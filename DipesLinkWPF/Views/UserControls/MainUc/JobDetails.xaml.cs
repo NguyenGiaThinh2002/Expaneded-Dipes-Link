@@ -2,20 +2,10 @@
 using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
-using SharedProgram.Models;
-using SharedProgram.Shared;
-using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using static SharedProgram.DataTypes.CommonDataType;
-using System.Data;
-using System.Threading.Channels;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -54,7 +44,7 @@ namespace DipesLink.Views.UserControls.MainUc
             if(_currentJob is not null && _currentJob.Index == e)
             {
                 _printingDataTableHelper?.Dispose();
-                _printingDataTableHelper = null;
+                _printingDataTableHelper = new();
                 InitValues();
                 DataGridDB.ItemsSource=null;
                 DataGridDB.Columns.Clear(); 
@@ -200,7 +190,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             _printingDataTableHelper?.ChangeStatusOnDataGrid(code, CurrentViewModel<JobOverview>(), DataGridDB);
                         });
                     }
-                    await Task.Delay(5);
+                    await Task.Delay(1);
                 }
             }
             catch (OperationCanceledException)
@@ -268,7 +258,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         }
                     }
                     catch (Exception) { }
-                    await Task.Delay(5);
+                    await Task.Delay(1);
                 }
             });
 

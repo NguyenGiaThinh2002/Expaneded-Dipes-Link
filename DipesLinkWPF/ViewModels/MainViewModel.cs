@@ -248,14 +248,11 @@ namespace DipesLink.ViewModels
                     switch (result[0])
                     {
                         case (byte)SharedMemoryCommandType.DeviceCommand:
-                            if (stationIndex == 0)
-                            {
-
-                            }
                             switch (result[2])
                             {
 
                                 case (byte)SharedMemoryType.DatabaseList:
+                                    Debug.WriteLine($"DB Size: {result.Length}");
                                     GetDatabaseList(stationIndex, result);
                                     break;
                                 case (byte)SharedMemoryType.CheckedList:
@@ -344,7 +341,7 @@ namespace DipesLink.ViewModels
             {
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
-                    Debug.WriteLine($"Elements Queue {stationIndex}: " + ipc.MessageQueue.Count);
+                   // Debug.WriteLine("Elements Queue: " + ipc.MessageQueue.Count);
                     _ = Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
                 }
                 await Task.Delay(1);
@@ -364,7 +361,7 @@ namespace DipesLink.ViewModels
                             //JobList[stationIndex].CameraStsBytes = result[3];
                             //JobList[stationIndex].CameraStsBytes = result;
                             JobList[stationIndex].CameraInfo= DataConverter.FromByteArray<CameraInfos>(result.Skip(3).ToArray());
-                            Debug.WriteLine($"Tram {stationIndex} : {JobList[stationIndex].CameraInfo.Info.Name}");
+                            Debug.WriteLine($"Tram {stationIndex} : {JobList[stationIndex]?.CameraInfo?.Info?.Name}");
                             break;
 
                         // Printer Status
@@ -429,7 +426,7 @@ namespace DipesLink.ViewModels
                             ShowLoadingImage(stationIndex);
                             break;
                         case (byte)SharedMemoryType.RestartStatus:
-                            RestartDetect(stationIndex);
+                            //RestartDetect(stationIndex);
                             break;
                     }
                     break;
@@ -442,17 +439,7 @@ namespace DipesLink.ViewModels
             }
         }
 
-        private void RestartDetect(int index)
-        {
-            if (true)
-            {
-
-            }
-            else
-            {
-
-            }
-        }
+       
 
         private void ShowLoadingImage(int stationIndex)
         {

@@ -1655,7 +1655,7 @@ namespace DipesLinkDeviceTransfer
                             MemoryTransfer.SendCounterPrintedToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, printedDataNumberBytes);
                         }
 
-                        //Current position (index and page)
+                        // Current position (index and page)
                         if (_QueueCurrentPositionInDatabase.TryDequeue(out byte[]? currentPos)) // Current Pos in Databse (index and page)
                         {
                             MemoryTransfer.SendCurrentPosDatabaseToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, currentPos);

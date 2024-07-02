@@ -16,9 +16,10 @@ namespace DipesLinkDeviceTransfer
     {
         private void ListenConnectionParam()
         {
+            Task.Run(() => ActionButtonFromUIProcessingAsync());
+
             Task.Run(async () =>
             {
-              
                 using IPCSharedHelper ipc = new(JobIndex, "UIToDeviceSharedMemory_DT", SharedValues.SIZE_1MB, isReceiver: true);
                 MemoryTransfer.SendRestartStatusToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(RestartStatus.Successful));
                 while (true)
@@ -47,6 +48,7 @@ namespace DipesLinkDeviceTransfer
                     await Task.Delay(10);
                 }
             });
+            
         }
 
         private void GetActionButtons(byte[] result)
@@ -54,7 +56,6 @@ namespace DipesLinkDeviceTransfer
             var resultActionButton = new byte[result.Length - 3];
             Array.Copy(result, 3, resultActionButton, 0, resultActionButton.Length);
             DeviceSharedFunctions.GetActionButton(resultActionButton);
-            ActionButtonFromUIProcessingAsync();
         }
 
         private void GetConenctionParams(byte[] result)
@@ -122,8 +123,6 @@ namespace DipesLinkDeviceTransfer
             }
         }
 
-
-
         private void AlwaySendPrinterOperationToUI()
         {
             Task.Run(async () =>
@@ -149,61 +148,52 @@ namespace DipesLinkDeviceTransfer
         private bool _isStopOrPauseAction;
         private async void ActionButtonFromUIProcessingAsync()
         {
-            await Task.Run(async () =>
+            while (true)
             {
                 switch (DeviceSharedValues.ActionButtonType)
                 {
                     case ActionButtonType.LoadDB: // Lệnh load dữ liệu khi UI yêu cầu lần đầu
-                        await LoadDatabaseFirst();
+                       // await Console.Out.WriteLineAsync("Vao day mot cach tu nhien");
+                        await LoadSelectedJob();
                         NotificationProcess(NotifyType.DeviceDBLoaded);
-                   
-                        await Console.Out.WriteLineAsync("Load Database Action");
                         break;
                     case ActionButtonType.Start:
-                     
+
                         _isStopOrPauseAction = false;
                         StartProcessAction(false); // Start without DB Load  
                         break;
-
                     case ActionButtonType.Pause: //Pause 
                         _isStopOrPauseAction = true;
                         _isPauseAction = true;
                         NotificationProcess(NotifyType.PauseSystem);
                         _ = StopProcessAsync();
                         break;
-
                     case ActionButtonType.Stop: //Stop 
                         _isPauseAction = false;
                         _isStopOrPauseAction = true;
                         NotificationProcess(NotifyType.StopSystem);
                         _ = StopProcessAsync();
                         break;
-
                     case ActionButtonType.Trigger: // Trigger
                         TriggerCamera();
                         break;
-
                     case ActionButtonType.ReloadTemplate: // Reload template
                         ObtainPrintProductTemplateList();
                         break;
-
                     case ActionButtonType.Reprint: // RePrint
 #if DEBUG
                         Console.WriteLine("Start Reprint !");
 #endif
                         RePrintAsync();
                         break;
-
                     default:
                         break;
                 }
-            });
+                DeviceSharedValues.ActionButtonType = ActionButtonType.Unknown; //Prevent state retention
+                await Task.Delay(10);
+            }
         }
 
-        private async Task LoadDatabaseFirst()
-        {
-            await LoadSelectedJob();
-        }
         private async void StartProcessAction(bool startWithDB)
         {
             Task<int> connectionCode = CheckDeviceConnectionAsync();
@@ -240,8 +230,21 @@ namespace DipesLinkDeviceTransfer
                 DatamanCameraDeviceHandler.ManualInputTrigger();
             }
         }
+
+        private static bool _isLoading = false;
+        private static readonly object lockObject = new();
         public async Task LoadSelectedJob()
         {
+            lock (lockObject)
+            {
+                if (_isLoading)
+                {
+                    SharedFunctions.PrintDebugMessage("Task loading DB is already running.");
+                    return;
+                }
+                _isLoading = true;
+                SharedFunctions.PrintDebugMessage("Loading DB");
+            }
             try
             {
                 string? selectedJobName = SharedFunctions.GetSelectedJobNameList(JobIndex).FirstOrDefault();
@@ -272,9 +275,17 @@ namespace DipesLinkDeviceTransfer
                     await InitDataAsync(_SelectedJob);
                 }
             }
-            catch (Exception)
+            catch (Exception ex) 
+            { 
+                SharedFunctions.PrintDebugMessage(ex.Message); 
+            }
+            finally
             {
-
+                lock (lockObject)
+                {
+                    _isLoading = false; // done loading db flag
+                    SharedFunctions.PrintDebugMessage("Loading DB Completed !");
+                }
             }
         }
         private void NotificationProcess(NotifyType notifyType)

@@ -366,9 +366,11 @@ namespace DipesLink.ViewModels
                 switch (buttonName)
                 {
                     case "ButtonAdd":
-                        bool isExistItemAdd = SelectedHeadersList.Any(x => x == SelectedColumnItem1);
-                        SelectedHeadersList.Add(SelectedColumnItem1.Clone());
-
+                        if(SelectedColumnItem1 != null)
+                        {
+                            bool isExistItemAdd = SelectedHeadersList.Any(x => x == SelectedColumnItem1);
+                            SelectedHeadersList.Add(SelectedColumnItem1.Clone());
+                        }
                         break;
                     case "ButtonRemove":
                         bool isExistItemRemove = SelectedHeadersList.Any(x => x == SelectedColumnItem2);

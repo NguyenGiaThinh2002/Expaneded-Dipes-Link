@@ -25,7 +25,7 @@ namespace SharedProgram.DeviceTransfer
         public static string DisableSensor = "";
         public static string PulseEncoder = "";
         public static string EncoderDiameter = "";
-        public static ActionButtonType ActionButtonType;
+        public static ActionButtonType ActionButtonType = ActionButtonType.Unknown;
 
         public static VerifyAndPrintModel VPObject = new();
     }
