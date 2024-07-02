@@ -43,5 +43,11 @@ namespace SharedProgram.Shared
         {
             OnVerifyAndPrindSendDataMethod?.Invoke(true, EventArgs.Empty);
         }
+
+        public static event EventHandler? OnRaiseCameraIPAddress;
+        public static void OnRaiseCameraIPAddressHandler(string ipAddress)
+        {
+            OnRaiseCameraIPAddress?.Invoke(ipAddress, EventArgs.Empty);
+        }
     }
 }

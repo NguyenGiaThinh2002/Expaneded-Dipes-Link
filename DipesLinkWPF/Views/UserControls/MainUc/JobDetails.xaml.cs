@@ -2,20 +2,10 @@
 using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
-using SharedProgram.Models;
-using SharedProgram.Shared;
-using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using static SharedProgram.DataTypes.CommonDataType;
-using System.Data;
-using System.Threading.Channels;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -54,7 +44,7 @@ namespace DipesLink.Views.UserControls.MainUc
             if(_currentJob is not null && _currentJob.Index == e)
             {
                 _printingDataTableHelper?.Dispose();
-                _printingDataTableHelper = null;
+                _printingDataTableHelper = new();
                 InitValues();
                 DataGridDB.ItemsSource=null;
                 DataGridDB.Columns.Clear(); 
@@ -158,7 +148,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             Application.Current.Dispatcher.Invoke(async () =>
             {
-                if (sender is List<(List<string[]>, int)> dbList)  // Item 1: db, item 2: current page
+                if (sender is List<(List<string[]>, int)> dbList && _printingDataTableHelper != null)  // Item 1: db, item 2: current page
                 {
                     await _printingDataTableHelper.InitDatabaseAsync(dbList.FirstOrDefault().Item1, DataGridDB, dbList.FirstOrDefault().Item2, CurrentViewModel<JobOverview>());
                     if (_currentJob != null) _currentJob.PrintedDataNumber = _printingDataTableHelper.PrintedNumber.ToString(); // Update UI First time
@@ -192,7 +182,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             _printingDataTableHelper?.ChangeStatusOnDataGrid(code, CurrentViewModel<JobOverview>(), DataGridDB);
                         });
                     }
-                    await Task.Delay(5);
+                    await Task.Delay(1);
                 }
             }
             catch (OperationCanceledException)
@@ -260,7 +250,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         }
                     }
                     catch (Exception) { }
-                    await Task.Delay(5);
+                    await Task.Delay(1);
                 }
             });
 

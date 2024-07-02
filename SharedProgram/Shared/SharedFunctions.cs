@@ -278,5 +278,14 @@ namespace SharedProgram.Shared
             using var writer = new StreamWriter(filePath, false, Encoding.UTF8);
             writer.Write(content);
         }
+
+
+        public static void PrintDebugMessage(string message)
+        {
+#if DEBUG
+            Console.WriteLine(message);
+#endif
+        }
+
     }
 }

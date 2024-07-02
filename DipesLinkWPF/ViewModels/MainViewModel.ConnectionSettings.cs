@@ -74,8 +74,8 @@ namespace DipesLink.ViewModels
             ConnectParamsList[index].EncoderDiameter = CurrentConnectParams.EncoderDiameter;
 
             // Get info camera
-            ConnectParamsList[index].CameraModel = JobList[index].CameraInfo.Info.Name;
-            ConnectParamsList[index].SerialNumber = JobList[index].CameraInfo.Info.SerialNumber;
+            //ConnectParamsList[index].CameraModel = JobList[index].CameraInfo.Info.Name;
+            //ConnectParamsList[index].SerialNumber = JobList[index].CameraInfo.Info.SerialNumber;
 
             //ConnectParamsList[index].PrintFieldForVerifyAndPrint = CurrentConnectParams.PrintFieldForVerifyAndPrint;
             //ConnectParamsList[index].FailedDataSentToPrinter = CurrentConnectParams.FailedDataSentToPrinter;

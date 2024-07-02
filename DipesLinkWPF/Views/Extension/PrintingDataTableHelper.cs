@@ -1,11 +1,11 @@
 ﻿using Cloudtoid;
 using DipesLink.Models;
 using DipesLink.Views.Converter;
+using SharedProgram.Shared;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace DipesLink.Views.Extension
 {
@@ -19,42 +19,52 @@ namespace DipesLink.Views.Extension
         public event EventHandler? OnDetectMissPrintedCode;
         public DataTable? PrintedDataTable { get; private set; }
         private OptimizedSearch? _optimizedSearch;
-      
 
         public async Task InitDatabaseAsync(List<string[]> dbList, DataGrid dataGrid, int currentPage, JobOverview? currentViewModel)
         {
             if (dbList is null || dbList.IsEmpty()) return;
-           // PrintedDataTable = null;
             PrintedDataTable = new();
-            
             await Task.Run(() =>
             {
-                foreach (var header in dbList[0]) // add column
+                try
                 {
-                    PrintedDataTable.Columns.Add(header);
+                    foreach (var header in dbList[0]) // add column
+                    {
+                        PrintedDataTable.Columns.Add(header);
+                    }
+                    for (int i = 1; i < dbList.Count; i++) // add Row data
+                    {
+                        PrintedDataTable.Rows.Add(dbList[i]);
+                    }
+                    _orgDBList = dbList;
+                    if (_orgDBList != null)
+                    {
+                        InitializeOptimizedSearch(_orgDBList);
+                    }
+                    CounterPrintedFirstLoad(PrintedDataTable);
                 }
-                for (int i = 1; i < dbList.Count; i++) // add Row data
+                catch (Exception ex)
                 {
-                    PrintedDataTable.Rows.Add(dbList[i]);
+                    SharedFunctions.PrintDebugMessage(ex.Message);
                 }
-                _orgDBList = dbList;
-                if (_orgDBList != null)
-                {
-                    InitializeOptimizedSearch(_orgDBList);
-                }
-                CounterPrintedFirstLoad(PrintedDataTable);
-
             });
 
             // Update UI after datatable loaded
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (currentViewModel == null) return;
-                CurrentViewModel = currentViewModel;
-                dataGrid.Columns.Clear();
-                ProcessMiniPageAsync(dataGrid, PrintedDataTable, currentPage);
-                currentViewModel.IsShowLoadingDB = Visibility.Collapsed;
-                currentViewModel.IsStartButtonEnable = true;
+                try
+                {
+                    if (currentViewModel == null) return;
+                    CurrentViewModel = currentViewModel;
+                    dataGrid.Columns.Clear();
+                    ProcessMiniPageAsync(dataGrid, PrintedDataTable, currentPage);
+                    currentViewModel.IsShowLoadingDB = Visibility.Collapsed;
+                    currentViewModel.IsStartButtonEnable = true;
+                }
+                catch (Exception ex)
+                {
+                    SharedFunctions.PrintDebugMessage(ex.Message);
+                }
             });
         }
 
@@ -62,7 +72,7 @@ namespace DipesLink.Views.Extension
         {
             PrintedNumber = dataTable.Select("Status = 'Printed'").Length;
         }
-        
+
         public void InitializeOptimizedSearch(List<string[]> dbList)
         {
             _optimizedSearch = new OptimizedSearch(dbList);
@@ -70,39 +80,50 @@ namespace DipesLink.Views.Extension
 
         public async void ChangeStatusOnDataGrid(string[] printedCode, JobOverview? currentViewModel, DataGrid dataGrid)
         {
-            if (currentViewModel == null) return;
-            string rowIdentifier = printedCode[0];
-            string newStatus = printedCode[^1];
-            CurrentViewModel = currentViewModel;
-            int _rowIndexTotal = 0;
-
-            if (_optimizedSearch != null)
+            try
             {
-                _rowIndexTotal = _optimizedSearch.FindIndexByData(printedCode);
-            }
-            if (Paginator == null) return;
-            int currentPage = Paginator.GetCurrentPageNumber(_rowIndexTotal);
-            if (Paginator != null && currentPage != Paginator.CurrentPage)
-            {
-                Paginator.CurrentPage = currentPage;
-                await UpdateDataGridAsync(dataGrid);
-            }
-       
-            foreach (DataRow row in CurrentViewModel.MiniDataTable.Rows)
-            {
-                _rowIndex = CurrentViewModel.MiniDataTable.Rows.IndexOf(row);
-
-                if (row[0].ToString() == rowIdentifier)
+                if (currentViewModel == null) 
                 {
-                    row["Status"] = newStatus;
-                    if (newStatus != "Printed")
-                    {
-                        //RaiseDetectMissPrintedCode();
-                    }
-                    break;
+                    return;
                 }
+                string rowIdentifier = printedCode[0];
+                string newStatus = printedCode[^1];
+                CurrentViewModel = currentViewModel;
+                int _rowIndexTotal = 0;
+                if (_optimizedSearch != null)
+                {
+                    _rowIndexTotal = _optimizedSearch.FindIndexByData(printedCode);
+                }
+                if (Paginator == null) 
+                { 
+                    return; 
+                }
+                int currentPage = Paginator.GetCurrentPageNumber(_rowIndexTotal);
+                if (Paginator != null && currentPage != Paginator.CurrentPage)
+                {
+                    Paginator.CurrentPage = currentPage;
+                    await UpdateDataGridAsync(dataGrid);
+                }
+
+                foreach (DataRow row in CurrentViewModel.MiniDataTable.Rows)
+                {
+                    _rowIndex = CurrentViewModel.MiniDataTable.Rows.IndexOf(row);
+                    if (row[0].ToString() == rowIdentifier)
+                    {
+                        row["Status"] = newStatus;
+                        if (newStatus != "Printed")
+                        {
+                            //RaiseDetectMissPrintedCode();
+                        }
+                        break;
+                    }
+                }
+                ScrollIntoView(_rowIndex, dataGrid);
             }
-            ScrollIntoView(_rowIndex, dataGrid);
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintDebugMessage(ex.Message);
+            }
         }
 
         public async void ProcessMiniPageAsync(DataGrid dataGrid, DataTable dataTable, int currentPage)
@@ -168,8 +189,9 @@ namespace DipesLink.Views.Extension
                         dataGrid.ItemsSource = CurrentViewModel.MiniDataTable.DefaultView;
                     });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    SharedFunctions.PrintDebugMessage(ex.Message);
                 }
                 finally
                 {
@@ -180,37 +202,50 @@ namespace DipesLink.Views.Extension
 
         public static void ScrollIntoView(int rowIndex, DataGrid dataGrid)
         {
-            if (rowIndex >= 0 && rowIndex < dataGrid.Items.Count)
+            try
             {
-                dataGrid.ScrollIntoView(dataGrid.Items[rowIndex]);
-                dataGrid.SelectedIndex = rowIndex;
-
-                dataGrid.Dispatcher.InvokeAsync(() =>
+                if (rowIndex >= 0 && rowIndex < dataGrid.Items.Count)
                 {
-                    DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex);
-                    row?.Focus();
-                }, System.Windows.Threading.DispatcherPriority.Background);
+                    dataGrid.ScrollIntoView(dataGrid.Items[rowIndex]);
+                    dataGrid.SelectedIndex = rowIndex;
+
+                    dataGrid.Dispatcher.InvokeAsync(() =>
+                    {
+                        DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex);
+                        row?.Focus();
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+                }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintDebugMessage(ex.Message);
             }
         }
 
 
         private bool disposedValue = false;
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    Paginator?.Dispose();
-                    _orgDBList?.Clear();
-                    PrintedDataTable?.Clear();
-                    PrintedDataTable?.Dispose();
-                    _optimizedSearch?.Dispose();
-
-                    Paginator = null;
-                    _orgDBList = null;
-                   
-                    _optimizedSearch = null;
+                    try
+                    {
+                        Paginator?.Dispose();
+                        _orgDBList?.Clear();
+                        PrintedDataTable?.Clear();
+                        PrintedDataTable?.Dispose();
+                        _optimizedSearch?.Dispose();
+                        Paginator = null;
+                        _orgDBList = null;
+                        _optimizedSearch = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        SharedFunctions.PrintDebugMessage(ex.Message);
+                    }
                 }
                 disposedValue = true;
             }

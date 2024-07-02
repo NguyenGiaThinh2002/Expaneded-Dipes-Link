@@ -81,7 +81,9 @@ namespace DipesLinkDeviceTransfer
                     string[] lastCode = _ListPrintedCodeObtainFromFile[^1];
                     if (_NumberOfDuplicate > 0)
                     {
-                        // Thôg báo lỗi trùng
+                        //Duplicate error message
+                        NotificationProcess(NotifyType.DuplicateData);
+                        SharedFunctions.PrintDebugMessage($"Database Duplicate: {_NumberOfDuplicate} row");
                     }
                 }
             }
