@@ -87,7 +87,9 @@ namespace DipesLink.Models
         public OperationStatus _operationStatus = OperationStatus.Stopped;
         public OperationStatus OperationStatus
         {
+            //get { return _operationStatus; }
             get { return _operationStatus; }
+
             set
             {
                 if (_operationStatus != value)

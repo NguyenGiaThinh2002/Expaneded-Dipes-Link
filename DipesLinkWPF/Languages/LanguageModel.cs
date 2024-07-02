@@ -1,4 +1,5 @@
-﻿using DipesLink.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.ViewModels;
 using SharedProgram.Models;
 using System;
 using System.Collections.Generic;
@@ -7,24 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using SharedProgram.Models;
+using SharedProgram.Shared;
+using MahApps.Metro.Controls;
 
 
 namespace DipesLink.Languages
 {
-    public class LanguageModel : ViewModelBase
+    //     // ViewModelBase
+    public class LanguageModel : ObservableObject
     {
         public const string ApplicationDefaultLanguage = "en-US";
+        //ViewModelSharedValues
+       
         
-        //private String? _selectedLanguage;
-
-        //public string SelectedLanguage
-        //{
-        //    get { return _selectedLanguage; }
-        //    set { 
-        //        _selectedLanguage = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
         public static ResourceDictionary? _langResource = LoadLanguageResourceDictionary(ApplicationDefaultLanguage) ??
                                                LoadLanguageResourceDictionary();
         public static ResourceDictionary? Language
@@ -32,8 +29,14 @@ namespace DipesLink.Languages
             get { return _langResource; }
             set
             {
-                _langResource = value;
-               // OnPropertyChanged();
+               
+                if (_langResource != value)
+                {
+                    _langResource = value;
+                    //OnPropertyChanged(nameof(Language));
+                    //OnPropertyChanged();
+                }
+
             }
         }
         //public static string? GetResource(string key)
@@ -41,7 +44,7 @@ namespace DipesLink.Languages
         //    return Language?[key]?.ToString();
         //}
 
-        private static ResourceDictionary? LoadLanguageResourceDictionary(String? lang = null)
+        public static ResourceDictionary? LoadLanguageResourceDictionary(String? lang = null)
         {
             try
             {
@@ -61,7 +64,20 @@ namespace DipesLink.Languages
 
         public void UpdateApplicationLanguage(string choosenLanguage)
         {
-            Language = LoadLanguageResourceDictionary(choosenLanguage) ??
+            string newLanguage = ViewModelSharedValues.Settings.Language;
+            if (string.IsNullOrEmpty(newLanguage))
+            {
+                newLanguage = ApplicationDefaultLanguage;
+            }
+            
+            if (!string.IsNullOrEmpty(choosenLanguage))
+            {
+                newLanguage = choosenLanguage;
+            }
+            //SettingsModel.Language = newLanguage;
+            ViewModelSharedValues.Settings.Language = newLanguage;
+            ViewModelSharedFunctions.SaveSetting();
+            Language = LoadLanguageResourceDictionary(newLanguage) ??
                                                LoadLanguageResourceDictionary();
             // If you have used other languages, clear it first.
             // Since the dictionary are cleared, the output of debugging will warn "Resource not found",
@@ -71,7 +87,9 @@ namespace DipesLink.Languages
             System.Diagnostics.Debug.WriteLine("Cleared");
             var a = Language?["Setting_Apply"];
             // Add new language.
+            OnPropertyChanged(nameof(Language));
             Application.Current.Resources.MergedDictionaries.Add(Language);
+            
         }
     }
 }
