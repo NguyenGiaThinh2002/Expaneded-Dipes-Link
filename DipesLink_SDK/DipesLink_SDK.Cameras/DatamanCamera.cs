@@ -1,4 +1,5 @@
-﻿using Cognex.DataMan.SDK;
+﻿using Cloudtoid;
+using Cognex.DataMan.SDK;
 using Cognex.DataMan.SDK.Discovery;
 using Cognex.DataMan.SDK.Utils;
 using DipesLink_SDK_Cameras.Models;
@@ -14,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using static Cognex.DataMan.SDK.Discovery.EthSystemDiscoverer;
 
 namespace DipesLink_SDK_Cameras
 {
@@ -26,23 +28,24 @@ namespace DipesLink_SDK_Cameras
         private bool _IsConnected;
         public bool IsConnected => _IsConnected;
         private EthSystemDiscoverer? _ethSystemDiscoverer = new();
-        internal List<EthSystemDiscoverer.SystemInfo> _cameraSystemInfoList = new();
+        private List<EthSystemDiscoverer.SystemInfo> _cameraSystemInfoList = new();
         private DataManSystem? _dataManSystem;
         private ResultCollector? _results;
         private ISystemConnector? _connector;
         IPCSharedHelper? _ipc;
         private readonly object _CurrentResultInfoSyncLock = new();
+        SystemInfo? _systemInfo;
 
         #endregion
-       
+
         public DatamanCamera(int index, IPCSharedHelper? ipc)
         {
-           
-           _index = index;
+
+            _index = index;
             _ipc = ipc;
             SharedEventsIpc.CameraStatusChanged += SharedEvents_DeviceStatusChanged;
             SharedEvents.OnCameraOutputSignalChange += SharedEvents_OnCameraOutputSignalChange;
-
+            SharedEvents.OnRaiseCameraIPAddress += SharedEvents_OnRaiseCameraIPAddress;
             _ethSystemDiscoverer.SystemDiscovered += new EthSystemDiscoverer.SystemDiscoveredHandler(OnEthSystemDiscovered);
             _ethSystemDiscoverer.Discover();
 
@@ -54,22 +57,58 @@ namespace DipesLink_SDK_Cameras
             _threadCameraStatusChecking.Start();
         }
 
+        private void SharedEvents_OnRaiseCameraIPAddress(object? sender, EventArgs e)
+        {
+            try
+            {
+                string? ipFromAppSetting = sender as string;
+                Console.WriteLine("ipFromAppSetting" + ipFromAppSetting);
+                //Console.WriteLine("ipFromDiscover" + _systemInfo.IPAddress.ToString());
+                GetSystemInfo(ipFromAppSetting);
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintDebugMessage(ex.Message);
+            }
+        }
+
+        private void GetSystemInfo(string? ipFromAppSetting)
+        {
+            try
+            {
+                _systemInfo = _cameraSystemInfoList.FirstOrDefault(x => x.IPAddress.ToString().Equals(ipFromAppSetting));
+                ShowCameraInfo(_systemInfo, IsConnected);
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintDebugMessage(ex.Message);
+            }
+        }
+
         private void CameraStatusChecking(object? obj)
         {
             while (true)
             {
-                if (!IsConnected && PingIPCamera(DeviceSharedValues.CameraIP)) // Check if there is a new IP and try connecting
+                try
                 {
-                    Connect();
+                    if (!IsConnected && PingIPCamera(DeviceSharedValues.CameraIP)) // Check if there is a new IP and try connecting
+                    {
+                        Connect();
+                        GetSystemInfo(DeviceSharedValues.CameraIP);
+                    }
+                    else if (!PingIPCamera(DeviceSharedValues.CameraIP)) // Losing IP will result in loss of connection
+                    {
+                        _IsConnected = false;
+                        Disconnect();
+                        SharedEventsIpc.RaiseCameraStatusChanged(_IsConnected, EventArgs.Empty);
+                        GetSystemInfo(DeviceSharedValues.CameraIP);
+                    }
+                    Thread.Sleep(2000);
                 }
-                else if (!PingIPCamera(DeviceSharedValues.CameraIP)) // Losing IP will result in loss of connection
+                catch (Exception ex)
                 {
-                    _IsConnected = false;
-                    Disconnect();
-                    SharedEventsIpc.RaiseCameraStatusChanged(_IsConnected, EventArgs.Empty);
-                 
+                    SharedFunctions.PrintDebugMessage(ex.Message);
                 }
-                Thread.Sleep(2000);
             }
         }
 
@@ -84,36 +123,52 @@ namespace DipesLink_SDK_Cameras
             {
                 if (sender == null) return;
                 bool camIsConnected = (bool)sender;
-                CamInfo camInfo = new()
-                {
-                    SerialNumber = _cameraSystemInfoList.FirstOrDefault()?.SerialNumber,
-                    Name = _cameraSystemInfoList.FirstOrDefault()?.Name,
-                    Type = _cameraSystemInfoList.FirstOrDefault()?.Type,
-                };
+            }
+            catch (Exception) { }
+        }
 
-                CameraInfos camera = new()
+        private void ShowCameraInfo(SystemInfo? systemInfo, bool isConnected)
+        {
+            try
+            {
+                CamInfo camInfo;
+                CameraInfos camera;
+                if (systemInfo is null)
                 {
-                    ConnectionStatus = camIsConnected,
-                    Info = camInfo,
-                };
+                    camInfo = new();
+                    camera = new()
+                    {
+                        ConnectionStatus = isConnected,
+                        Info = camInfo,
+                    };
+                }
+                else
+                {
+                    camInfo = new()
+                    {
+                        SerialNumber = systemInfo.SerialNumber,
+                        Name = systemInfo.Name,
+                        Type = systemInfo.Type,
+                    };
 
-#if DEBUG 
+                    camera = new()
+                    {
+                        ConnectionStatus = isConnected,
+                        Info = camInfo,
+                    };
+                }
+#if DEBUG
                 Console.WriteLine("Name: " + camera.Info.Name);
                 Console.WriteLine("Serial Number: " + camera.Info.SerialNumber);
                 Console.WriteLine("Type: " + camera.Info.Type);
-#endif 
-                var arrInfo = DataConverter.ToByteArray<CameraInfos>(camera);
-                //Console.WriteLine("ádfy" + arrInfo.Count());
-                //var c = DataConverter.FromByteArray<CameraInfos>(arrInfo);
-                //Console.WriteLine("Name: " + c.Info.Name);
-                //Console.WriteLine("Serial Number: " + c.Info.SerialNumber);
-                //Console.WriteLine("Type: " + c.Info.Type);
-
-                Console.WriteLine("Index" + _index);
-                MemoryTransfer.SendCameraStatusToUI(_ipc,_index, arrInfo);
-
+#endif
+                var arrInfo = DataConverter.ToByteArray(camera);
+                MemoryTransfer.SendCameraStatusToUI(_ipc, _index, arrInfo);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintDebugMessage(ex.Message);
+            }
         }
 
         public void Connect()
@@ -132,19 +187,21 @@ namespace DipesLink_SDK_Cameras
                 }
 #endif
 
-                if (_cameraSystemInfoList.Count < 1) return; 
+                // Console.WriteLine("Camera name------------------------------------: "+ _cameraSystemInfoList[0].Name);
+
+                if (_cameraSystemInfoList.Count < 1) return;
 
                 EthSystemDiscoverer.SystemInfo? currentCamera = _cameraSystemInfoList
                     .Where(x => x.IPAddress.ToString() == DeviceSharedValues.CameraIP)
                     .ToList()
-                    .FirstOrDefault(); 
+                    .FirstOrDefault();
 
                 EthSystemConnector? conn = new(currentCamera?.IPAddress);
-       
+
                 if (conn.Address != null)
                 {
                     _connector = conn;
-                    _dataManSystem = new(_connector) { DefaultTimeout = 1000 }; 
+                    _dataManSystem = new(_connector) { DefaultTimeout = 1000 };
 
                     _dataManSystem.SystemConnected += new SystemConnectedHandler(OnSystemConnected);
                     _dataManSystem.SystemDisconnected += new SystemDisconnectedHandler(OnSystemDisconnected);
@@ -153,7 +210,7 @@ namespace DipesLink_SDK_Cameras
 
                     _results = new(_dataManSystem, resultTypes);
                     _results.ComplexResultCompleted += ResultCollector_ComplexResultCompleted;
-                    _dataManSystem.Connect(); 
+                    _dataManSystem.Connect();
                     _dataManSystem.SetResultTypes(resultTypes);
                 }
                 if (conn.Address == null)
@@ -169,7 +226,7 @@ namespace DipesLink_SDK_Cameras
 #endif
             }
         }
-       
+
         public void Disconnect()
         {
             try
@@ -200,11 +257,20 @@ namespace DipesLink_SDK_Cameras
 
         #region Event
 
+
         private void OnEthSystemDiscovered(EthSystemDiscoverer.SystemInfo systemInfo)
         {
+
+            Console.WriteLine("OnEthSystemDiscovered Found: " + systemInfo.IPAddress.ToString());
+            //  IPFoundByEthDiscovered = systemInfo.IPAddress.ToString();
+            //Console.WriteLine("Ip Set: " + DeviceSharedValues.CameraIP);
+
             bool hasExist = CheckCameraInfoHasExist(systemInfo, _cameraSystemInfoList);
             if (!hasExist)
+            {
                 _cameraSystemInfoList.Add(systemInfo);
+            }
+            GetSystemInfo(DeviceSharedValues.CameraIP);
         }
 
         private void ResultCollector_ComplexResultCompleted(object sender, ComplexResult complexResult)
@@ -248,7 +314,7 @@ namespace DipesLink_SDK_Cameras
                     }
                 }
             }
-         
+
             var points = GetResultFromXmlString(imageGraphics.FirstOrDefault()); // Get polygon result
             DetectModel detectModel = new()
             {
@@ -257,7 +323,7 @@ namespace DipesLink_SDK_Cameras
                 ImageData = imageData,
                 Image = GetImageWithFocusRectangle(imageResult, imageGraphics)
             };
-          
+
             SharedEvents.RaiseOnCameraReadDataChangeEvent(detectModel); // Send data via Event
         }
 
@@ -339,7 +405,7 @@ namespace DipesLink_SDK_Cameras
         #endregion
 
         #region Functions
-       
+
         private static bool PingIPCamera(string ipAddress) // Function to check whether the IP address exists or not
         {
             try
@@ -366,7 +432,7 @@ namespace DipesLink_SDK_Cameras
         {
             foreach (object systemInfo in cameraSystemInfoList)
             {
-              
+
                 if (systemInfo is EthSystemDiscoverer.SystemInfo)
                 {
                     EthSystemDiscoverer.SystemInfo? ethSystemInfo = systemInfo as EthSystemDiscoverer.SystemInfo;
@@ -393,7 +459,7 @@ namespace DipesLink_SDK_Cameras
             catch (Exception) { return false; }
         }
 
-        public  bool OutputAction()
+        public bool OutputAction()
         {
             try
             {

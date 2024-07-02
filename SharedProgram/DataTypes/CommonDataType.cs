@@ -206,7 +206,8 @@ namespace SharedProgram.DataTypes
             OutOfInk,
             CartridgesLocked,
             InvalidVersion,
-            IncorrectPrinthead
+            IncorrectPrinthead,
+            DuplicateData
         }
         public enum EventsLogType
         {

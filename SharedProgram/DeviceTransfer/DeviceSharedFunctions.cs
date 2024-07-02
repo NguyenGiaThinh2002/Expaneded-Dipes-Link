@@ -7,8 +7,6 @@ namespace SharedProgram.DeviceTransfer
 {
     public class DeviceSharedFunctions
     {
-
-
         public static void GetConnectionParamsSetting(ConnectParamsModel connectParams)
         {
             if (connectParams == null) return;
@@ -30,6 +28,8 @@ namespace SharedProgram.DeviceTransfer
                 DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod = connectParams.VerifyAndPrintBasicSentMethod;
                 DeviceSharedValues.VPObject.FailedDataSentToPrinter = connectParams.FailedDataSentToPrinter;
                 SharedEvents.RaiseOnVerifyAndPrindSendDataMethod();
+                SharedEvents.OnRaiseCameraIPAddressHandler(DeviceSharedValues.CameraIP);
+
 #if DEBUG
                 Console.WriteLine("Camera IP : " + DeviceSharedValues.CameraIP);
                 Console.WriteLine("Printer IP : " + DeviceSharedValues.PrinterIP);
