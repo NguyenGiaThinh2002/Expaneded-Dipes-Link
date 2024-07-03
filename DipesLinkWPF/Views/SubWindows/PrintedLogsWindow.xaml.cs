@@ -421,110 +421,19 @@ namespace DipesLink.Views.SubWindows
             var pathBackupPrintedResponse = SharedPaths.PathPrintedResponse + $"Job{_currentJob?.Index + 1}\\" + pathstr;
 
             // Init Databse from file, add index column, status column, and string "Feild"
-            List<string[]> tmp = await Task.Run(() => { return InitDatabase(pathDatabase); });
+            List<string[]> tmp = await Task.Run(() => { return SharedFunctions.InitDatabaseWithStatus(pathDatabase); });
 
             // Update Printed status
             if (pathstr != "" && File.Exists(_currentJob?.DatabasePath) && tmp.Count > 1)
             {
-                await Task.Run(() => { InitPrintedStatus(pathBackupPrintedResponse, tmp); });
+                await Task.Run(() => { SharedFunctions.InitPrintedStatus(pathBackupPrintedResponse, tmp); });
             }
             return tmp;
         }
 
-        private static List<string[]> InitDatabase(string? path)
-        {
-            List<(int index, string[] data)> result = new(); // List to store index and data
+      
 
-            if (path == null || !File.Exists(path))
-            {
-                return result.Select(t => t.data).ToList();
-            }
-
-            try
-            {
-                var lines = File.ReadAllLines(path);
-                int columnCount = 0;
-                if (lines.Length > 0)
-                {
-                    var firstLine = SplitLine(lines[0], path.EndsWith(".csv"));
-                    columnCount = firstLine.Length + 2;
-                    var headerRow = new string[columnCount];
-                    headerRow[0] = "Index";
-                    headerRow[^1] = "Status";
-                    for (int i = 1; i < headerRow.Length - 1; i++)
-                    {
-                        headerRow[i] = firstLine[i - 1] + $" - Field{i}";
-                    }
-                    result.Add((0, headerRow));
-                }
-
-                Parallel.ForEach(lines.Skip(1), (line, state, index) =>
-                {
-                    var columns = SplitLine(line, path.EndsWith(".csv"));
-                    var row = new string[columnCount];
-                    row[0] = (index + 1).ToString();
-                    row[^1] = "Waiting";
-                    for (int i = 1; i < row.Length - 1; i++)
-                    {
-                        row[i] = i - 1 < columns.Length ? Csv.Unescape(columns[i - 1]) : "";
-                    }
-                    lock (result)
-                    {
-                        result.Add(((int)index + 1, row));
-                    }
-                });
-                
-                result.Sort((a, b) => a.index.CompareTo(b.index)); // Sort by index
-            }
-            catch (IOException) { }
-            catch (Exception) { }
-
-            return result.Select(t => t.data).ToList(); // Return sorted data
-            //thinh
-            //var sortedAndTransformed = result.AsParallel()
-            //                     .OrderBy(item => item.index)
-            //                     .Select(item => item.data)
-            //                     .ToList();
-            //return sortedAndTransformed;
-        }
-
-        private static string[] SplitLine(string line, bool isCsv)
-        {
-            return isCsv ? line.Split(',') : line.Split('\t');
-        }
-
-        private static void InitPrintedStatus(string pathBackupPrinted, List<string[]> dbList)
-        {
-            if (!File.Exists(pathBackupPrinted))
-            {
-                return;
-            }
-
-            // Use FileStream with buffering
-            using FileStream fs = new(pathBackupPrinted, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
-            using StreamReader reader = new(fs, Encoding.UTF8, true);
-
-            // Read all lines at once
-            var lines = reader.ReadToEnd().Split(Environment.NewLine);
-
-            if (lines.Length < 2) return; // If there are less than 2 lines, there's nothing to process
-
-            // Skip the first line (header) and process the rest in parallel
-            Parallel.For(1, lines.Length, i =>
-            {
-                if (string.IsNullOrWhiteSpace(lines[i])) return;
-                string line = lines[i];
-                var columns = line.Split(',');
-                if (columns.Length > 0)
-                {
-                    string indexString = Csv.Unescape(columns[0]);
-                    if (int.TryParse(indexString, out int index))
-                    {
-                        dbList[index][^1] = "Printed"; // Get rows by index and update the last column with "Printed"
-                    }
-                }
-            });
-        }
+       
 
         private async void TextBoxSearch_KeyDownAsync(object sender, KeyEventArgs e)
         {
