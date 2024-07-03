@@ -134,16 +134,10 @@ namespace DipesLink.ViewModels
             //string stationName = LanguageModel.Language?["Station"].ToString();
             //string message = GetFormattedString("StationNumber", stationIndex + 1);
             
-            string newLanguage = ViewModelSharedValues.Settings.Language;
-            string t = newLanguage == "vi-VN" ? $"Trạm {stationIndex + 1}" : $"Station {stationIndex + 1}";
+            
+            string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {stationIndex + 1}" : $"Station {stationIndex + 1}";
             
             TabStation.Add(new TabItemModel() { Header = $"{t}", Content = userControl });
-        }
-
-        private static string ShowStationNumber(int stationIndex)
-        {
-            string message = GetFormattedString("StationNumber", stationIndex + 1);
-            return message;
         }
 
         private bool CheckJobExisting(int index, out JobModel? job)
