@@ -87,10 +87,10 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     _currentJob = CurrentViewModel<JobOverview>();
                     if (_currentJob == null) return;
-                    //_currentJob.OnLoadCompleteDatabase -= Shared_OnLoadCompleteDatabase;
-                    //_currentJob.OnChangePrintedCode -= Shared_OnChangePrintedCode;
-                    //_currentJob.OnLoadCompleteCheckedDatabase -= Shared_OnLoadCompleteCheckedDatabase;
-                    //_currentJob.OnChangeCheckedCode -= Shared_OnChangeCheckedCode;
+                    _currentJob.OnLoadCompleteDatabase -= Shared_OnLoadCompleteDatabase;
+                    _currentJob.OnChangePrintedCode -= Shared_OnChangePrintedCode;
+                    _currentJob.OnLoadCompleteCheckedDatabase -= Shared_OnLoadCompleteCheckedDatabase;
+                    _currentJob.OnChangeCheckedCode -= Shared_OnChangeCheckedCode;
 
                     _currentJob.OnLoadCompleteDatabase += Shared_OnLoadCompleteDatabase;
                     _currentJob.OnChangePrintedCode += Shared_OnChangePrintedCode;

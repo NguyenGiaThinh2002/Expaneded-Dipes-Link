@@ -287,5 +287,93 @@ namespace SharedProgram.Shared
 #endif
         }
 
+        public static List<string[]> InitDatabaseWithStatus(string? csvPath)
+        {
+            List<(int index, string[] data)> result = new(); // List to store index and data
+            if (csvPath == null || !File.Exists(csvPath))
+            {
+                return result.Select(t => t.data).ToList();
+            }
+            try
+            {
+                string[] lines = File.ReadAllLines(csvPath);
+                int columnCount = 0;
+                if (lines.Length > 0)
+                {
+                    string[] firstLine = SplitLine(lines[0], csvPath.EndsWith(".csv"));
+                    columnCount = firstLine.Length + 2;
+                    string[] headerRow = new string[columnCount];
+                    headerRow[0] = "Index";
+                    headerRow[^1] = "Status";
+                    for (int i = 1; i < headerRow.Length - 1; i++)
+                    {
+                        headerRow[i] = firstLine[i - 1] + $" - Field{i}";
+                    }
+                    result.Add((0, headerRow));
+                }
+
+                Parallel.ForEach(lines.Skip(1), (line, state, index) =>
+                {
+                    string[] columns = SplitLine(line, csvPath.EndsWith(".csv"));
+                    string[] row = new string[columnCount];
+                    row[0] = (index + 1).ToString();
+                    row[^1] = "Waiting";
+                    for (int i = 1; i < row.Length - 1; i++)
+                    {
+                        row[i] = i - 1 < columns.Length ? Csv.Unescape(columns[i - 1]) : "";
+                    }
+                    lock (result)
+                    {
+                        result.Add(((int)index + 1, row));
+                    }
+                });
+            }
+            catch (IOException) { }
+            catch (Exception) { }
+
+            List<string[]> sortedAndTransformed = result.AsParallel()
+                                 .OrderBy(item => item.index)
+                                 .Select(item => item.data)
+                                 .ToList();
+            return sortedAndTransformed;
+        }
+
+        private static string[] SplitLine(string line, bool isCsv)
+        {
+            return isCsv ? line.Split(',') : line.Split('\t');
+        }
+
+        public static void InitPrintedStatus(string pathBackupPrinted, List<string[]> dbList)
+        {
+            if (!File.Exists(pathBackupPrinted))
+            {
+                return;
+            }
+
+            // Use FileStream with buffering
+            using FileStream fs = new(pathBackupPrinted, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+            using StreamReader reader = new(fs, Encoding.UTF8, true);
+
+            // Read all lines at once
+            string[] lines = reader.ReadToEnd().Split(Environment.NewLine);
+
+            if (lines.Length < 2) return; // If there are less than 2 lines, there's nothing to process
+
+            // Skip the first line (header) and process the rest in parallel
+            Parallel.For(1, lines.Length, i =>
+            {
+                if (string.IsNullOrWhiteSpace(lines[i])) return;
+                string line = lines[i];
+                string[] columns = line.Split(',');
+                if (columns.Length > 0)
+                {
+                    string indexString = Csv.Unescape(columns[0]);
+                    if (int.TryParse(indexString, out int index))
+                    {
+                        dbList[index][^1] = "Printed"; // Get rows by index and update the last column with "Printed"
+                    }
+                }
+            });
+        }
     }
 }

@@ -164,7 +164,6 @@ namespace SharedProgram.DataTypes
             Unk,
             CameraConnectionFail,
             PrinterConnectionFail,
-
             StartSync,
             CompleteLoadDB,
             DatabaseUnknownError,
