@@ -76,9 +76,12 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#00b4d8" />
+                            <!--<GradientStop Offset="1.0" Color="#00b4d8" />
                             <GradientStop Offset="0.5" Color="#90e0ef" />
-                            <GradientStop Offset="0.0" Color="#caf0f8" />
+                            <GradientStop Offset="0.0" Color="#caf0f8" />-->
+                            <GradientStop Offset="1.0" Color="#457b9d" />
+                            <GradientStop Offset="0.5" Color="#a8dadc" />
+                            <GradientStop Offset="0.0" Color="#f1faee" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -111,9 +114,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#00b4d8" />
-                            <GradientStop Offset="0.5" Color="#90e0ef" />
-                            <GradientStop Offset="0.0" Color="#caf0f8" />
+                            <GradientStop Offset="1.0" Color="#457b9d" />
+                            <GradientStop Offset="0.5" Color="#a8dadc" />
+                            <GradientStop Offset="0.0" Color="#f1faee" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -141,9 +144,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#00b4d8" />
-                            <GradientStop Offset="0.5" Color="#90e0ef" />
-                            <GradientStop Offset="0.0" Color="#caf0f8" />
+                            <GradientStop Offset="1.0" Color="#457b9d" />
+                            <GradientStop Offset="0.5" Color="#a8dadc" />
+                            <GradientStop Offset="0.0" Color="#f1faee" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -172,9 +175,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#00b4d8" />
-                            <GradientStop Offset="0.5" Color="#90e0ef" />
-                            <GradientStop Offset="0.0" Color="#caf0f8" />
+                            <GradientStop Offset="1.0" Color="#457b9d" />
+                            <GradientStop Offset="0.5" Color="#a8dadc" />
+                            <GradientStop Offset="0.0" Color="#f1faee" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -202,9 +205,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#00b4d8" />
-                            <GradientStop Offset="0.5" Color="#90e0ef" />
-                            <GradientStop Offset="0.0" Color="#caf0f8" />
+                            <GradientStop Offset="1.0" Color="#457b9d" />
+                            <GradientStop Offset="0.5" Color="#a8dadc" />
+                            <GradientStop Offset="0.0" Color="#f1faee" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>

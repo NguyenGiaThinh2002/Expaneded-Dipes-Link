@@ -67,8 +67,9 @@
                             FontSize="20"
                             FontWeight="Bold"
                             Foreground="White"
-                            Text="LINE JOB " />
+                            Text="{DynamicResource ResourceKey=LINE_JOB}" />
                         <TextBlock
+                            Margin="5,0,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="20"
@@ -101,7 +102,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="Job Name" />
+                                Text="{DynamicResource ResourceKey=Job_Name}" />
                             <TextBox
                                 Grid.Row="1"
                                 Height="30"
@@ -130,7 +131,7 @@
                                     Margin="10,0,10,0"
                                     VerticalAlignment="Center"
                                     FontSize="16"
-                                    Text="Job Type" />
+                                    Text="{DynamicResource ResourceKey=Job_Type}" />
                                 <TextBox
                                     Grid.Row="1"
                                     Height="30"
@@ -154,7 +155,7 @@
                                     Margin="10,0,10,0"
                                     VerticalAlignment="Center"
                                     FontSize="16"
-                                    Text="Compare Type" />
+                                    Text="{DynamicResource ResourceKey=Compare_Type}" />
                                 <TextBox
                                     Grid.Row="1"
                                     Height="30"
@@ -181,7 +182,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="Totals Record Database" />
+                                Text="{DynamicResource ResourceKey=Totals_Record_Database}" />
                             <TextBox
                                 Grid.Row="1"
                                 Height="30"
@@ -205,7 +206,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="POD Format" />
+                                Text="{DynamicResource ResourceKey=POD_Format}" />
                             <TextBox
                                 Grid.Row="1"
                                 Height="30"
@@ -243,7 +244,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="Code Data" />
+                                Text="{DynamicResource ResourceKey=Code_Data}" />
                             <TextBox
                                 Grid.Row="1"
                                 Height="30"
@@ -286,7 +287,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="Time (ms)" />
+                                Text="{DynamicResource ResourceKey=Time_(ms)}" />
                             <TextBox
                                 Grid.Row="1"
                                 Grid.ColumnSpan="2"
@@ -324,7 +325,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="Checked Result" />
+                                Text="{DynamicResource ResourceKey=Checked_Result}" />
                             <TextBox
                                 x:Name="CheckResultColor"
                                 Grid.Row="1"
@@ -442,7 +443,7 @@
                             FontSize="20"
                             FontWeight="Bold"
                             Foreground="White"
-                            Text="VERIFICATION INFO" />
+                            Text="{DynamicResource ResourceKey=VERIFICATION_INFO}" />
                     </Border>
 
                     <Grid
@@ -513,7 +514,7 @@
                                         FontSize="16"
                                         FontWeight="Bold"
                                         Foreground="White"
-                                        Text="Total Checked" />
+                                        Text="{DynamicResource ResourceKey=Total_Checked}" />
                                     <TextBlock
                                         x:Name="TextBlockTotalChecked"
                                         Grid.RowSpan="2"
@@ -542,7 +543,7 @@
                                         FontSize="16"
                                         FontWeight="Bold"
                                         Foreground="White"
-                                        Text="Passed" />
+                                        Text="{DynamicResource ResourceKey=Passed}" />
                                     <TextBlock
                                         x:Name="TextBlockTotalPassed"
                                         Grid.RowSpan="2"
@@ -569,7 +570,7 @@
                                         FontSize="16"
                                         FontWeight="Bold"
                                         Foreground="White"
-                                        Text="Failed" />
+                                        Text="{DynamicResource ResourceKey=Failed}" />
                                     <TextBlock
                                         x:Name="TextBlockTotalFailed"
                                         Grid.RowSpan="2"
@@ -635,7 +636,7 @@
                                     Margin="10,0,0,0"
                                     HorizontalAlignment="Left"
                                     FontSize="20"
-                                    Text="Sent Data" />
+                                    Text="{DynamicResource ResourceKey=Sent_Data}" />
                                 <TextBlock
                                     Margin="0,15,0,0"
                                     HorizontalAlignment="Center"
@@ -671,7 +672,7 @@
                                     Margin="10,0,0,0"
                                     HorizontalAlignment="Left"
                                     FontSize="20"
-                                    Text="Received Data" />
+                                    Text="{DynamicResource ResourceKey=Received_Data}" />
                                 <TextBlock
                                     Margin="0,15,0,0"
                                     HorizontalAlignment="Center"
@@ -708,7 +709,7 @@
                                     Margin="10,0,0,0"
                                     HorizontalAlignment="Left"
                                     FontSize="20"
-                                    Text="Printed Data" />
+                                    Text="{DynamicResource ResourceKey=Printed_Data}" />
                                 <TextBlock
                                     Margin="0,15,0,0"
                                     HorizontalAlignment="Center"
@@ -873,7 +874,7 @@
                             FontSize="20"
                             FontWeight="Bold"
                             Foreground="White"
-                            Text="VERIFICATION RESULT" />
+                            Text="{DynamicResource ResourceKey=VERIFICATION_RESULT}" />
                     </Border>
 
                     <Grid Grid.Row="1">
@@ -889,7 +890,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             FontSize="16"
-                            Text="Database" />
+                            Text="{DynamicResource ResourceKey=Database}" />
                         <DataGrid
                             x:Name="DataGridDB"
                             Grid.Row="1"
@@ -916,7 +917,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             FontSize="16"
-                            Text="Job Logs" />
+                            Text="{DynamicResource ResourceKey=Job_Logs}" />
                         <DataGrid
                             x:Name="DataGridResult"
                             Grid.Row="3"

@@ -1,10 +1,54 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
-  <system:String x:Key="Language_Code">en-US</system:String>
-  <system:String x:Key="Setting_Apply">Apply</system:String>
-  <system:String x:Key="Setting_Choose_Your_Language">Choose Your Language:</system:String>
-  <system:String x:Key="Display_Hello_World">Hello World!</system:String>
-  <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <system:String x:Key="Language_Code">en-US</system:String>
+    <system:String x:Key="Setting_Apply">Apply</system:String>
+    <system:String x:Key="Setting_Choose_Your_Language">Choose Your Language:</system:String>
+    <system:String x:Key="Display_Hello_World">Hello World!</system:String>
+    <system:String x:Key="Stations_Details">Stations Details</system:String>
+    <system:String x:Key="Stations_Overview">Stations Overview</system:String>
+    <system:String x:Key="Station_Jobs_Operations">Station Jobs Operations</system:String>
+    <system:String x:Key="Stations_Settings">Stations Settings</system:String>
+    <system:String x:Key="Stations_Jobs_Logs">Stations Jobs Logs</system:String>
+    <system:String x:Key="Stations {x} _Jobs_Logs">Stations Jobs Logs</system:String>
+    <system:String x:Key="TemplateLoadError">Station {0}: Printer's not connected!</system:String>
+    <system:String x:Key="StationNumber">Station {0}</system:String>
+
+    <system:String x:Key="Home">Home</system:String>
+    <system:String x:Key="Jobs">Jobs</system:String>
+    <system:String x:Key="Settings">Settings</system:String>
+    <system:String x:Key="Logs">Logs</system:String>
+    <system:String x:Key="Exit">Exit</system:String>
+    <system:String x:Key="Station_Status">Station Status:</system:String>
+    <system:String x:Key="Printer_IP">Printer IP:</system:String>
+    <system:String x:Key="Camera_IP">Camera IP:</system:String>
+    <system:String x:Key="Controller_IP">Controller IP:</system:String>
+    <system:String x:Key="Stopped">Stopped</system:String>
+    <system:String x:Key="Running">Running</system:String>
+    <system:String x:Key="Processing">Processing</system:String>
+    <system:String x:Key="Startup">Startup</system:String>
+    <system:String x:Key="Sent_Data">Sent Data</system:String>
+    <system:String x:Key="Printed_Data">Printed Data</system:String>
+    <system:String x:Key="Received_Data">Received Data</system:String>
+    <system:String x:Key="Total_Checked">Total Checked</system:String>
+    <system:String x:Key="Passed">Passed</system:String>
+    <system:String x:Key="Failed">Failed</system:String>
+    <system:String x:Key="LINE_JOB">LINE JOB</system:String>
+    <system:String x:Key="VERIFICATION_INFO">VERIFICATION INFO</system:String>
+    <system:String x:Key="VERIFICATION_RESULT">VERIFICATION RESULT</system:String>
+    <system:String x:Key="Job_Name">Job Name</system:String>
+    <system:String x:Key="Job_Type">Job Type</system:String>
+    <system:String x:Key="Compare_Type">Compare Type</system:String>
+    <system:String x:Key="Totals_Record_Database">Totals Record Database</system:String>
+    <system:String x:Key="POD_Format">POD Format</system:String>
+    <system:String x:Key="Code_Data">Code Data</system:String>
+    <system:String x:Key="Time_(ms)">Time (ms)</system:String>
+    <system:String x:Key="Checked_Result">Checked Result</system:String>
+    <system:String x:Key="Database">Database</system:String>
+    <system:String x:Key="Job_Logs">Job Logs</system:String>
+    <system:String x:Key="Station">Station</system:String>
+
+    <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
 </ResourceDictionary>

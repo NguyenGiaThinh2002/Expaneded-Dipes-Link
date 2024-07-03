@@ -5,6 +5,7 @@ using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.MainUc;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -64,7 +65,7 @@ namespace DipesLink.Views
             if (viewModel == null) return false;  // Ensure viewModel is not null
 
             // Count the number of running stations
-            int runningPrintersCount = viewModel.PrinterStateList.Count(printerState => printerState.State != "Stopped");
+            int runningPrintersCount = viewModel.PrinterStateList.Count(printerState => printerState.State != "Stopped" && printerState.State != "Dừng");
 
             if (runningPrintersCount > 0)
             {
@@ -244,8 +245,8 @@ namespace DipesLink.Views
                         aboutPopup.ShowDialog();
                         break;
                     case "System Management":
-                        var systemManangement = new SystemManangement();
-                        systemManangement.ShowDialog();
+                        var systemManagement = new SystemManagement();
+                        systemManagement.ShowDialog();
                         break;
                     case "Logout": //Restart
                         var res = CusMsgBox.Show("Do you want to logout ?", "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);

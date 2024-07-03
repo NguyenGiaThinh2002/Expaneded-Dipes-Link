@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Xml;
-
 namespace SharedProgram.Models
 {
     public class SettingsModel : CommonSettingsModel
