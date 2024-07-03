@@ -137,7 +137,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             Foreground="White"
-                            Text="Home" />
+                            Text="{DynamicResource ResourceKey=Home}" />
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
@@ -156,7 +156,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             Foreground="White"
-                            Text="Jobs" />
+                            Text="{DynamicResource ResourceKey=Jobs}" />
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
@@ -175,7 +175,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             Foreground="White"
-                            Text="Settings" />
+                            Text="{DynamicResource ResourceKey=Settings}" />
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
@@ -194,7 +194,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             Foreground="White"
-                            Text="Logs" />
+                            Text="{DynamicResource ResourceKey=Logs}" />
                     </StackPanel>
                 </ListBoxItem>
 
@@ -221,7 +221,7 @@
                     <TextBlock
                         HorizontalAlignment="Center"
                         Foreground="{StaticResource ColorMenuItem}"
-                        Text="Exit" />
+                        Text="{DynamicResource ResourceKey=Exit}" />
                 </StackPanel>
             </Button>
         </Grid>
@@ -253,7 +253,7 @@
                     FontWeight="Bold"
                     Foreground="Gray"
                     Text="{Binding TitleApp}" />
-                <TextBlock Text="{DynamicResource ResourceKey=Setting_Choose_Your_Language}" />
+                <!--<TextBlock Text="{DynamicResource ResourceKey=Setting_Choose_Your_Language}" />
                 <Button Width="100" Click="Eng_Button_Click">
                     <TextBlock VerticalAlignment="Center" Text="English" />
                 </Button>
@@ -262,7 +262,7 @@
                     Margin="300,0,0,0"
                     Click="Vi_Button_Click">
                     <TextBlock VerticalAlignment="Center" Text="Vietnamese" />
-                </Button>
+                </Button>-->
                 <StackPanel
                     Grid.Column="2"
                     Margin="0,0,10,0"
@@ -389,7 +389,7 @@
                             <TextBlock
                                 Width="70"
                                 VerticalAlignment="Center"
-                                Text="Printer IP: " />
+                                Text="{DynamicResource ResourceKey=Printer_IP}" />
                             <TextBlock
                                 x:Name="TextBlockPrinterIP"
                                 VerticalAlignment="Center"
@@ -399,7 +399,7 @@
                             <TextBlock
                                 Width="70"
                                 VerticalAlignment="Center"
-                                Text="Camera IP: " />
+                                Text="{DynamicResource ResourceKey=Camera_IP}" />
                             <TextBlock
                                 x:Name="TextBlockCamIP"
                                 VerticalAlignment="Center"
@@ -412,9 +412,9 @@
                         </StackPanel>
                         <StackPanel Margin="10" Orientation="Horizontal">
                             <TextBlock
-                                Width="85"
+                                Width="95"
                                 VerticalAlignment="Center"
-                                Text="Controller IP: " />
+                                Text="{DynamicResource ResourceKey=Controller_IP}" />
                             <TextBlock
                                 x:Name="TextBlockControllerIP"
                                 VerticalAlignment="Center"
@@ -430,7 +430,7 @@
                             VerticalAlignment="Center"
                             FontSize="14"
                             Foreground="DimGray"
-                            Text="Station Status: " />
+                            Text="{DynamicResource ResourceKey=Station_Status}" />
                         <ListBox
                             HorizontalContentAlignment="Stretch"
                             FontSize="14"

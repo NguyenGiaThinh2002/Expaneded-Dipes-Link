@@ -61,43 +61,44 @@ namespace DipesLink.ViewModels
             }
         }
 
-        private string _TitleApp = "Stations Details";
-
+        private string _TitleApp = "Stations_Details";
+        
         public string TitleApp
         {
-            get { return _TitleApp; }
+            get {
+                return LanguageModel.Language?[_TitleApp].ToString(); 
+            }
             set
             {
                 if (_TitleApp != value)
                 {
+                    
                     _TitleApp = value;
                     OnPropertyChanged();
                 }
             }
         }
+       
+
 
         internal void ChangeTitleMainWindow(TitleAppContext titleType)
         {
-            // thinh is fixing.
-            var lg = new LanguageModel();
-            //var t = lg.GetResource("Setting_Apply");
-            var a = LanguageModel.Language?["Setting_Apply"];
             switch (titleType)
             {
                 case TitleAppContext.Overview:
-                    TitleApp = "Stations Overview"; 
+                    TitleApp = "Stations_Overview"; 
                     break;
                 case TitleAppContext.Home:
-                    TitleApp = "Stations Details";
+                    TitleApp = "Stations_Details";
                     break;
                 case TitleAppContext.Jobs:
-                    TitleApp = "Station Jobs Operations";
+                    TitleApp = "Station_Jobs_Operations";
                     break;
                 case TitleAppContext.Setting:
-                    TitleApp = "Stations Settings";
+                    TitleApp = "Stations_Settings";
                     break;
                 case TitleAppContext.Logs:
-                    TitleApp = "Stations Jobs Logs";
+                    TitleApp = "Stations_Jobs_Logs";
                     break;
                 default:
                     break;

@@ -1,4 +1,5 @@
 ﻿using DipesLink.Extensions;
+using DipesLink.Languages;
 using DipesLink.Models;
 using DipesLink.Views.Extension;
 using DipesLink.Views.Models;
@@ -116,6 +117,7 @@ namespace DipesLink.ViewModels
 
         private void CreateMultiObjects(int i)
         {
+            // thinh
             int deviceTransferIDProc = ViewModelSharedFunctions.InitDeviceTransfer(i);
             JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = $"Station {i + 1}" }); // Job List Creation
             JobDeviceStatusList.Add(new JobDeviceStatus() { Index = i, Name = $"Devices{i + 1}" }); // Device Status List Creation
@@ -126,7 +128,22 @@ namespace DipesLink.ViewModels
         public void InitTabStationUI(int stationIndex)
         {
             var userControl = new JobDetails() { DataContext = JobList[stationIndex] };
-            TabStation.Add(new TabItemModel() { Header = $"Station {stationIndex + 1}", Content = userControl });
+
+            //string stationName = LanguageModel.Language?["Station"].ToString();
+            //var f = LanguageModel.LoadLanguageResourceDictionary(newLanguage);
+            //string stationName = LanguageModel.Language?["Station"].ToString();
+            //string message = GetFormattedString("StationNumber", stationIndex + 1);
+            
+            string newLanguage = ViewModelSharedValues.Settings.Language;
+            string t = newLanguage == "vi-VN" ? $"Trạm {stationIndex + 1}" : $"Station {stationIndex + 1}";
+            
+            TabStation.Add(new TabItemModel() { Header = $"{t}", Content = userControl });
+        }
+
+        private static string ShowStationNumber(int stationIndex)
+        {
+            string message = GetFormattedString("StationNumber", stationIndex + 1);
+            return message;
         }
 
         private bool CheckJobExisting(int index, out JobModel? job)
@@ -324,7 +341,7 @@ namespace DipesLink.ViewModels
             {
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
-                    Debug.WriteLine($"Elements Queue: index {stationIndex} / number queue" + ipc.MessageQueue.Count);
+                   // Debug.WriteLine("Elements Queue: " + ipc.MessageQueue.Count);
                     _ = Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
                 }
                 await Task.Delay(1);
@@ -662,6 +679,17 @@ namespace DipesLink.ViewModels
                 await Task.Delay(1);
             }
         }
+        public static string GetFormattedString(string resourceKey, params object[] args)
+        {
+            var resourceString = Application.Current.Resources[resourceKey] as string;
+            return string.Format(resourceString, args);
+        }
+
+        private static void ShowTemplateLoadError(int stationIndex)
+        {
+            string message = GetFormattedString("TemplateLoadError", stationIndex + 1);
+            CusAlert.Show(message, ImageStyleMessageBox.Warning);
+        }
 
         private static void JobMessageStatusProcess(int stationIndex, NotifyType nt)
         {
@@ -718,7 +746,9 @@ namespace DipesLink.ViewModels
                     CusMsgBox.Show("Missing params !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                     break;
                 case NotifyType.NotConnectPrinter:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer's not connected!", ImageStyleMessageBox.Warning);
+                    //CusAlert.Show($"Station {stationIndex + 1}: Printer's not connected!", ImageStyleMessageBox.Warning);
+                    // thinh
+                    ShowTemplateLoadError(stationIndex);
                     break;
                 case NotifyType.LeastOneAction:
                     break;
@@ -800,8 +830,8 @@ namespace DipesLink.ViewModels
                     bool isRunningCmp = false;
                     while (true)
                     {
-                        PrinterStateList[stationIndex].State = JobList[stationIndex].OperationStatus.ToString();
-   
+                        PrinterStateList[stationIndex].State = LanguageModel.Language?[JobList[stationIndex].OperationStatus.ToString()].ToString();
+
                         switch (JobList[stationIndex].OperationStatus)
                         {
                             case OperationStatus.Processing:

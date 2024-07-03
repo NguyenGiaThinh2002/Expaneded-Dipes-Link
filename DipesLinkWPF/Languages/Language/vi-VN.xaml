@@ -7,5 +7,50 @@
     <system:String x:Key="Setting_Apply">Ap dung</system:String>
     <system:String x:Key="Setting_Choose_Your_Language">Chon ngon ngu cua ban:</system:String>
     <system:String x:Key="Display_Hello_World">Xin Chao!</system:String>
+    <system:String x:Key="Stations_Details">Chi tiết các trạm</system:String>
+    <system:String x:Key="Stations_Overview">Tổng quan các trạm</system:String>
+    <system:String x:Key="Station_Jobs_Operations">Hoạt động việc làm trạm</system:String>
+    <system:String x:Key="Stations_Settings">Cài đặt trạm</system:String>
+    <system:String x:Key="Stations_Jobs_Logs">Nhật ký việc làm trạm</system:String>
+    <system:String x:Key="TemplateLoadError">Trạm {0}: Máy in không được kết nối!</system:String>
+    <system:String x:Key="StationNumber">Trạm {0}</system:String>
+
+    <system:String x:Key="Home">Trang chủ</system:String>
+    <system:String x:Key="Jobs">Công việc</system:String>
+    <system:String x:Key="Settings">Cài đặt</system:String>
+    <system:String x:Key="Logs">Bản ghi</system:String>
+    <system:String x:Key="Exit">Thoát</system:String>
+    <system:String x:Key="Station_Status">Trạng thái trạm:</system:String>
+    <system:String x:Key="Printer_IP">Máy in IP:</system:String>
+    <system:String x:Key="Camera_IP">Máy ảnh IP:</system:String>
+    <system:String x:Key="Controller_IP">Bộ điều khiển IP:</system:String>
+    <!--  Can than khi thay doi trang thai dung, co dieu kien  -->
+    <system:String x:Key="Stopped">Dừng</system:String>
+    <system:String x:Key="Running">Đang chạy</system:String>
+    <system:String x:Key="Processing">Đang xử lý</system:String>
+    <system:String x:Key="Startup">Khởi động</system:String>
+    <system:String x:Key="Sent_Data">Dữ liệu gửi</system:String>
+    <system:String x:Key="Printed_Data">Dữ liệu nhận</system:String>
+    <system:String x:Key="Received_Data">Dữ liệu in</system:String>
+    <system:String x:Key="Total_Checked">Tổng số kiểm tra</system:String>
+    <system:String x:Key="Passed">Thành công</system:String>
+    <system:String x:Key="Failed">Không Thành công</system:String>
+    <system:String x:Key="LINE_JOB">THÔNG TIN CÔNG VIỆC</system:String>
+    <system:String x:Key="VERIFICATION_INFO">THÔNG TIN XÁC THỰC</system:String>
+    <system:String x:Key="VERIFICATION_RESULT">KẾT QUẢ XÁC THỰC</system:String>
+    <system:String x:Key="Job_Name">Tên công việc</system:String>
+    <system:String x:Key="Job_Type">Loại công việc</system:String>
+    <system:String x:Key="Compare_Type">Kiểu so sánh</system:String>
+    <system:String x:Key="Totals_Record_Database">Dữ liệu tổng hợp bản ghi</system:String>
+    <system:String x:Key="POD_Format">Định dạng POD</system:String>
+    <system:String x:Key="Code_Data">Mã dữ liệu</system:String>
+    <system:String x:Key="Time_(ms)">Thời gian (ms)</system:String>
+    <system:String x:Key="Checked_Result">Kết quả kiểm tra</system:String>
+    <system:String x:Key="Database">Dữ liệu</system:String>
+    <system:String x:Key="Job_Logs">Bản ghi công việc</system:String>
+    <system:String x:Key="Station">Trạm</system:String>
+
+
+
     <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
 </ResourceDictionary>
