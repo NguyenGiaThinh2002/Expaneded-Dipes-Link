@@ -732,7 +732,7 @@
                                                         Height="30"
                                                         HorizontalAlignment="Right"
                                                         Click="SelectPrintField"
-                                                        Content="Select"
+                                                        Content="{DynamicResource ResourceKey=Select}"
                                                         Style="{StaticResource ModernButton2}" />
                                                 </StackPanel>
 
@@ -754,7 +754,7 @@
                                                         Height="30"
                                                         HorizontalAlignment="Right"
                                                         Click="DefaultClick"
-                                                        Content="Default"
+                                                        Content="{DynamicResource ResourceKey=Default}"
                                                         Style="{StaticResource ModernButton2}" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -765,7 +765,7 @@
                                             Height="236"
                                             Margin="0,20,0,0">
                                             <GroupBox.Header>
-                                                <TextBlock FontWeight="Bold" Text="Select Number of stations" />
+                                                <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Select_Number_of_Stations}" />
                                             </GroupBox.Header>
                                             <StackPanel Orientation="Vertical">
                                                 <StackPanel
@@ -775,7 +775,7 @@
                                                     <TextBlock
                                                         Margin="0,0,10,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Number of Stations:" />
+                                                        Text="{DynamicResource ResourceKey=Number_of_Stations}" />
                                                     <ComboBox
                                                         x:Name="ComboBoxStationNum"
                                                         Width="230"
@@ -801,7 +801,7 @@
                                                                 Margin="0,0,5,0"
                                                                 Foreground="#00ABE6"
                                                                 Icon="RotateBack" />
-                                                            <TextBlock VerticalAlignment="Center" Text="Restart" />
+                                                            <TextBlock VerticalAlignment="Center" Text="{DynamicResource ResourceKey=Restart}" />
                                                         </StackPanel>
                                                     </Button>
                                                 </StackPanel>

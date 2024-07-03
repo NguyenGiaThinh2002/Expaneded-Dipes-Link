@@ -30,11 +30,11 @@
     <system:String x:Key="Processing">Đang xử lý</system:String>
     <system:String x:Key="Startup">Khởi động</system:String>
     <system:String x:Key="Sent_Data">Dữ liệu gửi</system:String>
-    <system:String x:Key="Printed_Data">Dữ liệu nhận</system:String>
-    <system:String x:Key="Received_Data">Dữ liệu in</system:String>
+    <system:String x:Key="Printed_Data">Dữ liệu in</system:String>
+    <system:String x:Key="Received_Data">Dữ liệu nhận</system:String>
     <system:String x:Key="Total_Checked">Tổng số kiểm tra</system:String>
     <system:String x:Key="Passed">Thành công</system:String>
-    <system:String x:Key="Failed">Không Thành công</system:String>
+    <system:String x:Key="Failed">Không thành công</system:String>
     <system:String x:Key="LINE_JOB">THÔNG TIN CÔNG VIỆC</system:String>
     <system:String x:Key="VERIFICATION_INFO">THÔNG TIN XÁC THỰC</system:String>
     <system:String x:Key="VERIFICATION_RESULT">KẾT QUẢ XÁC THỰC</system:String>
@@ -58,9 +58,8 @@
     <system:String x:Key="Enable_Controller">Kích hoạt điều khiển:</system:String>
     <system:String x:Key="Delay_Sensor">Cảm biến trễ:</system:String>
     <system:String x:Key="Disable_Sensor">Vô hiệu hóa cảm biến:</system:String>
-    <system:String x:Key="Pulse_Encoder">Mã hóa xung:</system:String>
-
-    <system:String x:Key="Encoder_Diameter">Đường kính mã hóa:</system:String>
+    <system:String x:Key="Pulse_Encoder">Encoder xung:</system:String>
+    <system:String x:Key="Encoder_Diameter">Đường kính Encoder:</system:String>
     <system:String x:Key="Camera_Settings">Cài đặt camera:</system:String>
     <system:String x:Key="Model">Mô hình:</system:String>
     <system:String x:Key="Serial">Số seri:</system:String>
@@ -68,12 +67,34 @@
     <system:String x:Key="Send_Mode">Chế độ gửi:</system:String>
     <system:String x:Key="Basic">Cơ bản</system:String>
     <system:String x:Key="Compare">So sánh</system:String>
-    <system:String x:Key="Print_Fields">Lĩnh vực in:</system:String>
+    <system:String x:Key="Print_Fields">Trường in:</system:String>
     <system:String x:Key="Select">Chọn</system:String>
     <system:String x:Key="Error_Field">Trường lỗi:</system:String>
     <system:String x:Key="Default">Mặc định</system:String>
     <system:String x:Key="Select_Number_of_Stations">Chọn số lượng trạm:</system:String>
     <system:String x:Key="Restart">Khởi động lại</system:String>
+    <system:String x:Key="Number_of_Stations">Số lượng trạm:</system:String>
+
+    <system:String x:Key="Select_Job">Chọn Công Việc</system:String>
+    <system:String x:Key="Create_New_Job">Tạo Công Việc Mới</system:String>
+    <system:String x:Key="Job_Selection">Lựa Chọn Công Việc</system:String>
+    <system:String x:Key="List_Job">Danh Sách Công Việc</system:String>
+    <system:String x:Key="Selected">Đã Chọn</system:String>
+    <system:String x:Key="Job_Info">Thông Tin Công Việc</system:String>
+    <!--<system:String x:Key="Job_Name">Tên Công Việc</system:String>
+    <system:String x:Key="Job_Type">Loại Công Việc</system:String>
+    <system:String x:Key="Compare_Type">Loại So Sánh</system:String>-->
+    <system:String x:Key="Printer_Series">Dòng Máy In</system:String>
+    <system:String x:Key="DB_Path">Đường Dẫn DB</system:String>
+    <system:String x:Key="Compare_Format">Định Dạng So Sánh</system:String>
+    <system:String x:Key="Printer_Template">Mẫu Máy In</system:String>
+    <system:String x:Key="Complete_Type">Loại Hoàn Thành</system:String>
+    <system:String x:Key="Output_Camera">Camera Đầu Ra</system:String>
+    <system:String x:Key="Image_Export">Xuất Hình Ảnh</system:String>
+    <system:String x:Key="Image_Export_Path">Đường Dẫn Xuất Hình Ảnh</system:String>
+    <system:String x:Key="Total_Record_DB">Tổng Số Bản Ghi DB</system:String>
+    <system:String x:Key="Job_Status">Tình Trạng Công Việc</system:String>
+
 
 
 

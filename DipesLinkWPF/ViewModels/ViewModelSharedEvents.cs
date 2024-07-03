@@ -32,5 +32,12 @@ namespace DipesLink.ViewModels
         {
             OnListBoxMenuSelectionChange?.Invoke(index, EventArgs.Empty);
         }
+
+        public static event EventHandler? OnLoadingTableStatusChange;
+        public static void OnLoadingTableStatusChangeHandler()
+        {
+            OnLoadingTableStatusChange?.Invoke(null, EventArgs.Empty);
+        }
+
     }
 }

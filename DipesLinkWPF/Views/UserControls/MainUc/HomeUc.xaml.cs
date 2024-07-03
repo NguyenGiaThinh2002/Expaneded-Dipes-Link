@@ -21,10 +21,11 @@ namespace DipesLink.Views.UserControls.MainUc
     /// </summary>
     public partial class HomeUc : UserControl
     {
+        
         public HomeUc()
         {
             InitializeComponent();
-            Loaded += HomeUc_Loaded;
+            Loaded += HomeUc_Loaded;     
         }
 
         private void HomeUc_Loaded(object sender, RoutedEventArgs e)

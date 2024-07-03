@@ -59,7 +59,6 @@
     <system:String x:Key="Delay_Sensor">Delay Sensor:</system:String>
     <system:String x:Key="Disable_Sensor">Disable Sensor:</system:String>
     <system:String x:Key="Pulse_Encoder">Pulse Encoder:</system:String>
-
     <system:String x:Key="Encoder_Diameter">Encoder Diameter:</system:String>
     <system:String x:Key="Camera_Settings">Camera Settings:</system:String>
     <system:String x:Key="Model">Model:</system:String>
@@ -74,6 +73,28 @@
     <system:String x:Key="Default">Default</system:String>
     <system:String x:Key="Select_Number_of_Stations">Select Number of Stations:</system:String>
     <system:String x:Key="Restart">Restart</system:String>
+    <system:String x:Key="Number_of_Stations">Number of Stations:</system:String>
+
+    <system:String x:Key="Select_Job">Select Job</system:String>
+    <system:String x:Key="Create_New_Job">Create New Job</system:String>
+    <system:String x:Key="Job_Selection">Job Selection</system:String>
+    <system:String x:Key="List_Job">List Job</system:String>
+    <system:String x:Key="Selected">Selected</system:String>
+    <system:String x:Key="Job_Info">Job Info</system:String>
+    <!--<system:String x:Key="Job_Name">Job Name</system:String>
+    <system:String x:Key="Job_Type">Job Type</system:String>
+    <system:String x:Key="Compare_Type">Compare Type</system:String>-->
+    <system:String x:Key="Printer_Series">Printer Series</system:String>
+
+    <system:String x:Key="DB_Path">DB Path</system:String>
+    <system:String x:Key="Compare_Format">Compare Format</system:String>
+    <system:String x:Key="Printer_Template">Printer Template</system:String>
+    <system:String x:Key="Complete_Type">Complete Type</system:String>
+    <system:String x:Key="Output_Camera">Output Camera</system:String>
+    <system:String x:Key="Image_Export">Image Export</system:String>
+    <system:String x:Key="Image_Export_Path">Image Export Path</system:String>
+    <system:String x:Key="Total_Record_DB">Total Record DB</system:String>
+    <system:String x:Key="Job_Status">Job Status</system:String>
 
 
 </ResourceDictionary>
