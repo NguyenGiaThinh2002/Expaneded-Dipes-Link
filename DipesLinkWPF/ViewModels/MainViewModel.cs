@@ -335,8 +335,8 @@ namespace DipesLink.ViewModels
             {
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
-                   // Debug.WriteLine("Elements Queue: " + ipc.MessageQueue.Count);
-                    _ = Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
+                  //  Debug.WriteLine($"Elements Queue: index {stationIndex} / number queue" + ipc.MessageQueue.Count);
+                    await Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
                 }
                 await Task.Delay(1);
             }
@@ -723,7 +723,10 @@ namespace DipesLink.ViewModels
                     CusAlert.Show($"Station {stationIndex + 1}: Checked result do not exist !", ImageStyleMessageBox.Warning);
                     break;
                 case NotifyType.PrintedResponseDoNotExist:
-                    CusMsgBox.Show("Printed response do not exist !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                    CusAlert.Show($"Station {stationIndex + 1}: Printer's not connected!", ImageStyleMessageBox.Warning);
+                    break;
+                case NotifyType.DuplicateData:
+                    CusAlert.Show($"Station {stationIndex + 1}: Input Database duplicate!", ImageStyleMessageBox.Warning);
                     break;
                 case NotifyType.NoJobsSelected:
                     CusMsgBox.Show("No job selected !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
