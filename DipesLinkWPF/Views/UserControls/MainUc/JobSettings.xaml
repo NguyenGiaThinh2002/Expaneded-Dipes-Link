@@ -261,7 +261,7 @@
                                 <!--  Printer Settings  -->
                                 <GroupBox FontSize="16">
                                     <GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="Printer Settings" />
+                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Settings}" />
                                     </GroupBox.Header>
                                     <!--<Border
                                     Width="345"
@@ -280,7 +280,7 @@
                                             <TextBlock
                                                 Width="110"
                                                 VerticalAlignment="Center"
-                                                Text="IP Address: " />
+                                                Text="{DynamicResource ResourceKey=IP_Address}" />
                                             <cuscontrol:IpAddressControl
                                                 x:Name="TextBoxPrinterIP"
                                                 Width="200"
@@ -304,7 +304,7 @@
                                             <TextBlock
                                                 Width="110"
                                                 VerticalAlignment="Center"
-                                                Text="Port: " />
+                                                Text="{DynamicResource ResourceKey=Port}" />
                                             <TextBox
                                                 x:Name="TextBoxPrinterPort"
                                                 Width="80"
@@ -320,7 +320,7 @@
                                             <TextBlock
                                                 Width="110"
                                                 VerticalAlignment="Center"
-                                                Text="Remote: " />
+                                                Text="{DynamicResource ResourceKey=Remote}" />
                                             <Button
                                                 Width="80"
                                                 Height="35"
@@ -348,7 +348,7 @@
                                         <TextBlock
                                             FontSize="16"
                                             FontWeight="Bold"
-                                            Text="Camera Settings" />
+                                            Text="{DynamicResource ResourceKey=Camera_Settings}" />
                                     </GroupBox.Header>
                                     <!--<Border
                                         Width="345"
@@ -382,7 +382,7 @@
                                             <TextBlock
                                                 Width="110"
                                                 VerticalAlignment="Center"
-                                                Text="IP Address: " />
+                                                Text="{DynamicResource ResourceKey=IP_Address}" />
                                             <cuscontrol:IpAddressControl
                                                 x:Name="TextBoxCamIP"
                                                 Width="200"
@@ -394,7 +394,7 @@
                                             <TextBlock
                                                 Width="110"
                                                 VerticalAlignment="Center"
-                                                Text="Model: " />
+                                                Text="{DynamicResource ResourceKey=Model}" />
                                             <TextBox
                                                 x:Name="TextBoxCamModel"
                                                 Width="200"
@@ -410,7 +410,7 @@
                                             <TextBlock
                                                 Width="110"
                                                 VerticalAlignment="Center"
-                                                Text="Serial: " />
+                                                Text="{DynamicResource ResourceKey=Serial}" />
                                             <TextBox
                                                 x:Name="TextBoxCamSerial"
                                                 Width="200"
@@ -443,7 +443,7 @@
                                             <TextBlock
                                                 FontSize="16"
                                                 FontWeight="Bold"
-                                                Text="Controller Settings" />
+                                                Text="{DynamicResource ResourceKey=Controller_Settings}" />
                                         </GroupBox.Header>
 
                                         <StackPanel Margin="5,10,0,0">
@@ -453,7 +453,7 @@
                                                 <TextBlock
                                                     Width="170"
                                                     VerticalAlignment="Center"
-                                                    Text="Enable Controller: " />
+                                                    Text="{DynamicResource ResourceKey=Enable_Controller}" />
                                                 <ToggleButton
                                                     Width="100"
                                                     Height="45"
@@ -526,7 +526,7 @@
                                                     <TextBlock
                                                         Width="170"
                                                         VerticalAlignment="Center"
-                                                        Text="IP Address: " />
+                                                        Text="{DynamicResource ResourceKey=IP_Address}" />
                                                     <cuscontrol:IpAddressControl
                                                         x:Name="TextBoxControllerIP"
                                                         Width="200"
@@ -547,7 +547,7 @@
                                                     <TextBlock
                                                         Width="170"
                                                         VerticalAlignment="Center"
-                                                        Text="Port " />
+                                                        Text="{DynamicResource ResourceKey=Port}" />
                                                     <TextBox
                                                         x:Name="TextBoxControllerPort"
                                                         Width="100"
@@ -564,7 +564,7 @@
                                                     <TextBlock
                                                         Width="170"
                                                         VerticalAlignment="Center"
-                                                        Text="Delay Sensor: " />
+                                                        Text="{DynamicResource ResourceKey=Delay_Sensor}" />
                                                     <TextBox
                                                         x:Name="NumDelaySensor"
                                                         Width="100"
@@ -585,7 +585,7 @@
                                                     <TextBlock
                                                         Width="170"
                                                         VerticalAlignment="Center"
-                                                        Text="Disable Sensor: " />
+                                                        Text="{DynamicResource ResourceKey=Disable_Sensor}" />
                                                     <TextBox
                                                         x:Name="NumDisSensor"
                                                         Width="100"
@@ -606,7 +606,7 @@
                                                     <TextBlock
                                                         Width="170"
                                                         VerticalAlignment="Center"
-                                                        Text="Pulse Encoder: " />
+                                                        Text="{DynamicResource ResourceKey=Pulse_Encoder}" />
                                                     <TextBox
                                                         x:Name="NumPulseEncoder"
                                                         Width="100"
@@ -627,7 +627,7 @@
                                                     <TextBlock
                                                         Width="170"
                                                         VerticalAlignment="Center"
-                                                        Text="Encoder Diameter: " />
+                                                        Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
                                                     <TextBox
                                                         x:Name="NumEncoderDia"
                                                         Width="100"
@@ -675,7 +675,7 @@
                                         Orientation="Vertical">
                                         <GroupBox Grid.Column="1">
                                             <GroupBox.Header>
-                                                <TextBlock FontWeight="Bold" Text="Verify and Print POD send mode" />
+                                                <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Verify_and_Print_POD_Send_Mode}" />
                                             </GroupBox.Header>
                                             <StackPanel
                                                 Grid.Row="1"
@@ -686,7 +686,7 @@
                                                 <!--  Gr Mode  -->
                                                 <GroupBox Width="auto" Height="70">
                                                     <GroupBox.Header>
-                                                        <TextBlock FontWeight="Normal" Text="Send Mode" />
+                                                        <TextBlock FontWeight="Normal" Text="{DynamicResource ResourceKey=Send_Mode}" />
                                                     </GroupBox.Header>
                                                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                                         <RadioButton
@@ -694,7 +694,7 @@
                                                             Width="100"
                                                             HorizontalAlignment="Center"
                                                             Checked="ModeSendCheckedChange"
-                                                            Content="Basic"
+                                                            Content="{DynamicResource ResourceKey=Basic}"
                                                             FontSize="16"
                                                             GroupName="PrinterSeriesGr"
                                                             IsChecked="{Binding Path=VerifyAndPrintBasicSentMethod_UI, Converter={StaticResource BoolToRadioButtonConverter}, Mode=TwoWay, ConverterParameter=True}"
@@ -705,7 +705,7 @@
                                                             Width="150"
                                                             Margin="10,0,0,0"
                                                             Checked="ModeSendCheckedChange"
-                                                            Content="Compare"
+                                                            Content="{DynamicResource ResourceKey=Compare}"
                                                             FontSize="16"
                                                             GroupName="PrinterSeriesGr"
                                                             IsChecked="{Binding Path=VerifyAndPrintBasicSentMethod_UI, Converter={StaticResource BoolToRadioButtonConverter}, Mode=TwoWay, ConverterParameter=False}"
@@ -719,7 +719,7 @@
                                                     Margin="0,10,0,10"
                                                     IsEnabled="{Binding ElementName=RadCompare, Path=IsChecked}"
                                                     Orientation="Horizontal">
-                                                    <TextBlock Width="100" Text="Print Fields" />
+                                                    <TextBlock Width="100" Text="{DynamicResource ResourceKey=Print_Fields}" />
                                                     <TextBox
                                                         x:Name="TextBoxPOD"
                                                         Width="200"
@@ -732,13 +732,13 @@
                                                         Height="30"
                                                         HorizontalAlignment="Right"
                                                         Click="SelectPrintField"
-                                                        Content="Select"
+                                                        Content="{DynamicResource ResourceKey=Select}"
                                                         Style="{StaticResource ModernButton2}" />
                                                 </StackPanel>
 
                                                 <!--  Error Print Fields  -->
                                                 <StackPanel Margin="0,10,0,10" Orientation="Horizontal">
-                                                    <TextBlock Width="100" Text="Error Field" />
+                                                    <TextBlock Width="100" Text="{DynamicResource ResourceKey=Error_Field}" />
 
                                                     <TextBox
                                                         x:Name="TextBoxErrorField"
@@ -754,7 +754,7 @@
                                                         Height="30"
                                                         HorizontalAlignment="Right"
                                                         Click="DefaultClick"
-                                                        Content="Default"
+                                                        Content="{DynamicResource ResourceKey=Default}"
                                                         Style="{StaticResource ModernButton2}" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -765,7 +765,7 @@
                                             Height="236"
                                             Margin="0,20,0,0">
                                             <GroupBox.Header>
-                                                <TextBlock FontWeight="Bold" Text="Select Number of stations" />
+                                                <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Select_Number_of_Stations}" />
                                             </GroupBox.Header>
                                             <StackPanel Orientation="Vertical">
                                                 <StackPanel
@@ -775,7 +775,7 @@
                                                     <TextBlock
                                                         Margin="0,0,10,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Number of Stations:" />
+                                                        Text="{DynamicResource ResourceKey=Number_of_Stations}" />
                                                     <ComboBox
                                                         x:Name="ComboBoxStationNum"
                                                         Width="230"
@@ -801,7 +801,7 @@
                                                                 Margin="0,0,5,0"
                                                                 Foreground="#00ABE6"
                                                                 Icon="RotateBack" />
-                                                            <TextBlock VerticalAlignment="Center" Text="Restart" />
+                                                            <TextBlock VerticalAlignment="Center" Text="{DynamicResource ResourceKey=Restart}" />
                                                         </StackPanel>
                                                     </Button>
                                                 </StackPanel>
@@ -810,9 +810,11 @@
                                     </StackPanel>
                                 </Grid>
                             </Grid>
+
                         </Grid>
                     </Grid>
                 </Grid>
+
             </Border>
         </ScrollViewer>
     </Grid>

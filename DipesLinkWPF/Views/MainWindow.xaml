@@ -110,96 +110,96 @@
                         Icon="User" />
                 </Border>
             </Button>
-
-            <ListBox
-                x:Name="ListBoxMenu"
-                Grid.Row="1"
-                IsTabStop="False"
-                ItemContainerStyle="{DynamicResource ListBoxItemStyleMenu}"
-                SelectedIndex="0"
-                Style="{DynamicResource ListBoxStyleMenu}">
-                <ListBoxItem
-                    Height="{StaticResource MenuItemHeight}"
+            <StackPanel Grid.Row="1">
+                <ListBox
+                    x:Name="ListBoxMenu"
                     IsTabStop="False"
-                    PreviewMouseDown="ListBoxItem_MouseDown">
-                    <StackPanel
-                        Width="{StaticResource MenuItemSize}"
-                        Height="{StaticResource MenuItemSize}"
-                        Margin="{StaticResource CommonMenuMargin}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                        <fa:IconImage
-                            Width="{StaticResource MenuIconSize}"
-                            Height="{StaticResource MenuIconSize}"
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource ColorMenuItem}"
-                            Icon="Home" />
-                        <TextBlock
+                    ItemContainerStyle="{DynamicResource ListBoxItemStyleMenu}"
+                    SelectedIndex="0"
+                    Style="{DynamicResource ListBoxStyleMenu}">
+                    <ListBoxItem
+                        Height="{StaticResource MenuItemHeight}"
+                        IsTabStop="False"
+                        PreviewMouseDown="ListBoxItem_MouseDown">
+                        <StackPanel
+                            Width="{StaticResource MenuItemSize}"
+                            Height="{StaticResource MenuItemSize}"
+                            Margin="{StaticResource CommonMenuMargin}"
                             HorizontalAlignment="Center"
-                            Foreground="White"
-                            Text="{DynamicResource ResourceKey=Home}" />
-                    </StackPanel>
-                </ListBoxItem>
-                <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
-                    <StackPanel
-                        Width="{StaticResource MenuItemSize}"
-                        Height="{StaticResource MenuItemSize}"
-                        Margin="{StaticResource CommonMenuMargin}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                        <fa:IconImage
-                            Width="{StaticResource MenuIconSize}"
-                            Height="{StaticResource MenuIconSize}"
                             VerticalAlignment="Center"
-                            Foreground="{StaticResource ColorMenuItem}"
-                            Icon="FileCircleCheck" />
-                        <TextBlock
+                            IsEnabled="False">
+                            <fa:IconImage
+                                Width="{StaticResource MenuIconSize}"
+                                Height="{StaticResource MenuIconSize}"
+                                VerticalAlignment="Center"
+                                Foreground="{StaticResource ColorMenuItem}"
+                                Icon="Home" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="White"
+                                Text="{DynamicResource ResourceKey=Home}" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
+                        <StackPanel
+                            Width="{StaticResource MenuItemSize}"
+                            Height="{StaticResource MenuItemSize}"
+                            Margin="{StaticResource CommonMenuMargin}"
                             HorizontalAlignment="Center"
-                            Foreground="White"
-                            Text="{DynamicResource ResourceKey=Jobs}" />
-                    </StackPanel>
-                </ListBoxItem>
-                <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
-                    <StackPanel
-                        Width="{StaticResource MenuItemSize}"
-                        Height="{StaticResource MenuItemSize}"
-                        Margin="{StaticResource CommonMenuMargin}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                        <fa:IconImage
-                            Width="{StaticResource MenuIconSize}"
-                            Height="{StaticResource MenuIconSize}"
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource ColorMenuItem}"
-                            Icon="Sliders" />
-                        <TextBlock
+                            VerticalAlignment="Center">
+                            <fa:IconImage
+                                Width="{StaticResource MenuIconSize}"
+                                Height="{StaticResource MenuIconSize}"
+                                VerticalAlignment="Center"
+                                Foreground="{StaticResource ColorMenuItem}"
+                                Icon="FileCircleCheck" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="White"
+                                Text="{DynamicResource ResourceKey=Jobs}" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
+                        <StackPanel
+                            Width="{StaticResource MenuItemSize}"
+                            Height="{StaticResource MenuItemSize}"
+                            Margin="{StaticResource CommonMenuMargin}"
                             HorizontalAlignment="Center"
-                            Foreground="White"
-                            Text="{DynamicResource ResourceKey=Settings}" />
-                    </StackPanel>
-                </ListBoxItem>
-                <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
-                    <StackPanel
-                        Width="{StaticResource MenuItemSize}"
-                        Height="{StaticResource MenuItemSize}"
-                        Margin="{StaticResource CommonMenuMargin}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                        <fa:IconImage
-                            Width="{StaticResource MenuIconSize}"
-                            Height="{StaticResource MenuIconSize}"
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource ColorMenuItem}"
-                            Icon="History" />
-                        <TextBlock
+                            VerticalAlignment="Center">
+                            <fa:IconImage
+                                Width="{StaticResource MenuIconSize}"
+                                Height="{StaticResource MenuIconSize}"
+                                VerticalAlignment="Center"
+                                Foreground="{StaticResource ColorMenuItem}"
+                                Icon="Sliders" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="White"
+                                Text="{DynamicResource ResourceKey=Settings}" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
+                        <StackPanel
+                            Width="{StaticResource MenuItemSize}"
+                            Height="{StaticResource MenuItemSize}"
+                            Margin="{StaticResource CommonMenuMargin}"
                             HorizontalAlignment="Center"
-                            Foreground="White"
-                            Text="{DynamicResource ResourceKey=Logs}" />
-                    </StackPanel>
-                </ListBoxItem>
+                            VerticalAlignment="Center">
+                            <fa:IconImage
+                                Width="{StaticResource MenuIconSize}"
+                                Height="{StaticResource MenuIconSize}"
+                                VerticalAlignment="Center"
+                                Foreground="{StaticResource ColorMenuItem}"
+                                Icon="History" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="White"
+                                Text="{DynamicResource ResourceKey=Logs}" />
+                        </StackPanel>
+                    </ListBoxItem>
 
-            </ListBox>
-
+                </ListBox>
+            </StackPanel>
             <Button
                 x:Name="ButtonExitApp"
                 Grid.Row="2"

@@ -1,8 +1,10 @@
 ﻿using Cloudtoid;
 using DipesLink.Models;
+using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using SharedProgram.Shared;
 using System.Data;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,6 +15,7 @@ namespace DipesLink.Views.Extension
     {
         public Paginator? Paginator { get; set; }
         public JobOverview? CurrentViewModel { get; private set; }
+        public MainWindow CurrentWindow { get; set; }
         private List<string[]>? _orgDBList;
         public int PrintedNumber { get; set; }
         private int _rowIndex;
@@ -58,8 +61,11 @@ namespace DipesLink.Views.Extension
                     CurrentViewModel = currentViewModel;
                     dataGrid.Columns.Clear();
                     ProcessMiniPageAsync(dataGrid, PrintedDataTable, currentPage);
+
                     currentViewModel.IsShowLoadingDB = Visibility.Collapsed;
                     currentViewModel.IsStartButtonEnable = true;
+                    ViewModelSharedEvents.OnLoadingTableStatusChangeHandler();
+
                 }
                 catch (Exception ex)
                 {

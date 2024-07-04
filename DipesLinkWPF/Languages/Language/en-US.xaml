@@ -50,5 +50,51 @@
     <system:String x:Key="Job_Logs">Job Logs</system:String>
     <system:String x:Key="Station">Station</system:String>
 
-    <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
+    <system:String x:Key="Printer_Settings">Printer Settings</system:String>
+    <system:String x:Key="IP_Address">IP Address:</system:String>
+    <system:String x:Key="Port">Port:</system:String>
+    <system:String x:Key="Remote">Remote:</system:String>
+    <system:String x:Key="Controller_Settings">Controller Settings</system:String>
+    <system:String x:Key="Enable_Controller">Enable Controller:</system:String>
+    <system:String x:Key="Delay_Sensor">Delay Sensor:</system:String>
+    <system:String x:Key="Disable_Sensor">Disable Sensor:</system:String>
+    <system:String x:Key="Pulse_Encoder">Pulse Encoder:</system:String>
+    <system:String x:Key="Encoder_Diameter">Encoder Diameter:</system:String>
+    <system:String x:Key="Camera_Settings">Camera Settings:</system:String>
+    <system:String x:Key="Model">Model:</system:String>
+    <system:String x:Key="Serial">Serial:</system:String>
+    <system:String x:Key="Verify_and_Print_POD_Send_Mode">Verify and Print POD send mode</system:String>
+    <system:String x:Key="Send_Mode">Send Mode:</system:String>
+    <system:String x:Key="Basic">Basic</system:String>
+    <system:String x:Key="Compare">Compare</system:String>
+    <system:String x:Key="Print_Fields">Print Fields:</system:String>
+    <system:String x:Key="Select">Select</system:String>
+    <system:String x:Key="Error_Field">Error Field:</system:String>
+    <system:String x:Key="Default">Default</system:String>
+    <system:String x:Key="Select_Number_of_Stations">Select Number of Stations:</system:String>
+    <system:String x:Key="Restart">Restart</system:String>
+    <system:String x:Key="Number_of_Stations">Number of Stations:</system:String>
+
+    <system:String x:Key="Select_Job">Select Job</system:String>
+    <system:String x:Key="Create_New_Job">Create New Job</system:String>
+    <system:String x:Key="Job_Selection">Job Selection</system:String>
+    <system:String x:Key="List_Job">List Job</system:String>
+    <system:String x:Key="Selected">Selected</system:String>
+    <system:String x:Key="Job_Info">Job Info</system:String>
+    <!--<system:String x:Key="Job_Name">Job Name</system:String>
+    <system:String x:Key="Job_Type">Job Type</system:String>
+    <system:String x:Key="Compare_Type">Compare Type</system:String>-->
+    <system:String x:Key="Printer_Series">Printer Series</system:String>
+
+    <system:String x:Key="DB_Path">DB Path</system:String>
+    <system:String x:Key="Compare_Format">Compare Format</system:String>
+    <system:String x:Key="Printer_Template">Printer Template</system:String>
+    <system:String x:Key="Complete_Type">Complete Type</system:String>
+    <system:String x:Key="Output_Camera">Output Camera</system:String>
+    <system:String x:Key="Image_Export">Image Export</system:String>
+    <system:String x:Key="Image_Export_Path">Image Export Path</system:String>
+    <system:String x:Key="Total_Record_DB">Total Record DB</system:String>
+    <system:String x:Key="Job_Status">Job Status</system:String>
+
+
 </ResourceDictionary>
