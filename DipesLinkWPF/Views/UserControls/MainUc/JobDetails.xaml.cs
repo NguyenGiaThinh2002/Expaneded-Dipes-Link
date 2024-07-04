@@ -23,7 +23,7 @@ namespace DipesLink.Views.UserControls.MainUc
         private ConcurrentQueue<string[]> _queuePrintedCode = new();
         private int count = 0;
         private CancellationTokenSource ctsGetPrintedCode = new();
-        public static bool isAddbutton = false;
+       // public static bool isAddbutton = false;
         public JobDetails()
         {
             InitializeComponent();
