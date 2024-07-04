@@ -136,7 +136,8 @@ namespace DipesLink.ViewModels
         {
             // thinh
             int deviceTransferIDProc = ViewModelSharedFunctions.InitDeviceTransfer(i);
-            JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = $"Station {i + 1}" }); // Job List Creation
+            string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {i + 1}" : $"Station {i + 1}";
+            JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = t }); // Job List Creation
             JobDeviceStatusList.Add(new JobDeviceStatus() { Index = i, Name = $"Devices{i + 1}" }); // Device Status List Creation
             PrinterStateList.Add(new PrinterState() { Name = $"{i + 1}:", State = "" }); // Printer State List Creation
 
