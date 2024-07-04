@@ -5,11 +5,13 @@ using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.MainUc;
+using LiveChartsCore.VisualElements;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using static DipesLink.Views.Enums.ViewEnums;
 using Application = System.Windows.Application;
 
@@ -22,7 +24,7 @@ namespace DipesLink.Views
     {
         public static event EventHandler<EventArgs>? MainWindowSizeChangeCustomEvent;
         public static SplashScreenLoading? SplashScreenLoading = new();
-       
+
         public static int currentStation = 0;
         public MainWindow()
         {
@@ -35,6 +37,7 @@ namespace DipesLink.Views
             }
             var lg = new LanguageModel();
             lg.UpdateApplicationLanguage("");
+            
         }
 
         private void EventRegister()
@@ -46,10 +49,24 @@ namespace DipesLink.Views
             AllStationUc.DoneLoadUIEvent += AllStationUc_DoneLoadUIEvent;
             Shared.OnActionLoadingSplashScreen += Shared_OnActionLoadingSplashScreen;
             ListBoxMenu.SelectionChanged += ListBoxMenu_SelectionChanged;
+            ViewModelSharedEvents.OnLoadingTableStatusChange += ViewModelSharedEvents_OnLoadingTableStatusChange;
+
+
         }
+        private void ViewModelSharedEvents_OnLoadingTableStatusChange(object sender, EventArgs e)
+        {
+            EnableMenuBox();
+        }
+        public void EnableMenuBox()
+        {
+            bool enable = CurrentViewModel<MainViewModel>().JobList[currentStation].IsStartButtonEnable;
+            ListBoxMenu.IsEnabled = enable;
+        }
+
 
         private void JobDetails_OnJobDetailChange(object? sender, int e)
         {
+            EnableMenuBox();
             var CamIP = ViewModelSharedValues.Settings.SystemParamsList[e].CameraIP;
             var PrinterIP = ViewModelSharedValues.Settings.SystemParamsList[e].PrinterIP;
             var ControllerIP = ViewModelSharedValues.Settings.SystemParamsList[e].ControllerIP;

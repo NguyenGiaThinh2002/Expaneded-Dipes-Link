@@ -192,6 +192,7 @@ namespace DipesLink.ViewModels
         }
 
 
+
         //private IPCSharedHelper? _ipcDeviceToUISharedMemory_DT;
         //private IPCSharedHelper? _ipcUIToDeviceSharedMemory_DT;
         //private IPCSharedHelper? _ipcUIToDeviceSharedMemory_DT1;

@@ -87,7 +87,7 @@
     <!--#region ListBoxStyle Menu-->
     <SolidColorBrush x:Key="ListBox.Static.Background" Color="Transparent" />
     <SolidColorBrush x:Key="ListBox.Static.Border" Color="Transparent" />
-    <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="Transparent" />
     <SolidColorBrush x:Key="ListBox.Disabled.Border" Color="Transparent" />
     <Style x:Key="ListBoxStyleMenu" TargetType="{x:Type ListBox}">
         <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}" />

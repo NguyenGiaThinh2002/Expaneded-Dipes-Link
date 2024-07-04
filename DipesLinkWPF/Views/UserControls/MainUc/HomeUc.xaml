@@ -94,8 +94,10 @@
         <TabControl
             x:Name="TabControl_Station"
             Grid.Row="1"
+            
             ItemsSource="{Binding TabStation}"
-            SelectedIndex="0">
+            SelectedIndex="0"
+            >
 
             <!--  Title  -->
             <TabControl.ItemTemplate>

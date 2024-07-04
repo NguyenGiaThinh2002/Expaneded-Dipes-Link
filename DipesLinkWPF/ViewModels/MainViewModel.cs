@@ -1,6 +1,7 @@
 ﻿using DipesLink.Extensions;
 using DipesLink.Languages;
 using DipesLink.Models;
+using DipesLink.Views;
 using DipesLink.Views.Extension;
 using DipesLink.Views.Models;
 using DipesLink.Views.UserControls.MainUc;
@@ -128,22 +129,10 @@ namespace DipesLink.ViewModels
         public void InitTabStationUI(int stationIndex)
         {
             var userControl = new JobDetails() { DataContext = JobList[stationIndex] };
-
-            //string stationName = LanguageModel.Language?["Station"].ToString();
-            //var f = LanguageModel.LoadLanguageResourceDictionary(newLanguage);
-            //string stationName = LanguageModel.Language?["Station"].ToString();
-            //string message = GetFormattedString("StationNumber", stationIndex + 1);
-            
-            string newLanguage = ViewModelSharedValues.Settings.Language;
-            string t = newLanguage == "vi-VN" ? $"Trạm {stationIndex + 1}" : $"Station {stationIndex + 1}";
+       
+            string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {stationIndex + 1}" : $"Station {stationIndex + 1}";
             
             TabStation.Add(new TabItemModel() { Header = $"{t}", Content = userControl });
-        }
-
-        private static string ShowStationNumber(int stationIndex)
-        {
-            string message = GetFormattedString("StationNumber", stationIndex + 1);
-            return message;
         }
 
         private bool CheckJobExisting(int index, out JobModel? job)
@@ -274,11 +263,13 @@ namespace DipesLink.ViewModels
                 {
                     Debug.WriteLine("Dont Reload Database for job: " + +stationIndex);
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
+                    JobList[stationIndex].IsStartButtonEnable = true;
                     return;
                 }
                 Debug.WriteLine("Reload Database for job: " + stationIndex);
-                JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
+                //JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
                 JobList[stationIndex].IsStartButtonEnable = false;
+                //ViewModelSharedEvents.OnLoadingTableStatusChangeHandler();
                 byte[] listBytes = result.Skip(3).ToArray();
                 List<string[]>? listDatabase = DataConverter.FromByteArray<List<string[]>>(listBytes);
                 List<(List<string[]>, int)> dbInfo = new(1);
@@ -445,6 +436,7 @@ namespace DipesLink.ViewModels
         {
             JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
             JobList[stationIndex].IsShowLoadingChecked = Visibility.Visible;
+            JobList[stationIndex].IsStartButtonEnable = false;
         }
 
         private void GetControllerMessageResponse(int stationIndex, byte[] result)

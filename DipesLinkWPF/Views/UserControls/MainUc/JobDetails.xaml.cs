@@ -75,8 +75,9 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private async Task PerformLoadDbAfterDelay()
         {
-            await Task.Delay(1000); // waiting for 3s connection completed
+           await Task.Delay(10); // waiting for 3s connection completed
             _currentJob?.RaiseLoadDb(_currentJob.Index);
+            
         }
 
         public void EventRegister()
@@ -98,7 +99,16 @@ namespace DipesLink.Views.UserControls.MainUc
                     _currentJob.OnChangeCheckedCode += Shared_OnChangeCheckedCode;
                     _printingDataTableHelper = new();
 
-
+                    if (_currentJob.Name == null)
+                    {
+                        if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
+                        {
+                            _currentJob.IsStartButtonEnable = true;
+                        }
+                    }
+                }
+                else {
+                    
                 }
               
             }
