@@ -21,8 +21,8 @@ namespace DipesLinkDeviceTransfer
 #endif
 
             if (SharedValues.OperStatus != OperationStatus.Running && 
-                SharedValues.OperStatus != OperationStatus.Processing && 
-                _SelectedJob?.JobType != JobType.StandAlone)
+                SharedValues.OperStatus != OperationStatus.Processing &&
+                SharedValues.SelectedJob?.JobType != JobType.StandAlone)
             {
                 return; // Only implement when Running
             }
@@ -34,27 +34,27 @@ namespace DipesLinkDeviceTransfer
 
         public void SimulateValidDataCamera()
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
             DetectModel dtm = new();
             string[] data = Array.Empty<string>();
             if (_IsAfterProductionMode)
             {
-                for (int i = 0; i < _TotalCode; i++)
+                for (int i = 0; i < SharedValues.TotalCode; i++)
                 {
-                    string tmp = GetCompareDataByPODFormat(_ListPrintedCodeObtainFromFile[i], _SelectedJob.PODFormat);
+                    string tmp = SharedFunctions.GetCompareDataByPODFormat(SharedValues.ListPrintedCodeObtainFromFile[i], SharedValues.SelectedJob.PODFormat);
                     if (_CodeListPODFormat.TryGetValue(tmp, out CompareStatus? compareStatus))
                     {
                         if (!compareStatus.Status) // only send data not yet compare 
                         {
-                            data = _ListPrintedCodeObtainFromFile[i];
+                            data = SharedValues.ListPrintedCodeObtainFromFile[i];
                             break;
                         }
                     }
                 }
             }
-            if (_SelectedJob.CompareType == CompareType.Database)
+            if (SharedValues.SelectedJob.CompareType == CompareType.Database)
             {
-                dtm.Text = GetCompareDataByPODFormat(data, _SelectedJob.PODFormat);
+                dtm.Text = SharedFunctions.GetCompareDataByPODFormat(data, SharedValues.SelectedJob.PODFormat);
             }
 
             SharedEvents.RaiseOnCameraReadDataChangeEvent(dtm); //Trigger event for send data camera
@@ -67,7 +67,7 @@ namespace DipesLinkDeviceTransfer
         }
         public void SimulateInvalidDataCamera(TypeOfSimulateInvalidDataCamera typeOfInvalidData)
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
             DetectModel dtm = new();
             switch (typeOfInvalidData)
             {
@@ -75,9 +75,9 @@ namespace DipesLinkDeviceTransfer
                     dtm.Text = "Trigger"; // A specific string
                     break;
                 case TypeOfSimulateInvalidDataCamera.Duplicate:
-                    if(_ListCheckedResultCode != null && _ListCheckedResultCode.Count >0)
+                    if(SharedValues.ListCheckedResultCode != null && SharedValues.ListCheckedResultCode.Count >0)
                     {
-                        string[]? validRowData = _ListCheckedResultCode.Where(x => x[2] == "Valid").FirstOrDefault(); // Get valid code from checked list 
+                        string[]? validRowData = SharedValues.ListCheckedResultCode.Where(x => x[2] == "Valid").FirstOrDefault(); // Get valid code from checked list 
                         if (validRowData != null)
                         {
                             dtm.Text = validRowData[1]; // Get column 1 (data)

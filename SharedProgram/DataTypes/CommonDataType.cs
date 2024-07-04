@@ -121,7 +121,8 @@ namespace SharedProgram.DataTypes
             Trigger,
             ReloadTemplate,
             Reprint,
-            Pause
+            Pause,
+            ExportResult
         }
         public enum InitDataError
         {
@@ -206,7 +207,8 @@ namespace SharedProgram.DataTypes
             CartridgesLocked,
             InvalidVersion,
             IncorrectPrinthead,
-            DuplicateData
+            DuplicateData,
+            ExportResultFail
         }
         public enum EventsLogType
         {

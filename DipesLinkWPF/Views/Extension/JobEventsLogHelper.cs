@@ -14,7 +14,7 @@ namespace DipesLink.Views.Extension
 {
     public class JobEventsLogHelper : ViewModelBase
     {
-        private readonly string[] _ColumnNames = new string[] {"EventType", "Title", "Message", "DateTime" };
+       // private readonly string[] _ColumnNames = new string[] {"EventType", "Title", "Message", "DateTime" };
         public ObservableCollection<EventsLogModel>? EventsList { get; set; } = new();
         
         public List<string[]> InitEventsLogDatabase(string path)
@@ -44,7 +44,7 @@ namespace DipesLink.Views.Extension
                     {
                         string[] line = rexCsvSplitter.Split(data).Select(x => Csv.Unescape(x)).ToArray();
                         if (line.Length == 1 && line[0] == "") { continue; }; // ignore empty line 
-                        if (line.Length < _ColumnNames.Length)
+                        if (line.Length < SharedValues.ColumnNames.Length)
                         {
                             string[] checkedResult = GetTheRightString(line);
                             result.Add(checkedResult);
@@ -68,7 +68,7 @@ namespace DipesLink.Views.Extension
 
         private string[] GetTheRightString(string[] line)
         {
-            var code = new string[_ColumnNames.Length];
+            var code = new string[SharedValues.ColumnNames.Length];
             for (int i = 0; i < code.Length; i++)
             {
                 if (i < line.Length)

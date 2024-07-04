@@ -575,14 +575,6 @@ namespace DipesLink.Models
             PauseCommandJob = new RelayCommand(OnPauseButtonCommandClick);
             StopCommandJob = new RelayCommand(OnStopButtonCommandClick);
             TriggerCommandJob = new RelayCommand(OnTriggerButtonCommandClick);
-            // Khởi tạo gaugeitem
-            //_gaugeItem = new GaugeItem(30, series =>
-            //{
-            //    series.MaxRadialColumnWidth = 10;
-            //    series.DataLabelsSize = 30;
-            //});
-            //// Khởi tạo Series
-            //Series = GaugeGenerator.BuildSolidGauge(_gaugeItem);
             JobSystemSettings = new JobSystemSettings();
         }
 
@@ -607,6 +599,11 @@ namespace DipesLink.Models
             StopButtonCommand?.Invoke(Index, EventArgs.Empty);
         }
 
+        public event EventHandler OnExportButtonCommand;
+        public void OnExportButtonCommandHandler(int index)
+        {
+            OnExportButtonCommand?.Invoke(index, EventArgs.Empty);
+        }
 
         public event EventHandler StartButtonCommand;
         public void OnStartButtonCommandClick()

@@ -15,9 +15,14 @@ namespace SharedProgram.Shared
 
         public static string DeviceTransferName = "DipesLinkDeviceTransfer";
 
-
+        public static readonly string[] ColumnNames = new string[] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
+        
         public static OperationStatus OperStatus = OperationStatus.Stopped;
-
+        public static int TotalCode = 0;
+        public static string[] DatabaseColunms = Array.Empty<string>();
+        public static List<string[]> ListPrintedCodeObtainFromFile = new();
+        public static List<string[]> ListCheckedResultCode = new();
+        public static JobModel? SelectedJob = new();
         public static string ConnectionString = "AccountDB.db";
 
         public static long SIZE_1MB = 1024 * 1024 * 1;

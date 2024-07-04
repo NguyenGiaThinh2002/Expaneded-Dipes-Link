@@ -190,6 +190,7 @@ namespace DipesLink.ViewModels
             JobList[index].OnPercentageChange -= PercentageChangeHandler;
             JobList[index].OnReprint -= ReprintHandler;
             JobList[index].OnLoadDb -= LoadDbEventHandler;
+            JobList[index].OnExportButtonCommand -= ExportButtonCommandHandler;
 
             JobList[index].StartButtonCommand += StartButtonCommandEventHandler;
             JobList[index].PauseButtonCommand += PauseButtonCommandEventHandler;
@@ -198,8 +199,11 @@ namespace DipesLink.ViewModels
             JobList[index].OnPercentageChange += PercentageChangeHandler;
             JobList[index].OnReprint += ReprintHandler;
             JobList[index].OnLoadDb += LoadDbEventHandler;
+            JobList[index].OnExportButtonCommand += ExportButtonCommandHandler;
 
         }
+
+      
 
         private void LoadDbEventHandler(object? sender, EventArgs e)
         {
@@ -819,6 +823,9 @@ namespace DipesLink.ViewModels
                     break;
                 case NotifyType.IncorrectPrinthead:
                     CusAlert.Show($"Station {stationIndex + 1}: Printer Incorrect Printhead", ImageStyleMessageBox.Warning);
+                    break;
+                case NotifyType.ExportResultFail:
+                    CusAlert.Show($"Station {stationIndex + 1}: Can't export", ImageStyleMessageBox.Warning);
                     break;
             }
         }

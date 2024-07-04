@@ -3,7 +3,10 @@ using SharedProgram.Shared;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 using System.Windows.Shapes;
+using UILanguage;
+using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLinkDeviceTransfer
 {
@@ -11,11 +14,10 @@ namespace DipesLinkDeviceTransfer
     {
 
         private readonly string _DateTimeFormat = "yyMMddHHmmss";
-      
 
         private async void ExportCheckedResultToFileAsync()
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
 #if DEBUG
             // _SelectedJob.CheckedResultPath = "";
 #endif
@@ -25,28 +27,28 @@ namespace DipesLinkDeviceTransfer
             await Task.Run(() =>
             {
                 //CREATE NEW PATH if not exist
-                if (_SelectedJob.CheckedResultPath == "")
+                if (SharedValues.SelectedJob.CheckedResultPath == "")
                 {
-                    string fileNameCheckedRes = DateTime.Now.ToString(_DateTimeFormat) + "_" + _SelectedJob.Name; // Create file name
-                    string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + _SelectedJob.Name + SharedValues.Settings.JobFileExtension; // Path for job file
-                    string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + _SelectedJob.Name + SharedValues.Settings.JobFileExtension; // Path for job file
+                    string fileNameCheckedRes = DateTime.Now.ToString(_DateTimeFormat) + "_" + SharedValues.SelectedJob.Name; // Create file name
+                    string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension; // Path for job file
+                    string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension; // Path for job file
                     string pathCheckedRes = SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\" + fileNameCheckedRes + ".csv"; // path for Checked Result
 
                     if (!File.Exists(pathCheckedRes))
                     {
                         // If not found checked Result path then create new file with column template
                         using StreamWriter streamWriter = new(pathCheckedRes, true, new UTF8Encoding(true));
-                        streamWriter.WriteLine(string.Join(",", _ColumnNames));
+                        streamWriter.WriteLine(string.Join(",", SharedValues.ColumnNames));
                     }
                     //Save Job
-                    _SelectedJob.CheckedResultPath = fileNameCheckedRes + ".csv";
-                  
-                    _SelectedJob.SaveJobFile(jobPath);
-                    _SelectedJob.SaveJobFile(selectedJobPath);
+                    SharedValues.SelectedJob.CheckedResultPath = fileNameCheckedRes + ".csv";
+
+                    SharedValues.SelectedJob.SaveJobFile(jobPath);
+                    SharedValues.SelectedJob.SaveJobFile(selectedJobPath);
                 }
                 try
                 {
-                    string checkedResultPath = SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\" + _SelectedJob.CheckedResultPath;
+                    string checkedResultPath = SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.CheckedResultPath;
                     while (true)
                     {
                         // Only stop if all data is handled
@@ -81,36 +83,36 @@ namespace DipesLinkDeviceTransfer
 
         private async void ExportPrintedResponseToFileAsync()
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
             _CTS_BackupPrintedResponse = new();
             var token = _CTS_BackupPrintedResponse.Token;
 
             await Task.Run(async () =>
             {
 
-                if (_SelectedJob.PrintedResponePath == "") // if not exist path then create new 
+                if (SharedValues.SelectedJob.PrintedResponePath == "") // if not exist path then create new 
                 {
-                    string fileNamePrintedResponse = DateTime.Now.ToString(_DateTimeFormat) + "_Printed_" + _SelectedJob.Name;
-                    string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + _SelectedJob.Name + SharedValues.Settings.JobFileExtension;
-                    string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + _SelectedJob.Name + SharedValues.Settings.JobFileExtension; //
+                    string fileNamePrintedResponse = DateTime.Now.ToString(_DateTimeFormat) + "_Printed_" + SharedValues.SelectedJob.Name;
+                    string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension;
+                    string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension; //
                     string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + ".csv";
 
                     if (!File.Exists(printedResponsePath))
                     {
                         using StreamWriter streamWriter = new(printedResponsePath, true, new UTF8Encoding(true));
-                        streamWriter.WriteLine(string.Join(",", _DatabaseColunms));
+                        streamWriter.WriteLine(string.Join(",", SharedValues.DatabaseColunms));
                     }
-                    _SelectedJob.PrintedResponePath = fileNamePrintedResponse + ".csv";
-                   SharedFunctions.SaveStringOfPrintedResponePath(
-                         SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\",
-                         "printedPathString",
-                         _SelectedJob.PrintedResponePath);
-                    _SelectedJob.SaveJobFile(jobPath);
-                    _SelectedJob.SaveJobFile(selectedJobPath);
+                    SharedValues.SelectedJob.PrintedResponePath = fileNamePrintedResponse + ".csv";
+                    SharedFunctions.SaveStringOfPrintedResponePath(
+                          SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\",
+                          "printedPathString",
+                          SharedValues.SelectedJob.PrintedResponePath);
+                    SharedValues.SelectedJob.SaveJobFile(jobPath);
+                    SharedValues.SelectedJob.SaveJobFile(selectedJobPath);
                 }
                 try
                 {
-                    string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + _SelectedJob.PrintedResponePath;
+                    string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponePath;
                     while (true)
                     {
                         // Only stop if handled all data
@@ -180,13 +182,13 @@ namespace DipesLinkDeviceTransfer
                          {
                              try
                              {
-                               string fileName = string.Format("\\{0}_Job_{1}_Image_{2:D7}.jpg",
-                               _SelectedJob?.ExportNamePrefix,
-                               _SelectedJob?.Name,
-                               exImageModel.Index);
-                                 if (_SelectedJob?.ImageExportPath != null && exImageModel.Image != null)
+                                 string fileName = string.Format("\\{0}_Job_{1}_Image_{2:D7}.jpg",
+                                 SharedValues.SelectedJob?.ExportNamePrefix,
+                                 SharedValues.SelectedJob?.Name,
+                                 exImageModel.Index);
+                                 if (SharedValues.SelectedJob?.ImageExportPath != null && exImageModel.Image != null)
                                  {
-                                     string path = _SelectedJob?.ImageExportPath + $"Job{JobIndex + 1}\\" + _SelectedJob?.Name + fileName;
+                                     string path = SharedValues.SelectedJob?.ImageExportPath + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob?.Name + fileName;
                                      using (exImageModel.Image)
                                      {
                                          SaveBitmap(exImageModel.Image, path);
@@ -208,7 +210,7 @@ namespace DipesLinkDeviceTransfer
                  catch (Exception ex)
                  {
 #if DEBUG
-                   //  await Console.Out.WriteLineAsync("save image failed: " + ex);
+                     //  await Console.Out.WriteLineAsync("save image failed: " + ex);
 #endif
                  }
              });
@@ -230,6 +232,48 @@ namespace DipesLinkDeviceTransfer
                 memoryStream.CopyTo(fileStream);
             }
             catch (Exception) { }
+        }
+
+       
+     
+        private async Task ExportResultAsync() 
+        {
+            try
+            {
+                if (SharedValues.SelectedJob?.Name == null)
+                {
+                    NotificationProcess(NotifyType.ExportResultFail);
+                    return;
+                }
+                string docFolderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "DPLink_LogFiles",
+                    $"Job{SharedValues.SelectedJob?.Index+1}");
+                string fileName = SharedValues.SelectedJob?.Name + $"_Logs_{DateTime.Now:yyyy_MM_dd}.csv";
+               
+                if (!Directory.Exists(docFolderPath))
+                {
+                    Directory.CreateDirectory(docFolderPath);
+                }
+
+                if (fileName != null)
+                {
+                    string fullFilePath = System.IO.Path.Combine(docFolderPath, fileName);
+                    Task<bool> doneExportTask = Task.Run(() => { return SharedFunctions.ExportResult(fullFilePath); });
+
+                    if (!(await doneExportTask))
+                    {
+                        NotificationProcess(NotifyType.ExportResultFail);
+                    }
+                    else
+                    {
+                        SharedFunctions.PrintDebugMessage($"Job{SharedValues.SelectedJob?.Index + 1} export successfully");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintDebugMessage(ex.Message);
+            }
         }
 
     }
