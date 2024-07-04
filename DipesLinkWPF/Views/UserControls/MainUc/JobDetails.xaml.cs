@@ -109,17 +109,15 @@ namespace DipesLink.Views.UserControls.MainUc
                     _currentJob.OnChangePrintedCode += Shared_OnChangePrintedCode;
                     _currentJob.OnLoadCompleteCheckedDatabase += Shared_OnLoadCompleteCheckedDatabase;
                     _currentJob.OnChangeCheckedCode += Shared_OnChangeCheckedCode;
-                    //_printingDataTableHelper = new();
 
-                    //if (_currentJob.Name == null)
-                    //{
-                    //    if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
-                    //    {
-                    //        _currentJob.IsStartButtonEnable = true;
-                    //        ViewModelSharedEvents.OnEnableUIChangeHandler(true);
-                    //        // _currentJob.EnableUI = false;
-                    //    }
-                    //}
+
+                    if (_currentJob.Name == null)
+                    {
+                        if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
+                        {
+                            ViewModelSharedEvents.OnEnableUIChangeHandler(_currentJob.Index,true);
+                        }
+                    }
                 }
                 else {
                     
