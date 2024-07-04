@@ -210,7 +210,7 @@ namespace DipesLink.Views.UserControls.MainUc
             vm.LoadJobList(CurrentIndex()); // Update Job on UI
           //  CallbackCommand(vm => vm.RestartDeviceTransfer(jobIndex)); // Update Job on UI
             vm.UpdateJobInfo(CurrentIndex());
-            ViewModelSharedEvents.OnRestartStationHandler(CurrentIndex());
+            ViewModelSharedEvents.OnChangeJobHandler(CurrentIndex()); // kích hoạt sự kiện phát hiện change job
             //Task.Run(async () => { await PerformLoadDbAfterDelay(vm); });
             PerformLoadDbAfterDelay(vm);
         }
@@ -246,7 +246,7 @@ namespace DipesLink.Views.UserControls.MainUc
             int jobIndex = ListBoxMenu.SelectedIndex;
             CurrentViewModel<MainViewModel>()?.DeleteJobAction(jobIndex);
             CurrentViewModel<MainViewModel>()?.UpdateJobInfo(jobIndex);
-            ViewModelSharedEvents.OnRestartStationHandler(jobIndex);
+            ViewModelSharedEvents.OnChangeJobHandler(jobIndex);
             CallbackCommand(vm => vm.LoadJobList(jobIndex)); // Update Job on UI
         }
 

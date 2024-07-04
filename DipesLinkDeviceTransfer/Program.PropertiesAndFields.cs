@@ -28,10 +28,10 @@ namespace DipesLinkDeviceTransfer
         public int NumberOfCheckFailed { get; set; }
         public int CountFeedback { get; set; }
 
-        private readonly string[] _ColumnNames = new string[] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
+        
 
-        private string[] _DatabaseColunms = Array.Empty<string>();
-        private JobModel? _SelectedJob = new();
+       // private string[] DatabaseColunms = Array.Empty<string>();
+      //  private JobModel? _SelectedJob = new();
         private object _SyncObjCheckedResultList = new();
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace DipesLinkDeviceTransfer
         /// </summary>
         private readonly ConcurrentDictionary<string, SharedProgram.Controller.CompareStatus> _CodeListPODFormat = new();
         private int _NumberOfDuplicate = 0;
-        private int _TotalCode = 0;
+        //private int TotalCode = 0;
         private int _CurrentPage = 0;
         private readonly int _MaxDatabaseLine = 500;
 
@@ -64,12 +64,12 @@ namespace DipesLinkDeviceTransfer
         /// <summary>
         /// List data to print contains printed status
         /// </summary>
-        private List<string[]> _ListPrintedCodeObtainFromFile = new();
+       // private List<string[]> _ListPrintedCodeObtainFromFile = new();
 
         /// <summary>
         /// List checked Result 
         /// </summary>
-        private List<string[]> _ListCheckedResultCode = new();
+       // private List<string[]> ListCheckedResultCode = new();
         private static string[] _PrintProductTemplateList = Array.Empty<string>();
 
 

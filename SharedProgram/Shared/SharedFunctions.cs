@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Media.Imaging;
 using System.Xml;
+using static SharedProgram.DataTypes.CommonDataType;
 
 namespace SharedProgram.Shared
 {
@@ -64,6 +65,7 @@ namespace SharedProgram.Shared
             string filePath = $"{SharedPaths.PathSubJobsApp}{jobIndex + 1}\\{templateNameWithoutExtension}{SharedValues.Settings.JobFileExtension}";
             return File.Exists(filePath);
         }
+
         public static bool CheckExitTemplate(string printerTemplate, List<string> compareList)
         {
             try
@@ -119,6 +121,7 @@ namespace SharedProgram.Shared
         {
             return ImageArrivedEventArgs.GetImageFromImageBytes(inputImgData);
         }
+
         public static BitmapImage ConvertToBitmapImage(Image image)
         {
             if (image == null) return new BitmapImage();
@@ -143,6 +146,7 @@ namespace SharedProgram.Shared
             }
 
         }
+
         public static int DeviceTransferStartProcess(int index, string fullPath, string arguments)
         {
             try
@@ -194,7 +198,7 @@ namespace SharedProgram.Shared
 
         public static bool IsValidIPAddress(string ipString, out IPAddress? ipd)
         {
-          
+
             bool isValid = IPAddress.TryParse(ipString, out ipd);
             return isValid;
         }
@@ -209,9 +213,10 @@ namespace SharedProgram.Shared
                 folderPath = dialog.SelectedPath + "\\";
             }
         }
-        public static void AutoGenerateFileName(int index,out string? jobName)
+
+        public static void AutoGenerateFileName(int index, out string? jobName)
         {
-            jobName = string.Format("{1}_{0}", DateTime.Now.ToString("yyyyMMdd_HHmmss"), $"JobFile_{index+1}");
+            jobName = string.Format("{1}_{0}", DateTime.Now.ToString("yyyyMMdd_HHmmss"), $"JobFile_{index + 1}");
         }
 
         public static byte[] StringToFixedLengthByteArray(string inputString, int fixedLength)
@@ -243,9 +248,9 @@ namespace SharedProgram.Shared
             return combinedArray;
         }
 
-       public static string ReadStringOfPrintedResponePath(string filePath)
+        public static string ReadStringOfPrintedResponePath(string filePath)
         {
-          
+
             if (!File.Exists(filePath))
             {
                 return "";
@@ -278,7 +283,6 @@ namespace SharedProgram.Shared
             using var writer = new StreamWriter(filePath, false, Encoding.UTF8);
             writer.Write(content);
         }
-
 
         public static void PrintDebugMessage(string message)
         {
@@ -374,6 +378,102 @@ namespace SharedProgram.Shared
                     }
                 }
             });
+        }
+
+        public static string GetCompareDataByPODFormat(string[] row, List<PODModel> pODFormat, int addingIndex = 0)
+        {
+            if (row.Length == 0) return "";
+            var compareString = "";
+            foreach (var item in pODFormat)
+            {
+                if (item.Type == PODModel.TypePOD.FIELD) // In case it is a FIELD column
+                {
+                    compareString += row[item.Index + addingIndex];
+                }
+                else if (item.Type == PODModel.TypePOD.TEXT) // In case of a custom text Column
+                {
+                    compareString += item.Value;
+                }
+            }
+            return compareString;
+        }
+
+        public static bool ExportResult(string fileName)
+        {
+            try
+            {
+                // Create a dictionary to count the number of occurrences of each ResultData with "Duplicated" status
+                var duplicateCountDict = SharedValues.ListCheckedResultCode
+                    .Where(x => x[2] == "Duplicated")
+                    .GroupBy(x => x[1])
+                    .ToDictionary(g => g.Key, g => g.Count());
+
+                // Create a dictionary to store the first valid results
+                var checkedResultDict = SharedValues.ListCheckedResultCode
+                    .Where(x => x[2] == "Valid")
+                    .GroupBy(x => x[1])
+                    .ToDictionary(g => g.Key, g => g.First()[SharedValues.ColumnNames.Length - 1]);
+
+                if (File.Exists(fileName)) File.Delete(fileName);
+                using (StreamWriter writer = new(fileName, true, Encoding.UTF8))
+                {
+                    string header = string.Join(",", SharedValues.DatabaseColunms.Select(Csv.Escape)) + ",VerifyDate";
+                    writer.WriteLine(header);
+
+                    for (int i = 0; i < SharedValues.TotalCode; i++)
+                    {
+                        var record = SharedValues.ListPrintedCodeObtainFromFile[i];
+                        var compareString = SharedFunctions.GetCompareDataByPODFormat(record, SharedValues.SelectedJob.PODFormat);
+                        var writeValue = string.Join(",", record.Take(record.Length - 1).Select(Csv.Escape)) + ",";
+
+                        if (checkedResultDict.TryGetValue(compareString, out string dateVerify))
+                        {
+                            if (duplicateCountDict.TryGetValue(compareString, out int duplicateCount) && duplicateCount >= 1)
+                            {
+                                writeValue += "Duplicate";
+                            }
+                            else
+                            {
+                                writeValue += "Verified";
+                            }
+                            writeValue += "," + Csv.Escape(dateVerify);
+                            checkedResultDict.Remove(compareString);
+                        }
+                        else
+                        {
+                            string tmpValue = record[record.Length - 1];
+                            writeValue += tmpValue == "Printed" ? "Unverified" : tmpValue;
+                            writeValue += "," + "";
+                        }
+                        writer.WriteLine(writeValue);
+                    }
+                }
+                if (File.Exists(fileName))
+                {
+                    // Use Process.Start to open the folder and select the file
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "explorer",
+                        Arguments = $"/select,\"{fileName}\"",
+                        UseShellExecute = true
+                    });
+                   
+                }
+                else
+                {
+                    Console.WriteLine("File does not exist.");
+                    return false;
+
+                }
+                checkedResultDict.Clear();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                PrintDebugMessage(ex.Message);
+                return false;
+            }
+
         }
     }
 }

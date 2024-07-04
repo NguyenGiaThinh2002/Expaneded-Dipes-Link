@@ -138,7 +138,7 @@
                     <Button
                         d:DataContext="{d:DesignInstance Type=models1:ConnectParamsModel}"
                         Background="Transparent"
-                        Click="Export_Button_Click"
+                        Click="ExportButton_Click"
                         IsEnabled="{Binding OperationStatus, Converter={StaticResource OperationStatusToBool}}"
                         Tag="{Binding Index}">
                         <StackPanel Margin="4,0,0,0" Orientation="Horizontal">

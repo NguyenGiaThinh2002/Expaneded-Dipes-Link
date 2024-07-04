@@ -27,7 +27,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             InitializeComponent();
             Loaded += StationDetailUc_Loaded;
-            ViewModelSharedEvents.OnRestartStation += ViewModelSharedEvents_OnRestartStation;
+            ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler; 
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
             InitValues();
             Task.Run(() => { TaskAddDataAsync(); });
@@ -36,22 +36,34 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
         {
-            EventRegister();
+            var selectedIndex = (int)sender;
+            if (selectedIndex == 0 || selectedIndex ==1)
+            {
+                // sự kiện này giúp vào EventRegister bằng sự kiện ListBoxMenu change thay vì Loaded
+                EventRegister();
+            }
+           
         }
 
-        private void ViewModelSharedEvents_OnRestartStation(object? sender, int e)
+        private void OnChangeJobHandler(object? sender, int jobIndex) 
         {
-            if(_currentJob is not null && _currentJob.Index == e)
+            if(_currentJob is not null && _currentJob.Index == jobIndex)
             {
-                _printingDataTableHelper?.Dispose();
-                _printingDataTableHelper = new();
+                Debug.WriteLine($"Clear data of Job: {jobIndex}");
+                _printingDataTableHelper?.Dispose(); // Release DataTable Helper for Printing
+                _printingDataTableHelper = new();  // Create new DataTable Helper for Printing
+
                 InitValues();
-                DataGridDB.ItemsSource=null;
+
+                DataGridDB.ItemsSource=null; // Clear Datagrid printed
                 DataGridDB.Columns.Clear(); 
-                DataGridResult.ItemsSource=null;
+
+                DataGridResult.ItemsSource=null; // Clear Datagrid checked
                 DataGridResult.Columns.Clear();
-                _currentJob = null;
+
+                ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
             }
+            
         }
 
         public void InitValues()
@@ -70,7 +82,6 @@ namespace DipesLink.Views.UserControls.MainUc
                 Debug.WriteLine("Event load database was called: " + _currentJob.Index);
                 await PerformLoadDbAfterDelay();
             }
-
         }
 
         private async Task PerformLoadDbAfterDelay()
@@ -84,6 +95,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
+                // Mỗi khi vào một station detail khi chuyển tab station, thì xét xem nếu chưa tồn tại _current Job thì tạo mới
                 if (_currentJob == null)
                 {
                     _currentJob = CurrentViewModel<JobOverview>();
@@ -97,15 +109,17 @@ namespace DipesLink.Views.UserControls.MainUc
                     _currentJob.OnChangePrintedCode += Shared_OnChangePrintedCode;
                     _currentJob.OnLoadCompleteCheckedDatabase += Shared_OnLoadCompleteCheckedDatabase;
                     _currentJob.OnChangeCheckedCode += Shared_OnChangeCheckedCode;
-                    _printingDataTableHelper = new();
+                    //_printingDataTableHelper = new();
 
-                    if (_currentJob.Name == null)
-                    {
-                        if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
-                        {
-                            _currentJob.IsStartButtonEnable = true;
-                        }
-                    }
+                    //if (_currentJob.Name == null)
+                    //{
+                    //    if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
+                    //    {
+                    //        _currentJob.IsStartButtonEnable = true;
+                    //        ViewModelSharedEvents.OnEnableUIChangeHandler(true);
+                    //        // _currentJob.EnableUI = false;
+                    //    }
+                    //}
                 }
                 else {
                     
@@ -154,7 +168,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         #region DATAGRID FOR DATABASE
 
-        private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e)
+        private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e) // sự kiện báo load xong database ở UI được gửi từ device transfer
         {
             try
             {

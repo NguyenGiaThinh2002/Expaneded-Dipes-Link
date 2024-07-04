@@ -199,7 +199,36 @@ namespace DipesLink.ViewModels
         //private IPCSharedHelper? _ipcDeviceToUISharedMemory_DB;
         //private IPCSharedHelper? _ipcDeviceToUISharedMemory_RD;
 
+        private int _selectedTabIndex = 1;
 
+        public int SelectedTabIndex
+        {
+            get { return _selectedTabIndex; }
+            set
+            {
+                if (_selectedTabIndex != value)
+                {
+                    _selectedTabIndex = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private bool _tabControlEnable;
+
+        public bool TabControlEnable
+        {
+            get { return _tabControlEnable; }
+            set
+            {
+                if (_tabControlEnable != value)
+                {
+                    _tabControlEnable = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
     }
 
 }

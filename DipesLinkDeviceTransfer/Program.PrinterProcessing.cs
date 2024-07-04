@@ -73,7 +73,7 @@ namespace DipesLinkDeviceTransfer
             //            }
             //#endif
 
-            if (_SelectedJob != null && _SelectedJob.CompareType == CompareType.Database && _SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+            if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
             {
                 //Check Printer Connection
                 if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected())
@@ -82,7 +82,7 @@ namespace DipesLinkDeviceTransfer
                 }
 
                 // Check Printer Template
-                if (_SelectedJob.CompareType == CompareType.Database && (_SelectedJob == null || _SelectedJob.PrinterTemplate == ""))
+                if (SharedValues.SelectedJob.CompareType == CompareType.Database && (SharedValues.SelectedJob == null || SharedValues.SelectedJob.PrinterTemplate == ""))
                 {
                     return CheckCondition.MissingParameterActivation;
                 }
@@ -100,7 +100,7 @@ namespace DipesLinkDeviceTransfer
 
         public void StartProcess()
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
 
             // Block Run More Times
             if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
@@ -124,7 +124,7 @@ namespace DipesLinkDeviceTransfer
             }
 
             // Check Database Exist
-            bool isDatabaseDeny = _SelectedJob.CompareType == CompareType.Database && _TotalCode == 0;
+            bool isDatabaseDeny = SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.TotalCode == 0;
             if (isDatabaseDeny)
             {
                 // Show Dialog Error !
@@ -195,22 +195,22 @@ namespace DipesLinkDeviceTransfer
 
 
             // Check Printer via Web API  : todo
-            _SelectedJob.ExportNamePrefix = DateTime.Now.ToString(_SelectedJob.ExportNamePrefixFormat);
+            SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
             // Logging Start : todo
 
             _QueueBufferPrinterReceivedData.Clear();
 
-            if (_SelectedJob.CompareType == CompareType.Database &&
-                _SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+            if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
+                SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
             {
                 SharedValues.OperStatus = OperationStatus.Processing;
                 if (RynanRPrinterDeviceHandler != null &&
-                _SelectedJob.JobStatus != JobStatus.Accomplished)
+                SharedValues.SelectedJob.JobStatus != JobStatus.Accomplished)
                 {
                     RynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
                     Thread.Sleep(5);
                     RynanRPrinterDeviceHandler.SendData("CLPB"); //send clear buffer command to printer
-                    string templateNameWithoutExt = _SelectedJob.PrinterTemplate.Replace(".dsj", "");
+                    string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
                     string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
                     Thread.Sleep(50);
                     RynanRPrinterDeviceHandler.SendData(startPrintCommand); // Send Start command to printer
@@ -223,9 +223,9 @@ namespace DipesLinkDeviceTransfer
 
             }
 
-            _SelectedJob.JobStatus = JobStatus.Unfinished;
+            SharedValues.SelectedJob.JobStatus = JobStatus.Unfinished;
 
-            SaveJobChangedSettings(_SelectedJob);
+            SaveJobChangedSettings(SharedValues.SelectedJob);
 
             SendCompleteDataToUIAsync();
 
@@ -237,7 +237,7 @@ namespace DipesLinkDeviceTransfer
 
             ExportCheckedResultToFileAsync(); // Begin export checked result to file  Thread
 
-            if (_SelectedJob.CompareType == CompareType.Database) // If use mode database : start thread for backup printed code to file and update printed respone
+            if (SharedValues.SelectedJob.CompareType == CompareType.Database) // If use mode database : start thread for backup printed code to file and update printed respone
             {
                 UpdateUIPrintedResponseAsync(); // Begin Update Printed response Thread + Queue for backup
                 ExportPrintedResponseToFileAsync();
@@ -261,33 +261,33 @@ namespace DipesLinkDeviceTransfer
 
                     lock (_SyncObjCodeList)
                     {
-                        if (_ListPrintedCodeObtainFromFile.Count > 0 && _CodeListPODFormat.Count > 0)
+                        if (SharedValues.ListPrintedCodeObtainFromFile.Count > 0 && _CodeListPODFormat.Count > 0)
                         {
                             _TotalMissed = 0;
-                            int statusColIndex = _ListPrintedCodeObtainFromFile[0].Length - 1;
+                            int statusColIndex = SharedValues.ListPrintedCodeObtainFromFile[0].Length - 1;
                             foreach (var item in _CodeListPODFormat)
                             {
                                 if (!item.Value.Status) // Not yet compare or failed compare
                                 {
-                                    if (_ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] == "Printed") // Is Printed
-                                        _ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Reprint"; // change to Re-Print state
+                                    if (SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] == "Printed") // Is Printed
+                                        SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Reprint"; // change to Re-Print state
 #if DEBUG
-                                    Console.WriteLine("Status Reprint: " + _ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
+                                    Console.WriteLine("Status Reprint: " + SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
 #endif
                                 }
                                 else // Valid compare
                                 {
-                                    if (_ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] != "Printed") // Not Printed
-                                        _ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Printed";
+                                    if (SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] != "Printed") // Not Printed
+                                        SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Printed";
 #if DEBUG
-                                    Console.WriteLine("Status Printed: " + _ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
+                                    Console.WriteLine("Status Printed: " + SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
 #endif
                                 }
                             }
-                            _TotalMissed = _TotalCode - NumberOfCheckPassed;
+                            _TotalMissed = SharedValues.TotalCode - NumberOfCheckPassed;
                         }
                     }
-                    if (NumberOfCheckPassed < _TotalCode)
+                    if (NumberOfCheckPassed < SharedValues.TotalCode)
                     {
                         StartProcess();
                     }
@@ -321,7 +321,7 @@ namespace DipesLinkDeviceTransfer
                 _QueueBufferPrinterReceivedData.Clear();
                 ClearBufferUpdateUI();
 
-                if (_SelectedJob != null && _SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
                 {
                     if (RynanRPrinterDeviceHandler != null)
                     {
@@ -347,14 +347,14 @@ namespace DipesLinkDeviceTransfer
 
                 SharedValues.OperStatus = OperationStatus.Stopped;
 
-                if (_SelectedJob != null && _SelectedJob.CompareType == CompareType.Database)
+                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database)
                 {
-                    int currentCheckNumber = _SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
+                    int currentCheckNumber = SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
 
-                    if (currentCheckNumber >= _TotalCode - _NumberOfDuplicate)
+                    if (currentCheckNumber >= SharedValues.TotalCode - _NumberOfDuplicate)
                     {
-                        _SelectedJob.JobStatus = JobStatus.Accomplished;
-                        SaveJobChangedSettings(_SelectedJob);
+                        SharedValues.SelectedJob.JobStatus = JobStatus.Accomplished;
+                        SaveJobChangedSettings(SharedValues.SelectedJob);
                     }
                 }
             });
@@ -378,7 +378,7 @@ namespace DipesLinkDeviceTransfer
                 List<string[]> codeList;
                 lock (_SyncObjCodeList)
                 {
-                    codeList = new List<string[]>(_ListPrintedCodeObtainFromFile); //Clone list code
+                    codeList = new List<string[]>(SharedValues.ListPrintedCodeObtainFromFile); //Clone list code
                 }
                 lock (_PrintLocker)
                 {
@@ -616,11 +616,11 @@ namespace DipesLinkDeviceTransfer
         private ConcurrentDictionary<string, int> _Emergency = new ConcurrentDictionary<string, int>();
         private void ResultFinishPrint(string[] podCommand)
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
 
             string printedResult = "";
 
-            if (_SelectedJob.JobType == JobType.VerifyAndPrint) // Verify and Print
+            if (SharedValues.SelectedJob.JobType == JobType.VerifyAndPrint) // Verify and Print
             {
                 if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod)
                 {
@@ -634,13 +634,13 @@ namespace DipesLinkDeviceTransfer
                         {
                             lock (_SyncObjCodeList)
                             {
-                                printedResult = GetCompareDataByPODFormat(_ListPrintedCodeObtainFromFile[codeIndex], _SelectedJob.PODFormat);
+                                printedResult = SharedFunctions.GetCompareDataByPODFormat(SharedValues.ListPrintedCodeObtainFromFile[codeIndex], SharedValues.SelectedJob.PODFormat);
                             }
                         }
                     }
                     else
                     {
-                        foreach (var item in _SelectedJob.PODFormat)
+                        foreach (var item in SharedValues.SelectedJob.PODFormat)
                         {
                             if (item.Type == PODModel.TypePOD.FIELD)
                             {
@@ -658,7 +658,7 @@ namespace DipesLinkDeviceTransfer
             }
             else // After production
             {
-                foreach (PODModel podData in _SelectedJob.PODFormat)
+                foreach (PODModel podData in SharedValues.SelectedJob.PODFormat)
                 {
                     if (podData.Type == PODModel.TypePOD.FIELD)
                     {
@@ -783,7 +783,7 @@ namespace DipesLinkDeviceTransfer
 
         private void MonitorCommandHandler(string[] podCommand, PODResponseModel podResponse)
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
             try
             {
                 podResponse.Status = podCommand[3];
@@ -791,7 +791,7 @@ namespace DipesLinkDeviceTransfer
                 // Detect printer suddenly stop 
                 //  Console.WriteLine($"operation: {SharedValues.OperStatus} !");
                 if (podResponse.Status == "Stop" && (SharedValues.OperStatus == OperationStatus.Running) &&
-                    _SelectedJob.CompareType == CompareType.Database && _SelectedJob.JobType != JobType.StandAlone && !_isStopOrPauseAction)
+                    SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.JobType != JobType.StandAlone && !_isStopOrPauseAction)
                 {
                     _ = StopProcessAsync();
                     NotificationProcess(NotifyType.PrinterSuddenlyStop);
@@ -855,7 +855,7 @@ namespace DipesLinkDeviceTransfer
         private async void CompareAsync()
         {
             // await Console.Out.WriteLineAsync("Compare Start");
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
             _CTS_CompareAction = new();
             var token = _CTS_CompareAction.Token;
 
@@ -863,17 +863,17 @@ namespace DipesLinkDeviceTransfer
             {
                 int currentCheckedIndex = -1;
                 //  string staticText = "";
-                bool isAutoComplete = _SelectedJob.CompareType == CompareType.Database;
+                bool isAutoComplete = SharedValues.SelectedJob.CompareType == CompareType.Database;
 
                 bool isReprint =
-                    _SelectedJob.CompareType == CompareType.Database &&
-                    _SelectedJob.JobType == JobType.AfterProduction &&
+                    SharedValues.SelectedJob.CompareType == CompareType.Database &&
+                    SharedValues.SelectedJob.JobType == JobType.AfterProduction &&
                     _TotalMissed > 0 &&
-                    _SelectedJob.CompleteCondition == CompleteCondition.TotalChecked; // Condition for RePrint
+                    SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked; // Condition for RePrint
 
-                bool isDBStandalone = _SelectedJob.CompareType == CompareType.Database && _SelectedJob.JobType == JobType.StandAlone;
+                bool isDBStandalone = SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.JobType == JobType.StandAlone;
                 int reprintStopCond = TotalChecked + _TotalMissed - _NumberOfDuplicate;
-                int stopCond = _TotalCode - _NumberOfDuplicate;
+                int stopCond = SharedValues.TotalCode - _NumberOfDuplicate;
                 bool isOneMore = false;
                 bool isComplete = false;
                 try
@@ -896,20 +896,20 @@ namespace DipesLinkDeviceTransfer
                                 bool completeCondition = false;
                                 // Total check : ((pass + fail) >= total) code will auto stop
                                 // Pass check: (pass >= total) check will auto stop
-                                int stopNumber = _SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
+                                int stopNumber = SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
 
                                 // get stop number for verify and print mode
-                                if (_SelectedJob.JobType == JobType.VerifyAndPrint)
+                                if (SharedValues.SelectedJob.JobType == JobType.VerifyAndPrint)
                                 {
                                     // is total pass check
-                                    if (!(_SelectedJob.CompleteCondition == CompleteCondition.TotalChecked))
+                                    if (!(SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked))
                                     {
                                         if (isOneMore)
                                         {
                                             stopNumber++;
                                         }
 
-                                        if (NumberOfCheckPassed >= _TotalCode - _NumberOfDuplicate)
+                                        if (NumberOfCheckPassed >= SharedValues.TotalCode - _NumberOfDuplicate)
                                         {
                                             isOneMore = true;
                                         }
@@ -952,18 +952,18 @@ namespace DipesLinkDeviceTransfer
                             Stopwatch measureTime = Stopwatch.StartNew();
 
                             // CAN READ COMPARE
-                            if (_SelectedJob.CompareType == CompareType.CanRead)
+                            if (SharedValues.SelectedJob.CompareType == CompareType.CanRead)
                             {
 
                             }
 
                             //STATIC TEXT COMPARE
-                            else if (_SelectedJob.CompareType == CompareType.StaticText)
+                            else if (SharedValues.SelectedJob.CompareType == CompareType.StaticText)
                             {
 
                             }
                             // DATABASE COMPARE
-                            else if (_SelectedJob.CompareType == CompareType.Database)
+                            else if (SharedValues.SelectedJob.CompareType == CompareType.Database)
                             {
                                 bool isNeedToCheckPrintedResponse = true; // mặc định true nếu không phải on production
 
@@ -1003,7 +1003,7 @@ namespace DipesLinkDeviceTransfer
 
                             }
                             // Output trigger for Camera
-                            if (_SelectedJob.OutputCamera)
+                            if (SharedValues.SelectedJob.OutputCamera)
                             {
                                 bool outputCondition = detectModel.CompareResult != ComparisonResult.Valid;
                                 if (outputCondition)
@@ -1091,8 +1091,8 @@ namespace DipesLinkDeviceTransfer
             var result = new ConcurrentDictionary<string, int>();
             var _CheckedResultCodeSet = new HashSet<string>();
             string validCond = ComparisonResult.Valid.ToString();
-            int columnCount = _ColumnNames.Length;
-            foreach (string[] array in _ListCheckedResultCode)
+            int columnCount = SharedValues.ColumnNames.Length;
+            foreach (string[] array in SharedValues.ListCheckedResultCode)
             {
                 if (columnCount == array.Length && array[2] == validCond)
                 {
@@ -1100,14 +1100,14 @@ namespace DipesLinkDeviceTransfer
                 }
             }
 
-            if (_ListPrintedCodeObtainFromFile.Count > 0)
+            if (SharedValues.ListPrintedCodeObtainFromFile.Count > 0)
             {
-                int codeLenght = _ListPrintedCodeObtainFromFile[0].Count() - 1;
-                for (int index = 0; index < _ListPrintedCodeObtainFromFile.Count; index++)
+                int codeLenght = SharedValues.ListPrintedCodeObtainFromFile[0].Count() - 1;
+                for (int index = 0; index < SharedValues.ListPrintedCodeObtainFromFile.Count; index++)
                 {
-                    string[] row = _ListPrintedCodeObtainFromFile[index].ToArray();  // Get row data
+                    string[] row = SharedValues.ListPrintedCodeObtainFromFile[index].ToArray();  // Get row data
                     string data = "";
-                    foreach (PODModel item in _SelectedJob.PODFormat) // Get data by POD compare
+                    foreach (PODModel item in SharedValues.SelectedJob.PODFormat) // Get data by POD compare
                     {
                         if (item.Type == PODModel.TypePOD.DATETIME)
                         {
@@ -1166,7 +1166,7 @@ namespace DipesLinkDeviceTransfer
                     {
                         lock (_SyncObjCodeList)
                         {
-                            arr = _ListPrintedCodeObtainFromFile[currentCheckedIndex]; //Verify and Print Compare send method
+                            arr = SharedValues.ListPrintedCodeObtainFromFile[currentCheckedIndex]; //Verify and Print Compare send method
                         }
                     }
                 }
@@ -1181,7 +1181,7 @@ namespace DipesLinkDeviceTransfer
                     {
                         lock (_SyncObjCodeList)
                         {
-                            arr = new string[_ListPrintedCodeObtainFromFile[0].Length];
+                            arr = new string[SharedValues.ListPrintedCodeObtainFromFile[0].Length];
                         }
                     }
                 }
@@ -1276,7 +1276,7 @@ namespace DipesLinkDeviceTransfer
                     {
                         if (compareStatus.Index == -1)
                         {
-                            compareStatus.Index = _ListPrintedCodeObtainFromFile.FindIndex(x => GetCompareDataByPODFormat(x, _SelectedJob.PODFormat) == data);
+                            compareStatus.Index = SharedValues.ListPrintedCodeObtainFromFile.FindIndex(x => SharedFunctions.GetCompareDataByPODFormat(x, SharedValues.SelectedJob.PODFormat) == data);
                         }
                         //If not yet check => change status to checked and => return valid Result
                         if (!compareStatus.Status) // Check duplicate
@@ -1309,14 +1309,14 @@ namespace DipesLinkDeviceTransfer
         // UPDATE UI 
         private async void UpdateUIPrintedResponseAsync()
         {
-            if (_SelectedJob == null) return;
+            if (SharedValues.SelectedJob == null) return;
             _CTS_UIUpdatePrintedResponse = new();
             var token = _CTS_UIUpdatePrintedResponse.Token;
 
             await Task.Run(async () =>
             {
                 List<string[]> strPrintedResponseList = new();
-                var isAutoComplete = _SelectedJob.CompareType == CompareType.Database; // Check if need to auto stop procces when compare type is verify and print
+                var isAutoComplete = SharedValues.SelectedJob.CompareType == CompareType.Database; // Check if need to auto stop procces when compare type is verify and print
                 int numOfResponse = NumberPrinted;
                 int currentIndex = 0;
                 int currentPage = 0;
@@ -1370,13 +1370,13 @@ namespace DipesLinkDeviceTransfer
                                 _QueueCurrentPositionInDatabase.Enqueue(bytesPos);
 
                                 // Printed response backup data
-                                if (_ListPrintedCodeObtainFromFile[compareStatus.Index].Last() == "Waiting")
+                                if (SharedValues.ListPrintedCodeObtainFromFile[compareStatus.Index].Last() == "Waiting")
                                 {
                                     lock (_SyncObjCodeList)// Update status column by index compare
                                     {
-                                        (_ListPrintedCodeObtainFromFile[compareStatus.Index])[^1] = "Printed";
-                                        strPrintedResponseList.Add(_ListPrintedCodeObtainFromFile[compareStatus.Index]); // Add new printed data to list
-                                        _QueuePrintedCode.Enqueue(_ListPrintedCodeObtainFromFile[compareStatus.Index]); // Queue raw code for UI
+                                        (SharedValues.ListPrintedCodeObtainFromFile[compareStatus.Index])[^1] = "Printed";
+                                        strPrintedResponseList.Add(SharedValues.ListPrintedCodeObtainFromFile[compareStatus.Index]); // Add new printed data to list
+                                        _QueuePrintedCode.Enqueue(SharedValues.ListPrintedCodeObtainFromFile[compareStatus.Index]); // Queue raw code for UI
                                     }
                                 }
 
@@ -1443,7 +1443,7 @@ namespace DipesLinkDeviceTransfer
                         Console.WriteLine("_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count);
                         // Backup Failed Image
                         var image = detectModel.Image ?? new Bitmap(100, 100);
-                        if (_SelectedJob != null && _SelectedJob.IsImageExport)
+                        if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.IsImageExport)
                         {
                             if (detectModel.CompareResult != ComparisonResult.Valid)
                             {
@@ -1458,7 +1458,7 @@ namespace DipesLinkDeviceTransfer
 
                         lock (_SyncObjCheckedResultList)
                         {
-                            _ListCheckedResultCode.Add(strResult);
+                            SharedValues.ListCheckedResultCode.Add(strResult);
                             _QueueCheckedResult.Enqueue(strResult);
                            
                         }
@@ -1550,9 +1550,9 @@ namespace DipesLinkDeviceTransfer
                 _CTS_BackupCheckedResult?.Dispose();
                 _CTS_BackupFailedImage?.Dispose();
 
-                _ListCheckedResultCode.Clear();
+                SharedValues.ListCheckedResultCode.Clear();
                 _CodeListPODFormat.Clear();
-                _ListPrintedCodeObtainFromFile.Clear();
+                SharedValues.ListPrintedCodeObtainFromFile.Clear();
 
                 _QueueBufferCameraReceivedData.Clear();
                 _QueueBufferPrinterReceivedData.Clear();

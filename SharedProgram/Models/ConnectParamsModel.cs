@@ -9,7 +9,9 @@ namespace SharedProgram.Models
        
 
         public string CameraIP { get; set; } = "127.0.0.1";
-        public string CameraModel { get;set; }
+
+        private string cameraModel;
+        public string CameraModel { get => cameraModel; set { cameraModel = value; OnPropertyChanged(); }  }
         public string PrinterIP { get; set; } = "127.0.0.1";
         public string PrinterPort { get; set; } = "0";
         public string ControllerIP { get; set; } = "127.0.0.1";
@@ -125,6 +127,7 @@ namespace SharedProgram.Models
         }
 
         private string _FailedDataSentToPrinter;
+        
 
         public string FailedDataSentToPrinter
         {
@@ -139,6 +142,7 @@ namespace SharedProgram.Models
             }
         }
 
-        public string? SerialNumber { get; set; }
+        private string? serialNumber;
+        public string? SerialNumber { get => serialNumber; set { serialNumber = value; OnPropertyChanged(); } }
     }
 }

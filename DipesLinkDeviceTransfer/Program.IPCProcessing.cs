@@ -186,6 +186,9 @@ namespace DipesLinkDeviceTransfer
 #endif
                         RePrintAsync();
                         break;
+                    case ActionButtonType.ExportResult:
+                        await ExportResultAsync();
+                        break;
                     default:
                         break;
                 }
@@ -248,15 +251,15 @@ namespace DipesLinkDeviceTransfer
             try
             {
                 string? selectedJobName = SharedFunctions.GetSelectedJobNameList(JobIndex).FirstOrDefault();
-                _SelectedJob = SharedFunctions.GetJobSelected(selectedJobName, JobIndex);
-                await Console.Out.WriteLineAsync(_SelectedJob?.Index.ToString());
-                if (_SelectedJob != null)
+                SharedValues.SelectedJob = SharedFunctions.GetJobSelected(selectedJobName, JobIndex);
+                await Console.Out.WriteLineAsync(SharedValues.SelectedJob?.Index.ToString());
+                if (SharedValues.SelectedJob != null)
                 {
-                    _IsAfterProductionMode = _SelectedJob.JobType == JobType.AfterProduction;
-                    _IsOnProductionMode = _SelectedJob.JobType == JobType.OnProduction;
-                    _IsVerifyAndPrintMode = _SelectedJob.JobType == JobType.VerifyAndPrint;
+                    _IsAfterProductionMode = SharedValues.SelectedJob.JobType == JobType.AfterProduction;
+                    _IsOnProductionMode = SharedValues.SelectedJob.JobType == JobType.OnProduction;
+                    _IsVerifyAndPrintMode = SharedValues.SelectedJob.JobType == JobType.VerifyAndPrint;
 
-                    _TotalCode = 0;
+                    SharedValues.TotalCode = 0;
                     NumberOfSentPrinter = 0;
                     ReceivedCode = 0;
                     NumberPrinted = 0;
@@ -265,14 +268,14 @@ namespace DipesLinkDeviceTransfer
                     NumberOfCheckPassed = 0;
                     NumberOfCheckFailed = 0;
 
-                    _ListCheckedResultCode.Clear();
-                    _ListPrintedCodeObtainFromFile.Clear();
+                    SharedValues.ListCheckedResultCode.Clear();
+                    SharedValues.ListPrintedCodeObtainFromFile.Clear();
                     _CodeListPODFormat.Clear();
 
-                    SharedFunctions.SaveStringOfPrintedResponePath(SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\","printedPathString", _SelectedJob.PrintedResponePath);
-                    SharedFunctions.SaveStringOfCheckedPath(SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\", "checkedPathString", _SelectedJob.CheckedResultPath);
+                    SharedFunctions.SaveStringOfPrintedResponePath(SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\","printedPathString", SharedValues.SelectedJob.PrintedResponePath);
+                    SharedFunctions.SaveStringOfCheckedPath(SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\", "checkedPathString", SharedValues.SelectedJob.CheckedResultPath);
                     
-                    await InitDataAsync(_SelectedJob);
+                    await InitDataAsync(SharedValues.SelectedJob);
                 }
             }
             catch (Exception ex) 

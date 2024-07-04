@@ -349,7 +349,7 @@
                 Margin="0,0,0,5"
                 VerticalAlignment="Bottom"
                 Background="AliceBlue"
-                IsEnabled="{Binding IsStartButtonEnable}"
+            
                 ShowGridLines="False">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -502,7 +502,7 @@
                                 Margin="2"
                                 Background="#00ABE6"
                                 CornerRadius="15"
-                                IsEnabled="{Binding IsStartButtonEnable}"
+                              
                                 PreviewMouseDown="ViewChekedResult_PreMouDown"
                                 SnapsToDevicePixels="True">
                                 <Grid>
@@ -689,7 +689,7 @@
                             BorderBrush="LightGray"
                             BorderThickness="1,1,0,0"
                             CornerRadius="5"
-                            IsEnabled="{Binding IsStartButtonEnable}"
+                         
                             PreviewMouseDown="PrintedData_PreviewMouseDown">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -903,8 +903,8 @@
                         <Image
                             x:Name="ImageLoadingDatabase"
                             Grid.Row="1"
-                            Width="50"
-                            Height="50"
+                            Width="90"
+                            Height="90"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             gif:ImageBehavior.AnimatedSource="/Images/LoadingIcon.gif"
@@ -931,8 +931,8 @@
                         <Image
                             x:Name="ImageLoadingCheckedList"
                             Grid.Row="3"
-                            Width="50"
-                            Height="50"
+                            Width="90"
+                            Height="90"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             gif:ImageBehavior.AnimatedSource="/Images/LoadingIcon.gif"

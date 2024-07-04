@@ -4,10 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converterHomeUc="clr-namespace:DipesLink.Views.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:DipesLink.Views.UserControls.MainUc"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:DipesLink.Views.UserControls.MainUc"
-    xmlns:vm="clr-namespace:DipesLink.ViewModels"
     d:Background="White"
     d:DesignHeight="768"
     d:DesignWidth="1280"
@@ -94,10 +91,9 @@
         <TabControl
             x:Name="TabControl_Station"
             Grid.Row="1"
-            
+            IsEnabled="{Binding TabControlEnable}"
             ItemsSource="{Binding TabStation}"
-            SelectedIndex="0"
-            >
+            SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
 
             <!--  Title  -->
             <TabControl.ItemTemplate>

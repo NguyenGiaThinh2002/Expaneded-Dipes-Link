@@ -28,7 +28,7 @@ namespace DipesLink.Views.SubWindows
     /// </summary>
     public partial class EventsLogWindow : Window
     {
-        private readonly string[] _ColumnNames = new string[] { "Index", "Event Type", "Title", "Message", "DateTime" };
+        //private readonly string[] _ColumnNames = new string[] { "Index", "Event Type", "Title", "Message", "DateTime" };
         public EventsLogWindow()
         {
             InitializeComponent();

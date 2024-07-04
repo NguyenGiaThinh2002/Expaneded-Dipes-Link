@@ -40,14 +40,15 @@ namespace DipesLink.Views.UserControls.MainUc
 
         }
 
-        private void Export_Button_Click(object sender, RoutedEventArgs e)
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
+            var button = sender as Button;
             if (button != null)
             {
                 int index = Convert.ToInt32(button.Tag); // Retrieve the index from the Tag property
-                ExportResult.ExportNewResult(index);
+             //   ExportResult.ExportNewResult(index);
                 // Add further handling logic here
+                ViewModel.OnExportButtonCommandHandler(index);
             }
         }
     }
