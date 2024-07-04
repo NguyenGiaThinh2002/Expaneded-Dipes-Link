@@ -120,7 +120,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     {
                         if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
                         {
-
+                              ViewModelSharedEvents.OnEnableUIChangeHandler(_currentJob.Index,true);
                         }
                     }
                 }
