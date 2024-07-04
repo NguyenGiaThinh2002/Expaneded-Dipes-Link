@@ -403,7 +403,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     vm?.DeleteSeletedJob(CurrentIndex());
                     vm?.UpdateJobInfo(CurrentIndex());
-                    ViewModelSharedEvents.OnChangeJobHandler(CurrentIndex()); // event trigger for clear data job detail
+                    ViewModelSharedEvents.OnChangeJobHandler(((Button)sender).Name, CurrentIndex()); // event trigger for clear data job detail
                     CusAlert.Show($"Station {job?.Index + 1}: Restart Successfully!", ImageStyleMessageBox.Info, true);
                 }
                 vm?.AutoSaveConnectionSetting(CurrentIndex());

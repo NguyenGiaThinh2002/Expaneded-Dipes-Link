@@ -23,9 +23,9 @@ namespace DipesLink.ViewModels
         }
 
         public static event EventHandler<int>? OnChangeJob;
-        public static void OnChangeJobHandler(int currentStation)
+        public static void OnChangeJobHandler(string buttonName, int currentStation)
         {
-            OnChangeJob?.Invoke(null, currentStation);
+            OnChangeJob?.Invoke(buttonName, currentStation);
         }
 
         public static event EventHandler? OnListBoxMenuSelectionChange;

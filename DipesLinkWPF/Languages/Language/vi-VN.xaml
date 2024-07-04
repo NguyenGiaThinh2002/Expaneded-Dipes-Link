@@ -14,7 +14,6 @@
     <system:String x:Key="Stations_Jobs_Logs">Nhật ký việc làm trạm</system:String>
     <system:String x:Key="TemplateLoadError">Trạm {0}: Máy in không được kết nối!</system:String>
     <system:String x:Key="StationNumber">Trạm {0}</system:String>
-
     <system:String x:Key="Home">Trang chủ</system:String>
     <system:String x:Key="Jobs">Công việc</system:String>
     <system:String x:Key="Settings">Cài đặt</system:String>
@@ -49,7 +48,6 @@
     <system:String x:Key="Database">Dữ liệu</system:String>
     <system:String x:Key="Job_Logs">Bản ghi công việc</system:String>
     <system:String x:Key="Station">Trạm</system:String>
-
     <system:String x:Key="Printer_Settings">Cài đặt máy in</system:String>
     <system:String x:Key="IP_Address">Địa chỉ IP:</system:String>
     <system:String x:Key="Port">Cổng:</system:String>
@@ -74,16 +72,14 @@
     <system:String x:Key="Select_Number_of_Stations">Chọn số lượng trạm:</system:String>
     <system:String x:Key="Restart">Khởi động lại</system:String>
     <system:String x:Key="Number_of_Stations">Số lượng trạm:</system:String>
-
     <system:String x:Key="Select_Job">Chọn Công Việc</system:String>
     <system:String x:Key="Create_New_Job">Tạo Công Việc Mới</system:String>
     <system:String x:Key="Job_Selection">Lựa Chọn Công Việc</system:String>
     <system:String x:Key="List_Job">Danh Sách Công Việc</system:String>
     <system:String x:Key="Selected">Đã Chọn</system:String>
     <system:String x:Key="Job_Info">Thông Tin Công Việc</system:String>
-    <!--<system:String x:Key="Job_Name">Tên Công Việc</system:String>
-    <system:String x:Key="Job_Type">Loại Công Việc</system:String>
-    <system:String x:Key="Compare_Type">Loại So Sánh</system:String>-->
+    <system:String x:Key="ADD">THÊM</system:String>
+    <system:String x:Key="DELETE">XÓA</system:String>
     <system:String x:Key="Printer_Series">Dòng Máy In</system:String>
     <system:String x:Key="DB_Path">Đường Dẫn DB</system:String>
     <system:String x:Key="Compare_Format">Định Dạng So Sánh</system:String>
@@ -91,9 +87,24 @@
     <system:String x:Key="Complete_Type">Loại Hoàn Thành</system:String>
     <system:String x:Key="Output_Camera">Camera Đầu Ra</system:String>
     <system:String x:Key="Image_Export">Xuất Hình Ảnh</system:String>
-    <system:String x:Key="Image_Export_Path">Đường Dẫn Xuất Hình Ảnh</system:String>
+    <system:String x:Key="Image_Export_Path">Đ.Dẫn Xuất H.Ảnh</system:String>
     <system:String x:Key="Total_Record_DB">Tổng Số Bản Ghi DB</system:String>
     <system:String x:Key="Job_Status">Tình Trạng Công Việc</system:String>
+
+
+    <system:String x:Key="After_Production">Sau Sản Xuất</system:String>
+    <system:String x:Key="On_Production">Trong Sản Xuất</system:String>
+    <system:String x:Key="Verify_And_Print">Kiểm Tra và In</system:String>
+    <system:String x:Key="Can_Read">Có Thể Đọc</system:String>
+    <system:String x:Key="Static_Text">Văn Bản Tĩnh</system:String>
+    <system:String x:Key="Database_Path">Đ.Dẫn CSDL</system:String>
+    <system:String x:Key="Template_Name">Tên Mẫu</system:String>
+    <system:String x:Key="Complete_Condition">Điều Kiện Hoàn Thành</system:String>
+    <system:String x:Key="Total_Passed">Tổng Đã Đạt</system:String>
+    <system:String x:Key="CREATE">TẠO</system:String>
+    <system:String x:Key="Enable">Kích Hoạt</system:String>
+    <system:String x:Key="Disable">Vô Hiệu Hóa</system:String>
+
 
 
 

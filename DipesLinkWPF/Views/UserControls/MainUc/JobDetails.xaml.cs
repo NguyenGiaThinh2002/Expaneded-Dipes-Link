@@ -23,6 +23,7 @@ namespace DipesLink.Views.UserControls.MainUc
         private ConcurrentQueue<string[]> _queuePrintedCode = new();
         private int count = 0;
         private CancellationTokenSource ctsGetPrintedCode = new();
+       // public static bool isAddbutton = false;
         public JobDetails()
         {
             InitializeComponent();
@@ -61,7 +62,12 @@ namespace DipesLink.Views.UserControls.MainUc
                 DataGridResult.ItemsSource=null; // Clear Datagrid checked
                 DataGridResult.Columns.Clear();
 
-                ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
+                if(sender is not null && (string)sender == "ButtonAddJob")
+                {
+                    ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
+                }
+                    
+
             }
             
         }
@@ -110,12 +116,11 @@ namespace DipesLink.Views.UserControls.MainUc
                     _currentJob.OnLoadCompleteCheckedDatabase += Shared_OnLoadCompleteCheckedDatabase;
                     _currentJob.OnChangeCheckedCode += Shared_OnChangeCheckedCode;
 
-
                     if (_currentJob.Name == null)
                     {
                         if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
                         {
-                            ViewModelSharedEvents.OnEnableUIChangeHandler(_currentJob.Index,true);
+
                         }
                     }
                 }
