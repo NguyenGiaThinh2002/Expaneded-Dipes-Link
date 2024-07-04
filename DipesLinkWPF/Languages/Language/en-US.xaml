@@ -15,7 +15,6 @@
     <system:String x:Key="Stations {x} _Jobs_Logs">Stations Jobs Logs</system:String>
     <system:String x:Key="TemplateLoadError">Station {0}: Printer's not connected!</system:String>
     <system:String x:Key="StationNumber">Station {0}</system:String>
-
     <system:String x:Key="Home">Home</system:String>
     <system:String x:Key="Jobs">Jobs</system:String>
     <system:String x:Key="Settings">Settings</system:String>
@@ -49,7 +48,6 @@
     <system:String x:Key="Database">Database</system:String>
     <system:String x:Key="Job_Logs">Job Logs</system:String>
     <system:String x:Key="Station">Station</system:String>
-
     <system:String x:Key="Printer_Settings">Printer Settings</system:String>
     <system:String x:Key="IP_Address">IP Address:</system:String>
     <system:String x:Key="Port">Port:</system:String>
@@ -74,18 +72,15 @@
     <system:String x:Key="Select_Number_of_Stations">Select Number of Stations:</system:String>
     <system:String x:Key="Restart">Restart</system:String>
     <system:String x:Key="Number_of_Stations">Number of Stations:</system:String>
-
     <system:String x:Key="Select_Job">Select Job</system:String>
     <system:String x:Key="Create_New_Job">Create New Job</system:String>
     <system:String x:Key="Job_Selection">Job Selection</system:String>
     <system:String x:Key="List_Job">List Job</system:String>
     <system:String x:Key="Selected">Selected</system:String>
     <system:String x:Key="Job_Info">Job Info</system:String>
-    <!--<system:String x:Key="Job_Name">Job Name</system:String>
-    <system:String x:Key="Job_Type">Job Type</system:String>
-    <system:String x:Key="Compare_Type">Compare Type</system:String>-->
     <system:String x:Key="Printer_Series">Printer Series</system:String>
-
+    <system:String x:Key="ADD">ADD</system:String>
+    <system:String x:Key="DELETE">DELETE</system:String>
     <system:String x:Key="DB_Path">DB Path</system:String>
     <system:String x:Key="Compare_Format">Compare Format</system:String>
     <system:String x:Key="Printer_Template">Printer Template</system:String>
@@ -95,6 +90,21 @@
     <system:String x:Key="Image_Export_Path">Image Export Path</system:String>
     <system:String x:Key="Total_Record_DB">Total Record DB</system:String>
     <system:String x:Key="Job_Status">Job Status</system:String>
+
+
+    <system:String x:Key="After_Production">After Production</system:String>
+    <system:String x:Key="On_Production">On Production</system:String>
+    <system:String x:Key="Verify_And_Print">Verify And Print</system:String>
+    <system:String x:Key="Can_Read">Can Read</system:String>
+    <system:String x:Key="Static_Text">Static Text</system:String>
+    <system:String x:Key="Database_Path">Database Path</system:String>
+    <system:String x:Key="Template_Name">Template Name</system:String>
+    <system:String x:Key="Complete_Condition">Complete Condition</system:String>
+    <system:String x:Key="Total_Passed">Total Passed</system:String>
+    <system:String x:Key="CREATE">CREATE</system:String>
+    <system:String x:Key="Enable">Enable</system:String>
+    <system:String x:Key="Disable">Disable</system:String>
+
 
 
 </ResourceDictionary>

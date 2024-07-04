@@ -389,7 +389,7 @@
 
                     <TabItem x:Name="TabItemSelectJob" DataContext="{Binding SelectJob}">
                         <TabItem.Header>
-                            <TextBlock Text="Select Job" />
+                            <TextBlock Text="{DynamicResource ResourceKey=Select_Job}" />
                         </TabItem.Header>
                         <Grid Margin="10,10,0,0" Background="WhiteSmoke">
                             <Grid.Resources>
@@ -420,7 +420,7 @@
                                         <TextBlock
                                             FontSize="16"
                                             FontWeight="Bold"
-                                            Text="Job Selection" />
+                                            Text="{DynamicResource ResourceKey=Job_Selection}" />
                                     </GroupBox.Header>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -428,12 +428,13 @@
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="4*" />
                                         </Grid.ColumnDefinitions>
-
-                                        <StackPanel>
+                                        <!--  thinh this is where to fix IsEnabled="{Binding IsJobNotLoading}" IsEnabled="False"  -->
+                                        <StackPanel x:Name="ListJobStackPanel">
                                             <TextBlock
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
-                                                Text="List Job" />
+                                                Text="{DynamicResource ResourceKey=List_Job}" />
+
                                             <ListView
                                                 x:Name="ListViewJobTemplate"
                                                 Height="200"
@@ -445,15 +446,8 @@
                                                 SelectedItem="{Binding SelectedJob}"
                                                 SelectionChanged="ListViewJobTemplate_SelectionChanged"
                                                 Style="{StaticResource ModernListViewStyle}" />
-                                            <!--<Button
-                                                x:Name="ButtonDelJob"
-                                                Width="60"
-                                                Height="30"
-                                                Click="ButtonDelJob_Click"
-                                                Content="DELETE"
-                                                Style="{StaticResource ModernButtonDel}" />-->
-                                        </StackPanel>
 
+                                        </StackPanel>
 
                                         <StackPanel Grid.Column="1" Margin="0,50,0,0">
                                             <Button
@@ -461,7 +455,7 @@
                                                 Width="70"
                                                 Height="30"
                                                 Click="Button_AddJobClick"
-                                                Content="ADD"
+                                                Content="{DynamicResource ResourceKey=ADD}"
                                                 IsEnabled="{Binding IsButtonEnable}"
                                                 Style="{StaticResource ModernButton2}" />
                                             <Button
@@ -470,7 +464,7 @@
                                                 Height="30"
                                                 Margin="0,10,0,0"
                                                 Click="ButtonDelJob_Click"
-                                                Content="DELETE"
+                                                Content="{DynamicResource ResourceKey=DELETE}"
                                                 IsEnabled="{Binding IsButtonEnable}"
                                                 Style="{StaticResource ModernButtonDel}" />
                                         </StackPanel>
@@ -478,7 +472,7 @@
                                             <TextBlock
                                                 Margin="10,0,0,0"
                                                 FontSize="16"
-                                                Text="Selected" />
+                                                Text="{DynamicResource ResourceKey=Selected}" />
                                             <ListView
                                                 x:Name="ListViewSelectedJob"
                                                 Height="200"
@@ -501,7 +495,7 @@
                                         VerticalAlignment="Top"
                                         FontSize="16"
                                         FontWeight="Bold"
-                                        Header="Job Info">
+                                        Header="{DynamicResource ResourceKey=Job_Info}">
                                         <StackPanel>
 
                                             <!--<TextBlock Text="Job Info" />-->
@@ -521,7 +515,7 @@
                                                     <TextBlock
                                                         Width="150"
                                                         VerticalAlignment="Center"
-                                                        Text="Job name" />
+                                                        Text="{DynamicResource ResourceKey=Job_Name}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -535,7 +529,7 @@
                                                         Width="150"
                                                         Margin="30,0,0,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Complete Type" />
+                                                        Text="{DynamicResource ResourceKey=Complete_Type}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -554,7 +548,7 @@
                                                     <TextBlock
                                                         Width="150"
                                                         VerticalAlignment="Center"
-                                                        Text="Printer Series" />
+                                                        Text="{DynamicResource ResourceKey=Printer_Series}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -568,7 +562,7 @@
                                                         Width="150"
                                                         Margin="30,0,0,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Output Camera" />
+                                                        Text="{DynamicResource ResourceKey=Output_Camera}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -587,7 +581,7 @@
                                                     <TextBlock
                                                         Width="150"
                                                         VerticalAlignment="Center"
-                                                        Text="Job Type" />
+                                                        Text="{DynamicResource ResourceKey=Job_Type}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -601,7 +595,7 @@
                                                         Width="150"
                                                         Margin="30,0,0,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Image Export" />
+                                                        Text="{DynamicResource ResourceKey=Image_Export}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -620,7 +614,7 @@
                                                     <TextBlock
                                                         Width="150"
                                                         VerticalAlignment="Center"
-                                                        Text="Compare Type" />
+                                                        Text="{DynamicResource ResourceKey=Compare_Type}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -634,7 +628,7 @@
                                                         Width="150"
                                                         Margin="30,0,0,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Image Export Path" />
+                                                        Text="{DynamicResource ResourceKey=Image_Export_Path}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -654,7 +648,7 @@
                                                     <TextBlock
                                                         Width="150"
                                                         VerticalAlignment="Center"
-                                                        Text="DB Path" />
+                                                        Text="{DynamicResource ResourceKey=DB_Path}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -668,7 +662,7 @@
                                                         Width="150"
                                                         Margin="30,0,0,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Total Record DB" />
+                                                        Text="{DynamicResource ResourceKey=Total_Record_DB}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -687,7 +681,7 @@
                                                     <TextBlock
                                                         Width="150"
                                                         VerticalAlignment="Center"
-                                                        Text="Compare fomat" />
+                                                        Text="{DynamicResource ResourceKey=Compare_Format}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -701,7 +695,7 @@
                                                         Width="150"
                                                         Margin="30,0,0,0"
                                                         VerticalAlignment="Center"
-                                                        Text="Job Status" />
+                                                        Text="{DynamicResource ResourceKey=Job_Status}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -720,7 +714,7 @@
                                                     <TextBlock
                                                         Width="150"
                                                         VerticalAlignment="Center"
-                                                        Text="Printer Template" />
+                                                        Text="{DynamicResource ResourceKey=Printer_Template}" />
                                                     <TextBox
                                                         Width="200"
                                                         Height="30"
@@ -746,7 +740,7 @@
 
                     <!--  CREATE NEW JOB  -->
 
-                    <TabItem DataContext="{Binding CreateNewJob}" Header="Create New Job">
+                    <TabItem DataContext="{Binding CreateNewJob}" Header="{DynamicResource ResourceKey=Create_New_Job}">
                         <Grid Margin="10,10,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="490" />
@@ -782,7 +776,7 @@
                                         Width="{StaticResource LabelWidth}"
                                         Margin="5,0,0,0"
                                         VerticalAlignment="Center"
-                                        Text="Job Name" />
+                                        Text="{DynamicResource ResourceKey=Job_Name}" />
                                     <TextBox
                                         Width="260"
                                         Height="30"
@@ -807,7 +801,7 @@
                                     Orientation="Horizontal">
                                     <GroupBox Width="470" Height="60">
                                         <GroupBox.Header>
-                                            <TextBlock FontWeight="Bold" Text="Printer Series" />
+                                            <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Series}" />
                                         </GroupBox.Header>
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <RadioButton
@@ -842,13 +836,13 @@
                                         Width="470"
                                         Height="60">
                                         <GroupBox.Header>
-                                            <TextBlock FontWeight="Bold" Text="Job Type" />
+                                            <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Job_Type}" />
                                         </GroupBox.Header>
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <RadioButton
                                                 x:Name="RadioButtonAfterProduction"
                                                 Width="150"
-                                                Content="After Production"
+                                                Content="{DynamicResource ResourceKey=After_Production}"
                                                 GroupName="JobTypeGr"
                                                 IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=AfterProduction}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
@@ -856,7 +850,7 @@
                                                 x:Name="RadioButtonOnProduction"
                                                 Width="150"
                                                 Margin="10,0,0,0"
-                                                Content="On Production"
+                                                Content="{DynamicResource ResourceKey=On_Production}"
                                                 GroupName="JobTypeGr"
                                                 IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=OnProduction}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
@@ -864,7 +858,7 @@
                                                 x:Name="RadioButtonVerifyAndPrint"
                                                 Width="150"
                                                 Margin="10,0,0,0"
-                                                Content="Verify And Print"
+                                                Content="{DynamicResource ResourceKey=Verify_And_Print}"
                                                 GroupName="JobTypeGr"
                                                 IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=VerifyAndPrint}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
@@ -878,14 +872,14 @@
                                     Orientation="Horizontal">
                                     <GroupBox Width="470" Height="60">
                                         <GroupBox.Header>
-                                            <TextBlock FontWeight="Bold">Compare Type</TextBlock>
+                                            <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Compare_Type}" />
                                         </GroupBox.Header>
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <RadioButton
                                                 x:Name="RadioButtonCanRead"
                                                 Width="150"
                                                 Checked="RadioButton_Checked"
-                                                Content="Can Read"
+                                                Content="{DynamicResource ResourceKey=Can_Read}"
                                                 GroupName="CmpTypeGr"
                                                 IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=CanRead}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
@@ -894,7 +888,7 @@
                                                 Width="150"
                                                 Margin="10,0,0,0"
                                                 Checked="RadioButton_Checked"
-                                                Content="Static Text"
+                                                Content="{DynamicResource ResourceKey=Static_Text}"
                                                 GroupName="CmpTypeGr"
                                                 IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=StaticText}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
@@ -903,7 +897,7 @@
                                                 Width="150"
                                                 Margin="10,0,0,0"
                                                 Checked="RadioButton_Checked"
-                                                Content="Database"
+                                                Content="{DynamicResource ResourceKey=Database}"
                                                 GroupName="CmpTypeGr"
                                                 IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=Database}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
@@ -929,7 +923,7 @@
                                                 <TextBlock
                                                     Width="110"
                                                     VerticalAlignment="Center"
-                                                    Text="Database Path" />
+                                                    Text="{DynamicResource ResourceKey=Database_Path}" />
                                                 <TextBox
                                                     Width="260"
                                                     Height="30"
@@ -956,7 +950,7 @@
                                                 <TextBlock
                                                     Width="110"
                                                     VerticalAlignment="Center"
-                                                    Text="POD Format" />
+                                                    Text="{DynamicResource ResourceKey=POD_Format}" />
                                                 <TextBox
                                                     Width="260"
                                                     Height="30"
@@ -986,7 +980,7 @@
                                     <TextBlock
                                         Width="{StaticResource LabelWidth}"
                                         VerticalAlignment="Center"
-                                        Text="Static Text" />
+                                        Text="{DynamicResource ResourceKey=Static_Text}" />
                                     <TextBox
                                         Width="260"
                                         Height="30"
@@ -1009,7 +1003,7 @@
                                             <TextBlock
                                                 Width="110"
                                                 VerticalAlignment="Center"
-                                                Text="Template Name" />
+                                                Text="{DynamicResource ResourceKey=Template_Name}" />
                                             <TextBox
                                                 x:Name="TextBoxSearch"
                                                 Width="260"
@@ -1066,7 +1060,7 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
                                     Click="ButtonSaveJob_Click"
-                                    Content="CREATE"
+                                    Content="{DynamicResource ResourceKey=CREATE}"
                                     Style="{StaticResource ModernButton1}" />
                                 <!--  Complete Condition  -->
                                 <GroupBox
@@ -1074,19 +1068,19 @@
                                     Width="460"
                                     Height="60">
                                     <GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="Complete Condition" />
+                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Complete_Condition}" />
                                     </GroupBox.Header>
                                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                         <RadioButton
                                             Width="150"
-                                            Content="Total Passed"
+                                            Content="{DynamicResource ResourceKey=Total_Passed}"
                                             GroupName="compcondGr"
                                             IsChecked="{Binding CompleteCondition, Converter={StaticResource CompleteCondToBool}, ConverterParameter=TotalPassed}"
                                             Style="{DynamicResource RadioButtonStyle1}" />
                                         <RadioButton
                                             Width="150"
                                             Margin="10,0,0,0"
-                                            Content="Total Checked"
+                                            Content="{DynamicResource ResourceKey=Total_Checked}"
                                             GroupName="compcondGr"
                                             IsChecked="{Binding CompleteCondition, Converter={StaticResource CompleteCondToBool}, ConverterParameter=TotalChecked}"
                                             Style="{DynamicResource RadioButtonStyle1}" />
@@ -1104,14 +1098,14 @@
                                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                         <RadioButton
                                             Width="150"
-                                            Content="Enable"
+                                            Content="{DynamicResource ResourceKey=Enable}"
                                             GroupName="OutCamGr"
                                             IsChecked="{Binding OutputCamera, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"
                                             Style="{DynamicResource RadioButtonStyle1}" />
                                         <RadioButton
                                             Width="150"
                                             Margin="10,0,0,0"
-                                            Content="Disable"
+                                            Content="{DynamicResource ResourceKey=Disable}"
                                             GroupName="OutCamGr"
                                             IsChecked="{Binding OutputCamera, Converter={StaticResource CoupRadToBol}, ConverterParameter=1}"
                                             Style="{DynamicResource RadioButtonStyle1}" />
@@ -1124,20 +1118,20 @@
                                     Width="460"
                                     Height="60">
                                     <GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="Image Export" />
+                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Image_Export}" />
                                     </GroupBox.Header>
                                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                         <RadioButton
                                             x:Name="RadioButtonImageExport"
                                             Width="150"
-                                            Content="Enable"
+                                            Content="{DynamicResource ResourceKey=Enable}"
                                             GroupName="ImgExGr"
                                             IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"
                                             Style="{DynamicResource RadioButtonStyle1}" />
                                         <RadioButton
                                             Width="150"
                                             Margin="10,0,0,0"
-                                            Content="Disable"
+                                            Content="{DynamicResource ResourceKey=Disable}"
                                             GroupName="ImgExGr"
                                             IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=1}"
                                             Style="{DynamicResource RadioButtonStyle1}" />
@@ -1153,7 +1147,7 @@
                                     <TextBlock
                                         Width="130"
                                         VerticalAlignment="Center"
-                                        Text="Image Export Path" />
+                                        Text="{DynamicResource ResourceKey=Image_Export_Path}" />
                                     <TextBox
                                         Width="260"
                                         Height="30"
