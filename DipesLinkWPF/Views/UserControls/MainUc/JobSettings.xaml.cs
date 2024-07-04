@@ -3,6 +3,7 @@ using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.CustomControl;
 using SharedProgram.Models;
+using SharedProgram.Shared;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,16 +48,17 @@ namespace DipesLink.Views.UserControls.MainUc
             {
                 IsInitializing = false;
                 var vm = CurrentViewModel<MainViewModel>();
-                vm?.SaveConnectionSetting();
+                if (vm is null) return;
+
+                vm.SaveConnectionSetting();
                 ComboBoxStationNum.SelectedIndex = vm.StationSelectedIndex;
-                RadBasic.IsChecked = vm?.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
-                // ???? why put ? it shows error in vm? below
+                RadBasic.IsChecked = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
                 InputArea.IsEnabled = vm.ConnectParamsList[CurrentIndex()].EnController;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
-         
         }
 
         private T? CurrentViewModel<T>() where T : class
@@ -401,7 +403,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     vm?.DeleteSeletedJob(CurrentIndex());
                     vm?.UpdateJobInfo(CurrentIndex());
-                    ViewModelSharedEvents.OnRestartStationHandler(CurrentIndex()); // event trigger for clear data job detail
+                    ViewModelSharedEvents.OnChangeJobHandler(CurrentIndex()); // event trigger for clear data job detail
                     CusAlert.Show($"Station {job?.Index + 1}: Restart Successfully!", ImageStyleMessageBox.Info, true);
                 }
                 vm?.AutoSaveConnectionSetting(CurrentIndex());

@@ -43,24 +43,43 @@ namespace DipesLink.Views
         private void EventRegister()
         {
             ViewModelSharedEvents.OnJobDetailChange += JobDetails_OnJobDetailChange;
+            ViewModelSharedEvents.OnMoveToJobDetail += MoveToJobDetail;
             SizeChanged += MainWindow_SizeChanged;
             Closing += MainWindow_Closing;
             Closed += MainWindow_Closed;
             AllStationUc.DoneLoadUIEvent += AllStationUc_DoneLoadUIEvent;
             Shared.OnActionLoadingSplashScreen += Shared_OnActionLoadingSplashScreen;
             ListBoxMenu.SelectionChanged += ListBoxMenu_SelectionChanged;
-            ViewModelSharedEvents.OnLoadingTableStatusChange += ViewModelSharedEvents_OnLoadingTableStatusChange;
-
-
+            ViewModelSharedEvents.OnDataTableLoading += DataTableLoading;
         }
-        private void ViewModelSharedEvents_OnLoadingTableStatusChange(object sender, EventArgs e)
+
+        private void MoveToJobDetail(object? sender, EventArgs e)
+        {
+            try
+            {
+                var vm = CurrentViewModel<MainViewModel>();
+                if (vm is null || sender == null) return;
+                int index = (int)sender;
+                ListBoxMenu.SelectedIndex = 0;
+                vm.SelectedTabIndex = index;
+            }
+            catch (Exception)
+            {
+            }
+          
+        }
+
+        private void DataTableLoading(object sender, EventArgs e)
         {
             EnableMenuBox();
         }
+
         public void EnableMenuBox()
         {
-            bool enable = CurrentViewModel<MainViewModel>().JobList[currentStation].IsStartButtonEnable;
-            ListBoxMenu.IsEnabled = enable;
+            var vm = CurrentViewModel<MainViewModel>();
+            if (vm is null) return;
+           // bool enable = vm.JobList[currentStation].EnableUI;
+          //  ListBoxMenu.IsEnabled = enable;
         }
 
 
@@ -373,5 +392,7 @@ namespace DipesLink.Views
             var lg = new LanguageModel();
             lg.UpdateApplicationLanguage("vi-VN");
         }
+
+       
     }
 }

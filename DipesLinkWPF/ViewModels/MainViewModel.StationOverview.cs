@@ -37,7 +37,13 @@ namespace DipesLink.ViewModels
             }
         }
 
-       
+       internal void UIEnableControlByLoadingDb(int index , bool visible)
+        {
+            TabControlEnable = visible;
+            JobList[index].IsStartButtonEnable = visible;
+            
+            
+        }
 
 
         #region Button Control

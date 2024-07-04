@@ -8,12 +8,14 @@ using DipesLink.Views.UserControls.MainUc;
 using IPCSharedMemory;
 using SharedProgram.Models;
 using SharedProgram.Shared;
+using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using static DipesLink.Views.Enums.ViewEnums;
 using static IPCSharedMemory.Datatypes.Enums;
 using static SharedProgram.DataTypes.CommonDataType;
@@ -49,6 +51,7 @@ namespace DipesLink.ViewModels
 
         public MainViewModel()
         {
+            EventRegister();
             ViewModelSharedFunctions.LoadSetting();
             _NumberOfStation = ViewModelSharedValues.Settings.NumberOfStation;
             StationSelectedIndex = _NumberOfStation > 0 ? _NumberOfStation - 1 : StationSelectedIndex;
@@ -57,6 +60,19 @@ namespace DipesLink.ViewModels
             InitStations(_NumberOfStation);
         }
        
+        private void EventRegister()
+        {
+            ViewModelSharedEvents.OnEnableUIChange += EnableUIChange;
+        }
+
+        private void EnableUIChange(object? sender, bool isEnable)
+        {
+            if (sender is null) return;
+            UIEnableControlByLoadingDb((int)sender, isEnable);
+        }
+
+        
+
         private void InitInstanceIPC(int index)
         {
             listIPCUIToDevice1MB.Add(new(index, "UIToDeviceSharedMemory_DT", SharedValues.SIZE_1MB));
@@ -192,8 +208,6 @@ namespace DipesLink.ViewModels
 
         }
 
-      
-
         private void LoadDbEventHandler(object? sender, EventArgs e)
         {
             if (sender is int index)
@@ -243,9 +257,8 @@ namespace DipesLink.ViewModels
                         case (byte)SharedMemoryCommandType.DeviceCommand:
                             switch (result[2])
                             {
-
                                 case (byte)SharedMemoryType.DatabaseList:
-                                    Debug.WriteLine($"DB Size: {result.Length}");
+                                    //Debug.WriteLine($"DB Size: {result.Length}");
                                     GetDatabaseList(stationIndex, result);
                                     break;
                                 case (byte)SharedMemoryType.CheckedList:
@@ -265,21 +278,24 @@ namespace DipesLink.ViewModels
             {
                 if (JobList[stationIndex].IsDBExist)
                 {
-                    Debug.WriteLine("Dont Reload Database for job: " + +stationIndex);
+                   // Debug.WriteLine("Dont Reload Database for job: " + +stationIndex);
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
-                    JobList[stationIndex].IsStartButtonEnable = true;
+                  //  JobList[stationIndex].IsStartButtonEnable = true;
+                    ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
+              //      JobList[stationIndex].EnableUI = true;
                     return;
                 }
-                Debug.WriteLine("Reload Database for job: " + stationIndex);
+               // Debug.WriteLine("Reload Database for job: " + stationIndex);
                 //JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
-                JobList[stationIndex].IsStartButtonEnable = false;
+               // JobList[stationIndex].IsStartButtonEnable = false;
+                ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
+                //  JobList[stationIndex].EnableUI = false;
                 //ViewModelSharedEvents.OnLoadingTableStatusChangeHandler();
                 byte[] listBytes = result.Skip(3).ToArray();
                 List<string[]>? listDatabase = DataConverter.FromByteArray<List<string[]>>(listBytes);
                 List<(List<string[]>, int)> dbInfo = new(1);
                 if (listDatabase != null)
                 {
-
                     int firstWaiting = listDatabase.IndexOf(listDatabase.Find(x => x[x.Length - 1] == "Waiting"));
                     int totalCode = listDatabase.Count;
                     int currentPage = (listDatabase.Count > _MaxDatabaseLine) ? (firstWaiting > 0 ? firstWaiting / _MaxDatabaseLine : (firstWaiting == 0 ? 0 : totalCode / _MaxDatabaseLine - 1)) : 0;
@@ -353,10 +369,9 @@ namespace DipesLink.ViewModels
                     {
                         // Camera Status
                         case (byte)SharedMemoryType.CameraInfo:
-                            //JobList[stationIndex].CameraStsBytes = result[3];
-                            //JobList[stationIndex].CameraStsBytes = result;
-                            JobList[stationIndex].CameraInfo= DataConverter.FromByteArray<CameraInfos>(result.Skip(3).ToArray());
-                            Debug.WriteLine($"Tram {stationIndex} : {JobList[stationIndex]?.CameraInfo?.Info?.Name}");
+                            JobList[stationIndex].CameraInfo = DataConverter.FromByteArray<CameraInfos>(result.Skip(3).ToArray());
+                            UpdateCameraInfo(stationIndex);
+                           // Debug.WriteLine($"Tram {stationIndex} : {JobList[stationIndex]?.CameraInfo?.Info?.Name}");
                             break;
 
                         // Printer Status
@@ -440,7 +455,9 @@ namespace DipesLink.ViewModels
         {
             JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
             JobList[stationIndex].IsShowLoadingChecked = Visibility.Visible;
-            JobList[stationIndex].IsStartButtonEnable = false;
+           // JobList[stationIndex].IsStartButtonEnable = false;
+            ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
+            //  JobList[stationIndex].EnableUI = false;
         }
 
         private void GetControllerMessageResponse(int stationIndex, byte[] result)

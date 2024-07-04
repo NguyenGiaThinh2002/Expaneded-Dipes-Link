@@ -1,9 +1,7 @@
 ﻿using DipesLink.Views.UserControls.MainUc;
 using IPCSharedMemory;
-using SharedProgram.Models;
 using SharedProgram.Shared;
-using System;
-using System.Windows;
+using System.Diagnostics;
 
 namespace DipesLink.ViewModels
 {
@@ -73,15 +71,24 @@ namespace DipesLink.ViewModels
             ConnectParamsList[index].PulseEncoder = CurrentConnectParams.PulseEncoder;
             ConnectParamsList[index].EncoderDiameter = CurrentConnectParams.EncoderDiameter;
 
-            // Get info camera
-            //ConnectParamsList[index].CameraModel = JobList[index].CameraInfo.Info.Name;
-            //ConnectParamsList[index].SerialNumber = JobList[index].CameraInfo.Info.SerialNumber;
-
-            //ConnectParamsList[index].PrintFieldForVerifyAndPrint = CurrentConnectParams.PrintFieldForVerifyAndPrint;
-            //ConnectParamsList[index].FailedDataSentToPrinter = CurrentConnectParams.FailedDataSentToPrinter;
-            //ConnectParamsList[index].VerifyAndPrintBasicSentMethod = CurrentConnectParams.VerifyAndPrintBasicSentMethod;
             CurrentConnectParams = ConnectParamsList[index];
             SaveConnectionSetting();
+        }
+
+        /// <summary>
+        /// Update camera infor (Type and Model) to UI
+        /// </summary>
+        internal void UpdateCameraInfo(int index) 
+        {
+            try
+            {
+                ConnectParamsList[index].CameraModel = JobList[index].CameraInfo.Info.Name;
+                ConnectParamsList[index].SerialNumber = JobList[index].CameraInfo.Info.SerialNumber;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         internal void SelectionChangeSystemSettings(int index)
@@ -97,9 +104,7 @@ namespace DipesLink.ViewModels
                 var sysParamsBytes =  DataConverter.ToByteArray(ViewModelSharedValues.Settings.SystemParamsList[i]);
                 MemoryTransfer.SendConnectionParamsToDevice(listIPCUIToDevice1MB[stationIndex], stationIndex, sysParamsBytes);
             }
-            catch (Exception){}
+            catch (Exception ex) { Debug.WriteLine(ex.Message);  }
         }
-
-       
     }
 }

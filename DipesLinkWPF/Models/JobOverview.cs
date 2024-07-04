@@ -520,7 +520,6 @@ namespace DipesLink.Models
         }
 
         private bool _IsStartButtonEnable = false;
-
         public bool IsStartButtonEnable
         {
             get { return _IsStartButtonEnable; }
@@ -533,6 +532,21 @@ namespace DipesLink.Models
                 }
             }
         }
+
+        //private bool _enableUI;
+
+        //public bool EnableUI
+        //{
+        //    get { return _enableUI; }
+        //    set
+        //    {
+        //        if (_enableUI != value)
+        //        {
+        //            _enableUI = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
 
         private Visibility _IsShowLoadingChecked = Visibility.Collapsed; 
 

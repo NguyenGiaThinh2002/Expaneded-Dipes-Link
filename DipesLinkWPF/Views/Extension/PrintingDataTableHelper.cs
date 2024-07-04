@@ -63,8 +63,10 @@ namespace DipesLink.Views.Extension
                     ProcessMiniPageAsync(dataGrid, PrintedDataTable, currentPage);
 
                     currentViewModel.IsShowLoadingDB = Visibility.Collapsed;
-                    currentViewModel.IsStartButtonEnable = true;
-                    ViewModelSharedEvents.OnLoadingTableStatusChangeHandler();
+                 //   currentViewModel.IsStartButtonEnable = true;
+                    ViewModelSharedEvents.OnEnableUIChangeHandler(currentViewModel.Index, true);
+                    //  currentViewModel.EnableUI = true;
+                    ViewModelSharedEvents.OnDataTableLoadingHandler();
 
                 }
                 catch (Exception ex)
@@ -246,7 +248,7 @@ namespace DipesLink.Views.Extension
                         _optimizedSearch?.Dispose();
                         Paginator = null;
                         _orgDBList = null;
-                        _optimizedSearch = null;
+                        
                     }
                     catch (Exception ex)
                     {

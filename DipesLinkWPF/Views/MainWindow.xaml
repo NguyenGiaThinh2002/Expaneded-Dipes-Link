@@ -113,6 +113,7 @@
             <StackPanel Grid.Row="1">
                 <ListBox
                     x:Name="ListBoxMenu"
+                    IsEnabled="{Binding TabControlEnable}"
                     IsTabStop="False"
                     ItemContainerStyle="{DynamicResource ListBoxItemStyleMenu}"
                     SelectedIndex="0"
@@ -327,7 +328,11 @@
                     Grid.ColumnSpan="2"
                     Margin="20,20,20,20"
                     Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=-1}" />
-                <uc:HomeUc Grid.ColumnSpan="2" Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=0}" />
+                <uc:HomeUc
+                    Grid.ColumnSpan="2"
+                    SelectedTabIndex="{Binding SelectedTabIndex}"
+                    TabControlEnable="{Binding TabControlEnable}"
+                    Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=0}" />
                 <uc:JobSettings
                     Grid.ColumnSpan="2"
                     Background="WhiteSmoke"

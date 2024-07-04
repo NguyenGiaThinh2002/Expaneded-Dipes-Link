@@ -21,18 +21,33 @@ namespace DipesLink.Views.UserControls.MainUc
     /// </summary>
     public partial class HomeUc : UserControl
     {
+        #region DependencyProperty
         
+        public static readonly DependencyProperty SelectedTabIndexProperty =
+        DependencyProperty.Register("SelectedTabIndex", typeof(int), typeof(HomeUc), new PropertyMetadata(0));
+
+        public int SelectedTabIndex
+        {
+            get => (int)GetValue(SelectedTabIndexProperty);
+            set => SetValue(SelectedTabIndexProperty, value);
+        }
+
+        public static readonly DependencyProperty TabControlEnableProperty =
+      DependencyProperty.Register("TabControlEnable", typeof(bool), typeof(HomeUc), new PropertyMetadata(true));
+
+        public bool TabControlEnable
+        {
+            get => (bool)GetValue(TabControlEnableProperty);
+            set => SetValue(TabControlEnableProperty, value);
+        }
+
+        #endregion End DependencyProperty
+
         public HomeUc()
         {
             InitializeComponent();
-            Loaded += HomeUc_Loaded;     
+        
         }
-
-        private void HomeUc_Loaded(object sender, RoutedEventArgs e)
-        {
-            InitTabControlUI(2);
-        }
-
         public void CallbackCommand(Action<MainViewModel> execute)
         {
             try
@@ -52,20 +67,6 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void InitTabControlUI(int numberOfItem = 1)
-        {
-            //for (int i = 0; i < numberOfItem; i++)
-            //{
-            //    TabItem tabItem = new()
-            //    {
-            //        Header = $"Station {i + 1}"
-            //    };
-            //    StationDetailUc stationDetailUc = new();
-               
-            //    tabItem.Content = stationDetailUc;
-            //    TabControl_Station.Items.Add(tabItem);
-            //}
-        }
 
         bool toggle = false;
         private void btntest_Click(object sender, RoutedEventArgs e)

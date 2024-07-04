@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace DipesLink.ViewModels
 {
@@ -21,10 +22,10 @@ namespace DipesLink.ViewModels
             OnJobDetailChange?.Invoke(null, currentJob);
         }
 
-        public static event EventHandler<int>? OnRestartStation;
-        public static void OnRestartStationHandler(int currentStation)
+        public static event EventHandler<int>? OnChangeJob;
+        public static void OnChangeJobHandler(int currentStation)
         {
-            OnRestartStation?.Invoke(null, currentStation);
+            OnChangeJob?.Invoke(null, currentStation);
         }
 
         public static event EventHandler? OnListBoxMenuSelectionChange;
@@ -33,11 +34,22 @@ namespace DipesLink.ViewModels
             OnListBoxMenuSelectionChange?.Invoke(index, EventArgs.Empty);
         }
 
-        public static event EventHandler? OnLoadingTableStatusChange;
-        public static void OnLoadingTableStatusChangeHandler()
+        public static event EventHandler? OnDataTableLoading;
+        public static void OnDataTableLoadingHandler()
         {
-            OnLoadingTableStatusChange?.Invoke(null, EventArgs.Empty);
+            OnDataTableLoading?.Invoke(null, EventArgs.Empty);
         }
 
+        public static event EventHandler<bool>? OnEnableUIChange;
+        public static void OnEnableUIChangeHandler(int index, bool isEnable)
+        {
+            OnEnableUIChange?.Invoke(index, isEnable);
+        }
+
+        public static event EventHandler? OnMoveToJobDetail;
+        public static void OnMoveToJobDetailHandler(int index)
+        {
+            OnMoveToJobDetail?.Invoke(index,EventArgs.Empty);
+        }
     }
 }
