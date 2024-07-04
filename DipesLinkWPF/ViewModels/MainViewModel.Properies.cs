@@ -199,7 +199,7 @@ namespace DipesLink.ViewModels
         //private IPCSharedHelper? _ipcDeviceToUISharedMemory_DB;
         //private IPCSharedHelper? _ipcDeviceToUISharedMemory_RD;
 
-        private int _selectedTabIndex = 1;
+        private int _selectedTabIndex = 0;
 
         public int SelectedTabIndex
         {

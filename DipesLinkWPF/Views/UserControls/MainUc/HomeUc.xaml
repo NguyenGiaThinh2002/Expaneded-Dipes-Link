@@ -93,7 +93,7 @@
             Grid.Row="1"
             IsEnabled="{Binding TabControlEnable}"
             ItemsSource="{Binding TabStation}"
-            SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+            SelectedIndex="{Binding SelectedTabIndex}">
 
             <!--  Title  -->
             <TabControl.ItemTemplate>

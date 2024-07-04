@@ -383,6 +383,7 @@
                 <TabControl
                     x:Name="TabControlJobSettings"
                     Margin="0,3,0,0"
+                    IsEnabled="{Binding TabControlEnable}"
                     SelectionChanged="TabControlJobSettings_SelectionChanged">
 
                     <!--  SELECT JOB  -->
