@@ -512,7 +512,7 @@ namespace DipesLink.ViewModels
                             // If Running but Camera Disconnected => Show Alert
                             if (JobList[stationIndex].OperationStatus != OperationStatus.Stopped && !_detectCamDisconnected)
                             {
-                                CusAlert.Show("Camera's Disconnected !", ImageStyleMessageBox.Error);
+                                CusAlert.Show($"Station {stationIndex}:Camera's Disconnected !", ImageStyleMessageBox.Error);
                                 _detectCamDisconnected = true;
                             }
                         }
@@ -534,7 +534,7 @@ namespace DipesLink.ViewModels
 
                             if (JobList[stationIndex].OperationStatus != OperationStatus.Stopped && !_detectPrinterDisconnected)
                             {
-                                CusAlert.Show("Printer's Disconnected !", ImageStyleMessageBox.Error);
+                                CusAlert.Show($"Station {stationIndex}: Printer's Disconnected !", ImageStyleMessageBox.Error);
                                 _detectPrinterDisconnected = true;
                             }
                         }

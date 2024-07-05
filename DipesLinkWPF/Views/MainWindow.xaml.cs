@@ -267,6 +267,12 @@ namespace DipesLink.Views
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             // thinh 2
+            var viewModel = CurrentViewModel<MainViewModel>();
+
+            // Count the number of running stations
+            int runningPrintersCount = viewModel.PrinterStateList.Count(printerState => printerState.State != "Stopped" && printerState.State != "Dừng");
+            bool isNotRunning = runningPrintersCount > 0 ? false : true;
+
             var menuItem = sender as MenuItem;
             if (menuItem != null)
             {
@@ -281,20 +287,31 @@ namespace DipesLink.Views
                         aboutPopup.ShowDialog();
                         break;
                     case "System Management":
-                        var systemManagement = new SystemManagement();
+                        var systemManagement = new SystemManagement(isNotRunning);
                         systemManagement.ShowDialog();
                         break;
                     case "Logout": //Restart
-                        var res = CusMsgBox.Show("Do you want to logout ?", "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-                        if (res)
-                        {
-                            Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                            Application.Current.Shutdown();
-                        }
+                        Logout(isNotRunning);
                         break;
                     default:
                         break;
                 }
+            }
+        }
+        private void Logout(bool isNotRunning)
+        {
+            if (isNotRunning)
+            {
+                var res = CusMsgBox.Show("Do you want to logout ?", "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                if (res)
+                {
+                    Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                    Application.Current.Shutdown();
+                }
+            }
+            else
+            {
+                CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
             }
         }
 

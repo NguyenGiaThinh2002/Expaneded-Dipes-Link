@@ -349,7 +349,6 @@
                 Margin="0,0,0,5"
                 VerticalAlignment="Bottom"
                 Background="AliceBlue"
-            
                 ShowGridLines="False">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -501,10 +500,19 @@
                             <Border
                                 Margin="2"
                                 Background="#00ABE6"
+                                BorderBrush="#00ABE6"
                                 CornerRadius="15"
-                              
+                                IsEnabled="{Binding StatusStartButton}"
                                 PreviewMouseDown="ViewChekedResult_PreMouDown"
                                 SnapsToDevicePixels="True">
+                                <Border.Effect>
+                                    <DropShadowEffect
+                                        BlurRadius="5"
+                                        Direction="320"
+                                        Opacity="0.5"
+                                        ShadowDepth="5"
+                                        Color="#00ABE6" />
+                                </Border.Effect>
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="1*" />
@@ -686,10 +694,10 @@
                         <Border
                             Grid.Column="2"
                             Margin="5,0,5,5"
-                            BorderBrush="LightGray"
+                            BorderBrush="#00ABE6"
                             BorderThickness="1,1,0,0"
                             CornerRadius="5"
-                         
+                            IsEnabled="{Binding StatusStartButton}"
                             PreviewMouseDown="PrintedData_PreviewMouseDown">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -704,7 +712,7 @@
                                     Direction="320"
                                     Opacity="0.5"
                                     ShadowDepth="5"
-                                    Color="DimGray" />
+                                    Color="#00ABE6" />
                             </Border.Effect>
                             <StackPanel>
                                 <TextBlock
