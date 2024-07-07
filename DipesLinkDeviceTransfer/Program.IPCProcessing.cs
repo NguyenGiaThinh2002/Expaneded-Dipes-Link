@@ -160,7 +160,8 @@ namespace DipesLinkDeviceTransfer
                     case ActionButtonType.Start:
 
                         _isStopOrPauseAction = false;
-                        StartProcessAction(false); // Start without DB Load  
+                        StartAllThreadForTesting();
+                        //  StartProcessAction(false); // Start without DB Load  
                         break;
                     case ActionButtonType.Pause: //Pause 
                         _isStopOrPauseAction = true;
@@ -175,7 +176,8 @@ namespace DipesLinkDeviceTransfer
                         _ = StopProcessAsync();
                         break;
                     case ActionButtonType.Trigger: // Trigger
-                        TriggerCamera();
+                                                   TriggerCamera();
+                        
                         break;
                     case ActionButtonType.ReloadTemplate: // Reload template
                         ObtainPrintProductTemplateList();
@@ -187,6 +189,7 @@ namespace DipesLinkDeviceTransfer
                         RePrintAsync();
                         break;
                     case ActionButtonType.ExportResult:
+                        //StartAllThreadForTesting();
                         await ExportResultAsync();
                         break;
                     default:

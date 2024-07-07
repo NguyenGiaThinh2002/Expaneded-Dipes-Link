@@ -902,8 +902,7 @@ namespace DipesLink.ViewModels
                 {
                     while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                     {
-                       // Debug.WriteLine("Elements Queue: " + ipc.MessageQueue.Count);
-                        _ = Task.Run(() => ProcessItemDetectModel(result, stationIndex));
+                        await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
                     }
                     await Task.Delay(1);
                 }
