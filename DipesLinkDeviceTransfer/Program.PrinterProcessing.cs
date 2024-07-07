@@ -6,6 +6,8 @@ using SharedProgram.Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
+using System.Windows.Shapes;
 using static SharedProgram.DataTypes.CommonDataType;
 using PrinterStatus = SharedProgram.DataTypes.CommonDataType.PrinterStatus;
 namespace DipesLinkDeviceTransfer
@@ -16,6 +18,13 @@ namespace DipesLinkDeviceTransfer
         private CancellationTokenSource _CTS_SendStsPrint = new();
         private CancellationTokenSource _CTS_SendStsCheck = new();
         private CancellationTokenSource _CTS_SendData = new();
+        private ConcurrentDictionary<string, int> _Emergency = new();
+        private readonly object _PrintedResponseLocker = new();
+        private bool _IsPrintedResponse = false;
+        private readonly object _CheckLocker = new();
+        private ComparisonResult _CheckedResult = ComparisonResult.Valid;
+        private bool _IsCheckedWait = true;
+        public event EventHandler? OnReceiveVerifyDataEvent;
 
         public void PrinterEventInit()
         {
@@ -66,12 +75,12 @@ namespace DipesLinkDeviceTransfer
         private CheckCondition CheckAllTheConditions()
         {
             // Check Camera Connection
-            //#if !DEBUG
-            //            if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
-            //            {
-            //                return CheckCondition.NotConnectCamera;
-            //            }
-            //#endif
+            #if !DEBUG
+            if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
+            {
+                return CheckCondition.NotConnectCamera;
+            }
+            #endif
 
             if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
             {
@@ -101,8 +110,6 @@ namespace DipesLinkDeviceTransfer
         public void StartProcess()
         {
             if (SharedValues.SelectedJob == null) return;
-
-            // Block Run More Times
             if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
             {
 #if DEBUG
@@ -112,7 +119,6 @@ namespace DipesLinkDeviceTransfer
                 return;
             }
 
-            // Check Init Data
             var checkInitDataNotifyType = CheckInitDataErrorAndGenerateMessage();
             if (checkInitDataNotifyType != NotifyType.Unk)
             {
@@ -123,11 +129,9 @@ namespace DipesLinkDeviceTransfer
                 return;
             }
 
-            // Check Database Exist
             bool isDatabaseDeny = SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.TotalCode == 0;
             if (isDatabaseDeny)
             {
-                // Show Dialog Error !
 #if DEBUG
                 Console.WriteLine("Database doesn't exist !");
 #endif
@@ -135,7 +139,6 @@ namespace DipesLinkDeviceTransfer
                 return;
             }
 
-            //Check All Condition
             CheckCondition checkCondition = CheckAllTheConditions();
             if (checkCondition != CheckCondition.Success)
             {
@@ -193,13 +196,8 @@ namespace DipesLinkDeviceTransfer
                 return;
             }
 
-
-            // Check Printer via Web API  : todo
             SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
-            // Logging Start : todo
-
             _QueueBufferPrinterReceivedData.Clear();
-
             if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
                 SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
             {
@@ -216,11 +214,9 @@ namespace DipesLinkDeviceTransfer
                     RynanRPrinterDeviceHandler.SendData(startPrintCommand); // Send Start command to printer
                 }
             }
-            else // For mode Not use Database
+            else 
             {
                 SharedValues.OperStatus = OperationStatus.Running;
-
-
             }
 
             SharedValues.SelectedJob.JobStatus = JobStatus.Unfinished;
@@ -229,28 +225,21 @@ namespace DipesLinkDeviceTransfer
 
             SendCompleteDataToUIAsync();
 
-            CompareAsync(); // Begin Compare data thread
+            CompareAsync(); 
 
             ExportImagesToFileAsync();
 
-            UpdateUICheckedResultAsync(); // Begin Update Checked Result Thread + Queue for backup
+            UpdateUICheckedResultAsync(); 
 
-            ExportCheckedResultToFileAsync(); // Begin export checked result to file  Thread
+            ExportCheckedResultToFileAsync(); 
 
-            if (SharedValues.SelectedJob.CompareType == CompareType.Database) // If use mode database : start thread for backup printed code to file and update printed respone
+            if (SharedValues.SelectedJob.CompareType == CompareType.Database) 
             {
-                UpdateUIPrintedResponseAsync(); // Begin Update Printed response Thread + Queue for backup
+                UpdateUIPrintedResponseAsync(); 
                 ExportPrintedResponseToFileAsync();
             }
-            //Shared.RaiseOnOperationStatusChangeEvent(Shared.OperStatus);
         }
 
-        /// <summary>
-        /// Desciption mode: 
-        /// 1. Printed and Failed code -> reprint status
-        /// 2. Printed and not yet checked -> reprint status
-        /// 3. Waiting -> keep the waiting state
-        /// </summary>
         private async void RePrintAsync()
         {
             await Task.Run(() =>
@@ -313,6 +302,13 @@ namespace DipesLinkDeviceTransfer
             }
         }
 
+        private void SimulateCameraData()
+        {
+            //DetectModel dtm = new DetectModel();
+            //dtm.Text
+            //_QueueBufferCameraReceivedData.Enqueue(detectModel);
+        }
+
         private async Task StopProcessAsync()
         {
             await Task.Run(() =>
@@ -344,6 +340,7 @@ namespace DipesLinkDeviceTransfer
                 _CTS_CompareAction.Cancel();
                 _QueueBufferCameraReceivedData.Enqueue(null);
                 _QueueBufferPODDataCompared.Enqueue(null);
+                _VirtualCTS?.Cancel();
 
                 SharedValues.OperStatus = OperationStatus.Stopped;
 
@@ -370,7 +367,7 @@ namespace DipesLinkDeviceTransfer
         {
             _CTS_SendWorkingDataToPrinter = new();
             var token = _CTS_SendWorkingDataToPrinter.Token;
-
+            Stopwatch stopwSend = new();
             await Task.Run(async () =>
             {
                 await Task.Delay(500, token); // Wait printer ready
@@ -391,24 +388,21 @@ namespace DipesLinkDeviceTransfer
                     if (startIndex == -1) return;
                     _IsPrintedWait = true;  // Init waiting send data
 
-                    // Send data loop
+            
                     for (int codeIndex = startIndex; codeIndex < codeList.Count; codeIndex++)
                     {
                         token.ThrowIfCancellationRequested();
-                        string[] codeModel = codeList[codeIndex]; // Get data at waiting print index
-
-                        //Ensure not printed or duplicate
+                        string[] codeModel = codeList[codeIndex]; 
                         if (codeModel[^1] != "Printed" && codeModel[^1] != "Duplicate")
                         {
                             string data = "";
                             token.ThrowIfCancellationRequested();
                             data = string.Join(";", codeModel.Take(codeModel.Length - 1).Skip(1));// Trim data (exclude Index, Status column)
                             string command = string.Format("DATA;{0}", data); // Init send command
-
-                            //Send data command to Printer
                             if (RynanRPrinterDeviceHandler != null)
                             {
                                 RynanRPrinterDeviceHandler.SendData(command);
+                               
                                 NumberOfSentPrinter++;
                                 Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
                                 _QueueSentCodeNumber.Enqueue(_countSentCode);
@@ -421,15 +415,13 @@ namespace DipesLinkDeviceTransfer
 
                             if (SharedValues.OperStatus == OperationStatus.Processing)
                             {
-                                if (counterCodeSent >= 100 && _IsAfterProductionMode) // Sau 100 lần gửi đầu tiên thành công sẽ chuyển sang trạng thái Running
+                                if (counterCodeSent >= 100 && _IsAfterProductionMode) 
                                 {
                                     SharedValues.OperStatus = OperationStatus.Running;
-                                    //  Console.WriteLine("Bị Running oi dayu");
                                 }
-                                else if (counterCodeSent >= 1 && _IsOnProductionMode)// Với mode OnProduction thì gửi 1 Data POD sẽ Run 
+                                else if (counterCodeSent >= 1 && _IsOnProductionMode)
                                 {
                                     SharedValues.OperStatus = OperationStatus.Running;
-                                    //  Console.WriteLine("Bị Running oi day");
                                 }
                             }
 
@@ -438,9 +430,7 @@ namespace DipesLinkDeviceTransfer
                                 lock (_PrintLocker)
                                 {
                                     _IsPrintedWait = true;
-                                    while (_IsPrintedWait) Monitor.Wait(_PrintLocker); // Chờ đến khi cập nhật UI sẽ đi tiếp
-
-                                    // Nếu Printed Result lấy từ kết quả việc check từ camera Invalid sẽ giữ index này cho việc gửi tiếp theo
+                                    while (_IsPrintedWait) Monitor.Wait(_PrintLocker); 
                                     if (_PrintedResult != ComparisonResult.Valid && _PrintedResult != ComparisonResult.Duplicated)
                                     {
                                         codeIndex--;
@@ -448,22 +438,25 @@ namespace DipesLinkDeviceTransfer
 
                                 }
                             }
-
+                            stopwSend?.Stop();
+                         //   await Console.Out.WriteLineAsync("Time sent POD: " + stopwSend?.ElapsedMilliseconds.ToString());
                             // After production mode
                             if (_IsAfterProductionMode)
                             {
                                 if (counterCodeSent < 100)
                                 {
-                                    await Task.Delay(50, token); // Gửi 100 code đầu tiên theo thời gian delay
+                                    stopwSend = Stopwatch.StartNew();
+                                    await Task.Delay(50, token);
+                                   
                                 }
                                 else
                                 {
-                                    //  await Task.Delay(50, token);
                                     bool detectStopSend = true;
                                     while (detectStopSend)
                                     {
-                                        if (_QueueCountFeedback.TryDequeue(out int res)) // Chờ feedback đã in từ máy in mới được phép gửi tiếp
+                                        if (_QueueCountFeedback.TryDequeue(out int res)) 
                                         {
+                                            stopwSend = Stopwatch.StartNew();
                                             detectStopSend = false;
                                         }
                                         await Task.Delay(1, token);
@@ -476,7 +469,6 @@ namespace DipesLinkDeviceTransfer
                     if (SharedValues.OperStatus == OperationStatus.Processing)
                     {
                         SharedValues.OperStatus = OperationStatus.Running;
-
                     }
 
                 }
@@ -613,7 +605,7 @@ namespace DipesLinkDeviceTransfer
                 }
             });
         }
-        private ConcurrentDictionary<string, int> _Emergency = new ConcurrentDictionary<string, int>();
+
         private void ResultFinishPrint(string[] podCommand)
         {
             if (SharedValues.SelectedJob == null) return;
@@ -844,17 +836,10 @@ namespace DipesLinkDeviceTransfer
             }
         }
 
-
         #region COMPARE 
-        private readonly object _PrintedResponseLocker = new object();
-        private bool _IsPrintedResponse = false;
-        private readonly object _CheckLocker = new object();
-        private ComparisonResult _CheckedResult = ComparisonResult.Valid;
-        private bool _IsCheckedWait = true;
-
+      
         private async void CompareAsync()
         {
-            // await Console.Out.WriteLineAsync("Compare Start");
             if (SharedValues.SelectedJob == null) return;
             _CTS_CompareAction = new();
             var token = _CTS_CompareAction.Token;
@@ -916,13 +901,9 @@ namespace DipesLinkDeviceTransfer
                                     }
                                     stopNumber--;
                                 }
-                                //await Console.Out.WriteLineAsync("Status: "+ SharedValues.OperStatus + stopNumber);
-                                // get Stop condtion
                                 if (!isReprint)
                                 {
                                     completeCondition = SharedValues.OperStatus != OperationStatus.Stopped && stopNumber >= stopCond;
-                                    //Debug.WriteLine("StopCounter : " + stopNumber);
-                                    // Console.WriteLine($"Stop Number/Stop Cond: {stopNumber}/{stopCond}");
                                 }
                                 else
                                 {
@@ -943,9 +924,8 @@ namespace DipesLinkDeviceTransfer
                         }
 
 
-                        _ = _QueueBufferCameraReceivedData.TryDequeue(out DetectModel? detectModel); // Dequeue camera data
-
-                        int compareIndex = _StartIndex + TotalChecked; // remember index
+                        _ = _QueueBufferCameraReceivedData.TryDequeue(out DetectModel? detectModel); 
+                        int compareIndex = _StartIndex + TotalChecked; 
 
                         if (detectModel != null)
                         {
@@ -999,9 +979,8 @@ namespace DipesLinkDeviceTransfer
                                 {
                                     VerifyAndPrintProcessing(detectModel, ref currentCheckedIndex);
                                 }
-
-
                             }
+
                             // Output trigger for Camera
                             if (SharedValues.SelectedJob.OutputCamera)
                             {
@@ -1012,9 +991,7 @@ namespace DipesLinkDeviceTransfer
                                 }
                             }
 
-
                             measureTime.Stop();
-
                             TotalChecked++;
                             Interlocked.Exchange(ref _countTotalCheked, TotalChecked);
                             _QueueTotalChekedNumber.Enqueue(_countTotalCheked);
@@ -1047,7 +1024,6 @@ namespace DipesLinkDeviceTransfer
                             }
                             // Add result compare to buffer
                             _QueueBufferCameraDataCompared.Enqueue(detectModel);
-
                         }
                         await Task.Delay(1, token);
                     }
@@ -1076,6 +1052,7 @@ namespace DipesLinkDeviceTransfer
         }
 
         #region VerifyAndPrint
+
         private async Task InitVerifyAndPrindSendDataMethod()
         {
 
@@ -1085,6 +1062,7 @@ namespace DipesLinkDeviceTransfer
             _Emergency = await InitVNPUpdatePrintedStatusConditionBuffer();
             // EnableUIComponentWhenLoadData(true);
         }
+
         private async Task<ConcurrentDictionary<string, int>> InitVNPUpdatePrintedStatusConditionBuffer()
         {
             // Thực hiện khi load hết database lên
@@ -1189,11 +1167,12 @@ namespace DipesLinkDeviceTransfer
                 currentCheckedIndex = -1;
             }
         }
-        public event EventHandler? OnReceiveVerifyDataEvent;
+        
         public void RaiseOnReceiveVerifyDataEvent(object sender)
         {
             OnReceiveVerifyDataEvent?.Invoke(sender, EventArgs.Empty);
         }
+
         public static bool GetPrinterStatus()
         {
             if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected())
@@ -1202,6 +1181,7 @@ namespace DipesLinkDeviceTransfer
             }
             return true;
         }
+
         private void SendVerifiedDataToPrinter(object? sender, EventArgs e)
         {
             string command = "DATA;";
@@ -1440,7 +1420,7 @@ namespace DipesLinkDeviceTransfer
                         _ = _QueueBufferCameraDataCompared.TryDequeue(out DetectModel? detectModel);
                        
                         if (detectModel == null) { await Task.Delay(1); continue; };
-                        Console.WriteLine("_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count);
+                       // Console.WriteLine("_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count);
                         // Backup Failed Image
                         var image = detectModel.Image ?? new Bitmap(100, 100);
                         if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.IsImageExport)
@@ -1465,7 +1445,7 @@ namespace DipesLinkDeviceTransfer
 
                         _QueueBufferBackupCheckedResult.Enqueue(new List<string[]>(strResultCheckList)); // Add to queue for backup file checked result
                         _QueueCheckedResultForUpdateUI.Enqueue(detectModel); // Queue Detectmodel for UI Update (Image and Decode Time)
-                        Console.WriteLine("_QueueCheckedResultForUpdateUI: " + _QueueCheckedResultForUpdateUI.Count);
+                     //   Console.WriteLine("_QueueCheckedResultForUpdateUI: " + _QueueCheckedResultForUpdateUI.Count);
                         _ = strResult.DefaultIfEmpty();
                         strResultCheckList.Clear();
 
@@ -1576,11 +1556,6 @@ namespace DipesLinkDeviceTransfer
             catch (Exception) { }
         }
 
-
-        /// <summary>
-        /// Get Printer Template by Command 
-        /// </summary>
-        /// 
         public void ObtainPrintProductTemplateList()
         {
             Task requestTemplateTask = Task.Run(async () =>
@@ -1795,6 +1770,92 @@ namespace DipesLinkDeviceTransfer
                 catch (Exception)
                 {
                     Console.WriteLine("Thread sent realtime data fail !");
+                }
+            });
+        }
+
+        private CancellationTokenSource? _VirtualCTS;
+
+        void StartAllThreadForTesting()
+        {
+            SharedValues.OperStatus = OperationStatus.Processing;
+
+            // Only work when camera disconection
+            //if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
+            //{
+                VirtualTestAsync();
+          //  }
+            SaveJobChangedSettings(SharedValues.SelectedJob);
+
+            SendCompleteDataToUIAsync();
+
+            CompareAsync();
+
+            ExportImagesToFileAsync();
+
+            UpdateUICheckedResultAsync();
+
+            ExportCheckedResultToFileAsync();
+
+            if (SharedValues.SelectedJob.CompareType == CompareType.Database)
+            {
+                UpdateUIPrintedResponseAsync();
+                ExportPrintedResponseToFileAsync();
+            }
+        }
+        public async void VirtualTestAsync()
+        {
+            _VirtualCTS = new CancellationTokenSource();
+            var token = _VirtualCTS.Token;
+
+            await Task.Run(() => 
+            {
+                var codes = new List<string[]>();
+                lock (_SyncObjCodeList)
+                {
+                    codes = SharedValues.ListPrintedCodeObtainFromFile.Where(x => x.Last() == "Waiting").ToList();
+                }
+
+                if (SharedValues.SelectedJob?.JobType == JobType.VerifyAndPrint)
+                {
+                    // todo
+                }
+
+                try
+                {
+                    for (int i = 0; i < codes.Count; i++)
+                    {
+                        // fake
+                        token.ThrowIfCancellationRequested();
+                        string[] codeModel = codes[i];
+                        if (codeModel.Last() == "Printed") continue;
+
+                        PODDataModel podDataModel = new()
+                        {
+                            Text = "RSFP;1/101;DATA;"
+                        };
+                        podDataModel.Text += string.Join(";", codeModel.Take(codeModel.Length - 1).Skip(1));
+
+                       // Bitmap bmp = new(1024, 1024);
+                        DetectModel detectModel = new()
+                        {
+                        //    Image = bmp,
+                            Text = SharedFunctions.GetCompareDataByPODFormat(codeModel, SharedValues.SelectedJob.PODFormat)
+                        };
+
+                        _QueueBufferPrinterReceivedData.Enqueue(podDataModel);
+                     //   _QueueBufferCameraReceivedData.Enqueue(detectModel);
+                        Thread.Sleep(50);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Thread virual data was stopped !");
+                }
+                catch
+                {
+                    Console.WriteLine("Thread virual data was stopped !");
+                    _VirtualCTS?.Cancel();
                 }
             });
         }
