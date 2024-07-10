@@ -266,13 +266,13 @@ namespace DipesLinkDeviceTransfer
                     }
                     else
                     {
-                        SharedFunctions.PrintDebugMessage($"Job{SharedValues.SelectedJob?.Index + 1} export successfully");
+                        SharedFunctions.PrintConsoleMessage($"Job{SharedValues.SelectedJob?.Index + 1} export successfully");
                     }
                 }
             }
             catch (Exception ex)
             {
-                SharedFunctions.PrintDebugMessage(ex.Message);
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 

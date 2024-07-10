@@ -4,6 +4,7 @@ using DipesLink.Views.Models;
 using IPCSharedMemory.Datatypes;
 using SharedProgram.Models;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Input;
@@ -378,6 +379,22 @@ namespace DipesLink.Models
                 if (_MiniDataTable != value)
                 {
                     _MiniDataTable = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private ObservableCollection<DynamicDataRowViewModel> _DataCollection = new();
+
+        public ObservableCollection<DynamicDataRowViewModel> DataCollection
+        {
+            get { return _DataCollection; }
+            set
+            {
+                if (_DataCollection != value)
+                {
+                    _DataCollection = value;
                     OnPropertyChanged();
                 }
             }

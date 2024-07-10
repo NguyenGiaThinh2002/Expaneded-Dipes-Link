@@ -16,6 +16,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static Cognex.DataMan.SDK.Discovery.EthSystemDiscoverer;
+using Encoder = System.Drawing.Imaging.Encoder;
+using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
 namespace DipesLink_SDK_Cameras
 {
@@ -68,7 +70,7 @@ namespace DipesLink_SDK_Cameras
             }
             catch (Exception ex)
             {
-                SharedFunctions.PrintDebugMessage(ex.Message);
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
@@ -81,7 +83,7 @@ namespace DipesLink_SDK_Cameras
             }
             catch (Exception ex)
             {
-                SharedFunctions.PrintDebugMessage(ex.Message);
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
@@ -107,7 +109,7 @@ namespace DipesLink_SDK_Cameras
                 }
                 catch (Exception ex)
                 {
-                    SharedFunctions.PrintDebugMessage(ex.Message);
+                    SharedFunctions.PrintConsoleMessage(ex.Message);
                 }
             }
         }
@@ -167,7 +169,7 @@ namespace DipesLink_SDK_Cameras
             }
             catch (Exception ex)
             {
-                SharedFunctions.PrintDebugMessage(ex.Message);
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
@@ -314,27 +316,23 @@ namespace DipesLink_SDK_Cameras
                     }
                 }
             }
-
-            var points = GetResultFromXmlString(imageGraphics.FirstOrDefault()); // Get polygon result
             DetectModel detectModel = new()
             {
                 Text = Regex.Replace(strResult, @"\r\n", ""),  // Replace special characters in camera data by symbol ';'
-                ImagePolyResult = points,
-                ImageData = imageData,
-                Image = GetImageWithFocusRectangle(imageResult, imageGraphics)
+                ImageBytes = GetImageWithFocusRectangle(imageResult, imageGraphics)
             };
-
+            SharedFunctions.PrintConsoleMessage("Image size: " + detectModel.ImageBytes.Length.ToString());
             SharedEvents.RaiseOnCameraReadDataChangeEvent(detectModel); // Send data via Event
         }
 
-        private static Bitmap GetImageWithFocusRectangle(Image? imageResult, List<string> imageGraphics)
+        private static byte[] GetImageWithFocusRectangle(Image? imageResult, List<string> imageGraphics)
         {
             Bitmap bitmap = new(100, 100);
             try
             {
                 if (imageResult != null)
                 {
-                    bitmap = ((Bitmap)imageResult).Clone(new System.Drawing.Rectangle(0, 0, imageResult.Width, imageResult.Height), PixelFormat.Format24bppRgb);
+                    bitmap = ((Bitmap)imageResult).Clone(new Rectangle(0, 0, imageResult.Width, imageResult.Height), PixelFormat.Format24bppRgb);
                 }
                 else
                 {
@@ -350,23 +348,34 @@ namespace DipesLink_SDK_Cameras
                         ResultGraphicsRenderer.PaintResults(graphicsImage, resultGraphics);
                     }
                 }
-                return bitmap.Clone(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), bitmap.PixelFormat);
+                // Compress and save the image to a MemoryStream
+                using (var memoryStream = new MemoryStream())
+                {
+                    ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
+                    EncoderParameters encoderParams = new(1);
+                    encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 50L); // Adjust quality as needed
+                    bitmap.Save(memoryStream, jpegCodec, encoderParams);
+                   // Bitmap compressedBitmap = new(memoryStream);
+                    return memoryStream.ToArray();//compressedBitmap.Clone(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), bitmap.PixelFormat);
+                }
+              //  return bitmap.Clone(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), bitmap.PixelFormat);
             }
-            catch (Exception) { return bitmap; }
+            catch (Exception) { return Array.Empty<byte>(); }
         }
 
-        private string? GetResultFromXmlString(string? xmlString)
+        private static ImageCodecInfo GetEncoder(System.Drawing.Imaging.ImageFormat format)
         {
-            if (xmlString == null) return null;
-            XDocument xmlDoc = XDocument.Parse(xmlString);
-            XNamespace ns = "http://www.w3.org/2000/svg"; // For Sgv Format namespace
-            IEnumerable<XElement> polygons = xmlDoc
-                        .Descendants(ns + "polygon")
-                        .Where(p => (string?)p
-                        .Attribute("class") == "result");
-            string? pointsValue = polygons.Select(x => x.Attribute("points"))?.FirstOrDefault()?.Value.ToString(); // Get Points value
-            return pointsValue;
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
         }
+      
 
         private void OnSystemDisconnected(object sender, EventArgs args)
         {

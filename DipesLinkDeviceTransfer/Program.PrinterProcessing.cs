@@ -1,14 +1,19 @@
-﻿using IPCSharedMemory;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using IPCSharedMemory;
 using SharedProgram.Controller;
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
 using SharedProgram.Shared;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.Intrinsics.Arm;
 using System.Windows.Forms;
 using System.Windows.Shapes;
 using static SharedProgram.DataTypes.CommonDataType;
+using static System.Windows.Forms.LinkLabel;
 using PrinterStatus = SharedProgram.DataTypes.CommonDataType.PrinterStatus;
 namespace DipesLinkDeviceTransfer
 {
@@ -1418,7 +1423,7 @@ namespace DipesLinkDeviceTransfer
                                 token.ThrowIfCancellationRequested();
 
                         _ = _QueueBufferCameraDataCompared.TryDequeue(out DetectModel? detectModel);
-                       
+                       // SharedFunctions.PrintConsoleMessage($"_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count().ToString());
                         if (detectModel == null) { await Task.Delay(1); continue; };
                        // Console.WriteLine("_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count);
                         // Backup Failed Image
@@ -1588,7 +1593,7 @@ namespace DipesLinkDeviceTransfer
             // Sent Number, Received Number, Printed Number
             _CTS_SendStsPrint = new();
             var tokenSts = _CTS_SendStsPrint.Token;
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 byte[]? sentDataNumberBytes = new byte[7];
                 byte[]? receivedDataNumberBytes = new byte[7];
@@ -1635,8 +1640,8 @@ namespace DipesLinkDeviceTransfer
                         {
                             MemoryTransfer.SendCurrentPosDatabaseToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, currentPos);
                         }
-                        // await Task.Delay(5);
-                        Thread.Sleep(1);
+                         await Task.Delay(1);
+                        //Thread.Sleep(1);
                     }
                 }
                 catch (OperationCanceledException)
@@ -1652,7 +1657,7 @@ namespace DipesLinkDeviceTransfer
             // Total Checked, Total Passed, Total Failed
             _CTS_SendStsCheck = new();
             var tokenResult = _CTS_SendStsCheck.Token;
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 byte[]? totalCheckedNumberBytes = new byte[7];
                 byte[]? totalPassedNumberBytes = new byte[7];
@@ -1701,7 +1706,7 @@ namespace DipesLinkDeviceTransfer
                             MemoryTransfer.SendCheckedStatisticsToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, combineBytes);
                         }
 
-                        Thread.Sleep(1);
+                        await Task.Delay(1);
                     }
 
                 }
@@ -1718,7 +1723,7 @@ namespace DipesLinkDeviceTransfer
             //Printed code, Camera Data (Image, Point Focus), Checked Result
             _CTS_SendData = new();
             var tokenData = _CTS_SendData.Token;
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 try
                 {
@@ -1745,22 +1750,28 @@ namespace DipesLinkDeviceTransfer
                             //Detect Model Data
                             if (_QueueCheckedResultForUpdateUI.TryDequeue(out DetectModel? detectModel)) // Detect model heavy size, So we will use Task
                             {
-                                _ = Task.Run(() =>
-                                {
-                                    var detectModelBytes = DataConverter.ToByteArray(detectModel);
-                                    MemoryTransfer.SendDetectModelToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, detectModelBytes);
-                                });
+                                //  SharedFunctions.PrintConsoleMessage($"_QueueCheckedResultForUpdateUI: " + _QueueCheckedResultForUpdateUI.Count().ToString());
+
+                                   var detectModelBytes = DataConverter.ToByteArray(detectModel);
+                                 //  SharedFunctions.PrintConsoleMessage(detectModelBytes.Length.ToString());
+                                   MemoryTransfer.SendDetectModelToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, detectModelBytes);
                             }
 
                             // Current Checked Result
                             if (_QueueCheckedResult.TryDequeue(out string[]? checkedResult))
                             {
-                                var checkedResultBytes = DataConverter.ToByteArray(checkedResult);
-                                MemoryTransfer.SendCheckedResultRawToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, checkedResultBytes);
+                                // SharedFunctions.PrintConsoleMessage($"_QueueCheckedResult: " + _QueueCheckedResult.Count().ToString());
+                                //_ = Task.Run(() =>
+                                //{
+                                    var checkedResultBytes = DataConverter.ToByteArray(checkedResult);
+                                    MemoryTransfer.SendCheckedResultRawToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, checkedResultBytes);
+                                //}); ;
+                                    
+                               
                             }
                         }
                         catch (Exception) { }
-                        Thread.Sleep(1);
+                        await Task.Delay(1);
                     }
                 }
                 catch (OperationCanceledException)
@@ -1776,39 +1787,42 @@ namespace DipesLinkDeviceTransfer
 
         private CancellationTokenSource? _VirtualCTS;
 
-        void StartAllThreadForTesting()
+        private void StartAllThreadForTesting()
         {
-            SharedValues.OperStatus = OperationStatus.Processing;
-
-            // Only work when camera disconection
-            //if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
-            //{
-                VirtualTestAsync();
-          //  }
-            SaveJobChangedSettings(SharedValues.SelectedJob);
-
-            SendCompleteDataToUIAsync();
-
-            CompareAsync();
-
-            ExportImagesToFileAsync();
-
-            UpdateUICheckedResultAsync();
-
-            ExportCheckedResultToFileAsync();
-
-            if (SharedValues.SelectedJob.CompareType == CompareType.Database)
+            try
             {
-                UpdateUIPrintedResponseAsync();
-                ExportPrintedResponseToFileAsync();
+                if (SharedValues.SelectedJob is null)
+                {
+                    SharedFunctions.PrintConsoleMessage("Job Not Found !"); return;
+                }
+
+                SharedValues.OperStatus = OperationStatus.Processing;
+                SimulationPerformanceTestAsync();
+                SaveJobChangedSettings(SharedValues.SelectedJob);
+                SendCompleteDataToUIAsync();
+                CompareAsync();
+                ExportImagesToFileAsync();
+                UpdateUICheckedResultAsync();
+                ExportCheckedResultToFileAsync();
+                if (SharedValues.SelectedJob.CompareType == CompareType.Database)
+                {
+                    UpdateUIPrintedResponseAsync();
+                    ExportPrintedResponseToFileAsync();
+                }
             }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+           
         }
-        public async void VirtualTestAsync()
+
+        public async void SimulationPerformanceTestAsync()
         {
             _VirtualCTS = new CancellationTokenSource();
             var token = _VirtualCTS.Token;
 
-            await Task.Run(() => 
+            await Task.Run(async () => 
             {
                 var codes = new List<string[]>();
                 lock (_SyncObjCodeList)
@@ -1835,17 +1849,18 @@ namespace DipesLinkDeviceTransfer
                             Text = "RSFP;1/101;DATA;"
                         };
                         podDataModel.Text += string.Join(";", codeModel.Take(codeModel.Length - 1).Skip(1));
+                        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                        string imageBytespath= System.IO.Path.Combine(currentDirectory, "Resources", "ImageBytes.bin");
+                        var imageBytes =  SharedFunctions.ReadByteArrayFromFile(imageBytespath);
 
-                       // Bitmap bmp = new(1024, 1024);
                         DetectModel detectModel = new()
                         {
-                        //    Image = bmp,
+                            ImageBytes = imageBytes,
                             Text = SharedFunctions.GetCompareDataByPODFormat(codeModel, SharedValues.SelectedJob.PODFormat)
                         };
-
                         _QueueBufferPrinterReceivedData.Enqueue(podDataModel);
-                     //   _QueueBufferCameraReceivedData.Enqueue(detectModel);
-                        Thread.Sleep(50);
+                        _QueueBufferCameraReceivedData.Enqueue(detectModel);
+                        await Task.Delay(50);
                     }
                 }
                 catch (OperationCanceledException)

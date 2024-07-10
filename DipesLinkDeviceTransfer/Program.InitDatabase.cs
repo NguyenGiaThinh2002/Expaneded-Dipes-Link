@@ -74,19 +74,19 @@ namespace DipesLinkDeviceTransfer
                         }
                         else
                         {
-                            SharedFunctions.PrintDebugMessage("Not found this waiting data !");
+                            SharedFunctions.PrintConsoleMessage("Not found this waiting data !");
                         }
                     }
                     else
                     {
-                        SharedFunctions.PrintDebugMessage("Not found database list !");
+                        SharedFunctions.PrintConsoleMessage("Not found database list !");
                     }
 
                     // Notify input database is duplicate
                     if (_NumberOfDuplicate > 0)
                     {
                         NotificationProcess(NotifyType.DuplicateData);
-                        SharedFunctions.PrintDebugMessage($"Database Duplicate: {_NumberOfDuplicate} row");
+                        SharedFunctions.PrintConsoleMessage($"Database Duplicate: {_NumberOfDuplicate} row");
                     }
                 }
             }

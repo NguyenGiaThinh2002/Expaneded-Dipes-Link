@@ -3,6 +3,7 @@ using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -35,6 +36,11 @@ namespace DipesLink.Views.Extension
             }
         }
 
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(50);
+        private readonly List<CheckedResultModel> _batchUpdateList = new();
+        private readonly object _lock = new();
+        private DateTime _lastUpdateTime = DateTime.MinValue;
+
         #endregion End Declarations 
 
         #region Functionals
@@ -55,42 +61,6 @@ namespace DipesLink.Views.Extension
             CheckedList = new ObservableCollection<CheckedResultModel>(list.Select(data => new CheckedResultModel(data)));
             GetStatistic();
         }
-
-        //public DataTable GetDataTableDB()
-        //{
-        //    string[] columnNames = new string[5] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" }; // Default header col
-        //    var dataTable = new DataTable();
-        //    var list = CheckedList?.ToList();
-        //    if (list == null) return dataTable;
-
-        //    try
-        //    {
-        //            // Add Header columns
-        //            foreach (var columnName in columnNames)
-        //            {
-        //                dataTable.Columns.Add(columnName);
-        //            }
-
-        //            // Add rows
-        //            foreach (CheckedResultModel array in list)
-        //            {
-        //                DataRow row = dataTable.NewRow();
-
-        //                row["Index"] = array.Index != null ? array.Index : DBNull.Value;
-        //                row["ResultData"] = array.ResultData != null ? array.ResultData : DBNull.Value;
-        //                row["Result"] = array.Result != null ? array.Result : DBNull.Value;
-        //                row["ProcessingTime"] = array.ProcessingTime != null ? array.ProcessingTime : DBNull.Value;
-        //                row["DateTime"] = array.DateTime != null ? array.DateTime : DBNull.Value;
-
-        //                dataTable.Rows.Add(row);
-        //            }
-        //        return dataTable;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return dataTable;
-        //    }
-        //}
 
         public async Task<DataTable> GetDataTableDBAsync()
         {
@@ -131,7 +101,7 @@ namespace DipesLink.Views.Extension
             });
         }
 
-        public void CreateDataTemplate(DataGrid dataGrid)
+        public static void CreateDataTemplate(DataGrid dataGrid)
         {
             dataGrid.Columns.Clear();
             var properties = typeof(CheckedResultModel).GetProperties(); // get all properties of CheckedResultModel
@@ -171,12 +141,39 @@ namespace DipesLink.Views.Extension
             }
         }
 
-        public void AddNewData(string[] newData)
+        public async void AddNewData(string[] newData)
         {
             var data = new CheckedResultModel(newData);
-            CheckedList?.Add(data);
-            UpdateDisplayedData(data);
-            GetStatistic();
+            lock (_lock)
+            {
+                _batchUpdateList.Add(data);
+            }
+
+            await Application.Current.Dispatcher.InvokeAsync(() => //Batch Update and Throttle Updates 50ms
+            {
+                var now = DateTime.UtcNow;
+                if (now - _lastUpdateTime < _updateInterval)
+                {
+                    return;
+                }
+                _lastUpdateTime = now;
+
+                List<CheckedResultModel> updates;
+
+                lock (_lock)
+                {
+                    updates = new List<CheckedResultModel>(_batchUpdateList);
+                    _batchUpdateList.Clear();
+                }
+
+                foreach (var update in updates)
+                {
+                    CheckedList?.Add(update);
+                    UpdateDisplayedData(update);
+                }
+
+                GetStatistic();
+            });
         }
 
         public void TakeFirtloadCollection()
@@ -194,15 +191,19 @@ namespace DipesLink.Views.Extension
 
         public void UpdateDisplayedData(CheckedResultModel data)
         {
-            if (CheckedList != null)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                DisplayList?.Insert(0, data);
-                while (DisplayList?.Count > 100)
+                if (CheckedList != null)
                 {
-                    DisplayList.RemoveAt(DisplayList.Count - 1);
+                    DisplayList?.Insert(0, data);
+                    while (DisplayList?.Count > 100)
+                    {
+                        DisplayList.RemoveAt(DisplayList.Count - 1);
+                    }
                 }
-            }
+            });
         }
+
 
         private bool disposedValue = false;
         protected virtual void Dispose(bool disposing)
@@ -228,14 +229,11 @@ namespace DipesLink.Views.Extension
                 disposedValue = true;
             }
         }
-
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-
         #endregion
     }
 }

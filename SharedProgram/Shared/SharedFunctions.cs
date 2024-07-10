@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Media.Imaging;
 using System.Xml;
+using System.Xml.Linq;
 using static SharedProgram.DataTypes.CommonDataType;
 
 namespace SharedProgram.Shared
@@ -284,11 +285,15 @@ namespace SharedProgram.Shared
             writer.Write(content);
         }
 
-        public static void PrintDebugMessage(string message)
+        public static void PrintConsoleMessage(string message)
         {
 #if DEBUG
             Console.WriteLine(message);
 #endif
+        }
+        public static void PrintDebugMessage(string message)
+        {
+            Debug.WriteLine(message);
         }
 
         public static List<string[]> InitDatabaseWithStatus(string? csvPath)
@@ -470,10 +475,46 @@ namespace SharedProgram.Shared
             }
             catch (Exception ex)
             {
-                PrintDebugMessage(ex.Message);
+                PrintConsoleMessage(ex.Message);
                 return false;
             }
 
+        }
+
+        public static byte[] ReadByteArrayFromFile(string filePath)
+        {
+            try
+            {
+                return File.ReadAllBytes(filePath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading byte array from file: {ex.Message}");
+                return null;
+            }
+        }
+       public  static void SaveByteArrayToFile(string filePath, byte[] byteArray)
+        {
+            try
+            {
+                File.WriteAllBytes(filePath, byteArray);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving byte array to file: {ex.Message}");
+            }
+        }
+        private string? GetResultFromXmlString(string? xmlString)
+        {
+            if (xmlString == null) return null;
+            XDocument xmlDoc = XDocument.Parse(xmlString);
+            XNamespace ns = "http://www.w3.org/2000/svg"; // For Sgv Format namespace
+            IEnumerable<XElement> polygons = xmlDoc
+                        .Descendants(ns + "polygon")
+                        .Where(p => (string?)p
+                        .Attribute("class") == "result");
+            string? pointsValue = polygons.Select(x => x.Attribute("points"))?.FirstOrDefault()?.Value.ToString(); // Get Points value
+            return pointsValue;
         }
     }
 }

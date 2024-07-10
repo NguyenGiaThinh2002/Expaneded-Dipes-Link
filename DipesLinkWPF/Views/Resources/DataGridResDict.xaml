@@ -59,6 +59,8 @@
         <Setter Property="VerticalGridLinesBrush" Value="#D3D3D3" />
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
         <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+        <!--<Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>-->
         <Setter Property="RowHeight" Value="30" />
 
         <Setter Property="Template">
