@@ -1,4 +1,5 @@
 ﻿using Cloudtoid.Interprocess;
+using SharedProgram.Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
@@ -50,17 +51,17 @@ namespace IPCSharedMemory
         {
             _ctsThreadListenData = new CancellationTokenSource();
             var token = _ctsThreadListenData.Token;
-            Task.Factory.StartNew(() =>
+           Task.Run(async () =>
             {
                 try
                 {
                     while (!token.IsCancellationRequested)
                     {
-                        if (_Subscriber.TryDequeue(default, out ReadOnlyMemory<byte> message) && message.Length > 0)
+                        while(_Subscriber.TryDequeue(default, out ReadOnlyMemory<byte> message) && message.Length > 0)
                         {
-                            MessageQueue.Enqueue((byte[])message.ToArray().Clone());
+                          await Task.Run(()=>  MessageQueue.Enqueue((byte[])message.ToArray().Clone()));
                         }
-                        Thread.Sleep(1);  
+                        await Task.Delay(1);  
                     }
                 }
                 catch (OperationCanceledException)
@@ -71,7 +72,7 @@ namespace IPCSharedMemory
                 {
                     Debug.WriteLine("Error in IPC Listen Data: " + ex.Message);
                 }
-            }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            });
         }
 
 

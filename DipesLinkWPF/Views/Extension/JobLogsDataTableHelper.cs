@@ -198,12 +198,12 @@ namespace DipesLink.Views.Extension
 
         public async Task ProcessMiniPageAsync(DataGrid dataGrid, DataTable dataTable)
         {
-            Paginator = new Paginator(dataTable);
+         ///   Paginator = new Paginator(dataTable);
             if (Paginator == null) return;
             DataTable? pageTable = null;
             try
             {
-                pageTable = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage));
+              //  pageTable = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage));
 
                 foreach (DataColumn column in pageTable.Columns)
                 {
@@ -262,7 +262,7 @@ namespace DipesLink.Views.Extension
                 else Paginator.CurrentPage = customPage - 1;
                 try
                 {
-                    _miniDataTable = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage)); // Load mini datatable by current page
+                  //  _miniDataTable = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage)); // Load mini datatable by current page
                     if (_miniDataTable != null)
                     {
                         Interlocked.Exchange(ref NumberItemInCurPage, _miniDataTable.Rows.Count);

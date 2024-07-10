@@ -2,10 +2,12 @@
 using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
+using SharedProgram.Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Markup;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -16,39 +18,39 @@ namespace DipesLink.Views.UserControls.MainUc
     {
 
         PrintingDataTableHelper _printingDataTableHelper = new();
-       
+
         JobOverview? _currentJob;
         ConcurrentQueue<string[]> _queueCheckedCode = new();
         private CheckedObserHelper _checkedObserHelper = new();
         private ConcurrentQueue<string[]> _queuePrintedCode = new();
         private int count = 0;
         private CancellationTokenSource ctsGetPrintedCode = new();
-       // public static bool isAddbutton = false;
+        // public static bool isAddbutton = false;
         public JobDetails()
         {
             InitializeComponent();
             Loaded += StationDetailUc_Loaded;
-            ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler; 
+            ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
             InitValues();
-            Task.Run(() => { TaskAddDataAsync(); });
-            Task.Run(()=> { TaskChangePrintStatusAsync(); });
+            TaskAddDataAsync();
+            TaskChangePrintStatusAsync();
         }
 
         private void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
         {
             var selectedIndex = (int)sender;
-            if (selectedIndex == 0 || selectedIndex ==1)
+            if (selectedIndex == 0 || selectedIndex == 1)
             {
                 // sự kiện này giúp vào EventRegister bằng sự kiện ListBoxMenu change thay vì Loaded
                 EventRegister();
             }
-           
+
         }
 
-        private void OnChangeJobHandler(object? sender, int jobIndex) 
+        private void OnChangeJobHandler(object? sender, int jobIndex)
         {
-            if(_currentJob is not null && _currentJob.Index == jobIndex)
+            if (_currentJob is not null && _currentJob.Index == jobIndex)
             {
                 Debug.WriteLine($"Clear data of Job: {jobIndex}");
                 _printingDataTableHelper?.Dispose(); // Release DataTable Helper for Printing
@@ -56,20 +58,20 @@ namespace DipesLink.Views.UserControls.MainUc
 
                 InitValues();
 
-                DataGridDB.ItemsSource=null; // Clear Datagrid printed
-                DataGridDB.Columns.Clear(); 
+                DataGridDB.ItemsSource = null; // Clear Datagrid printed
+                DataGridDB.Columns.Clear();
 
-                DataGridResult.ItemsSource=null; // Clear Datagrid checked
+                DataGridResult.ItemsSource = null; // Clear Datagrid checked
                 DataGridResult.Columns.Clear();
 
-                if(sender is not null && (string)sender == "ButtonAddJob")
+                if (sender is not null && (string)sender == "ButtonAddJob")
                 {
                     ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
                 }
-                    
+
 
             }
-            
+
         }
 
         public void InitValues()
@@ -92,9 +94,9 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private async Task PerformLoadDbAfterDelay()
         {
-           await Task.Delay(10); // waiting for 3s connection completed
+            await Task.Delay(10); // waiting for 3s connection completed
             _currentJob?.RaiseLoadDb(_currentJob.Index);
-            
+
         }
 
         public void EventRegister()
@@ -120,14 +122,15 @@ namespace DipesLink.Views.UserControls.MainUc
                     {
                         if (_currentJob.IsShowLoadingDB == Visibility.Collapsed)
                         {
-                              ViewModelSharedEvents.OnEnableUIChangeHandler(_currentJob.Index,true);
+                            ViewModelSharedEvents.OnEnableUIChangeHandler(_currentJob.Index, true);
                         }
                     }
                 }
-                else {
-                    
+                else
+                {
+
                 }
-              
+
             }
             catch (Exception) { }
         }
@@ -171,6 +174,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         #region DATAGRID FOR DATABASE
 
+        PrintObserHelper _PrintObserHelper;
         private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e) // sự kiện báo load xong database ở UI được gửi từ device transfer
         {
             try
@@ -179,8 +183,17 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     if (sender is List<(List<string[]>, int)> dbList)  // Item 1: db, item 2: current page
                     {
-                        await _printingDataTableHelper.InitDatabaseAsync(dbList.FirstOrDefault().Item1, DataGridDB, dbList.FirstOrDefault().Item2, CurrentViewModel<JobOverview>());
-                        if (_currentJob != null) _currentJob.PrintedDataNumber = _printingDataTableHelper.PrintedNumber.ToString(); // Update UI First time
+                        var dataList = dbList.FirstOrDefault().Item1;
+                        var currentPage = dbList.FirstOrDefault().Item2;
+                        _PrintObserHelper = new(dataList, currentPage, DataGridDB);
+                       
+                       // DataGridDB.ItemsSource = _PrintObserHelper.PrintList;
+
+                        CurrentViewModel<JobOverview>().IsShowLoadingDB = Visibility.Collapsed;
+                        ViewModelSharedEvents.OnEnableUIChangeHandler(CurrentViewModel<JobOverview>().Index, true);
+                        ViewModelSharedEvents.OnDataTableLoadingHandler();
+                        //await _printingDataTableHelper.InitDatabaseAsync(dbList.FirstOrDefault().Item1, DataGridDB, dbList.FirstOrDefault().Item2, CurrentViewModel<JobOverview>());
+                        // if (_currentJob != null) _currentJob.PrintedDataNumber = _printingDataTableHelper.PrintedNumber.ToString(); // Update UI First time
                     }
                 });
             }
@@ -188,42 +201,42 @@ namespace DipesLink.Views.UserControls.MainUc
             {
                 MessageBox.Show(ex.Message, "");
             }
-            
+
         }
 
-        private void Shared_OnChangePrintedCode(object? sender, EventArgs e)
+        private async void Shared_OnChangePrintedCode(object? sender, EventArgs e)
         {
             if (sender is string[] printedCode)
             {
-                _queuePrintedCode.Enqueue(printedCode);
+                await Task.Run(() =>_queuePrintedCode.Enqueue(printedCode));
             }
         }
 
-       
+
         private async void TaskChangePrintStatusAsync()
         {
-            try
+            await Task.Run(async () =>
             {
-                while (true)
+                try
                 {
-                    if (ctsGetPrintedCode.IsCancellationRequested && _queuePrintedCode.IsEmpty)
+                    while (true)
                     {
-                        ctsGetPrintedCode.Token.ThrowIfCancellationRequested();
-                    }
-                    if (_queuePrintedCode.TryDequeue(out var code))
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>  //Update UI Flow
+                        if (ctsGetPrintedCode.IsCancellationRequested && _queuePrintedCode.IsEmpty)
                         {
-                            _printingDataTableHelper?.ChangeStatusOnDataGrid(code, CurrentViewModel<JobOverview>(), DataGridDB);
-                        });
+                            ctsGetPrintedCode.Token.ThrowIfCancellationRequested();
+                        }
+                        while (_queuePrintedCode.TryDequeue(out var code))
+                        {
+                            _PrintObserHelper.CheckAndUpdateStatusAsync(code);
+                        }
+                        await Task.Delay(1);
                     }
-                    await Task.Delay(1);
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                Debug.WriteLine("The task getting printed is stopped !");
-            }
+                catch (OperationCanceledException)
+                {
+                    Debug.WriteLine("The task getting printed is stopped !");
+                }
+            });
         }
 
         #endregion DATAGRID FOR AFTER PRODUCTION
@@ -239,7 +252,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     DataGridResult.AutoGenerateColumns = false;
                     _checkedObserHelper.ConvertListToObservableCol(listChecked);
-                    _checkedObserHelper.CreateDataTemplate(DataGridResult);
+                    CheckedObserHelper.CreateDataTemplate(DataGridResult);
                     _checkedObserHelper.TakeFirtloadCollection();
                     DataGridResult.ItemsSource = _checkedObserHelper.DisplayList;
                     UpdateCheckedNumber();
@@ -259,43 +272,46 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void Shared_OnChangeCheckedCode(object? sender, EventArgs e)
+        private async void Shared_OnChangeCheckedCode(object? sender, EventArgs e)
         {
             if (sender is string[] checkedCode && checkedCode != null)
             {
-                _queueCheckedCode.Enqueue(checkedCode);
+                await Task.Run(() =>
+                {
+                    _queueCheckedCode.Enqueue(checkedCode);
+               //     SharedFunctions.PrintDebugMessage($"checked code: " + checkedCode[1].ToString());
+                });
             }
         }
 
         private void TaskAddDataAsync()
         {
-            Application.Current?.Dispatcher.Invoke(async () =>
+            Task.Run(async () =>
             {
                 while (true)
                 {
                     try
                     {
-                        if (_queueCheckedCode.TryDequeue(out string[]? result))
+                        while (_queueCheckedCode.TryDequeue(out var result))
                         {
-                            if (result != null)
-                            {
-                                _checkedObserHelper.AddNewData(result);
-                                UpdateCheckedNumber();
-                            }
+                          await Task.Run(() => _checkedObserHelper.AddNewData(result));
+                          UpdateCheckedNumber();
                         }
                     }
                     catch (Exception) { }
                     await Task.Delay(1);
                 }
             });
-
         }
 
-        private void UpdateCheckedNumber()
+        private async void UpdateCheckedNumber()
         {
-            TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
-            TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
-            TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
+           await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
+                TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
+                TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
+            });
         }
 
 
@@ -306,11 +322,11 @@ namespace DipesLink.Views.UserControls.MainUc
             try
             {
                 if (_currentJob == null) return;
-             
+
                 JobLogsWindow jobLogsWindow = new(_checkedObserHelper)
                 {
                     DataContext = DataContext as JobOverview,
-                   // CheckedDataTable = _checkedObserHelper?.GetDataTableDB().Copy(),
+                    // CheckedDataTable = _checkedObserHelper?.GetDataTableDB().Copy(),
                     Num_TotalChecked = _currentJob.TotalRecDb
                 };
 
@@ -319,7 +335,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     jobLogsWindow.Num_Printed = printed;
                 }
 
-        
+
                 if (int.TryParse(TextBlockTotalChecked.Text, out int totalChecked))
                 {
                     jobLogsWindow.Num_Verified = totalChecked;
@@ -341,16 +357,16 @@ namespace DipesLink.Views.UserControls.MainUc
             try
             {
                 if (_currentJob == null) return;
-              
-                    PrintedLogsWindow printedLogsWindow = new(_currentJob);
-                    printedLogsWindow.ShowDialog();
-              
-              
+
+                PrintedLogsWindow printedLogsWindow = new(_currentJob);
+                printedLogsWindow.ShowDialog();
+
+
             }
             catch (Exception)
             {
             }
         }
-       
+
     }
 }

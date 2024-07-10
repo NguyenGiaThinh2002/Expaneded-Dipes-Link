@@ -12,12 +12,12 @@ namespace SharedProgram.Models
             set { _index = value; }
         }
 
-        private byte[]? _imageData;
-
-        public byte[]? ImageData
+        private byte[]? _imageBytes;
+       //  [JsonIgnore]
+        public byte[]? ImageBytes
         {
-            get { return _imageData; }
-            set { _imageData = value; }
+            get { return _imageBytes; }
+            set { _imageBytes = value; }
         }
 
         private string? _imagePolyRes;
