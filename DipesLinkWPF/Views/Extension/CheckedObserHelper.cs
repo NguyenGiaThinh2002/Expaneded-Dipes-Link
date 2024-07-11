@@ -3,7 +3,6 @@ using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -171,7 +170,6 @@ namespace DipesLink.Views.Extension
                     CheckedList?.Add(update);
                     UpdateDisplayedData(update);
                 }
-
                 GetStatistic();
             });
         }
@@ -199,6 +197,7 @@ namespace DipesLink.Views.Extension
                     while (DisplayList?.Count > 100)
                     {
                         DisplayList.RemoveAt(DisplayList.Count - 1);
+                        Thread.Sleep(1);
                     }
                 }
             });
