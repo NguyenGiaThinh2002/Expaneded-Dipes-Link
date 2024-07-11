@@ -1,28 +1,30 @@
 ﻿using DipesLink.Models;
 using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace DipesLink.Views.Extension
 {
+
     public class CheckedObserHelper : ViewModelBase, IDisposable
     {
-        #region Declarations    
-
         public int TotalChecked { get; set; }
 
         public int TotalPassed { get; set; }
 
         public int TotalFailed { get; set; }
 
-        public ObservableCollection<CheckedResultModel>? CheckedList { get; set; } = new();
+        public ObservableCollection<CheckedResultModel> CheckedList { get; set; } = new();
 
-        private ObservableCollection<CheckedResultModel>? _DisplayList = new();
-        public ObservableCollection<CheckedResultModel>? DisplayList
+        private ObservableCollection<CheckedResultModel> _DisplayList = new();
+
+        public ObservableCollection<CheckedResultModel> DisplayList
         {
             get { return _DisplayList; }
             set
@@ -35,18 +37,33 @@ namespace DipesLink.Views.Extension
             }
         }
 
-        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(50);
-        private readonly List<CheckedResultModel> _batchUpdateList = new();
-        private readonly object _lock = new();
-        private DateTime _lastUpdateTime = DateTime.MinValue;
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(2000);
 
-        #endregion End Declarations 
+        private DispatcherTimer _updateTimer;
 
-        #region Functionals
+        private readonly ConcurrentQueue<CheckedResultModel> _batchUpdateQueue = new();
+
+        private bool disposedValue = false;
+
+        public CheckedObserHelper()
+        {
+            _updateTimer = InitializeDispatcherTimer();
+        }
+
+        private DispatcherTimer InitializeDispatcherTimer()
+        {
+            var dispatcherTimer = new DispatcherTimer
+            {
+                Interval = _updateInterval
+            };
+            dispatcherTimer.Tick += (sender, args) => ProcessBatchUpdates();
+            dispatcherTimer.Start();
+            return dispatcherTimer;
+        }
+
         private void GetStatistic()
         {
             if (CheckedList == null) return;
-            //Get Number Checked
             TotalChecked = CheckedList.Count;
             TotalPassed = CheckedList.Count(x => x.Result == "Valid");
             if (TotalChecked >= TotalPassed)
@@ -57,7 +74,8 @@ namespace DipesLink.Views.Extension
 
         public void ConvertListToObservableCol(List<string[]> list)
         {
-            CheckedList = new ObservableCollection<CheckedResultModel>(list.Select(data => new CheckedResultModel(data)));
+            var newCheckedList = new ObservableCollection<CheckedResultModel>(list.Select(data => new CheckedResultModel(data)));
+            CheckedList = newCheckedList;
             GetStatistic();
         }
 
@@ -65,49 +83,37 @@ namespace DipesLink.Views.Extension
         {
             return await Task.Run(() =>
             {
-                string[] columnNames = new string[5] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" }; // Default header col
+                string[] columnNames = { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
                 var dataTable = new DataTable();
-                var list = CheckedList?.ToList();
-                if (list == null) return dataTable;
 
-                try
+                foreach (var columnName in columnNames)
                 {
-                    // Add Header columns
-                    foreach (var columnName in columnNames)
-                    {
-                        dataTable.Columns.Add(columnName);
-                    }
-
-                    // Add rows
-                    foreach (CheckedResultModel array in list)
-                    {
-                        DataRow row = dataTable.NewRow();
-
-                        row["Index"] = array.Index != null ? array.Index : DBNull.Value;
-                        row["ResultData"] = array.ResultData != null ? array.ResultData : DBNull.Value;
-                        row["Result"] = array.Result != null ? array.Result : DBNull.Value;
-                        row["ProcessingTime"] = array.ProcessingTime != null ? array.ProcessingTime : DBNull.Value;
-                        row["DateTime"] = array.DateTime != null ? array.DateTime : DBNull.Value;
-
-                        dataTable.Rows.Add(row);
-                    }
-                    return dataTable;
+                    dataTable.Columns.Add(columnName);
                 }
-                catch (Exception)
+
+                foreach (var array in CheckedList)
                 {
-                    return dataTable;
+                    var row = dataTable.NewRow();
+                    row["Index"] = array.Index != null ? array.Index : DBNull.Value;
+                    row["ResultData"] = array.ResultData != null ? array.ResultData : DBNull.Value;
+                    row["Result"] = array.Result != null ? array.Result : DBNull.Value;
+                    row["ProcessingTime"] = array.ProcessingTime != null ? array.ProcessingTime : DBNull.Value;
+                    row["DateTime"] = array.DateTime != null ? array.DateTime : DBNull.Value;
+                    dataTable.Rows.Add(row);
                 }
+
+                return dataTable;
             });
         }
 
         public static void CreateDataTemplate(DataGrid dataGrid)
         {
             dataGrid.Columns.Clear();
-            var properties = typeof(CheckedResultModel).GetProperties(); // get all properties of CheckedResultModel
+            var properties = typeof(CheckedResultModel).GetProperties();
 
             foreach (var property in properties)
             {
-                if (property.Name == "Result") // Create template for "Result" column
+                if (property.Name == "Result")
                 {
                     DataGridTemplateColumn templateColumn = new() { Header = property.Name, Width = DataGridLength.Auto };
                     DataTemplate template = new();
@@ -140,99 +146,70 @@ namespace DipesLink.Views.Extension
             }
         }
 
-        public async void AddNewData(string[] newData)
+        public void AddNewData(string[] newData)
         {
             var data = new CheckedResultModel(newData);
-            lock (_lock)
+            _batchUpdateQueue.Enqueue(data);
+        }
+
+        private void ProcessBatchUpdates()
+        {
+            if (_batchUpdateQueue.IsEmpty)
             {
-                _batchUpdateList.Add(data);
+                return;
+            }
+            var updates = new List<CheckedResultModel>();
+            while (_batchUpdateQueue.TryDequeue(out var data))
+            {
+                updates.Add(data);
             }
 
-            await Application.Current.Dispatcher.InvokeAsync(() => //Batch Update and Throttle Updates 50ms
+            Application.Current.Dispatcher.InvokeAsync(new Action(() =>
             {
-                var now = DateTime.UtcNow;
-                if (now - _lastUpdateTime < _updateInterval)
-                {
-                    return;
-                }
-                _lastUpdateTime = now;
-
-                List<CheckedResultModel> updates;
-
-                lock (_lock)
-                {
-                    updates = new List<CheckedResultModel>(_batchUpdateList);
-                    _batchUpdateList.Clear();
-                }
-
                 foreach (var update in updates)
                 {
-                    CheckedList?.Add(update);
-                    UpdateDisplayedData(update);
+                    CheckedList.Add(update);
+                    DisplayList.Insert(0, update);
+                    if (DisplayList.Count > 100)
+                    {
+                        DisplayList.RemoveAt(DisplayList.Count - 1);
+                    }
                 }
                 GetStatistic();
-            });
+            }));
         }
 
         public void TakeFirtloadCollection()
         {
-            var newestItems = CheckedList?.OrderByDescending(x => x.DateTime).Take(100).ToList();
-            if (DisplayList != null && newestItems != null)
+            var newestItems = CheckedList.OrderByDescending(x => x.DateTime).Take(100).ToList();
+            DisplayList.Clear();
+            foreach (var item in newestItems)
             {
-                DisplayList.Clear();
-                foreach (var item in newestItems)
-                {
-                    DisplayList.Add(item);
-                }
+                DisplayList.Add(item);
             }
         }
 
-        public void UpdateDisplayedData(CheckedResultModel data)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (CheckedList != null)
-                {
-                    DisplayList?.Insert(0, data);
-                    while (DisplayList?.Count > 100)
-                    {
-                        DisplayList.RemoveAt(DisplayList.Count - 1);
-                        Thread.Sleep(1);
-                    }
-                }
-            });
-        }
-
-
-        private bool disposedValue = false;
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    // Release managed resources here.
-                    CheckedList?.Clear();
-                    CheckedList = null;
-
-                    Application.Current.Dispatcher?.Invoke(() =>
+                    CheckedList.Clear();
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        DisplayList?.Clear();
-                        DisplayList = null;
-
+                        DisplayList.Clear();
                     });
                 }
-
-                // Release unmanaged resources here.
-
                 disposedValue = true;
             }
         }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
+   
     }
 }

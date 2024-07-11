@@ -17,7 +17,6 @@
     <ProjectReference Include="..\DipesLink_SDK\DipesLink_SDK_Printers\DipesLink_SDK_Printers.csproj" />
     <ProjectReference Include="..\DipesLink_SDK_PLC\DipesLink_SDK_PLC.csproj" />
     <ProjectReference Include="..\IPCSharedMemory\IPCSharedMemory.csproj" />
-    <ProjectReference Include="..\UILanguage\UILanguage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

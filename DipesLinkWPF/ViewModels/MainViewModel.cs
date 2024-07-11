@@ -347,9 +347,9 @@ namespace DipesLink.ViewModels
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
                     //SharedFunctions.PrintDebugMessage($"Queue print Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
-                    // await Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
-                    ProcessItem(result, stationIndex);
-                    await Task.Delay(1);
+                     await Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
+                    //ProcessItem(result, stationIndex);
+                   // await Task.Delay(1);
                 }
                 await Task.Delay(1);
             }
@@ -885,9 +885,9 @@ namespace DipesLink.ViewModels
                     while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                     {
                         //  SharedFunctions.PrintDebugMessage($"Queue Realtime Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
-                        //  await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
-                        ProcessItemDetectModel(result, stationIndex);
-                        await Task.Delay(1);
+                          await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
+                        //ProcessItemDetectModel(result, stationIndex);
+                       // await Task.Delay(1);
                     }
                     await Task.Delay(1);
                 }

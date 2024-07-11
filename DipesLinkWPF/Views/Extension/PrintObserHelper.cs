@@ -20,7 +20,7 @@ namespace DipesLink.Views.Extension
         public ObservableCollection<ExpandoObject>? PrintList { get => printList; set { printList = value; OnPropertyChanged(); } }
         private readonly Paginator paginator;
         readonly string[] columnNames = Array.Empty<string>();
-        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(50);
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(2000);
         private readonly List<string[]> _batchUpdateList = new();
         private ConcurrentQueue<string[]> _batchUpdateQueue = new();
         private readonly object _lock = new();
@@ -28,6 +28,7 @@ namespace DipesLink.Views.Extension
         private readonly Dictionary<string, (ExpandoObject Item, int PageNumber)> _dataLookup = new();
         private CancellationTokenSource cts_UpdateUI = new();
         private int _MaxDatabaseLine = 500;
+        private DispatcherTimer _dispatcherTimer;
 
         public PrintObserHelper(List<string[]> list, int currentPage, DataGrid dataGrid)
         {
@@ -39,10 +40,7 @@ namespace DipesLink.Views.Extension
             LoadPageAsync(currentPage);
             CreateDataLookup();
             _dispatcherTimer = InitializeDispatcherTimer();
-            // _batchUpdateQueue?.Clear();
-            // cts_UpdateUI?.Cancel();
 
-            // StartScrolling();
         }
 
         private void CreateDataLookup()
@@ -126,12 +124,9 @@ namespace DipesLink.Views.Extension
 
         public void CheckAndUpdateStatusAsync(string[] incomingData)
         {
-            lock (_lock)
-            {
-                _batchUpdateList.Add(incomingData);
-            }
+            _batchUpdateQueue.Enqueue(incomingData);
         }
-        private DispatcherTimer _dispatcherTimer;
+
         private DispatcherTimer InitializeDispatcherTimer()
         {
             var dispatcherTimer = new DispatcherTimer
@@ -142,27 +137,23 @@ namespace DipesLink.Views.Extension
             dispatcherTimer.Start();
             return dispatcherTimer;
         }
-     
 
         private void ProcessBatchUpdates()
         {
-            List<string[]> updates;
-
-            lock (_lock)
+            if (_batchUpdateQueue.IsEmpty)
             {
-                updates = new List<string[]>(_batchUpdateList);
-                _batchUpdateList.Clear();
+                return;
             }
-
+            var updates = new List<string[]>();
+            while (_batchUpdateQueue.TryDequeue(out var data))
+            {
+                updates.Add(data);
+            }
             foreach (var update in updates)
             {
                 ProcessDataAndDisplayAsync(update);
             }
         }
-
-
-   
-
 
         private void ProcessDataAndDisplayAsync(string[] incomingData)
         {
@@ -188,15 +179,14 @@ namespace DipesLink.Views.Extension
                     paginator.CurrentPage = curPageNumber;
                     LoadPageAsync(curPageNumber);
                 }
-               
-                   Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        ScrollToData(key);
-                    }, DispatcherPriority.Background);
+
+                Application.Current.Dispatcher.InvokeAsync(() =>
+                 {
+                     ScrollToData(key);
+                 }, DispatcherPriority.Background);
             }
         }
 
-    
         private void ScrollToData(string key)
         {
             foreach (var item in _dataGrid.Items)
@@ -204,12 +194,11 @@ namespace DipesLink.Views.Extension
                 if (item is IDictionary<string, object> modelDict && modelDict.ContainsKey(columnNames[0]) && modelDict[columnNames[0]].ToString() == key)
                 {
                     _dataGrid.ScrollIntoView(item);
-                   
+
                     break;
                 }
             }
         }
-
 
     }
 }

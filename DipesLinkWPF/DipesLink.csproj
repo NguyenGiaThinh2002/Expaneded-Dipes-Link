@@ -57,7 +57,6 @@
     <ProjectReference Include="..\DipesLink_SDK\DipesLink_SDK.Cameras\DipesLink_SDK_Cameras.csproj" />
     <ProjectReference Include="..\IPCSharedMemory\IPCSharedMemory.csproj" />
     <ProjectReference Include="..\RDBMS\RelationalDatabaseHelper.csproj" />
-    <ProjectReference Include="..\UILanguage\UILanguage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

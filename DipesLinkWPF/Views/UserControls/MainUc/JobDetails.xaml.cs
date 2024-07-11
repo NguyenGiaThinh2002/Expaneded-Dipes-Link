@@ -2,12 +2,11 @@
 using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
-using SharedProgram.Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Markup;
+using System.Windows.Input;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -17,18 +16,19 @@ namespace DipesLink.Views.UserControls.MainUc
     public partial class JobDetails : UserControl
     {
 
-        PrintingDataTableHelper _printingDataTableHelper = new();
-        JobOverview? _currentJob;
-        ConcurrentQueue<string[]> _queueCheckedCode = new();
-        private CheckedObserHelper? _checkedObserHelper = new();
-        private ConcurrentQueue<string[]>? _queuePrintedCode = new();
-        private CancellationTokenSource ctsGetPrintedCode = new();
-        PrintObserHelper? _PrintObserHelper;
+        private PrintingDataTableHelper _printingDataTableHelper = new();
+        private JobOverview? _currentJob;
+        private readonly ConcurrentQueue<string[]> _queueCheckedCode =new();
+        private CheckedObserHelper _checkedObserHelper = new();
+        private readonly ConcurrentQueue<string[]> _queuePrintedCode = new();
+        private readonly CancellationTokenSource _ctsGetPrintedCode = new();
+        private PrintObserHelper? _PrintObserHelper ;
 
         public JobDetails()
         {
             InitializeComponent();
             Loaded += StationDetailUc_Loaded;
+
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
             InitValues();
@@ -38,6 +38,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
         {
+            if (sender == null) return;
             var selectedIndex = (int)sender;
             if (selectedIndex == 0 || selectedIndex == 1)
             {
@@ -50,15 +51,14 @@ namespace DipesLink.Views.UserControls.MainUc
             if (_currentJob is not null && _currentJob.Index == jobIndex)
             {
                 Debug.WriteLine($"Clear data of Job: {jobIndex}");
-                _printingDataTableHelper?.Dispose(); // Release DataTable Helper for Printing
-                _printingDataTableHelper = new();  // Create new DataTable Helper for Printing
-
+                _printingDataTableHelper?.Dispose();
+                _printingDataTableHelper = new();
                 InitValues();
 
-                DataGridDB.ItemsSource = null; // Clear Datagrid printed
+                DataGridDB.ItemsSource = null;
                 DataGridDB.Columns.Clear();
 
-                DataGridResult.ItemsSource = null; // Clear Datagrid checked
+                DataGridResult.ItemsSource = null;
                 DataGridResult.Columns.Clear();
 
                 if (sender is not null && (string)sender == "ButtonAddJob")
@@ -77,11 +77,13 @@ namespace DipesLink.Views.UserControls.MainUc
 
         public async void StationDetailUc_Loaded(object sender, RoutedEventArgs e)
         {
+            
             EventRegister();
+            if (_currentJob == null) return;
             ViewModelSharedEvents.OnJobDetailChangeHandler(_currentJob.Index);
             if (!_currentJob.IsDBExist)
             {
-                Debug.WriteLine("Event load database was called: " + _currentJob.Index);
+                //  Debug.WriteLine("Event load database was called: " + _currentJob.Index);
                 await PerformLoadDbAfterDelay();
             }
         }
@@ -120,35 +122,8 @@ namespace DipesLink.Views.UserControls.MainUc
                         }
                     }
                 }
-                else
-                {
-
-                }
-
             }
             catch (Exception) { }
-        }
-
-
-        #region VIEWMODEL HANDLER
-
-        public void CallbackCommand(Action<MainViewModel> execute)
-        {
-            try
-            {
-                if (DataContext is MainViewModel model)
-                {
-                    execute?.Invoke(model);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch (Exception)
-            {
-                return;
-            }
         }
 
         private T? CurrentViewModel<T>() where T : class
@@ -163,19 +138,13 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-
-        #endregion VIEWMODEL HANDLER
-
-        #region DATAGRID FOR DATABASE
-
-        
-        private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e) // sự kiện báo load xong database ở UI được gửi từ device transfer
+        private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e)
         {
             try
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    if (sender is List<(List<string[]>, int)> dbList)  // Item 1: db, item 2: current page
+                    if (sender is List<(List<string[]>, int)> dbList)
                     {
                         var dataList = dbList.FirstOrDefault().Item1;
                         var currentPage = dbList.FirstOrDefault().Item2;
@@ -195,42 +164,6 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void Shared_OnChangePrintedCode(object? sender, EventArgs e)
-        {
-            if (sender is string[] printedCode)
-            {
-                _queuePrintedCode.Enqueue(printedCode);
-            }
-        }
-
-
-        private async Task TaskChangePrintStatusAsync()
-        {
-            try
-            {
-                while (true)
-                {
-                    if (ctsGetPrintedCode.IsCancellationRequested && _queuePrintedCode.IsEmpty)
-                    {
-                        ctsGetPrintedCode.Token.ThrowIfCancellationRequested();
-                    }
-                    while (_queuePrintedCode.TryDequeue(out var code))
-                    {
-                        _PrintObserHelper.CheckAndUpdateStatusAsync(code);
-                        await Task.Delay(1);
-                    }
-                    await Task.Delay(1);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-            }
-        }
-
-        #endregion DATAGRID FOR AFTER PRODUCTION
-
-        #region DATAGRID FOR CHECKED CODE
-
         private void Shared_OnLoadCompleteCheckedDatabase(object? sender, EventArgs e)
         {
             var listChecked = sender as List<string[]>;
@@ -249,14 +182,11 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void FirtLoadForChartPercent()
+        private void Shared_OnChangePrintedCode(object? sender, EventArgs e)
         {
-            if (_currentJob != null)
+            if (sender is string[] printedCode)
             {
-                _currentJob.TotalChecked = _checkedObserHelper.TotalChecked.ToString();
-                _currentJob.TotalPassed = _checkedObserHelper.TotalPassed.ToString();
-                _currentJob.TotalFailed = _checkedObserHelper.TotalFailed.ToString();
-                _currentJob.RaisePercentageChange(_currentJob.Index);
+                _queuePrintedCode?.Enqueue(printedCode);
             }
         }
 
@@ -268,34 +198,121 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
+        private async Task TaskChangePrintStatusAsync()
+        {
+            var tempDataList = new List<string[]>();
+            var batchSize = 50;
+            var batchDelay = 50;
+
+            while (true)
+            {
+                while (_queuePrintedCode.TryDequeue(out var result))
+                {
+                    tempDataList.Add(result);
+
+                    if (tempDataList.Count >= batchSize)
+                    {
+                        var tempData = new List<string[]>(tempDataList);
+                        tempDataList.Clear();
+
+                        await Task.Run(() =>
+                        {
+                            foreach (var data in tempData)
+                            {
+                                _PrintObserHelper?.CheckAndUpdateStatusAsync(data);
+                            }
+                        });
+                    }
+                    await Task.Delay(1);
+                }
+
+                if (tempDataList.Count > 0)
+                {
+                    var tempData = new List<string[]>(tempDataList);
+                    tempDataList.Clear();
+
+                    await Task.Run(() =>
+                    {
+                        foreach (var data in tempData)
+                        {
+                            _PrintObserHelper?.CheckAndUpdateStatusAsync(data);
+                        }
+                    });
+                }
+
+                await Task.Delay(batchDelay);
+            }
+
+        }
+
         private async Task TaskAddDataAsync()
         {
+            var tempDataList = new List<string[]>();
+            var batchSize = 50;
+            var batchDelay = 50;
+
             while (true)
             {
                 while (_queueCheckedCode.TryDequeue(out var result))
                 {
-                    _checkedObserHelper.AddNewData(result);
-                    UpdateCheckedNumber();
+                    tempDataList.Add(result);
+
+                    if (tempDataList.Count >= batchSize)
+                    {
+                        var tempData = new List<string[]>(tempDataList);
+                        tempDataList.Clear();
+
+                        await Task.Run(() =>
+                        {
+                            foreach (var data in tempData)
+                            {
+                                _checkedObserHelper?.AddNewData(data);
+                            }
+                        });
+                    }
                     await Task.Delay(1);
                 }
-                await Task.Delay(1);
+
+                if (tempDataList.Count > 0)
+                {
+                    var tempData = new List<string[]>(tempDataList);
+                    tempDataList.Clear();
+
+                    await Task.Run(() =>
+                    {
+                        foreach (var data in tempData)
+                        {
+                            _checkedObserHelper?.AddNewData(data);
+                        }
+                    });
+
+                    UpdateCheckedNumber();
+                }
+
+                await Task.Delay(batchDelay);
             }
+        }
+
+        private void FirtLoadForChartPercent()
+        {
+            if (_currentJob == null) return;
+            _currentJob.TotalChecked = _checkedObserHelper.TotalChecked.ToString();
+            _currentJob.TotalPassed = _checkedObserHelper.TotalPassed.ToString();
+            _currentJob.TotalFailed = _checkedObserHelper.TotalFailed.ToString();
+            _currentJob.RaisePercentageChange(_currentJob.Index);
         }
 
         private async void UpdateCheckedNumber()
         {
             await Application.Current.Dispatcher.InvokeAsync(() =>
-             {
-                 TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
-                 TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
-                 TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
-             });
+            {
+                TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
+                TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
+                TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
+            });
         }
 
-
-        #endregion DATAGRID FOR CHECKED CODE
-
-        private void ViewChekedResult_PreMouDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ViewChekedResult_PreMouDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
@@ -328,7 +345,7 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void PrintedData_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void PrintedData_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             try
             {

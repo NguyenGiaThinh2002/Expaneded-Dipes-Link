@@ -89,7 +89,10 @@ namespace DipesLink.Views.SubWindows
                         }
                     }
                 }
-
+                else
+                {
+                    CusMsgBox.Show("Username or password is incorrect !", "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                }
             }
             catch (Exception)
             {
