@@ -7,16 +7,12 @@ using DipesLink.Views.UserControls.MainUc;
 using IPCSharedMemory;
 using SharedProgram.Models;
 using SharedProgram.Shared;
-using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Text.Json;
 using System.Windows;
-using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Threading;
 using static DipesLink.Views.Enums.ViewEnums;
 using static IPCSharedMemory.Datatypes.Enums;
 using static SharedProgram.DataTypes.CommonDataType;
@@ -36,8 +32,7 @@ namespace DipesLink.ViewModels
             OnSomethingHappened?.Invoke(this, e);
         }
         #region SingletonInit
-        // Singleton init
-        // Singleton init
+
         private static MainViewModel? _instance;
         public static int StationNumber = 4;
         private bool _detectCamDisconnected;
@@ -77,9 +72,6 @@ namespace DipesLink.ViewModels
         private void InitInstanceIPC(int index)
         {
             listIPCUIToDevice1MB.Add(new(index, "UIToDeviceSharedMemory_DT", SharedValues.SIZE_1MB));
-            // _ipcDeviceToUISharedMemory_DT = new(JobIndex, "DeviceToUISharedMemory_DT", SharedValues.SIZE_1MB);
-            // _ipcUIToDeviceSharedMemory_DT = new(JobIndex, "UIToDeviceSharedMemory_DT", SharedValues.SIZE_1MB);
-
         }
 
         private void InitDir()
@@ -135,7 +127,7 @@ namespace DipesLink.ViewModels
 
         private void CreateMultiObjects(int i)
         {
-            // thinh
+   
             int deviceTransferIDProc = ViewModelSharedFunctions.InitDeviceTransfer(i);
             string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {i + 1}" : $"Station {i + 1}";
             JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = t }); // Job List Creation
@@ -355,7 +347,9 @@ namespace DipesLink.ViewModels
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
                     //SharedFunctions.PrintDebugMessage($"Queue print Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
-                    await  Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
+                    // await Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
+                    ProcessItem(result, stationIndex);
+                    await Task.Delay(1);
                 }
                 await Task.Delay(1);
             }
@@ -432,7 +426,7 @@ namespace DipesLink.ViewModels
                             catch (Exception) { }
                             break;
                         case (byte)SharedMemoryType.ControllerResponseMess:
-                             GetControllerMessageResponseAsync(stationIndex, result);
+                            GetControllerMessageResponseAsync(stationIndex, result);
                             break;
                         case (byte)SharedMemoryType.LoadingStatus:
                             ShowLoadingImage(stationIndex);
@@ -593,30 +587,30 @@ namespace DipesLink.ViewModels
                     if (!JobList[stationIndex].QueueReceivedNumberBytes.TryDequeue(out var resultReceived)) resultReceived = null;
                     if (!JobList[stationIndex].QueuePrintedNumberBytes.TryDequeue(out var resultPrinted)) resultPrinted = null;
 
-                   _ =  Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        string nullString = "\0\0\0\0\0\0\0";
-                        if (resultSent != null)
-                        {
-                            var numSent = Encoding.ASCII.GetString(resultSent);
-                            if (numSent != nullString)
-                                _JobList[stationIndex].SentDataNumber = numSent.Trim();
-                        }
+                    _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                     {
+                         string nullString = "\0\0\0\0\0\0\0";
+                         if (resultSent != null)
+                         {
+                             var numSent = Encoding.ASCII.GetString(resultSent);
+                             if (numSent != nullString)
+                                 _JobList[stationIndex].SentDataNumber = numSent.Trim();
+                         }
 
-                        if (resultReceived != null)
-                        {
-                            var numReceived = Encoding.ASCII.GetString(resultReceived);
-                            if (numReceived != nullString)
-                                _JobList[stationIndex].ReceivedDataNumber = numReceived.Trim();
-                        }
+                         if (resultReceived != null)
+                         {
+                             var numReceived = Encoding.ASCII.GetString(resultReceived);
+                             if (numReceived != nullString)
+                                 _JobList[stationIndex].ReceivedDataNumber = numReceived.Trim();
+                         }
 
-                        if (resultPrinted != null)
-                        {
-                            var numPrinted = Encoding.ASCII.GetString(resultPrinted);
-                            if (numPrinted != nullString)
-                                _JobList[stationIndex].PrintedDataNumber = numPrinted.Trim(); // todo: get old value
-                        }
-                    });
+                         if (resultPrinted != null)
+                         {
+                             var numPrinted = Encoding.ASCII.GetString(resultPrinted);
+                             if (numPrinted != nullString)
+                                 _JobList[stationIndex].PrintedDataNumber = numPrinted.Trim(); // todo: get old value
+                         }
+                     });
                 }
 
                 catch (Exception ex)
@@ -660,7 +654,7 @@ namespace DipesLink.ViewModels
         {
             while (true)
             {
-                while(JobList[stationIndex].QueueCurrentPrintedCode.TryDequeue(out byte[]? result))
+                while (JobList[stationIndex].QueueCurrentPrintedCode.TryDequeue(out byte[]? result))
                 {
                     try
                     {
@@ -674,6 +668,7 @@ namespace DipesLink.ViewModels
                     {
                         Debug.WriteLine("GetCurrentPrintedCodeAsync faild" + ex.Message);
                     }
+                    await Task.Delay(1);
                 }
                 await Task.Delay(1);
             }
@@ -890,7 +885,9 @@ namespace DipesLink.ViewModels
                     while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                     {
                         //  SharedFunctions.PrintDebugMessage($"Queue Realtime Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
-                        await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
+                        //  await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
+                        ProcessItemDetectModel(result, stationIndex);
+                        await Task.Delay(1);
                     }
                     await Task.Delay(1);
                 }
@@ -912,7 +909,7 @@ namespace DipesLink.ViewModels
                     {
                         // Camera detect model
                         case (byte)SharedMemoryType.DetectModel:
-                        //    DetectModel? dm = DataConverter.FromByteArray<DetectModel?>(result.Skip(3).ToArray());
+                            //    DetectModel? dm = DataConverter.FromByteArray<DetectModel?>(result.Skip(3).ToArray());
                             JobList[stationIndex].QueueCameraDataDetect.Enqueue(result.Skip(3).ToArray());
                             break;
 
@@ -950,12 +947,13 @@ namespace DipesLink.ViewModels
                     {
                         SharedFunctions.PrintDebugMessage("GetCheckedCodeAsync Error !");
                     }
+                    await Task.Delay(1);
 
                 }
                 await Task.Delay(1);
             }
         }
-      
+
 
         private async void GetCameraDataAsync(int stationIndex)
         {
@@ -968,7 +966,7 @@ namespace DipesLink.ViewModels
                         //  SharedFunctions.PrintDebugMessage($"QueueCameraDataDetect {stationIndex}: " + JobList[stationIndex].QueueCameraDataDetect.Count().ToString());
                         DetectModel? dm = DataConverter.FromByteArray<DetectModel>(result);
                         Image img = SharedFunctions.GetImageFromImageByte(dm?.ImageBytes); // Image Result
-                      //  SharedFunctions.SaveByteArrayToFile("byteArray.bin", dm?.ImageBytes);
+                                                                                           //  SharedFunctions.SaveByteArrayToFile("byteArray.bin", dm?.ImageBytes);
                         string? currentCode = dm?.Text;
                         long? processTime = dm?.CompareTime;
                         ComparisonResult? compareStatus = dm?.CompareResult;
@@ -986,6 +984,7 @@ namespace DipesLink.ViewModels
                     {
                         Debug.WriteLine("Detect Model Fail: " + ex.Message);
                     }
+                    await Task.Delay(1);
                 }
                 await Task.Delay(1);
             }

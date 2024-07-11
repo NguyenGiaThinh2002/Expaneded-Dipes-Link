@@ -59,7 +59,9 @@ namespace IPCSharedMemory
                     {
                         while(_Subscriber.TryDequeue(default, out ReadOnlyMemory<byte> message) && message.Length > 0)
                         {
-                          await Task.Run(()=>  MessageQueue.Enqueue((byte[])message.ToArray().Clone()));
+                            // await Task.Run(()=>  MessageQueue.Enqueue((byte[])message.ToArray().Clone()));
+                            MessageQueue.Enqueue((byte[])message.ToArray().Clone());
+                            await Task.Delay(1);
                         }
                         await Task.Delay(1);  
                     }

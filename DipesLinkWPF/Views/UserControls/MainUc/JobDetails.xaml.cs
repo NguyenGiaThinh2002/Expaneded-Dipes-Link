@@ -18,14 +18,13 @@ namespace DipesLink.Views.UserControls.MainUc
     {
 
         PrintingDataTableHelper _printingDataTableHelper = new();
-
         JobOverview? _currentJob;
         ConcurrentQueue<string[]> _queueCheckedCode = new();
-        private CheckedObserHelper _checkedObserHelper = new();
-        private ConcurrentQueue<string[]> _queuePrintedCode = new();
-        private int count = 0;
+        private CheckedObserHelper? _checkedObserHelper = new();
+        private ConcurrentQueue<string[]>? _queuePrintedCode = new();
         private CancellationTokenSource ctsGetPrintedCode = new();
-        // public static bool isAddbutton = false;
+        PrintObserHelper? _PrintObserHelper;
+
         public JobDetails()
         {
             InitializeComponent();
@@ -33,8 +32,8 @@ namespace DipesLink.Views.UserControls.MainUc
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
             InitValues();
-            TaskAddDataAsync();
-            TaskChangePrintStatusAsync();
+            Task.Run(TaskAddDataAsync);
+            Task.Run(TaskChangePrintStatusAsync);
         }
 
         private void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
@@ -42,10 +41,8 @@ namespace DipesLink.Views.UserControls.MainUc
             var selectedIndex = (int)sender;
             if (selectedIndex == 0 || selectedIndex == 1)
             {
-                // sự kiện này giúp vào EventRegister bằng sự kiện ListBoxMenu change thay vì Loaded
                 EventRegister();
             }
-
         }
 
         private void OnChangeJobHandler(object? sender, int jobIndex)
@@ -68,10 +65,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
                 }
-
-
             }
-
         }
 
         public void InitValues()
@@ -94,7 +88,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private async Task PerformLoadDbAfterDelay()
         {
-            await Task.Delay(10); // waiting for 3s connection completed
+            await Task.Delay(100);
             _currentJob?.RaiseLoadDb(_currentJob.Index);
 
         }
@@ -103,7 +97,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                // Mỗi khi vào một station detail khi chuyển tab station, thì xét xem nếu chưa tồn tại _current Job thì tạo mới
+
                 if (_currentJob == null)
                 {
                     _currentJob = CurrentViewModel<JobOverview>();
@@ -174,69 +168,63 @@ namespace DipesLink.Views.UserControls.MainUc
 
         #region DATAGRID FOR DATABASE
 
-        PrintObserHelper _PrintObserHelper;
+        
         private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e) // sự kiện báo load xong database ở UI được gửi từ device transfer
         {
             try
             {
-                Application.Current.Dispatcher.Invoke(async () =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (sender is List<(List<string[]>, int)> dbList)  // Item 1: db, item 2: current page
                     {
                         var dataList = dbList.FirstOrDefault().Item1;
                         var currentPage = dbList.FirstOrDefault().Item2;
                         _PrintObserHelper = new(dataList, currentPage, DataGridDB);
-                       
-                       // DataGridDB.ItemsSource = _PrintObserHelper.PrintList;
-
-                        CurrentViewModel<JobOverview>().IsShowLoadingDB = Visibility.Collapsed;
-                        ViewModelSharedEvents.OnEnableUIChangeHandler(CurrentViewModel<JobOverview>().Index, true);
+                        var vm = CurrentViewModel<JobOverview>();
+                        if (vm != null)
+                        {
+                            vm.IsShowLoadingDB = Visibility.Collapsed;
+                            ViewModelSharedEvents.OnEnableUIChangeHandler(vm.Index, true);
+                        }
                         ViewModelSharedEvents.OnDataTableLoadingHandler();
-                        //await _printingDataTableHelper.InitDatabaseAsync(dbList.FirstOrDefault().Item1, DataGridDB, dbList.FirstOrDefault().Item2, CurrentViewModel<JobOverview>());
-                        // if (_currentJob != null) _currentJob.PrintedDataNumber = _printingDataTableHelper.PrintedNumber.ToString(); // Update UI First time
                     }
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message, "");
             }
-
         }
 
-        private async void Shared_OnChangePrintedCode(object? sender, EventArgs e)
+        private void Shared_OnChangePrintedCode(object? sender, EventArgs e)
         {
             if (sender is string[] printedCode)
             {
-                await Task.Run(() =>_queuePrintedCode.Enqueue(printedCode));
+                _queuePrintedCode.Enqueue(printedCode);
             }
         }
 
 
-        private async void TaskChangePrintStatusAsync()
+        private async Task TaskChangePrintStatusAsync()
         {
-            await Task.Run(async () =>
+            try
             {
-                try
+                while (true)
                 {
-                    while (true)
+                    if (ctsGetPrintedCode.IsCancellationRequested && _queuePrintedCode.IsEmpty)
                     {
-                        if (ctsGetPrintedCode.IsCancellationRequested && _queuePrintedCode.IsEmpty)
-                        {
-                            ctsGetPrintedCode.Token.ThrowIfCancellationRequested();
-                        }
-                        while (_queuePrintedCode.TryDequeue(out var code))
-                        {
-                            _PrintObserHelper.CheckAndUpdateStatusAsync(code);
-                        }
+                        ctsGetPrintedCode.Token.ThrowIfCancellationRequested();
+                    }
+                    while (_queuePrintedCode.TryDequeue(out var code))
+                    {
+                        _PrintObserHelper.CheckAndUpdateStatusAsync(code);
                         await Task.Delay(1);
                     }
+                    await Task.Delay(1);
                 }
-                catch (OperationCanceledException)
-                {
-                    Debug.WriteLine("The task getting printed is stopped !");
-                }
-            });
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         #endregion DATAGRID FOR AFTER PRODUCTION
@@ -272,46 +260,36 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private async void Shared_OnChangeCheckedCode(object? sender, EventArgs e)
+        private void Shared_OnChangeCheckedCode(object? sender, EventArgs e)
         {
-            if (sender is string[] checkedCode && checkedCode != null)
+            if (sender is string[] checkedCode)
             {
-                await Task.Run(() =>
-                {
-                    _queueCheckedCode.Enqueue(checkedCode);
-               //     SharedFunctions.PrintDebugMessage($"checked code: " + checkedCode[1].ToString());
-                });
+                _queueCheckedCode.Enqueue(checkedCode);
             }
         }
 
-        private void TaskAddDataAsync()
+        private async Task TaskAddDataAsync()
         {
-            Task.Run(async () =>
+            while (true)
             {
-                while (true)
+                while (_queueCheckedCode.TryDequeue(out var result))
                 {
-                    try
-                    {
-                        while (_queueCheckedCode.TryDequeue(out var result))
-                        {
-                          await Task.Run(() => _checkedObserHelper.AddNewData(result));
-                          UpdateCheckedNumber();
-                        }
-                    }
-                    catch (Exception) { }
+                    _checkedObserHelper.AddNewData(result);
+                    UpdateCheckedNumber();
                     await Task.Delay(1);
                 }
-            });
+                await Task.Delay(1);
+            }
         }
 
         private async void UpdateCheckedNumber()
         {
-           await Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
-                TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
-                TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
-            });
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+             {
+                 TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
+                 TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
+                 TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
+             });
         }
 
 
@@ -326,7 +304,6 @@ namespace DipesLink.Views.UserControls.MainUc
                 JobLogsWindow jobLogsWindow = new(_checkedObserHelper)
                 {
                     DataContext = DataContext as JobOverview,
-                    // CheckedDataTable = _checkedObserHelper?.GetDataTableDB().Copy(),
                     Num_TotalChecked = _currentJob.TotalRecDb
                 };
 
@@ -334,7 +311,6 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     jobLogsWindow.Num_Printed = printed;
                 }
-
 
                 if (int.TryParse(TextBlockTotalChecked.Text, out int totalChecked))
                 {
@@ -357,11 +333,8 @@ namespace DipesLink.Views.UserControls.MainUc
             try
             {
                 if (_currentJob == null) return;
-
                 PrintedLogsWindow printedLogsWindow = new(_currentJob);
                 printedLogsWindow.ShowDialog();
-
-
             }
             catch (Exception)
             {
