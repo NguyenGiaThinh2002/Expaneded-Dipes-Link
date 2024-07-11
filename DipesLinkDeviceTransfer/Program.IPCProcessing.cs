@@ -160,7 +160,8 @@ namespace DipesLinkDeviceTransfer
                     case ActionButtonType.Start:
 
                         _isStopOrPauseAction = false;
-                        StartProcessAction(false); // Start without DB Load  
+                        StartAllThreadForTesting();
+                       // StartProcessAction(false); // Start without DB Load  
                         break;
                     case ActionButtonType.Pause: //Pause 
                         _isStopOrPauseAction = true;
@@ -175,7 +176,8 @@ namespace DipesLinkDeviceTransfer
                         _ = StopProcessAsync();
                         break;
                     case ActionButtonType.Trigger: // Trigger
-                        TriggerCamera();
+                                                   TriggerCamera();
+                        
                         break;
                     case ActionButtonType.ReloadTemplate: // Reload template
                         ObtainPrintProductTemplateList();
@@ -187,6 +189,7 @@ namespace DipesLinkDeviceTransfer
                         RePrintAsync();
                         break;
                     case ActionButtonType.ExportResult:
+                        //StartAllThreadForTesting();
                         await ExportResultAsync();
                         break;
                     default:
@@ -242,11 +245,11 @@ namespace DipesLinkDeviceTransfer
             {
                 if (_isLoading)
                 {
-                    SharedFunctions.PrintDebugMessage("Task loading DB is already running.");
+                    SharedFunctions.PrintConsoleMessage("Task loading DB is already running.");
                     return;
                 }
                 _isLoading = true;
-                SharedFunctions.PrintDebugMessage("Loading DB");
+                SharedFunctions.PrintConsoleMessage("Loading DB");
             }
             try
             {
@@ -280,14 +283,14 @@ namespace DipesLinkDeviceTransfer
             }
             catch (Exception ex) 
             { 
-                SharedFunctions.PrintDebugMessage(ex.Message); 
+                SharedFunctions.PrintConsoleMessage(ex.Message); 
             }
             finally
             {
                 lock (lockObject)
                 {
                     _isLoading = false; // done loading db flag
-                    SharedFunctions.PrintDebugMessage("Loading DB Completed !");
+                    SharedFunctions.PrintConsoleMessage("Loading DB Completed !");
                 }
             }
         }

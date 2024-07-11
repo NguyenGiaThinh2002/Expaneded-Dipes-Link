@@ -1,21 +1,22 @@
 ﻿using DipesLink.Extensions;
 using DipesLink.Languages;
 using DipesLink.Models;
-using DipesLink.Views;
 using DipesLink.Views.Extension;
 using DipesLink.Views.Models;
 using DipesLink.Views.UserControls.MainUc;
 using IPCSharedMemory;
 using SharedProgram.Models;
 using SharedProgram.Shared;
-using System;
-using System.Data;
+using System.Collections;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
-using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+using System.Windows.Threading;
 using static DipesLink.Views.Enums.ViewEnums;
 using static IPCSharedMemory.Datatypes.Enums;
 using static SharedProgram.DataTypes.CommonDataType;
@@ -59,7 +60,7 @@ namespace DipesLink.ViewModels
             InitJobConnectionSettings();
             InitStations(_NumberOfStation);
         }
-       
+
         private void EventRegister()
         {
             ViewModelSharedEvents.OnEnableUIChange += EnableUIChange;
@@ -71,7 +72,7 @@ namespace DipesLink.ViewModels
             UIEnableControlByLoadingDb((int)sender, isEnable);
         }
 
-        
+
 
         private void InitInstanceIPC(int index)
         {
@@ -117,17 +118,17 @@ namespace DipesLink.ViewModels
 
             Task.Run(() => ListenDetectModel(stationIndex));
 
-            Task.Run(() => GetOperationStatus(stationIndex));
+            Task.Run(() => GetOperationStatusAsync(stationIndex));
 
             Task.Run(() => GetStatisticsAsync(stationIndex));
 
-            Task.Run(() => DevicesStatusChange(stationIndex));
+            Task.Run(() => DevicesStatusChangeAsync(stationIndex));
 
             Task.Run(() => GetCurrentPrintedCodeAsync(stationIndex));
 
             Task.Run(() => GetCheckedCodeAsync(stationIndex));
 
-            Task.Run(() =>  GetCameraDataAsync(stationIndex));
+            Task.Run(() => GetCameraDataAsync(stationIndex));
 
             Task.Run(() => GetCheckedStatistics(stationIndex));
         }
@@ -146,9 +147,9 @@ namespace DipesLink.ViewModels
         public void InitTabStationUI(int stationIndex)
         {
             var userControl = new JobDetails() { DataContext = JobList[stationIndex] };
-       
+
             string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {stationIndex + 1}" : $"Station {stationIndex + 1}";
-            
+
             TabStation.Add(new TabItemModel() { Header = $"{t}", Content = userControl });
         }
 
@@ -244,7 +245,7 @@ namespace DipesLink.ViewModels
 
         #region GET DATABASE
 
-       
+
         private async void ListenDatabase(int stationIndex)
         {
             using IPCSharedHelper ipc = new(stationIndex, "DeviceToUISharedMemory_DB", SharedValues.SIZE_200MB, isReceiver: true);
@@ -279,16 +280,16 @@ namespace DipesLink.ViewModels
             {
                 if (JobList[stationIndex].IsDBExist)
                 {
-                   // Debug.WriteLine("Dont Reload Database for job: " + +stationIndex);
+                    // Debug.WriteLine("Dont Reload Database for job: " + +stationIndex);
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
-                  //  JobList[stationIndex].IsStartButtonEnable = true;
+                    //  JobList[stationIndex].IsStartButtonEnable = true;
                     ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
-              //      JobList[stationIndex].EnableUI = true;
+                    //      JobList[stationIndex].EnableUI = true;
                     return;
                 }
-               // Debug.WriteLine("Reload Database for job: " + stationIndex);
+                // Debug.WriteLine("Reload Database for job: " + stationIndex);
                 //JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
-               // JobList[stationIndex].IsStartButtonEnable = false;
+                // JobList[stationIndex].IsStartButtonEnable = false;
                 ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
                 //  JobList[stationIndex].EnableUI = false;
                 //ViewModelSharedEvents.OnLoadingTableStatusChangeHandler();
@@ -307,7 +308,7 @@ namespace DipesLink.ViewModels
                     JobList[stationIndex].RaiseLoadCompleteDatabase(dbInfo);
                     JobList[stationIndex].IsDBExist = true;
                 }
-                if(listDatabase.Count == 0)
+                if (listDatabase.Count == 0)
                 {
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
                 }
@@ -348,13 +349,13 @@ namespace DipesLink.ViewModels
 
         private async void ListenProcess(int stationIndex)
         {
-            using IPCSharedHelper ipc = new(stationIndex, "DeviceToUISharedMemory_DT", 1024 * 1024 * 1, isReceiver: true);
+            using IPCSharedHelper ipc = new(stationIndex, "DeviceToUISharedMemory_DT", SharedValues.SIZE_1MB, isReceiver: true);
             while (true)
             {
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
-                  //  Debug.WriteLine($"Elements Queue: index {stationIndex} / number queue" + ipc.MessageQueue.Count);
-                    await Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
+                    //SharedFunctions.PrintDebugMessage($"Queue print Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
+                    await  Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
                 }
                 await Task.Delay(1);
             }
@@ -372,7 +373,7 @@ namespace DipesLink.ViewModels
                         case (byte)SharedMemoryType.CameraInfo:
                             JobList[stationIndex].CameraInfo = DataConverter.FromByteArray<CameraInfos>(result.Skip(3).ToArray());
                             UpdateCameraInfo(stationIndex);
-                           // Debug.WriteLine($"Tram {stationIndex} : {JobList[stationIndex]?.CameraInfo?.Info?.Name}");
+                            // Debug.WriteLine($"Tram {stationIndex} : {JobList[stationIndex]?.CameraInfo?.Info?.Name}");
                             break;
 
                         // Printer Status
@@ -431,7 +432,7 @@ namespace DipesLink.ViewModels
                             catch (Exception) { }
                             break;
                         case (byte)SharedMemoryType.ControllerResponseMess:
-                            GetControllerMessageResponse(stationIndex, result);
+                             GetControllerMessageResponseAsync(stationIndex, result);
                             break;
                         case (byte)SharedMemoryType.LoadingStatus:
                             ShowLoadingImage(stationIndex);
@@ -450,24 +451,24 @@ namespace DipesLink.ViewModels
             }
         }
 
-       
+
 
         private void ShowLoadingImage(int stationIndex)
         {
             JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
             JobList[stationIndex].IsShowLoadingChecked = Visibility.Visible;
-           // JobList[stationIndex].IsStartButtonEnable = false;
+            // JobList[stationIndex].IsStartButtonEnable = false;
             ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
             //  JobList[stationIndex].EnableUI = false;
         }
 
-        private void GetControllerMessageResponse(int stationIndex, byte[] result)
+        private void GetControllerMessageResponseAsync(int stationIndex, byte[] result)
         {
             try
             {
                 var res = result.Skip(3).ToArray();
                 var mess = DataConverter.FromByteArray<string>(res);
-                Application.Current?.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     ConnectParamsList[stationIndex].ResponseMessList.Insert(0, mess);
                     if (ConnectParamsList[stationIndex].ResponseMessList.Count > 10)
@@ -483,10 +484,10 @@ namespace DipesLink.ViewModels
 #endif
             }
         }
-       
-        private void DevicesStatusChange(int stationIndex)
+
+        private async Task DevicesStatusChangeAsync(int stationIndex)
         {
-            Application.Current?.Dispatcher.Invoke(async () =>
+            await Application.Current.Dispatcher.Invoke(async () =>
             {
                 while (true)
                 {
@@ -592,7 +593,7 @@ namespace DipesLink.ViewModels
                     if (!JobList[stationIndex].QueueReceivedNumberBytes.TryDequeue(out var resultReceived)) resultReceived = null;
                     if (!JobList[stationIndex].QueuePrintedNumberBytes.TryDequeue(out var resultPrinted)) resultPrinted = null;
 
-                    Application.Current?.Dispatcher.Invoke(() =>
+                   _ =  Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         string nullString = "\0\0\0\0\0\0\0";
                         if (resultSent != null)
@@ -628,11 +629,6 @@ namespace DipesLink.ViewModels
             }
         }
 
-        /// <summary>
-        /// Get Current Index and Current Page Index of Database
-        /// </summary>
-        /// <param name="stationIndex"></param>
-        /// <param name="result"></param>
         private void GetCurrentPosDb(int stationIndex, byte[] result)
         {
             try
@@ -664,35 +660,25 @@ namespace DipesLink.ViewModels
         {
             while (true)
             {
-                if (JobList[stationIndex].QueueCurrentPrintedCode.TryDequeue(out byte[]? result))
+                while(JobList[stationIndex].QueueCurrentPrintedCode.TryDequeue(out byte[]? result))
                 {
-                    // Debug.WriteLine("Ket qua Printed: "+result.Count());
-                    if (result != null)
+                    try
                     {
-                        try
+                        string[]? printedCode = DataConverter.FromByteArray<string[]>(result);
+                        if (printedCode != null)
                         {
-                            string[]? printedCode = DataConverter.FromByteArray<string[]>(result);
-                            //if (printedCode != null)
-                            //    foreach (var item in printedCode)
-                            //    {
-                            //        Debug.Write(item );
-                            //    }
-                            //Debug.WriteLine($"at {stationIndex}\n");
-                            if (printedCode != null)
-                            {
-                                JobList[stationIndex].RaiseChangePrintedCode(printedCode);
-                            }
+                            JobList[stationIndex].RaiseChangePrintedCode(printedCode);
                         }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine("GetCurrentPrintedCodeAsync faild" + ex.Message);
-                        }
-
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("GetCurrentPrintedCodeAsync faild" + ex.Message);
                     }
                 }
                 await Task.Delay(1);
             }
         }
+
         public static string GetFormattedString(string resourceKey, params object[] args)
         {
             var resourceString = Application.Current.Resources[resourceKey] as string;
@@ -840,11 +826,11 @@ namespace DipesLink.ViewModels
             }
         }
 
-        private void GetOperationStatus(int stationIndex)
+        private async Task GetOperationStatusAsync(int stationIndex)
         {
             try
             {
-                _ = Application.Current?.Dispatcher.Invoke(async () =>
+                await Application.Current.Dispatcher.Invoke(async () =>
                 {
                     bool isRunning = false;
                     bool isRunningCmp = false;
@@ -890,6 +876,7 @@ namespace DipesLink.ViewModels
             }
         }
 
+
         #endregion  END GET PRINTING PARAMS AND STATUS
 
         #region GET CHECKED DATA
@@ -897,13 +884,13 @@ namespace DipesLink.ViewModels
         {
             try
             {
-                using IPCSharedHelper ipc = new(stationIndex, "DeviceToUISharedMemory_RD", SharedValues.SIZE_100MB, isReceiver: true);
+                using IPCSharedHelper ipc = new(stationIndex, "DeviceToUISharedMemory_RD", SharedValues.SIZE_50MB, isReceiver: true);
                 while (true)
                 {
                     while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                     {
-                       // Debug.WriteLine("Elements Queue: " + ipc.MessageQueue.Count);
-                        _ = Task.Run(() => ProcessItemDetectModel(result, stationIndex));
+                        //  SharedFunctions.PrintDebugMessage($"Queue Realtime Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
+                        await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
                     }
                     await Task.Delay(1);
                 }
@@ -925,6 +912,7 @@ namespace DipesLink.ViewModels
                     {
                         // Camera detect model
                         case (byte)SharedMemoryType.DetectModel:
+                        //    DetectModel? dm = DataConverter.FromByteArray<DetectModel?>(result.Skip(3).ToArray());
                             JobList[stationIndex].QueueCameraDataDetect.Enqueue(result.Skip(3).ToArray());
                             break;
 
@@ -946,61 +934,61 @@ namespace DipesLink.ViewModels
         {
             while (true)
             {
-                if (JobList[stationIndex].QueueCurrentCheckedCode.TryDequeue(out byte[]? result))
+                while (JobList[stationIndex].QueueCurrentCheckedCode.TryDequeue(out byte[]? result))
                 {
-                    if (result != null)
+                    // SharedFunctions.PrintDebugMessage($"Queue checked code {stationIndex}: " + JobList[stationIndex].QueueCurrentCheckedCode.Count().ToString());
+
+                    try
                     {
-                        try
+                        string[]? checkedCode = DataConverter.FromByteArray<string[]>(result);
+                        if (checkedCode != null)
                         {
-                            string[]? checkedCode = DataConverter.FromByteArray<string[]>(result);
-                            if (checkedCode != null)
-                            {
-                                JobList[stationIndex].RaiseChangeCheckedCode(checkedCode);
-                            }
-                        }
-                        catch (Exception)
-                        {
-#if DEBUG
-                            Debug.WriteLine("GetCheckedCodeAsync Error !");
-#endif  
+                            JobList[stationIndex].RaiseChangeCheckedCode(checkedCode);
                         }
                     }
+                    catch (Exception)
+                    {
+                        SharedFunctions.PrintDebugMessage("GetCheckedCodeAsync Error !");
+                    }
+
                 }
                 await Task.Delay(1);
             }
         }
+      
 
         private async void GetCameraDataAsync(int stationIndex)
         {
-                while (true)
+            while (true)
+            {
+                while (JobList[stationIndex].QueueCameraDataDetect.TryDequeue(out byte[]? result))
                 {
                     try
                     {
-                        while(JobList[stationIndex].QueueCameraDataDetect.TryDequeue(out byte[]? result))
-                        {
-                            DetectModel? dm = DataConverter.FromByteArray<DetectModel>(result);
-                            System.Drawing.Image img = SharedFunctions.GetImageFromImageByte(dm?.ImageData); // Image Result
-                            string? currentCode = dm?.Text;
-                            long? processTime = dm?.CompareTime;
-                            ComparisonResult? compareStatus = dm?.CompareResult;
+                        //  SharedFunctions.PrintDebugMessage($"QueueCameraDataDetect {stationIndex}: " + JobList[stationIndex].QueueCameraDataDetect.Count().ToString());
+                        DetectModel? dm = DataConverter.FromByteArray<DetectModel>(result);
+                        Image img = SharedFunctions.GetImageFromImageByte(dm?.ImageBytes); // Image Result
+                      //  SharedFunctions.SaveByteArrayToFile("byteArray.bin", dm?.ImageBytes);
+                        string? currentCode = dm?.Text;
+                        long? processTime = dm?.CompareTime;
+                        ComparisonResult? compareStatus = dm?.CompareResult;
 
-                            Application.Current?.Dispatcher.Invoke(() =>
-                            {
-                                if (img != null) JobList[stationIndex].ImageResult = SharedFunctions.ConvertToBitmapImage(img);
-                                if (currentCode != null) JobList[stationIndex].CurrentCodeData = currentCode;
-                                if (compareStatus != null) JobList[stationIndex].CompareResult = (ComparisonResult)compareStatus;
-                                if (processTime != null) JobList[stationIndex].ProcessingTime = (int)processTime;
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (img != null) JobList[stationIndex].ImageResult = SharedFunctions.ConvertToBitmapImage(img);
+                            if (currentCode != null) JobList[stationIndex].CurrentCodeData = currentCode;
+                            if (compareStatus != null) JobList[stationIndex].CompareResult = (ComparisonResult)compareStatus;
+                            if (processTime != null) JobList[stationIndex].ProcessingTime = (int)processTime;
                         });
                     }
-                    }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-#if DEBUG
-                        Debug.WriteLine("Get Image Failed !");
-#endif
+                        Debug.WriteLine("Detect Model Fail: " + ex.Message);
                     }
-                    await Task.Delay(1);
                 }
+                await Task.Delay(1);
+            }
         }
 
         private void GetCheckedStatistics(int stationIndex)
@@ -1048,7 +1036,6 @@ namespace DipesLink.ViewModels
 
         private void UpdatePercentForCircleChart(int stationIndex)
         {
-
             if (int.TryParse(JobList[stationIndex].TotalChecked, out int totalChecked))
             {
                 try
@@ -1056,14 +1043,19 @@ namespace DipesLink.ViewModels
                     if (totalChecked >= 0)
                     {
                         double percent = (double)totalChecked * 100 / JobList[stationIndex].TotalRecDb;
-                        JobList[stationIndex].CircleChart.Value = Math.Round(percent, 2);
-                        if (JobList[stationIndex].CircleChart.Value > 100) JobList[stationIndex].CircleChart.Value = 100;
+                        percent = Math.Round(percent, 2);
+                        if (percent > 100) percent = 100;
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            JobList[stationIndex].CircleChart.Value = percent;
+                        });
                     }
                 }
                 catch (Exception ex)
                 {
 #if DEBUG
-                    Debug.WriteLine("UpdatePercentForCircleChart Error" + ex.Message);
+                    Debug.WriteLine("UpdatePercentForCircleChart Error: " + ex.Message);
 #endif
                 }
             }

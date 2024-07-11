@@ -27,6 +27,7 @@ namespace SharedProgram.Shared
 
         public static long SIZE_1MB = 1024 * 1024 * 1;
         public static long SIZE_100MB = 1024 * 1024 * 100;
-       public static long SIZE_200MB = 1024 * 1024 * 200;
+        public static long SIZE_200MB = 1024 * 1024 * 200;
+        public static long SIZE_50MB = 1024 * 1024 * 50;
     }
 }

@@ -1,12 +1,9 @@
 ﻿using IPCSharedMemory;
-using IPCSharedMemory.Controllers;
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
 using SharedProgram.Shared;
-using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Shapes;
 using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLinkDeviceTransfer
@@ -22,67 +19,74 @@ namespace DipesLinkDeviceTransfer
 
         private readonly int _StartIndex = 1;
 
-
-
         private async Task InitDataAsync(JobModel selectedJob)
         {
-            //  Console.WriteLine("Toi bat dau load");
-
             if (SharedValues.SelectedJob == null) return;
             if (selectedJob.CompareType == CompareType.Database)
             {
+                // Database list init
                 MemoryTransfer.SendLoadingStatusToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(LoadDataStatus.StartLoad));
-                Task<List<string[]>> databaseTsk = InitDatabaseAndPrintedStatusAsync(selectedJob); //Load database and update print status
-                Task<List<string[]>> checkedResultTsk = InitCheckedResultDataAsync(selectedJob); //Load list of checked result by cameras
-                await Task.WhenAll(databaseTsk, checkedResultTsk); // Wait for the lists to finish loading
-                //Console.WriteLine("Toi da load");
-                // Save to List
-                SharedValues.ListPrintedCodeObtainFromFile = databaseTsk.Result;
-                SharedValues.ListCheckedResultCode = checkedResultTsk.Result;
-               // SharedFunctions.PrintDebugMessage("So luong database: " + SharedValues.ListPrintedCodeObtainFromFile.Count.ToString());
-
+                Task<List<string[]>> initDatabaseTask = InitDatabaseAndPrintedStatusAsync(selectedJob); 
+                Task<List<string[]>> initCheckedResultTask = InitCheckedResultDataAsync(selectedJob); 
+                await Task.WhenAll(initDatabaseTask, initCheckedResultTask);
+                SharedValues.ListPrintedCodeObtainFromFile = initDatabaseTask.Result;
+                SharedValues.ListCheckedResultCode = initCheckedResultTask.Result;
+             
+                //Send Database to UI async
                 Task transferDatabase = Task.Run(() => 
                 MemoryTransfer.SendDatabaseToUIFirstTime(_ipcDeviceToUISharedMemory_DB, 
                     JobIndex, 
                     DataConverter.ToByteArray(SharedValues.ListPrintedCodeObtainFromFile)));
-
-                Task transferCheckedDatabase = Task.Run(() =>
+                Task transferCheckedDatabase = Task.Run(() => //Send checked db to UI
                     MemoryTransfer.SendCheckedDatabaseToUIFirstTime(_ipcDeviceToUISharedMemory_DB, 
                     JobIndex, 
                     DataConverter.ToByteArray(SharedValues.ListCheckedResultCode)));
-
                 await Task.WhenAll(transferDatabase, transferCheckedDatabase);
                
 #if DEBUG
-                Console.WriteLine("\nDatabase: {0} raw", SharedValues.ListPrintedCodeObtainFromFile.Count - 1);
-                Console.WriteLine("Printed: " + SharedValues.ListPrintedCodeObtainFromFile.Count(item => item.Last() == "Printed")); // show row number was printed
-                Console.WriteLine("Checked: {0}", SharedValues.ListCheckedResultCode.Count);
+                Console.Write("\nDatabase: {0} row", SharedValues.ListPrintedCodeObtainFromFile.Count - 1);
+                Console.Write(", Printed: " + SharedValues.ListPrintedCodeObtainFromFile.Count(item => item.Last() == "Printed")); // show row number was printed
+                Console.Write(" ,Checked: {0}", SharedValues.ListCheckedResultCode.Count);
 #endif
 
                 if (SharedValues.ListPrintedCodeObtainFromFile != null && SharedValues.ListPrintedCodeObtainFromFile.Count > 1)
                 {
-                    SharedValues.DatabaseColunms = SharedValues.ListPrintedCodeObtainFromFile[0]; // get header column
-                    SharedValues.ListPrintedCodeObtainFromFile.RemoveAt(0);  // remove header for get only data
-                    await InitVerifyAndPrindSendDataMethod(); // Init Verify and Print cond send
+                    SharedValues.DatabaseColunms = SharedValues.ListPrintedCodeObtainFromFile[0]; 
+                    SharedValues.ListPrintedCodeObtainFromFile.RemoveAt(0);  
+                    await InitVerifyAndPrindSendDataMethod(); 
                     if (SharedValues.SelectedJob.CompareType == CompareType.Database)
                     {
                         await InitCompareDataAsync(SharedValues.ListPrintedCodeObtainFromFile, SharedValues.ListCheckedResultCode);
-#if DEBUG
-                        await Console.Out.WriteLineAsync($"POD filter: {_CodeListPODFormat.Count}");
-                        //  await Console.Out.WriteLineAsync("Complete load !");
-#endif
                     }
-                    SharedValues.TotalCode = SharedValues.ListPrintedCodeObtainFromFile.Count; // tổng số dữ liệu
-                    NumberPrinted = SharedValues.ListPrintedCodeObtainFromFile.Where(x => x[^1] == "Printed").Count(); // tổng số đã in
-                    int firstWaiting = SharedValues.ListPrintedCodeObtainFromFile.IndexOf(SharedValues.ListPrintedCodeObtainFromFile.Find(x => x[^1] == "Waiting")); // Xác định index của dữ liệu waiting đầu tiên
-                    _CurrentPage = SharedValues.TotalCode > _MaxDatabaseLine ?
-                                   (firstWaiting > 0 ? firstWaiting / _MaxDatabaseLine : (firstWaiting == 0 ? 0 : SharedValues.TotalCode / _MaxDatabaseLine - 1)) : 0;
-                    string[] lastCode = SharedValues.ListPrintedCodeObtainFromFile[^1];
+                    SharedValues.TotalCode = SharedValues.ListPrintedCodeObtainFromFile.Count; 
+                    NumberPrinted = SharedValues.ListPrintedCodeObtainFromFile.Where(x => x[^1] == "Printed").Count(); 
+
+                    if (SharedValues.ListPrintedCodeObtainFromFile != null)
+                    {
+                        string[]? foundItem = SharedValues.ListPrintedCodeObtainFromFile.Find(x => x[^1] == "Waiting");
+                        if (foundItem != null)
+                        {
+                            int firstWaiting = SharedValues.ListPrintedCodeObtainFromFile.IndexOf(foundItem);
+                            _CurrentPage = SharedValues.TotalCode > _MaxDatabaseLine ?
+                                  (firstWaiting > 0 ? firstWaiting / _MaxDatabaseLine : 
+                                  (firstWaiting == 0 ? 0 : SharedValues.TotalCode / _MaxDatabaseLine - 1)) : 0;
+                            string[] lastCode = SharedValues.ListPrintedCodeObtainFromFile[^1];
+                        }
+                        else
+                        {
+                            SharedFunctions.PrintConsoleMessage("Not found this waiting data !");
+                        }
+                    }
+                    else
+                    {
+                        SharedFunctions.PrintConsoleMessage("Not found database list !");
+                    }
+
+                    // Notify input database is duplicate
                     if (_NumberOfDuplicate > 0)
                     {
-                        //Duplicate error message
                         NotificationProcess(NotifyType.DuplicateData);
-                        SharedFunctions.PrintDebugMessage($"Database Duplicate: {_NumberOfDuplicate} row");
+                        SharedFunctions.PrintConsoleMessage($"Database Duplicate: {_NumberOfDuplicate} row");
                     }
                 }
             }
@@ -90,30 +94,30 @@ namespace DipesLinkDeviceTransfer
             {
                 SharedValues.ListCheckedResultCode = await InitCheckedResultDataAsync(selectedJob);
             }
-            TotalChecked = SharedValues.ListCheckedResultCode.Count; // Get total checked for remembering index
+
+            TotalChecked = SharedValues.ListCheckedResultCode.Count; 
             NumberOfCheckPassed = SharedValues.ListCheckedResultCode.Where(x => x[2] == "Valid").Count();
             NumberOfCheckFailed = TotalChecked - NumberOfCheckPassed;
+
 #if DEBUG
-            await Console.Out.WriteLineAsync($"Total checked: {TotalChecked}, Total passed: {NumberOfCheckPassed}, Total failed: {NumberOfCheckFailed}\n");
+            await Console.Out.WriteLineAsync($"\nTotal checked: {TotalChecked}, Total passed: {NumberOfCheckPassed}, Total failed: {NumberOfCheckFailed}\n");
 #endif
         }
 
         #region LOAD DB AND PRINTED LIST
+
         private async Task<List<string[]>> InitDatabaseAndPrintedStatusAsync(JobModel jobModel)
         {
-            // Get path db and printed list
-            var pathDatabase = jobModel.DatabasePath;
-            var pathBackupPrintedResponse = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + jobModel.PrintedResponePath;
+            string? pathDatabase = jobModel.DatabasePath;
+            string pathBackupPrintedResponse = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + jobModel.PrintedResponePath;
 
-            // Init Databse from file, add index column, status column, and string "Feild"
-            List<string[]> tmp = await Task.Run(() => { return SharedFunctions.InitDatabaseWithStatus(pathDatabase); });
+            List<string[]> tempDatabaseWithStatus = await Task.Run(() => { return SharedFunctions.InitDatabaseWithStatus(pathDatabase); });
 
-            // Update Printed status
-            if (jobModel.PrintedResponePath != "" && File.Exists(jobModel.DatabasePath) && tmp.Count > 1)
+            if (jobModel.PrintedResponePath != "" && File.Exists(jobModel.DatabasePath) && tempDatabaseWithStatus.Count > 1)
             {
-                await Task.Run(() => { SharedFunctions.InitPrintedStatus(pathBackupPrintedResponse, tmp); });
+                await Task.Run(() => { SharedFunctions.InitPrintedStatus(pathBackupPrintedResponse, tempDatabaseWithStatus); });
             }
-            return tmp;
+            return tempDatabaseWithStatus;
         }
 
         #endregion  LOAD DB AND PRINTED LIST
@@ -122,9 +126,7 @@ namespace DipesLinkDeviceTransfer
 
         private async Task<List<string[]>> InitCheckedResultDataAsync(JobModel selectedJob)
         {
-            Console.WriteLine("Job Index: " + selectedJob.Index);
-            string path = SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\" + selectedJob.CheckedResultPath; // Get path of checked result file (.csv)
-                                                                                                                  // await Console.Out.WriteLineAsync("path checked" + selectedJob.CheckedResultPath);
+            string path = SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\" + selectedJob.CheckedResultPath;                                                                                                      
             if (selectedJob.CheckedResultPath != "")
             {
                 Task<List<string[]>> task = Task.Run(() => { return InitCheckedResultData(path); });
@@ -133,11 +135,6 @@ namespace DipesLinkDeviceTransfer
             return new List<string[]>();
         }
 
-        /// <summary>
-        /// Read data from checked result backup file 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         private List<string[]> InitCheckedResultData(string path)
         {
             List<string[]> result = new();
@@ -154,16 +151,16 @@ namespace DipesLinkDeviceTransfer
                 while (!reader.EndOfStream)
                 {
                     var data = reader.ReadLine();
-                    if (data == null) { /*await Task.Delay(1);*/ continue; };
+                    if (data == null) { continue; };
 
                     if (!isFirstline)
                     {
-                        isFirstline = true; // Reject first line (header line)
+                        isFirstline = true; 
                     }
                     else
                     {
                         string[] line = rexCsvSplitter.Split(data).Select(x => Csv.Unescape(x)).ToArray();
-                        if (line.Length == 1 && line[0] == "") { /*await Task.Delay(1);*/ continue; }; // ignore empty line 
+                        if (line.Length == 1 && line[0] == "") { continue; }; 
                         if (line.Length < SharedValues.ColumnNames.Length)
                         {
                             string[] checkedResult = GetTheRightString(line);
@@ -171,7 +168,7 @@ namespace DipesLinkDeviceTransfer
                         }
                         else
                         {
-                            result.Add(line); // Add checked result to list
+                            result.Add(line); 
                         }
                     }
                 }
@@ -189,19 +186,15 @@ namespace DipesLinkDeviceTransfer
 
         private string[] GetTheRightString(string[] line)
         {
-            var code = new string[SharedValues.ColumnNames.Length];
+            string[] code = new string[SharedValues.ColumnNames.Length];
             for (int i = 0; i < code.Length; i++)
             {
-                if (i < line.Length)
-                    code[i] = line[i];
-                else
-                    code[i] = "";
+                code[i] = (i < line.Length) ? line[i] : "";
             }
             return code;
         }
 
         #endregion LOAD CHECKED RESULT LIST
-
 
         #region INIT COMPARE DATA
 
@@ -221,7 +214,6 @@ namespace DipesLinkDeviceTransfer
                 if (SharedValues.SelectedJob == null) return;
                 foreach (var result in checkedResultList)
                 {
-                    // Get the code content field and add it to the valid list
                     if (columnCount == result.Length && result[2] == validCond)
                     {
                         _ValidCheckedResultCodeSet.Add(result[1]);
@@ -235,18 +227,16 @@ namespace DipesLinkDeviceTransfer
                         string dataByPod = "";
                         dataByPod = SharedFunctions.GetCompareDataByPODFormat(rowData, SharedValues.SelectedJob.PODFormat);
 
-                        // If data has exist in _ValidCheckedResultCodeSet => status : checked = true
-                        // Add data to _CodeListPODFormat
-                        if (_ValidCheckedResultCodeSet.Contains(dataByPod)) // Compared POD data
+                        if (_ValidCheckedResultCodeSet.Contains(dataByPod)) 
                         {
                             bool tryAdd = _CodeListPODFormat.TryAdd(dataByPod, new SharedProgram.Controller.CompareStatus(i, true));
                             if (!tryAdd)
                             {
-                                SharedValues.ListPrintedCodeObtainFromFile[i][SharedValues.DatabaseColunms.Length - 1] = "Duplicate"; // same key => duplicate code
+                                SharedValues.ListPrintedCodeObtainFromFile[i][SharedValues.DatabaseColunms.Length - 1] = "Duplicate"; 
                                 _NumberOfDuplicate++;
                             }
                         }
-                        else // Not yet compare POD data
+                        else 
                         {
                             bool tryAdd = _CodeListPODFormat.TryAdd(dataByPod, new SharedProgram.Controller.CompareStatus(i, false));
                             if (!tryAdd)
@@ -265,11 +255,8 @@ namespace DipesLinkDeviceTransfer
                                         tmp += rowData[tmpPOD.Index];
                                     }
                                 }
-                                //     var tryAdd2 = _Emergency.TryAdd(tmp, i);
                             }
                         }
-
-
                     }
                 }
 
@@ -281,32 +268,7 @@ namespace DipesLinkDeviceTransfer
             }
         }
 
-
-        /// <summary>
-        /// Transfer raw code to UI
-        /// </summary>
-
-
-        //private static string GetCompareDataByPODFormat(string[] row, List<PODModel> pODFormat, int addingIndex = 0)
-        //{
-        //    if (row.Length == 0) return "";
-        //    var compareString = "";
-        //    foreach (var item in pODFormat)
-        //    {
-        //        if (item.Type == PODModel.TypePOD.FIELD) // In case it is a FIELD column
-        //        {
-        //            compareString += row[item.Index + addingIndex];
-        //        }
-        //        else if (item.Type == PODModel.TypePOD.TEXT) // In case of a custom text Column
-        //        {
-        //            compareString += item.Value;
-        //        }
-        //    }
-        //    return compareString;
-        //}
-
         #endregion INIT COMPARE DATA
-
 
     }
 }
