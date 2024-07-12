@@ -21,7 +21,11 @@ namespace DipesLinkDeviceTransfer
 
         private async Task InitDataAsync(JobModel selectedJob)
         {
-            if (SharedValues.SelectedJob == null) return;
+           
+            if (SharedValues.SelectedJob == null)
+            {
+                return;
+            }
             if (selectedJob.CompareType == CompareType.Database)
             {
                 // Database list init
@@ -42,7 +46,8 @@ namespace DipesLinkDeviceTransfer
                     JobIndex, 
                     DataConverter.ToByteArray(SharedValues.ListCheckedResultCode)));
                 await Task.WhenAll(transferDatabase, transferCheckedDatabase);
-               
+              
+
 #if DEBUG
                 Console.Write("\nDatabase: {0} row", SharedValues.ListPrintedCodeObtainFromFile.Count - 1);
                 Console.Write(", Printed: " + SharedValues.ListPrintedCodeObtainFromFile.Count(item => item.Last() == "Printed")); // show row number was printed

@@ -1,5 +1,4 @@
 ﻿using Cloudtoid.Interprocess;
-using SharedProgram.Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
@@ -46,7 +45,6 @@ namespace IPCSharedMemory
             }
         }
 
-
         public void ListenReceiveData()
         {
             _ctsThreadListenData = new CancellationTokenSource();
@@ -59,7 +57,7 @@ namespace IPCSharedMemory
                     {
                         while(_Subscriber.TryDequeue(default, out ReadOnlyMemory<byte> message) && message.Length > 0)
                         {
-                          await Task.Run(()=>  MessageQueue.Enqueue((byte[])message.ToArray().Clone()));
+                            MessageQueue.Enqueue((byte[])message.ToArray().Clone());
                         }
                         await Task.Delay(1);  
                     }

@@ -176,8 +176,7 @@ namespace DipesLinkDeviceTransfer
                         _ = StopProcessAsync();
                         break;
                     case ActionButtonType.Trigger: // Trigger
-                                                   TriggerCamera();
-                        
+                        TriggerCamera();
                         break;
                     case ActionButtonType.ReloadTemplate: // Reload template
                         ObtainPrintProductTemplateList();
@@ -253,6 +252,7 @@ namespace DipesLinkDeviceTransfer
             }
             try
             {
+              
                 string? selectedJobName = SharedFunctions.GetSelectedJobNameList(JobIndex).FirstOrDefault();
                 SharedValues.SelectedJob = SharedFunctions.GetJobSelected(selectedJobName, JobIndex);
                 await Console.Out.WriteLineAsync(SharedValues.SelectedJob?.Index.ToString());

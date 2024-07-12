@@ -1860,7 +1860,7 @@ namespace DipesLinkDeviceTransfer
                         };
                         _QueueBufferPrinterReceivedData.Enqueue(podDataModel);
                         _QueueBufferCameraReceivedData.Enqueue(detectModel);
-                        await Task.Delay(50);
+                        await Task.Delay(20);
                     }
                 }
                 catch (OperationCanceledException)

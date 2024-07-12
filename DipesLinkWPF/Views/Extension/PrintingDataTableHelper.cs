@@ -153,6 +153,7 @@ public class PrintingDataTableHelper : ViewModelBase, IDisposable
             while (_updateQueue.TryDequeue(out var printedCode))
             {
                 UpdateDataGrid(printedCode, dataGrid, curViewModel);
+                Thread.Sleep(1);
             }
         }
     }

@@ -1,11 +1,6 @@
-﻿using SharedProgram.Models;
-using SharedProgram.Shared;
-using System.Diagnostics;
+﻿using SharedProgram.Shared;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
-using System.Windows.Shapes;
-using UILanguage;
 using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLinkDeviceTransfer
