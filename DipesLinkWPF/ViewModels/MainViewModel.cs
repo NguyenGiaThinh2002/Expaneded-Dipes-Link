@@ -135,7 +135,6 @@ namespace DipesLink.ViewModels
 
         private void CreateMultiObjects(int i)
         {
-            // thinh
             int deviceTransferIDProc = ViewModelSharedFunctions.InitDeviceTransfer(i);
             string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {i + 1}" : $"Station {i + 1}";
             JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = t }); // Job List Creation
@@ -311,6 +310,8 @@ namespace DipesLink.ViewModels
                 if (listDatabase.Count == 0)
                 {
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
+                    ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, true);
+                    CusAlert.Show($"Station {stationIndex}:No data found", ImageStyleMessageBox.Info, true);
                 }
 
             }
