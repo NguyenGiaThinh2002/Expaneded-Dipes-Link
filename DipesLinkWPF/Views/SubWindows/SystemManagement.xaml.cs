@@ -4,6 +4,7 @@ using DipesLink.Views.Extension;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using static DipesLink.Views.Enums.ViewEnums;
 
 
 namespace DipesLink.Views.SubWindows
@@ -14,8 +15,10 @@ namespace DipesLink.Views.SubWindows
     public partial class SystemManagement : Window
     {
         public static bool IsInitializing = true;
-        public SystemManagement()
+        private bool _isStoptopAll;
+        public SystemManagement(bool isStopAll)
         {
+            _isStoptopAll = isStopAll;
             InitializeComponent();
             setCurrentLanguage();
         }
@@ -26,7 +29,6 @@ namespace DipesLink.Views.SubWindows
             try
             {
                 string languageCode = ViewModelSharedValues.Settings.Language;
-                //string languageCode = LanguageModel.Language.ToString();
 
                 if (languageCode == "en-US")
                 {
@@ -47,7 +49,13 @@ namespace DipesLink.Views.SubWindows
         private void ComboBoxLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (IsInitializing) return;
-
+            if (!_isStoptopAll)
+            {
+                CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
+                setCurrentLanguage();
+                return;  // Prevent the window from closing
+            }
+           
             var comboBox = sender as ComboBox;
             if(comboBox == null) return;
 

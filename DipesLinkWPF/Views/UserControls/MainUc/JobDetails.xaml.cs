@@ -146,6 +146,10 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     if (sender is List<(List<string[]>, int)> dbList)
                     {
+                        // Thinh is fixing
+                        await _printingDataTableHelper.InitDatabaseAsync(dbList.FirstOrDefault().Item1, DataGridDB, dbList.FirstOrDefault().Item2, CurrentViewModel<JobOverview>());
+                        if (_currentJob != null) _currentJob.PrintedDataNumber = _printingDataTableHelper.PrintedNumber.ToString(); // Update UI First time
+                        
                         var dataList = dbList.FirstOrDefault().Item1;
                         var currentPage = dbList.FirstOrDefault().Item2;
                         _PrintObserHelper = new(dataList, currentPage, DataGridDB);
@@ -156,6 +160,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             ViewModelSharedEvents.OnEnableUIChangeHandler(vm.Index, true);
                         }
                         ViewModelSharedEvents.OnDataTableLoadingHandler();
+
                     }
                 });
             }

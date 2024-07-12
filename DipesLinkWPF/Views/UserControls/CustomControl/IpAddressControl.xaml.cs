@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DipesLink.Views.UserControls.CustomControl
 {
@@ -20,7 +10,7 @@ namespace DipesLink.Views.UserControls.CustomControl
     /// </summary>
     public partial class IpAddressControl : UserControl
     {
-     
+
         public event TextChangedEventHandler TextChanged;
 
         public IpAddressControl()
@@ -52,52 +42,81 @@ namespace DipesLink.Views.UserControls.CustomControl
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (IpAddressControl)d;
-            string[] parts = ((string)e.NewValue)?.Split('.') ?? new string[0];
-            if (parts.Length == 4)
+            try
             {
-                control.TextBoxPart1.Text = parts[0];
-                control.TextBoxPart2.Text = parts[1];
-                control.TextBoxPart3.Text = parts[2];
-                control.TextBoxPart4.Text = parts[3];
+                var control = (IpAddressControl)d;
+                string[] parts = ((string)e.NewValue)?.Split('.') ?? new string[0];
+                if (parts.Length == 4)
+                {
+                    control.TextBoxPart1.Text = int.Parse(parts[0]) > 253 ? "253" : parts[0];
+                    control.TextBoxPart2.Text = int.Parse(parts[1]) > 255 ? "255" : parts[1];
+                    control.TextBoxPart3.Text = int.Parse(parts[2]) > 255 ? "255" : parts[2];
+                    control.TextBoxPart4.Text = int.Parse(parts[3]) > 255 ? "255" : parts[3];
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
             }
         }
         private void UpdateText(object sender, TextChangedEventArgs e)
         {
-            Text = $"{TextBoxPart1.Text}.{TextBoxPart2.Text}.{TextBoxPart3.Text}.{TextBoxPart4.Text}";
-            TextChanged?.Invoke(this, e);
+            try
+            {
+                Text = $"{TextBoxPart1.Text}.{TextBoxPart2.Text}.{TextBoxPart3.Text}.{TextBoxPart4.Text}";
+                TextChanged?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
         }
+
         private void IpPart_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !int.TryParse(e.Text, out int value);
-            var tb = sender as TextBox;
-            if (tb != null && (tb.Text.Length >= 3 && tb.SelectionLength == 0) || (tb?.Text.Length == 0 && e.Text == ".") && !(tb.SelectedText.Length == tb.Text.Length) )
+            try
             {
-                e.Handled = true;
+                e.Handled = !int.TryParse(e.Text, out int value);
+                var tb = sender as TextBox;
+                if (tb != null && (tb.Text.Length >= 3 && tb.SelectionLength == 0) || (tb?.Text.Length == 0 && e.Text == ".") && !(tb.SelectedText.Length == tb.Text.Length))
+                {
+                    e.Handled = true;
+                }
             }
-
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
         }
+
         private void IpPart_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            var tb = sender as TextBox;
-            if (tb != null)
+            try
             {
-                if ((e.Key == Key.OemPeriod || e.Key == Key.Decimal))
+                var tb = sender as TextBox;
+                if (tb != null)
                 {
-                    e.Handled = true;
-                    Dispatcher.BeginInvoke((Action)(() =>
+                    if ((e.Key == Key.OemPeriod || e.Key == Key.Decimal))
                     {
-                        tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-                    }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+                        e.Handled = true;
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                        }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+                    }
+                    else if (e.Key == Key.Space || e.Key == Key.Enter && tb.Text.Length == 3)
+                    { 
+                        e.Handled = true;
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                        }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+                    }
                 }
-                else if (e.Key == Key.Space || e.Key == Key.Enter && tb.Text.Length == 3)
-                {
-                    e.Handled = true;
-                    Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-                    }), System.Windows.Threading.DispatcherPriority.ContextIdle);
-                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
             }
         }
     }
