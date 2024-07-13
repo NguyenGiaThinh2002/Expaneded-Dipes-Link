@@ -82,6 +82,7 @@ namespace DipesLinkDeviceTransfer
         private int _countTotalPassed;
         private int _countTotalFailed;
         private int _countFb;
+        private double _cycleTimePODDataTransfer;
        
 
         #region QUEUE

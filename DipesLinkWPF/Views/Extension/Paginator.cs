@@ -36,7 +36,7 @@ namespace DipesLink.Views.Extension
             {
                 page.Add(SourceData[i]);
             }
-
+            CurrentPage = pageNumber;
             return page;
         }
 

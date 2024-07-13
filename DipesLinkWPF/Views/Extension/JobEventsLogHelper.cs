@@ -9,10 +9,11 @@ using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DipesLink.Views.Extension
 {
-    public class JobEventsLogHelper : ViewModelBase
+    public class JobEventsLogHelper : ObservableObject
     {
        // private readonly string[] _ColumnNames = new string[] {"EventType", "Title", "Message", "DateTime" };
         public ObservableCollection<EventsLogModel>? EventsList { get; set; } = new();

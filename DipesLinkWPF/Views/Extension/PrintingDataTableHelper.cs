@@ -14,8 +14,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-public class PrintingDataTableHelper : ViewModelBase, IDisposable
+public class PrintingDataTableHelper : ObservableObject, IDisposable
 {
     public Paginator? Paginator { get; set; }
     public JobOverview? CurrentViewModel { get; private set; }

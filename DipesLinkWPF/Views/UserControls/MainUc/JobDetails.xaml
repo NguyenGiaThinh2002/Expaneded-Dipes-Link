@@ -23,6 +23,7 @@
             </ResourceDictionary.MergedDictionaries>
             <converter:FromEnumtoStringConverter x:Key="FromEnumtoStringConverter" />
             <converter:AddOne x:Key="AddOneConverter" />
+            <converter:BooleanToVisibilityConverter x:Key="BolToVis" />
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
             <Color x:Key="DataTagColorGraBot">White</Color>
@@ -641,11 +642,20 @@
                                     Color="DimGray" />
                             </Border.Effect>
                             <StackPanel>
-                                <TextBlock
-                                    Margin="10,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    FontSize="20"
-                                    Text="{DynamicResource ResourceKey=Sent_Data}" />
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        FontSize="20"
+                                        Text="{DynamicResource ResourceKey=Sent_Data}" />
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        FontSize="15" VerticalAlignment="Center"
+                                        Foreground="Green"
+                                        Text="{Binding CycleTimePOD, FallbackValue=15ms}" />
+                                </StackPanel>
+
                                 <TextBlock
                                     Margin="0,15,0,0"
                                     HorizontalAlignment="Center"
@@ -729,128 +739,6 @@
                             </StackPanel>
                         </Border>
                     </Grid>
-
-
-
-
-                    <!--  Đặt WrapPanel trong một container có khả năng co dãn, chẳng hạn như Grid  -->
-                    <!--<Grid Grid.Row="1">-->
-                    <!--<Grid.Resources>
-                            <ResourceDictionary>
-                                <SolidColorBrush x:Key="TextBox.Static.Border" Color="#3399FF" />
-                                <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA" />
-                                <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5" />
-                                <Style x:Key="TextBoxStyle1" TargetType="{x:Type TextBox}">
-                                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-                                    <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}" />
-                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-                                    <Setter Property="BorderThickness" Value="1" />
-                                    <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                                    <Setter Property="AllowDrop" Value="true" />
-                                    <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
-                                    <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type TextBox}">
-                                                <Border
-                                                    x:Name="border"
-                                                    Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="4"
-                                                    SnapsToDevicePixels="True">
-                                                    <ScrollViewer
-                                                        x:Name="PART_ContentHost"
-                                                        Focusable="false"
-                                                        HorizontalScrollBarVisibility="Hidden"
-                                                        VerticalScrollBarVisibility="Hidden" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsEnabled" Value="false">
-                                                        <Setter TargetName="border" Property="Opacity" Value="0.56" />
-                                                    </Trigger>
-                                                    <Trigger Property="IsMouseOver" Value="true">
-                                                        <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource TextBox.MouseOver.Border}" />
-                                                    </Trigger>
-                                                    <Trigger Property="IsKeyboardFocused" Value="true">
-                                                        <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource TextBox.Focus.Border}" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <MultiTrigger>
-                                            <MultiTrigger.Conditions>
-                                                <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true" />
-                                                <Condition Property="IsSelectionActive" Value="false" />
-                                            </MultiTrigger.Conditions>
-                                            <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}" />
-                                        </MultiTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ResourceDictionary>
-                        </Grid.Resources>-->
-                    <!--<Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel HorizontalAlignment="Left">
-                    -->
-                    <!--  Các phần tử con của WrapPanel sẽ tự chuyển dòng khi không đủ không gian chiều ngang  -->
-                    <!--
-                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
-                                <TextBlock
-                                    Width="110"
-                                    VerticalAlignment="Center"
-                                    FontSize="16"
-                                    Text="Code Data" />
-                                <TextBox
-                                    Width="150"
-                                    Height="25"
-                                    Margin="5,0,0,0"
-                                    FontSize="16"
-                                    IsReadOnly="True"
-                                    Style="{StaticResource TextBoxStyle1}"
-                                    Text="{Binding CurrentCodeData}" />
-                            </StackPanel>
-                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
-                                <TextBlock
-                                    Width="110"
-                                    Margin="0,0,0,0"
-                                    VerticalAlignment="Center"
-                                    FontSize="16"
-                                    Text="Time (ms)" />
-                                <TextBox
-                                    Width="150"
-                                    Height="25"
-                                    Margin="5,0,0,0"
-                                    FontSize="16"
-                                    IsReadOnly="True"
-                                    Style="{StaticResource TextBoxStyle1}"
-                                    Text="{Binding ProcessingTime}" />
-                            </StackPanel>
-                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
-                                <TextBlock
-                                    Width="110"
-                                    VerticalAlignment="Center"
-                                    FontSize="16"
-                                    Text="Checked Result" />
-                                <TextBox
-                                    Width="150"
-                                    Height="25"
-                                    Margin="5,0,0,0"
-                                    FontSize="16"
-                                    IsReadOnly="True"
-                                    Style="{StaticResource TextBoxStyle1}"
-                                    Text="{Binding CompareResult}" />
-                            </StackPanel>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" />-->
-                    <!--</Grid>-->
-
                 </Grid>
 
             </Border>
@@ -878,13 +766,26 @@
                         Background="#00ABE6"
                         CornerRadius="15 15 0 0"
                         SnapsToDevicePixels="True">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="20"
-                            FontWeight="Bold"
-                            Foreground="White"
-                            Text="{DynamicResource ResourceKey=VERIFICATION_RESULT}" />
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                Text="{DynamicResource ResourceKey=VERIFICATION_RESULT}" />
+                            <Button
+                                x:Name="ButtonSimulate"
+                                Width="70"
+                                Height="30"
+                                Margin="10,0,0,0"
+                                Click="ButtonSimulate_Click"
+                                Command="{Binding SimulateCommandJob}"
+                                Content="Simulate"
+                                Style="{StaticResource ModernButtonDel}"
+                                Visibility="{Binding DataContext.IsDebugMode, Converter={StaticResource BolToVis}, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        </StackPanel>
+
                     </Border>
 
                     <Grid Grid.Row="1">

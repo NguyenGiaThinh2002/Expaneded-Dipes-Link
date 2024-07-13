@@ -302,7 +302,7 @@
                 <!--  DataView  -->
                 <Grid Grid.Row="1">
                     <DataGrid
-                        x:Name="DataGridResult"
+                        x:Name="DataGridPrintLog"
                         Grid.Row="3"
                         Margin="20"
                         AlternatingRowBackground="#F5F5F5"

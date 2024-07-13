@@ -1,4 +1,5 @@
-﻿using DipesLink.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.Models;
 using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using System.Collections.Concurrent;
@@ -12,7 +13,7 @@ using System.Windows.Threading;
 namespace DipesLink.Views.Extension
 {
 
-    public class CheckedObserHelper : ViewModelBase, IDisposable
+    public class CheckedObserHelper : ObservableObject, IDisposable
     {
         public int TotalChecked { get; set; }
 

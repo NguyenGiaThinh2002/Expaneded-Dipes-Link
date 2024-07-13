@@ -1,11 +1,15 @@
 ﻿using DipesLink.Models;
+using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -14,7 +18,7 @@ namespace DipesLink.Views.SubWindows
     /// <summary>
     /// Interaction logic for JobLogsWindow.xaml
     /// </summary>
-    public partial class JobLogsWindow : Window
+    public partial class CheckedLogsWindow : Window
     {
         private JobLogsDataTableHelper? _jobLogsDataTableHelper = new();
         private CheckedObserHelper? _checkedObserHelper = new();
@@ -27,16 +31,146 @@ namespace DipesLink.Views.SubWindows
         public int Num_Verified { get; set; }
         public int Num_Valid { get; set; }
         public int Num_Failed { get; set; }
+        private string[] _columnNames = Array.Empty<string>();
+        private List<string>? _imageNameList;
+        private PrintingInfo? _printingInfo;
+        private ObservableCollection<ExpandoObject>? filterList = new();
+        private Paginator? _paginator;
+        private int _MaxDatabaseLine = 500;
 
-        private List<string>? _imageNameList;   
 
-        public JobLogsWindow(CheckedObserHelper checkedObserHelper)
+
+
+        public CheckedLogsWindow(PrintingInfo printingInfo)
         {
+            _printingInfo = printingInfo;
             InitializeComponent();
-            _checkedObserHelper = checkedObserHelper;
-            Loaded += JobLogsWindow_LoadedAsync;
-            Closing += JobLogsWindow_Closing;
+            InitPrintData(); 
+         //   Loaded += JobLogsWindow_LoadedAsync;
+         //  Closing += JobLogsWindow_Closing;
         }
+
+        private void InitPrintData()
+        {
+            if (_printingInfo == null || _printingInfo.columnNames == null) return;
+            try
+            {
+                filterList = _printingInfo.list;
+                _columnNames = _printingInfo.columnNames;
+                CreateDataTemplate();
+                GetOriginalList();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void GetOriginalList()
+        {
+            if (_printingInfo == null || _printingInfo.list == null) return;
+            try
+            {
+                _paginator = new Paginator(_printingInfo.list, _MaxDatabaseLine);
+                _ = LoadPageAsync(0);
+                UpdatePageInfo();
+                UpdateNumber();
+
+
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void UpdateNumber()
+        {
+            try
+            {
+                if (_printingInfo == null || _printingInfo.list == null || _paginator == null) return;
+                TextBlockTotal.Text = _printingInfo.list.Count.ToString();
+                int countPrinted = _printingInfo.list.Count(item => ((IDictionary<string, object>)item)["Status"].ToString() == "Printed");
+                int countWaiting = _printingInfo.list.Count(item => ((IDictionary<string, object>)item)["Status"].ToString() == "Waiting");
+                TextBlockPrinted.Text = countPrinted.ToString();
+              //  TextBlockWait.Text = countWaiting.ToString();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private int countDataPerPage;
+        public async Task LoadPageAsync(int pageNumber)
+        {
+          //  ImageLoadingPrintedLog.Visibility = Visibility.Visible;
+            if (_paginator == null) return;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    // Thread.Sleep(5000); test load symbol
+                    if (pageNumber < 0 || pageNumber >= _paginator.TotalPages) return;
+                    ObservableCollection<ExpandoObject> pageData = _paginator.GetPage(pageNumber);
+                    countDataPerPage = pageData.Count;
+                    Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        DataGridCheckedLog.ItemsSource = pageData;
+                        UpdatePageInfo();
+                        ButtonPaginationVis();
+                    });
+
+                }
+                catch (Exception)
+                {
+
+                }
+
+            });
+          //  ImageLoadingPrintedLog.Visibility = Visibility.Collapsed;
+        }
+
+        private void CreateDataTemplate()
+        {
+            DataGridCheckedLog.Columns.Clear();
+            foreach (var columnName in _columnNames)
+            {
+                if (columnName == "Status")
+                {
+                    DataGridTemplateColumn templateColumn = new()
+                    {
+                        Header = columnName,
+                        Width = DataGridLength.Auto
+                    };
+                    DataTemplate template = new();
+                    FrameworkElementFactory factory = new(typeof(Image));
+                    Binding binding = new(columnName)
+                    {
+                        Converter = new StatusToIconConverter(),
+                        Mode = BindingMode.OneWay
+                    };
+                    factory.SetValue(Image.SourceProperty, binding);
+                    factory.SetValue(Image.HeightProperty, 20.0);
+                    factory.SetValue(Image.WidthProperty, 20.0);
+                    template.VisualTree = factory;
+                    templateColumn.CellTemplate = template;
+                    DataGridCheckedLog.Columns.Add(templateColumn);
+                }
+                else
+                {
+                    DataGridTextColumn textColumn = new()
+                    {
+                        Header = columnName,
+                        Binding = new Binding(columnName),
+                        Width = DataGridLength.Auto
+                    };
+                    DataGridCheckedLog.Columns.Add(textColumn);
+                }
+            }
+        }
+
+
+
+
         private async Task CleanupResourcesAsync()
         {
             await Task.Run(() =>
@@ -100,21 +234,21 @@ namespace DipesLink.Views.SubWindows
         }
         private async void JobLogsWindow_LoadedAsync(object sender, RoutedEventArgs e)
         {
-            Stopwatch? stopwatch = Stopwatch.StartNew();
-            ImageLoadingJobLog.Visibility = Visibility.Visible;
-            if (_jobLogsDataTableHelper == null) return;
-            await Task.Run(()=> { CheckedDataTable = _checkedObserHelper?.GetDataTableDBAsync().Result.Copy(); });
-            if (CheckedDataTable != null)
-            {
-                await _jobLogsDataTableHelper.InitDatabaseAsync(CheckedDataTable, DataGridResult);
-            }
-            UpdateParams();
-            UpdatePageInfo();
-            _imageNameList = GetImageNameList();
-            ImageLoadingJobLog.Visibility = Visibility.Hidden;
-            stopwatch.Stop();
-            Debug.Write($"Time loaded checked data: {stopwatch.ElapsedMilliseconds} ms\n");
-            stopwatch = null;
+            //Stopwatch? stopwatch = Stopwatch.StartNew();
+            //ImageLoadingJobLog.Visibility = Visibility.Visible;
+            //if (_jobLogsDataTableHelper == null) return;
+            //await Task.Run(()=> { CheckedDataTable = _checkedObserHelper?.GetDataTableDBAsync().Result.Copy(); });
+            //if (CheckedDataTable != null)
+            //{
+            //    await _jobLogsDataTableHelper.InitDatabaseAsync(CheckedDataTable, DataGridResult);
+            //}
+            //UpdateParams();
+            //UpdatePageInfo();
+            //_imageNameList = GetImageNameList();
+            //ImageLoadingJobLog.Visibility = Visibility.Hidden;
+            //stopwatch.Stop();
+            //Debug.Write($"Time loaded checked data: {stopwatch.ElapsedMilliseconds} ms\n");
+            //stopwatch = null;
         }
        
         private void UpdateParams()
@@ -142,40 +276,40 @@ namespace DipesLink.Views.SubWindows
 
         private async void PageAction_Click(object sender, RoutedEventArgs e)
         {
-            if (_jobLogsDataTableHelper == null || _jobLogsDataTableHelper.Paginator == null) return;
-            Button button = (Button)sender;
-            switch (button.Name)
-            {
-                case "ButtonFirst":
-                    await _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult, 1);
-                    break;
+            //if (_jobLogsDataTableHelper == null || _jobLogsDataTableHelper.Paginator == null) return;
+            //Button button = (Button)sender;
+            //switch (button.Name)
+            //{
+            //    case "ButtonFirst":
+            //        await _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult, 1);
+            //        break;
 
-                case "ButtonBack":
-                    if (_jobLogsDataTableHelper.Paginator.PreviousPage())
-                    {
-                        await _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult);
-                    }
-                    break;
+            //    case "ButtonBack":
+            //        if (_jobLogsDataTableHelper.Paginator.PreviousPage())
+            //        {
+            //            await _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult);
+            //        }
+            //        break;
 
-                case "ButtonNext":
-                    if (_jobLogsDataTableHelper.Paginator.NextPage())
-                    {
-                       await  _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult);
-                    }
-                    break;
+            //    case "ButtonNext":
+            //        if (_jobLogsDataTableHelper.Paginator.NextPage())
+            //        {
+            //           await  _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult);
+            //        }
+            //        break;
 
-                case "ButtonEnd":
-                   await _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult, _jobLogsDataTableHelper.Paginator.TotalPages);
-                    break;
+            //    case "ButtonEnd":
+            //       await _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult, _jobLogsDataTableHelper.Paginator.TotalPages);
+            //        break;
 
-                case "ButtonGotoPage":
-                    GotoPageAction();
-                    break;
-                default:
-                    break;
-            }
-            ButtonPaginationVis();
-            UpdatePageInfo();
+            //    case "ButtonGotoPage":
+            //        GotoPageAction();
+            //        break;
+            //    default:
+            //        break;
+            //}
+            //ButtonPaginationVis();
+            //UpdatePageInfo();
         }
 
         private void ButtonPaginationVis()
@@ -212,22 +346,22 @@ namespace DipesLink.Views.SubWindows
         /// </summary>
         private async void GotoPageAction()
         {
-            if (_jobLogsDataTableHelper == null || _jobLogsDataTableHelper.Paginator == null) return;
-            if (int.TryParse(TextBoxPage.Text, out int page))
-            {
-                if (page > 0 && page <= _jobLogsDataTableHelper.Paginator.TotalPages)
-                {
-                   await  _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult, page);
-                }
-                else
-                {
-                    MessageBox.Show("Page not found", "", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Page not found", "", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            //if (_jobLogsDataTableHelper == null || _jobLogsDataTableHelper.Paginator == null) return;
+            //if (int.TryParse(TextBoxPage.Text, out int page))
+            //{
+            //    if (page > 0 && page <= _jobLogsDataTableHelper.Paginator.TotalPages)
+            //    {
+            //       await  _jobLogsDataTableHelper.UpdateDataGridAsync(DataGridResult, page);
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("Page not found", "", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //    }
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Page not found", "", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //}
         }
 
         private void ComboBoxFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -261,7 +395,7 @@ namespace DipesLink.Views.SubWindows
                 default: break;
             }
            
-            _jobLogsDataTableHelper.DatabaseFilteredAsync(DataGridResult, type);
+          //  _jobLogsDataTableHelper.DatabaseFilteredAsync(DataGridResult, type);
             UpdatePageInfo();
             ButtonPaginationVis();
         }
@@ -279,31 +413,31 @@ namespace DipesLink.Views.SubWindows
 
         private async void SearchAction(string keyword)
         {
-            if (_jobLogsDataTableHelper == null || _jobLogsDataTableHelper.Paginator == null) return;
-            await _jobLogsDataTableHelper.DatabaseSearchAsync(DataGridResult, keyword);
-            UpdatePageInfo();
-            ButtonPaginationVis();
+            //if (_jobLogsDataTableHelper == null || _jobLogsDataTableHelper.Paginator == null) return;
+            //await _jobLogsDataTableHelper.DatabaseSearchAsync(DataGridResult, keyword);
+            //UpdatePageInfo();
+            //ButtonPaginationVis();
         }
 
         private void DataGridResult_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string imageId = GetValueCellInDataGrid(sender);
-            GetCurrentImage(imageId);
+            //string imageId = GetValueCellInDataGrid(sender);
+            //GetCurrentImage(imageId);
 
-            // Close all detail
-            foreach (var item in DataGridResult.Items)
-            {
-                DataGridRow row = (DataGridRow)DataGridResult.ItemContainerGenerator.ContainerFromItem(item);
-                if (row != null) row.DetailsVisibility = Visibility.Collapsed;
-            }
+            //// Close all detail
+            //foreach (var item in DataGridResult.Items)
+            //{
+            //    DataGridRow row = (DataGridRow)DataGridResult.ItemContainerGenerator.ContainerFromItem(item);
+            //    if (row != null) row.DetailsVisibility = Visibility.Collapsed;
+            //}
 
-            // Show Detail for Failed result in datagrid
-            var dataRowView = DataGridResult.SelectedItem as DataRowView;
-            if (dataRowView != null && dataRowView["Result"].ToString() != "Valid")
-            {
-                DataGridRow selectedRow = (DataGridRow)DataGridResult.ItemContainerGenerator.ContainerFromItem(DataGridResult.SelectedItem);
-                if (selectedRow != null) selectedRow.DetailsVisibility = Visibility.Visible;
-            }
+            //// Show Detail for Failed result in datagrid
+            //var dataRowView = DataGridResult.SelectedItem as DataRowView;
+            //if (dataRowView != null && dataRowView["Result"].ToString() != "Valid")
+            //{
+            //    DataGridRow selectedRow = (DataGridRow)DataGridResult.ItemContainerGenerator.ContainerFromItem(DataGridResult.SelectedItem);
+            //    if (selectedRow != null) selectedRow.DetailsVisibility = Visibility.Visible;
+            //}
                
         }
 
@@ -424,12 +558,12 @@ namespace DipesLink.Views.SubWindows
 
         private void DataGridResult_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Close all detail
-            foreach (var item in DataGridResult.Items)
-            {
-                DataGridRow row = (DataGridRow)DataGridResult.ItemContainerGenerator.ContainerFromItem(item);
-                if (row != null) row.DetailsVisibility = Visibility.Collapsed;
-            }
+            //// Close all detail
+            //foreach (var item in DataGridResult.Items)
+            //{
+            //    DataGridRow row = (DataGridRow)DataGridResult.ItemContainerGenerator.ContainerFromItem(item);
+            //    if (row != null) row.DetailsVisibility = Visibility.Collapsed;
+            //}
         }
 
         private void ButtonRePrint_Click(object sender, RoutedEventArgs e)

@@ -143,59 +143,46 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
-        private bool _isPauseAction;
-      
-        private bool _isStopOrPauseAction;
         private async void ActionButtonFromUIProcessingAsync()
         {
             while (true)
             {
                 switch (DeviceSharedValues.ActionButtonType)
                 {
-                    case ActionButtonType.LoadDB: // Lệnh load dữ liệu khi UI yêu cầu lần đầu
-                       // await Console.Out.WriteLineAsync("Vao day mot cach tu nhien");
+                    case ActionButtonType.LoadDB: 
                         await LoadSelectedJob();
                         NotificationProcess(NotifyType.DeviceDBLoaded);
                         break;
                     case ActionButtonType.Start:
-
-                        _isStopOrPauseAction = false;
-                        StartAllThreadForTesting();
-                       // StartProcessAction(false); // Start without DB Load  
+                       StartProcessAction(false); // Start without DB Load  
                         break;
-                    case ActionButtonType.Pause: //Pause 
-                        _isStopOrPauseAction = true;
-                        _isPauseAction = true;
-                        NotificationProcess(NotifyType.PauseSystem);
-                        _ = StopProcessAsync();
-                        break;
-                    case ActionButtonType.Stop: //Stop 
-                        _isPauseAction = false;
-                        _isStopOrPauseAction = true;
+                    case ActionButtonType.Stop:  
                         NotificationProcess(NotifyType.StopSystem);
                         _ = StopProcessAsync();
                         break;
-                    case ActionButtonType.Trigger: // Trigger
+                    case ActionButtonType.Trigger: 
                         TriggerCamera();
                         break;
-                    case ActionButtonType.ReloadTemplate: // Reload template
-                        ObtainPrintProductTemplateList();
+                    case ActionButtonType.Simulate:
+                        StartAllThreadForTesting();
                         break;
-                    case ActionButtonType.Reprint: // RePrint
+                    case ActionButtonType.ReloadTemplate: // Reload template
+                        GetPrinterTemplateList();
+                        break;
+                    case ActionButtonType.Reprint: 
 #if DEBUG
                         Console.WriteLine("Start Reprint !");
 #endif
                         RePrintAsync();
                         break;
                     case ActionButtonType.ExportResult:
-                        //StartAllThreadForTesting();
                         await ExportResultAsync();
                         break;
                     default:
                         break;
                 }
                 DeviceSharedValues.ActionButtonType = ActionButtonType.Unknown; //Prevent state retention
-                await Task.Delay(10);
+                await Task.Delay(50);
             }
         }
 

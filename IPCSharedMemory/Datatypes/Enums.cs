@@ -41,7 +41,8 @@ namespace IPCSharedMemory.Datatypes
             ControllerStatus,
             ControllerResponseMess,
             LoadingStatus,
-            RestartStatus
+            RestartStatus,
+            CycleTimePOD
         }
         public enum SharedMemoryCommandType
         {
