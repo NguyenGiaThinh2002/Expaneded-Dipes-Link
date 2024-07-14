@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using DipesLink.Views.Extension;
 using DipesLink.Views.Models;
-using IPCSharedMemory.Datatypes;
 using SharedProgram.Models;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -9,21 +7,23 @@ using System.Data;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Navigation;
 using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLink.Models
 {
     public partial class JobOverview : JobModel
     {
+        #region ICommand 
         public ICommand StartCommandJob { get; set; }
-
         public ICommand PauseCommandJob { get; set; }
         public ICommand StopCommandJob { get; set; }
         public ICommand TriggerCommandJob { get; set; }
+        public ICommand SimulateCommandJob { get; set; }
+        #endregion End ICommand
+
+        #region Properties
 
         private int _DeviceTransferID;
-
         public int DeviceTransferID
         {
             get { return _DeviceTransferID; }
@@ -37,9 +37,8 @@ namespace DipesLink.Models
             }
         }
 
-        private string _JobTitleName;
-
-        public string JobTitleName
+        private string? _JobTitleName;
+        public string? JobTitleName
         {
             get { return _JobTitleName; }
             set
@@ -52,9 +51,8 @@ namespace DipesLink.Models
             }
         }
 
-        private ImageSource _ImageResult;
-
-        public ImageSource ImageResult
+        private ImageSource? _ImageResult;
+        public ImageSource? ImageResult
         {
             get { return _ImageResult; }
             set
@@ -66,9 +64,6 @@ namespace DipesLink.Models
                 }
             }
         }
-
-        public bool IsDBExist { get; set; }
-        public CircleChartModel CircleChart { get; set; } = new();
 
         private string _sentDataNumber = "0";
         public string SentDataNumber
@@ -84,13 +79,25 @@ namespace DipesLink.Models
             }
         }
 
-       // public OperationStatus OperationStatus { get; set; } = OperationStatus.Stopped;
+        public string CycleTimePOD_Store { get; set; }
+        private string _cycleTimePOD;
+        public string CycleTimePOD
+        {
+            get { return _cycleTimePOD; }
+            set
+            {
+                if (_cycleTimePOD != value)
+                {
+                    _cycleTimePOD = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public OperationStatus _operationStatus = OperationStatus.Stopped;
         public OperationStatus OperationStatus
         {
-            //get { return _operationStatus; }
             get { return _operationStatus; }
-
             set
             {
                 if (_operationStatus != value)
@@ -115,7 +122,6 @@ namespace DipesLink.Models
             }
         }
 
-
         private string _printedDataNumber = "0";
         public string PrintedDataNumber
         {
@@ -132,7 +138,6 @@ namespace DipesLink.Models
 
 
         private int _currentIndex;
-
         public int CurrentIndexDB
         {
             get { return _currentIndex; }
@@ -146,9 +151,7 @@ namespace DipesLink.Models
             }
         }
 
-
         private int _currentPage;
-
         public int CurrentPage
         {
             get { return _currentPage; }
@@ -161,7 +164,6 @@ namespace DipesLink.Models
                 }
             }
         }
-
 
         private string? _currentCodeData;
         public string? CurrentCodeData
@@ -192,10 +194,8 @@ namespace DipesLink.Models
         }
 
 
-
-        private List<PODModel> _podModel;
-
-        public List<PODModel> ListPODFormat
+        private List<PODModel>? _podModel;
+        public List<PODModel>? ListPODFormat
         {
             get { return _podModel; }
             set
@@ -237,9 +237,8 @@ namespace DipesLink.Models
         }
 
 
-        private string _eventsLogPath;
-
-        public string EventsLogPath
+        private string? _eventsLogPath;
+        public string? EventsLogPath
         {
             get { return _eventsLogPath; }
             set
@@ -265,18 +264,12 @@ namespace DipesLink.Models
                 }
             }
         }
-
-        private Brush _compareResultColor = Brushes.Red; // 
-
+        private Brush _compareResultColor = Brushes.Red;
         public Brush CompareResultColor
         {
-            get
-            {
-                return _compareResultColor;
-            }
+            get { return _compareResultColor; }
             set
             {
-
                 _compareResultColor = value;
                 OnPropertyChanged();
             }
@@ -285,7 +278,8 @@ namespace DipesLink.Models
         private ComparisonResult _compareResult = ComparisonResult.None;
         public ComparisonResult CompareResult
         {
-            get {
+            get
+            {
                 ChangeColorResult();
                 return _compareResult;
             }
@@ -295,34 +289,11 @@ namespace DipesLink.Models
                 if (_compareResult != value)
                 {
                     _compareResult = value;
-                    
+
                     OnPropertyChanged();
                 }
             }
         }
-
-     private  void ChangeColorResult()
-        {
-            switch (_compareResult)
-            {
-                case ComparisonResult.Valid:
-                    CompareResultColor = Brushes.Green;
-                    break;
-                case ComparisonResult.Missed:
-                case ComparisonResult.Invalided:
-                    CompareResultColor = Brushes.Red;
-                    break;
-                case ComparisonResult.Duplicated:
-                    CompareResultColor = Brushes.Orange;
-                    break;
-                case ComparisonResult.Null:
-                    CompareResultColor = Brushes.Black;
-                    break;
-                default:
-                    break;
-            }
-        }
-      
 
         private string _totalChecked = "0";
         public string TotalChecked
@@ -342,7 +313,7 @@ namespace DipesLink.Models
         private string _totalPassed = "0";
         public string TotalPassed
         {
-            get { if (!int.TryParse(_totalPassed,out _)) return "0"; return _totalPassed;  }
+            get { if (!int.TryParse(_totalPassed, out _)) return "0"; return _totalPassed; }
             set
             {
                 if (_totalPassed != value)
@@ -352,7 +323,6 @@ namespace DipesLink.Models
                 }
             }
         }
-
 
         private string _totalFailed = "0";
         public string TotalFailed
@@ -370,7 +340,6 @@ namespace DipesLink.Models
 
 
         private DataTable _MiniDataTable = new();
-
         public DataTable MiniDataTable
         {
             get { return _MiniDataTable; }
@@ -384,9 +353,7 @@ namespace DipesLink.Models
             }
         }
 
-
         private ObservableCollection<DynamicDataRowViewModel> _DataCollection = new();
-
         public ObservableCollection<DynamicDataRowViewModel> DataCollection
         {
             get { return _DataCollection; }
@@ -429,38 +396,7 @@ namespace DipesLink.Models
         }
 
 
-        private DataView _PrintedCodeDataView;
-
-        public DataView PrintedCodeDataView
-        {
-            get { return _PrintedCodeDataView; }
-            set
-            {
-                if (_PrintedCodeDataView != value)
-                {
-                    _PrintedCodeDataView = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private DataView _CheckedCodeDataView;
-        public DataView CheckedCodeDataView
-        {
-            get { return _CheckedCodeDataView; }
-            set
-            {
-                if (_CheckedCodeDataView != value)
-                {
-                    _CheckedCodeDataView = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
         private bool _statusStartButton = true;
-
         public bool StatusStartButton
         {
             get { return _statusStartButton; }
@@ -476,7 +412,6 @@ namespace DipesLink.Models
 
 
         private bool _statusStopButton = false;
-
         public bool StatusStopButton
         {
             get { return _statusStopButton; }
@@ -550,22 +485,7 @@ namespace DipesLink.Models
             }
         }
 
-        //private bool _enableUI;
-
-        //public bool EnableUI
-        //{
-        //    get { return _enableUI; }
-        //    set
-        //    {
-        //        if (_enableUI != value)
-        //        {
-        //            _enableUI = value;
-        //            OnPropertyChanged();
-        //        }
-        //    }
-        //}
-
-        private Visibility _IsShowLoadingChecked = Visibility.Collapsed; 
+        private Visibility _IsShowLoadingChecked = Visibility.Collapsed;
 
         public Visibility IsShowLoadingChecked
         {
@@ -580,97 +500,80 @@ namespace DipesLink.Models
             }
         }
 
-        public byte[] CameraStsBytes { get; set; }
+        public bool IsDBExist { get; set; }
+        public CircleChartModel CircleChart { get; set; } = new();
+        public byte[]? CameraStsBytes { get; set; }
         public byte PrinterStsBytes { get; set; }
         public byte ControllerStsBytes { get; set; }
 
-        public byte[] CheckedStatisticNumberBytes { get; set; }
-        public byte[] CurrentPrintedCodeBytes { get; set; }
-        public byte[] CurrentChekedCodeBytes { get; set; }
+        public byte[]? CheckedStatisticNumberBytes { get; set; }
+        // public byte[] CurrentPrintedCodeBytes { get; set; }
+        // public byte[]? CurrentChekedCodeBytes { get; set; }
 
         public ConcurrentQueue<byte[]> QueueCurrentPrintedCode { get; set; } = new();
         public ConcurrentQueue<byte[]> QueueCurrentCheckedCode { get; set; } = new();
         public ConcurrentQueue<byte[]> QueueCameraDataDetect { get; set; } = new();
-
         public ConcurrentQueue<byte[]> QueueSentNumberBytes { get; set; } = new();
         public ConcurrentQueue<byte[]> QueueReceivedNumberBytes { get; set; } = new();
         public ConcurrentQueue<byte[]> QueuePrintedNumberBytes { get; set; } = new();
-
-        
-
         public JobSystemSettings JobSystemSettings { get; set; }
 
-        public JobOverview()
-        {
-            StartCommandJob = new RelayCommand(OnStartButtonCommandClick);
-            PauseCommandJob = new RelayCommand(OnPauseButtonCommandClick);
-            StopCommandJob = new RelayCommand(OnStopButtonCommandClick);
-            TriggerCommandJob = new RelayCommand(OnTriggerButtonCommandClick);
-            JobSystemSettings = new JobSystemSettings();
-        }
 
-        #region Events Register
+        #endregion
 
-        
-        public event EventHandler TriggerButtonCommand;
+        #region Events Declaration
+
+        public event EventHandler? TriggerButtonCommand;
         private void OnTriggerButtonCommandClick()
         {
-            TriggerButtonCommand?.Invoke(Index, EventArgs.Empty); 
+            TriggerButtonCommand?.Invoke(Index, EventArgs.Empty);
         }
 
-        public event EventHandler PauseButtonCommand;
+        public event EventHandler? PauseButtonCommand;
         private void OnPauseButtonCommandClick()
         {
             PauseButtonCommand?.Invoke(Index, EventArgs.Empty);
         }
 
-        public event EventHandler StopButtonCommand;
+        public event EventHandler? StopButtonCommand;
         public void OnStopButtonCommandClick()
         {
             StopButtonCommand?.Invoke(Index, EventArgs.Empty);
         }
 
-        public event EventHandler OnExportButtonCommand;
+        public event EventHandler? OnExportButtonCommand;
         public void OnExportButtonCommandHandler(int index)
         {
             OnExportButtonCommand?.Invoke(index, EventArgs.Empty);
         }
 
-        public event EventHandler StartButtonCommand;
+        public event EventHandler? StartButtonCommand;
         public void OnStartButtonCommandClick()
         {
-            StartButtonCommand?.Invoke(Index,EventArgs.Empty);
+            StartButtonCommand?.Invoke(Index, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Event for loaded printed Database (working database)
-        /// </summary>
+
         public event EventHandler? OnLoadCompleteDatabase;
         public void RaiseLoadCompleteDatabase(object database)
         {
             OnLoadCompleteDatabase?.Invoke(database, EventArgs.Empty);
         }
-        /// <summary>
-        /// Event for Loaded Checked Database
-        /// </summary>
+
         public event EventHandler? OnLoadCompleteCheckedDatabase;
         public void RaiseLoadCompleteCheckedDatabase(object database)
         {
             OnLoadCompleteCheckedDatabase?.Invoke(database, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Event for receive current printed code 
-        /// </summary>
+
         public event EventHandler? OnChangePrintedCode;
         public void RaiseChangePrintedCode(object printedCode)
         {
             OnChangePrintedCode?.Invoke(printedCode, EventArgs.Empty);
         }
 
-        /// <summary>
-        ///  Event for receive current checked code 
-        /// </summary>
+
         public event EventHandler? OnChangeCheckedCode;
         public void RaiseChangeCheckedCode(object checkedCode)
         {
@@ -694,6 +597,83 @@ namespace DipesLink.Models
         {
             OnLoadDb?.Invoke(index, EventArgs.Empty);
         }
+
+        public event EventHandler? SimulateButtonCommand;
+        private void OnSimulateButtonCommandClick()
+        {
+            SimulateButtonCommand?.Invoke(Index, EventArgs.Empty);
+        }
+
+        //public event EventHandler? OnFindUnkList;
+        //public void OnFindUnkListChanged()
+        //{
+        //    OnFindUnkList?.Invoke(Index, EventArgs.Empty);
+        //}
+
         #endregion End Events Register
+
+        #region Functions
+        public JobOverview()
+        {
+            StartCommandJob = new RelayCommand(OnStartButtonCommandClick);
+            PauseCommandJob = new RelayCommand(OnPauseButtonCommandClick);
+            StopCommandJob = new RelayCommand(OnStopButtonCommandClick);
+            TriggerCommandJob = new RelayCommand(OnTriggerButtonCommandClick);
+            SimulateCommandJob = new RelayCommand(OnSimulateButtonCommandClick);
+            JobSystemSettings = new JobSystemSettings();
+        }
+
+        private void ChangeColorResult()
+        {
+            switch (_compareResult)
+            {
+                case ComparisonResult.Valid:
+                    CompareResultColor = Brushes.Green;
+                    break;
+                case ComparisonResult.Missed:
+                case ComparisonResult.Invalided:
+                    CompareResultColor = Brushes.Red;
+                    break;
+                case ComparisonResult.Duplicated:
+                    CompareResultColor = Brushes.Orange;
+                    break;
+                case ComparisonResult.Null:
+                    CompareResultColor = Brushes.Black;
+                    break;
+                default:
+                    break;
+            }
+        }
+        #endregion
+
+        // public OperationStatus OperationStatus { get; set; } = OperationStatus.Stopped;
+        //private DataView _PrintedCodeDataView;
+
+        //public DataView PrintedCodeDataView
+        //{
+        //    get { return _PrintedCodeDataView; }
+        //    set
+        //    {
+        //        if (_PrintedCodeDataView != value)
+        //        {
+        //            _PrintedCodeDataView = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
+
+        //private DataView _CheckedCodeDataView;
+        //public DataView CheckedCodeDataView
+        //{
+        //    get { return _CheckedCodeDataView; }
+        //    set
+        //    {
+        //        if (_CheckedCodeDataView != value)
+        //        {
+        //            _CheckedCodeDataView = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
     }
 }

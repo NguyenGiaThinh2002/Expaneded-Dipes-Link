@@ -403,6 +403,20 @@ namespace SharedProgram.Shared
             return compareString;
         }
 
+        private void FindUnknownData(List<string[]> rawDatabaseList, List<string[]> checkedList)
+        {
+            // Create a dictionary to count the number of occurrences of each ResultData with "Duplicated" status
+            var duplicateCountDict = checkedList
+                .Where(x => x[2] == "Duplicated")
+                .GroupBy(x => x[1])
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            // Create a dictionary to store the first valid results
+            var checkedResultDict = checkedList
+                .Where(x => x[2] == "Valid")
+                .GroupBy(x => x[1])
+                .ToDictionary(g => g.Key, g => g.First()[SharedValues.ColumnNames.Length - 1]);
+        }
         public static bool ExportResult(string fileName)
         {
             try

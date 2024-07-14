@@ -14,113 +14,6 @@ namespace DipesLink.ViewModels
 
     public partial class MainViewModel
     {
-        #region Data Definition
-
-        private readonly int _maxLineDatabase = 500;
-
-        private bool _TextFieldPodVis;
-
-        public bool TextFieldPodVis
-        {
-            get { return _TextFieldPodVis; }
-            set { _TextFieldPodVis = value; OnPropertyChanged(); }
-        }
-
-        private readonly List<PODModel> _PODFormat = new();
-        private readonly List<PODModel> _TempPODFormat = new();
-
-        private DataView? _dataView;
-        public DataView? DataViewPODFormat
-        {
-            get { return _dataView; }
-            set
-            {
-                if (_dataView != value)
-                {
-                    _dataView = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private DataView? _CloneDataView;
-        public DataView? CloneDataView
-        {
-            get { return _CloneDataView; }
-            set { _CloneDataView = value; OnPropertyChanged(); }
-        }
-
-        private ObservableCollection<PODModel> _podList = new();
-        public ObservableCollection<PODModel> PODList
-        {
-            get { return _podList; }
-            set { _podList = value; OnPropertyChanged(); }
-        }
-
-        public string TextPODResult { get; set; }
-
-        private PODModel _SelectedColumnItem1;
-        public PODModel SelectedColumnItem1
-        {
-            get { return _SelectedColumnItem1; }
-            set
-            {
-                if (_SelectedColumnItem1 != value)
-                {
-                    _SelectedColumnItem1 = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
-        private PODModel _SelectedColumnItem2;
-        public PODModel SelectedColumnItem2
-        {
-            get { return _SelectedColumnItem2; }
-            set
-            {
-                if (_SelectedColumnItem2 != value)
-                {
-                    _SelectedColumnItem2 = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private int _SelectedHeaderIndex;
-        public int SelectedHeaderIndex
-        {
-            get { return _SelectedHeaderIndex; }
-            set
-            {
-                if (_SelectedHeaderIndex != value)
-                {
-                    _SelectedHeaderIndex = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private ObservableCollection<PODModel> _SelectedHeadersList = new();
-        public ObservableCollection<PODModel> SelectedHeadersList
-        {
-            get { return _SelectedHeadersList; }
-            set
-            {
-                if (_SelectedHeadersList != value)
-                {
-                    _SelectedHeadersList = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public List<string[]> RawDataList { get; set; } = new List<string[]>();
-        public string TextFieldFeedback { get; set; }
-        #endregion
-
-
         internal void SavePODFormat()
         {
             try
@@ -256,7 +149,7 @@ namespace DipesLink.ViewModels
                                 });
                             }
                         }
-                        while (!parser.EndOfData && rowCount < _maxLineDatabase)
+                        while (!parser.EndOfData && rowCount < _MaxDatabaseLine)
                         {
                             string[]? values = parser.ReadFields();
                             if (values != null)

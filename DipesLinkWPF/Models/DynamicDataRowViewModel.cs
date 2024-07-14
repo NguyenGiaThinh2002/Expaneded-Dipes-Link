@@ -1,9 +1,10 @@
-﻿using DipesLink.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.ViewModels;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class DynamicDataRowViewModel : ViewModelBase
+public class DynamicDataRowViewModel : ObservableObject
 {
     private readonly Dictionary<string, object> _data;
 

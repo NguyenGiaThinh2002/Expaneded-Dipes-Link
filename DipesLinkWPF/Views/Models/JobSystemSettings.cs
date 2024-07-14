@@ -5,7 +5,7 @@ using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLink.Views.Models
 {
-    public partial class JobSystemSettings :ViewModelBase
+    public partial class JobSystemSettings :ObservableObject
     {
         [ObservableProperty]
         public int _Id;

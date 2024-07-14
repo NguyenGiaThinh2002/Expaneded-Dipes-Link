@@ -1,11 +1,12 @@
-﻿using DipesLink.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.ViewModels;
 using LiveChartsCore;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView.Extensions;
 
 namespace DipesLink.Models
 {
-    public class CircleChartModel : ViewModelBase
+    public class CircleChartModel : ObservableObject
     {
         public IEnumerable<ISeries> Series { get; set; }
         private GaugeItem _gaugeItem;

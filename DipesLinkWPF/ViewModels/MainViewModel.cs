@@ -5,6 +5,7 @@ using DipesLink.Views.Extension;
 using DipesLink.Views.Models;
 using DipesLink.Views.UserControls.MainUc;
 using IPCSharedMemory;
+using Microsoft.VisualBasic;
 using SharedProgram.Models;
 using SharedProgram.Shared;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 using static DipesLink.Views.Enums.ViewEnums;
 using static IPCSharedMemory.Datatypes.Enums;
 using static SharedProgram.DataTypes.CommonDataType;
@@ -22,10 +24,8 @@ namespace DipesLink.ViewModels
 {
     public partial class MainViewModel : ViewModelBase
     {
-        private int _NumberOfStation;
 
-        private int _MaxDatabaseLine = 500;
-
+       
         public event EventHandler? OnSomethingHappened;
         protected virtual void RaiseSomethingHappened(EventArgs e)
         {
@@ -33,11 +33,7 @@ namespace DipesLink.ViewModels
         }
         #region SingletonInit
 
-        private static MainViewModel? _instance;
-        public static int StationNumber = 4;
-        private bool _detectCamDisconnected;
-        private bool _detectPrinterDisconnected;
-        List<IPCSharedHelper> listIPCUIToDevice1MB = new();
+       
         public static MainViewModel GetIntance()
         {
             _instance ??= new MainViewModel();
@@ -47,6 +43,13 @@ namespace DipesLink.ViewModels
 
         public MainViewModel()
         {
+
+#if DEBUG
+            IsDebugMode = true;
+#else
+        IsDebugMode = false;
+#endif
+
             EventRegister();
             ViewModelSharedFunctions.LoadSetting();
             _NumberOfStation = ViewModelSharedValues.Settings.NumberOfStation;
@@ -54,6 +57,8 @@ namespace DipesLink.ViewModels
             InitDir();
             InitJobConnectionSettings();
             InitStations(_NumberOfStation);
+
+           _updateTimer ??= InitializeDispatcherTimer();
         }
 
         private void EventRegister()
@@ -66,8 +71,6 @@ namespace DipesLink.ViewModels
             if (sender is null) return;
             UIEnableControlByLoadingDb((int)sender, isEnable);
         }
-
-
 
         private void InitInstanceIPC(int index)
         {
@@ -198,8 +201,11 @@ namespace DipesLink.ViewModels
             JobList[index].OnReprint += ReprintHandler;
             JobList[index].OnLoadDb += LoadDbEventHandler;
             JobList[index].OnExportButtonCommand += ExportButtonCommandHandler;
+            JobList[index].SimulateButtonCommand += SimulateButtonCommandHandler;
 
         }
+
+      
 
         private void LoadDbEventHandler(object? sender, EventArgs e)
         {
@@ -348,11 +354,29 @@ namespace DipesLink.ViewModels
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
                     //SharedFunctions.PrintDebugMessage($"Queue print Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
-                     await Task.Run(() => ProcessItem(result, stationIndex)); // handle tasks concurrently, Don't wait for the previous tasks to complete
-                    //ProcessItem(result, stationIndex);
-                   // await Task.Delay(1);
+                     await Task.Run(() => ProcessItem(result, stationIndex));
                 }
                 await Task.Delay(1);
+            }
+        }
+        private DispatcherTimer _updateTimer;
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(500);
+        private DispatcherTimer InitializeDispatcherTimer()
+        {
+            var dispatcherTimer = new DispatcherTimer
+            {
+                Interval = _updateInterval
+            };
+            dispatcherTimer.Tick += (sender, args) => PeriodUIUpdate();
+            dispatcherTimer.Start();
+            return dispatcherTimer;
+        }
+
+        private void PeriodUIUpdate()
+        {
+            foreach (var job in JobList)
+            {
+                job.CycleTimePOD = job.CycleTimePOD_Store;
             }
         }
 
@@ -434,6 +458,9 @@ namespace DipesLink.ViewModels
                             break;
                         case (byte)SharedMemoryType.RestartStatus:
                             //RestartDetect(stationIndex);
+                            break;
+                        case (byte)SharedMemoryType.CycleTimePOD:
+                            JobList[stationIndex].CycleTimePOD_Store = DataConverter.FromByteArray<double>(result.Skip(3).ToArray()).ToString() + " ms";
                             break;
                     }
                     break;
@@ -595,21 +622,21 @@ namespace DipesLink.ViewModels
                          {
                              var numSent = Encoding.ASCII.GetString(resultSent);
                              if (numSent != nullString)
-                                 _JobList[stationIndex].SentDataNumber = numSent.Trim();
+                                 JobList[stationIndex].SentDataNumber = numSent.Trim();
                          }
 
                          if (resultReceived != null)
                          {
                              var numReceived = Encoding.ASCII.GetString(resultReceived);
                              if (numReceived != nullString)
-                                 _JobList[stationIndex].ReceivedDataNumber = numReceived.Trim();
+                                 JobList[stationIndex].ReceivedDataNumber = numReceived.Trim();
                          }
 
                          if (resultPrinted != null)
                          {
                              var numPrinted = Encoding.ASCII.GetString(resultPrinted);
                              if (numPrinted != nullString)
-                                 _JobList[stationIndex].PrintedDataNumber = numPrinted.Trim(); // todo: get old value
+                                 JobList[stationIndex].PrintedDataNumber = numPrinted.Trim(); // todo: get old value
                          }
                      });
                 }

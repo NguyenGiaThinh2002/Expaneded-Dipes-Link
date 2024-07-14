@@ -1,4 +1,5 @@
-﻿using DipesLink.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.Models;
 using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using System.Collections.Concurrent;
@@ -12,13 +13,14 @@ using System.Windows.Threading;
 namespace DipesLink.Views.Extension
 {
 
-    public class CheckedObserHelper : ViewModelBase, IDisposable
+    public class CheckedObserHelper : ObservableObject, IDisposable
     {
         public int TotalChecked { get; set; }
 
         public int TotalPassed { get; set; }
 
         public int TotalFailed { get; set; }
+        public string[] ColumnNames = { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
 
         public ObservableCollection<CheckedResultModel> CheckedList { get; set; } = new();
 
@@ -83,10 +85,10 @@ namespace DipesLink.Views.Extension
         {
             return await Task.Run(() =>
             {
-                string[] columnNames = { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
+                
                 var dataTable = new DataTable();
 
-                foreach (var columnName in columnNames)
+                foreach (var columnName in ColumnNames)
                 {
                     dataTable.Columns.Add(columnName);
                 }

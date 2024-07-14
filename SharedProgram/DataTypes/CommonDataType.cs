@@ -122,7 +122,8 @@ namespace SharedProgram.DataTypes
             ReloadTemplate,
             Reprint,
             Pause,
-            ExportResult
+            ExportResult,
+            Simulate
         }
         public enum InitDataError
         {

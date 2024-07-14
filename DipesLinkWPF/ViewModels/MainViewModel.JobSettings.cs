@@ -27,30 +27,19 @@ namespace DipesLink.ViewModels
 
     public partial class MainViewModel
     {
-        private JobModel _jobModel;
-        private JobModel _createNewJob = new()
-        {
-            PrinterSeries = PrinterSeries.RynanSeries,
-            JobType = JobType.AfterProduction,
-            CompareType = CompareType.Database,
-            CompleteCondition = CompleteCondition.TotalChecked,
-        };
 
-
-        //private int currentSettingStations 
-        public JobModel CreateNewJob
+        private string _searchText;
+        public string SearchText
         {
-            get { return _createNewJob; }
+            get { return _searchText; }
             set
             {
-                if (_createNewJob != value)
-                {
-                    _createNewJob = value;
-                    OnPropertyChanged();
-                }
+                _searchText = value;
+                OnPropertyChanged();
+                FilterListViewPrinterTemplate();
             }
         }
-        // thinh
+
         internal void LockChoosingStation()
         {
             int t = 0;
@@ -60,7 +49,6 @@ namespace DipesLink.ViewModels
             for (int i = 0; i < JobList.Count; i++)
                 ConnectParamsList[i].LockChoosingStation = t <= 0;  // use ternary
         }
-
         internal void LockUI(int stationIndex)
         {
             switch (JobList[stationIndex].OperationStatus)
@@ -79,33 +67,6 @@ namespace DipesLink.ViewModels
             }
             EnableButtons(ConnectParamsList[stationIndex].LockUISetting);
             LoadJobListAction(stationIndex);
-        }
-
-        private SelectJobModel _SelectJob;
-        public SelectJobModel SelectJob
-        {
-            get { return _SelectJob; }
-            set
-            {
-                if (_SelectJob != value)
-                {
-                    _SelectJob = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string _searchText;
-        public string SearchText
-        {
-            get { return _searchText; }
-            set
-            {
-                _searchText = value;
-                OnPropertyChanged();
-                // Filter listview when SearchText changes
-                FilterListViewPrinterTemplate();
-            }
         }
 
         #region Job Selection and create new
@@ -138,8 +99,6 @@ namespace DipesLink.ViewModels
             };
             return job;
         }
-
-        public bool isSaveJob = false;
 
         internal void SaveJob(int jobIndex)
         {
@@ -181,9 +140,9 @@ namespace DipesLink.ViewModels
                             }
 
 #if DEBUG
-                            //_jobModel.PrinterTemplate = "podtest";
-                            //_jobModel.TemplateListFirstFound = new List<string>();
-                            //_jobModel.TemplateListFirstFound.Add("podtest");
+                            _jobModel.PrinterTemplate = "podtest";
+                            _jobModel.TemplateListFirstFound = new List<string>();
+                            _jobModel.TemplateListFirstFound.Add("podtest");
 #endif
                             // Check printer template
                             if (_jobModel.PrinterTemplate == null ||
@@ -317,7 +276,7 @@ namespace DipesLink.ViewModels
 
             //ConnectParamsList[stationIndex].LockUISetting
         }
-        public static int numberOfSelectedJobList;
+      
         private void LoadJobListAction(object? obj)
         {
             // thinh 

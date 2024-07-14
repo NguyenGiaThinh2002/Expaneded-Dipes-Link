@@ -284,7 +284,7 @@
                                 Grid.Column="2"
                                 Width="80"
                                 Height="30"
-                                Click="ButtonSearch_ClickAsync"
+                                Click="ButtonSearch_Click"
                                 Content="Search"
                                 Style="{StaticResource ModernButton2}" />
                         </Grid>
@@ -302,7 +302,7 @@
                 <!--  DataView  -->
                 <Grid Grid.Row="1">
                     <DataGrid
-                        x:Name="DataGridResult"
+                        x:Name="DataGridPrintLog"
                         Grid.Row="3"
                         Margin="20"
                         AlternatingRowBackground="#F5F5F5"

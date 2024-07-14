@@ -1,4 +1,5 @@
-﻿using DipesLink.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Windows.Media;
 
 namespace DipesLink.Models
 {
-    public class JobDeviceStatus : ViewModelBase
+    public class JobDeviceStatus : ObservableObject
     {
 
         private int _index;

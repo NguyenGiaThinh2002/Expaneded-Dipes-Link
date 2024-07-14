@@ -1,4 +1,5 @@
-﻿using DipesLink.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.Models;
 using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using System.Collections.Concurrent;
@@ -13,13 +14,13 @@ using System.Windows.Threading;
 
 namespace DipesLink.Views.Extension
 {
-    public class PrintObserHelper : ViewModelBase
+    public class PrintObserHelper : ObservableObject
     {
         private DataGrid _dataGrid;
         private ObservableCollection<ExpandoObject>? printList = new();
         public ObservableCollection<ExpandoObject>? PrintList { get => printList; set { printList = value; OnPropertyChanged(); } }
-        private readonly Paginator paginator;
-        readonly string[] columnNames = Array.Empty<string>();
+        private readonly Paginator<ExpandoObject> paginator;
+        public readonly string[] ColumnNames = Array.Empty<string>();
         private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(2000);
         private readonly List<string[]> _batchUpdateList = new();
         private ConcurrentQueue<string[]> _batchUpdateQueue = new();
@@ -29,18 +30,24 @@ namespace DipesLink.Views.Extension
         private CancellationTokenSource cts_UpdateUI = new();
         private int _MaxDatabaseLine = 500;
         private DispatcherTimer _dispatcherTimer;
+        public int PrintedNumber { get; set; }
 
         public PrintObserHelper(List<string[]> list, int currentPage, DataGrid dataGrid)
         {
             _dataGrid = dataGrid;
-            columnNames = list[0];
+            ColumnNames = list[0];
             CreateDataTemplate();
             AddDataToCollection(PrintList, list[0], list.Skip(1).ToList());
-            paginator = new Paginator(PrintList, _MaxDatabaseLine);
+            CounterPrintedFirstLoad(list);
+            paginator = new Paginator<ExpandoObject>(PrintList, _MaxDatabaseLine);
             LoadPageAsync(currentPage);
             CreateDataLookup();
             _dispatcherTimer = InitializeDispatcherTimer();
 
+        }
+        private void CounterPrintedFirstLoad(List<string[]> list)
+        {
+            PrintedNumber = list.Count(row => row[^1] == "Printed");
         }
 
         private void CreateDataLookup()
@@ -49,10 +56,10 @@ namespace DipesLink.Views.Extension
             for (int i = 0; i < paginator.SourceData.Count; i++)
             {
                 var item = paginator.SourceData[i];
-                if (item is IDictionary<string, object> modelDict && modelDict.ContainsKey(columnNames[0]))
+                if (item is IDictionary<string, object> modelDict && modelDict.ContainsKey(ColumnNames[0]))
                 {
 
-                    string? key = modelDict[columnNames[0]].ToString();
+                    string? key = modelDict[ColumnNames[0]].ToString();
                     int pageNumber = paginator.GetCurrentPageNumber(i);
                     if (key != null) _dataLookup[key] = (item, pageNumber);
                 }
@@ -76,7 +83,7 @@ namespace DipesLink.Views.Extension
         private void CreateDataTemplate()
         {
             _dataGrid.Columns.Clear();
-            foreach (var columnName in columnNames)
+            foreach (var columnName in ColumnNames)
             {
                 if (columnName == "Status")
                 {
@@ -191,7 +198,7 @@ namespace DipesLink.Views.Extension
         {
             foreach (var item in _dataGrid.Items)
             {
-                if (item is IDictionary<string, object> modelDict && modelDict.ContainsKey(columnNames[0]) && modelDict[columnNames[0]].ToString() == key)
+                if (item is IDictionary<string, object> modelDict && modelDict.ContainsKey(ColumnNames[0]) && modelDict[ColumnNames[0]].ToString() == key)
                 {
                     _dataGrid.ScrollIntoView(item);
 

@@ -1,8 +1,9 @@
-﻿using DipesLink.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.ViewModels;
 
 namespace DipesLink.Models
 {
-    public class PrinterState : ViewModelBase
+    public class PrinterState : ObservableObject
     {
         private string? state;
         private string? name;

@@ -19,7 +19,7 @@
                         </Grid.ColumnDefinitions>
                         <Border
                             Grid.Column="0"
-                            Width="76"           
+                            Width="76"
                             Height="30"
                             Padding="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

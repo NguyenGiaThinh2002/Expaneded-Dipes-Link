@@ -46,8 +46,6 @@ namespace DipesLink.Views.UserControls.MainUc
             if (button != null)
             {
                 int index = Convert.ToInt32(button.Tag); // Retrieve the index from the Tag property
-             //   ExportResult.ExportNewResult(index);
-                // Add further handling logic here
                 ViewModel.OnExportButtonCommandHandler(index);
             }
         }

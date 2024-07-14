@@ -14,10 +14,11 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-public class PrintingDataTableHelper : ViewModelBase, IDisposable
+public class PrintingDataTableHelper : ObservableObject, IDisposable
 {
-    public Paginator? Paginator { get; set; }
+   // public Paginator? Paginator { get; set; }
     public JobOverview? CurrentViewModel { get; private set; }
     public MainWindow? CurrentWindow { get; set; }
     private List<string[]>? _orgDBList;
@@ -62,23 +63,23 @@ public class PrintingDataTableHelper : ViewModelBase, IDisposable
         // Update UI after data collection is loaded
         Application.Current.Dispatcher.Invoke(() =>
         {
-            try
-            {
-                if (currentViewModel == null) return;
-                CurrentViewModel = currentViewModel;
-                dataGrid.AutoGenerateColumns = false; // Disable auto-generation of columns
-                dataGrid.Columns.Clear();
-                SetupDataGridColumns(dataGrid, PrintedDataCollection);
-               // Paginator = new Paginator(PrintedDataCollection, 500); // Set page size to 500
-                dataGrid.ItemsSource = Paginator.GetPage(currentPage); // Set the ItemsSource to the current page
-                currentViewModel.IsShowLoadingDB = Visibility.Collapsed;
-                ViewModelSharedEvents.OnEnableUIChangeHandler(currentViewModel.Index, true);
-                ViewModelSharedEvents.OnDataTableLoadingHandler();
-            }
-            catch (Exception ex)
-            {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
-            }
+            //try
+            //{
+            //    if (currentViewModel == null) return;
+            //    CurrentViewModel = currentViewModel;
+            //    dataGrid.AutoGenerateColumns = false; // Disable auto-generation of columns
+            //    dataGrid.Columns.Clear();
+            //    SetupDataGridColumns(dataGrid, PrintedDataCollection);
+            //   // Paginator = new Paginator(PrintedDataCollection, 500); // Set page size to 500
+            //    dataGrid.ItemsSource = Paginator.GetPage(currentPage); // Set the ItemsSource to the current page
+            //    currentViewModel.IsShowLoadingDB = Visibility.Collapsed;
+            //    ViewModelSharedEvents.OnEnableUIChangeHandler(currentViewModel.Index, true);
+            //    ViewModelSharedEvents.OnDataTableLoadingHandler();
+            //}
+            //catch (Exception ex)
+            //{
+            //    SharedFunctions.PrintConsoleMessage(ex.Message);
+            //}
         });
     }
 
@@ -160,88 +161,88 @@ public class PrintingDataTableHelper : ViewModelBase, IDisposable
 
     public async void UpdateDataGridAsync(DataGrid dataGrid)
     {
-        if (Paginator != null)
-        {
-            if (CurrentViewModel == null) return;
-            try
-            {
-                // Lấy trang hiện tại từ Paginator và cập nhật DataCollection
-                var currentPageData = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage));
-                Application.Current.Dispatcher.Invoke(() =>  // Update UI Flow
-                {
-                    CurrentViewModel.DataCollection.Clear();
-                    foreach (var item in currentPageData)
-                    {
-                      //  CurrentViewModel.DataCollection.Add(item);
-                    }
-                    dataGrid.ItemsSource = CurrentViewModel.DataCollection;
-                });
-            }
-            catch (Exception ex)
-            {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
-            }
-        }
+        //if (Paginator != null)
+        //{
+        //    if (CurrentViewModel == null) return;
+        //    try
+        //    {
+        //        // Lấy trang hiện tại từ Paginator và cập nhật DataCollection
+        //        var currentPageData = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage));
+        //        Application.Current.Dispatcher.Invoke(() =>  // Update UI Flow
+        //        {
+        //            CurrentViewModel.DataCollection.Clear();
+        //            foreach (var item in currentPageData)
+        //            {
+        //              //  CurrentViewModel.DataCollection.Add(item);
+        //            }
+        //            dataGrid.ItemsSource = CurrentViewModel.DataCollection;
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SharedFunctions.PrintConsoleMessage(ex.Message);
+        //    }
+        //}
     }
 
     private void UpdateDataGrid(string[] printedCode, DataGrid dataGrid, JobOverview? curViewModel)
     {
-        try
-        {
-            if (curViewModel == null)
-            {
-                return;
-            }
+        //try
+        //{
+        //    if (curViewModel == null)
+        //    {
+        //        return;
+        //    }
 
-            string rowIdentifier = printedCode[0];
-            string newStatus = printedCode[^1];
-            int _rowIndexTotal = 0;
+        //    string rowIdentifier = printedCode[0];
+        //    string newStatus = printedCode[^1];
+        //    int _rowIndexTotal = 0;
 
-            if (_optimizedSearch != null)
-            {
-                _rowIndexTotal = _optimizedSearch.FindIndexByData(printedCode);
-            }
+        //    if (_optimizedSearch != null)
+        //    {
+        //        _rowIndexTotal = _optimizedSearch.FindIndexByData(printedCode);
+        //    }
 
-            if (Paginator == null)
-            {
-                return;
-            }
+        //    if (Paginator == null)
+        //    {
+        //        return;
+        //    }
 
-            int currentPage = Paginator.GetCurrentPageNumber(_rowIndexTotal);
+        //    int currentPage = Paginator.GetCurrentPageNumber(_rowIndexTotal);
 
-            if (Paginator != null && currentPage != Paginator.CurrentPage)
-            {
-                Paginator.CurrentPage = currentPage;
-                UpdateDataGridAsync(dataGrid);  // Cập nhật DataGrid với trang mới
-            }
+        //    if (Paginator != null && currentPage != Paginator.CurrentPage)
+        //    {
+        //        Paginator.CurrentPage = currentPage;
+        //        UpdateDataGridAsync(dataGrid);  // Cập nhật DataGrid với trang mới
+        //    }
 
-            DynamicDataRowViewModel targetRow = null;
-            _rowIndex = -1;
-            for (int i = 0; i < curViewModel.DataCollection.Count; i++)
-            {
-                var row = curViewModel.DataCollection[i];
-                if (row.ContainsKey("Index") && row["Index"]?.ToString() == rowIdentifier)
-                {
-                    row["Status"] = newStatus;
-                    targetRow = row;
-                    _rowIndex = i;
-                    break;
-                }
-            }
+        //    DynamicDataRowViewModel targetRow = null;
+        //    _rowIndex = -1;
+        //    for (int i = 0; i < curViewModel.DataCollection.Count; i++)
+        //    {
+        //        var row = curViewModel.DataCollection[i];
+        //        if (row.ContainsKey("Index") && row["Index"]?.ToString() == rowIdentifier)
+        //        {
+        //            row["Status"] = newStatus;
+        //            targetRow = row;
+        //            _rowIndex = i;
+        //            break;
+        //        }
+        //    }
 
-            if (targetRow != null)
-            {
-                Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    ScrollIntoView(_rowIndex, dataGrid);
-                    // dataGrid.Items.Refresh(); // Refresh DataGrid to reflect changes
-                }, System.Windows.Threading.DispatcherPriority.Background);
-            }
-        }
-        catch (Exception ex)
-        {
-            SharedFunctions.PrintConsoleMessage(ex.Message);
-        }
+        //    if (targetRow != null)
+        //    {
+        //        Application.Current.Dispatcher.InvokeAsync(() =>
+        //        {
+        //            ScrollIntoView(_rowIndex, dataGrid);
+        //            // dataGrid.Items.Refresh(); // Refresh DataGrid to reflect changes
+        //        }, System.Windows.Threading.DispatcherPriority.Background);
+        //    }
+        //}
+        //catch (Exception ex)
+        //{
+        //    SharedFunctions.PrintConsoleMessage(ex.Message);
+        //}
     }
 
     public static void ScrollIntoView(int rowIndex, DataGrid dataGrid)
@@ -274,26 +275,26 @@ public class PrintingDataTableHelper : ViewModelBase, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                try
-                {
-                    Paginator?.Dispose();
-                    _orgDBList?.Clear();
-                    PrintedDataCollection?.Clear();
-                    _optimizedSearch?.Dispose();
-                    Paginator = null;
-                    _orgDBList = null;
-                }
-                catch (Exception ex)
-                {
-                    SharedFunctions.PrintConsoleMessage(ex.Message);
-                }
-            }
-            disposedValue = true;
-        }
+        //if (!disposedValue)
+        //{
+        //    if (disposing)
+        //    {
+        //        try
+        //        {
+        //            Paginator?.Dispose();
+        //            _orgDBList?.Clear();
+        //            PrintedDataCollection?.Clear();
+        //            _optimizedSearch?.Dispose();
+        //            Paginator = null;
+        //            _orgDBList = null;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SharedFunctions.PrintConsoleMessage(ex.Message);
+        //        }
+        //    }
+        //    disposedValue = true;
+        //}
     }
 
     public void Dispose()

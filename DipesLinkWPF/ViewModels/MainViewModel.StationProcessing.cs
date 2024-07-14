@@ -43,11 +43,20 @@ namespace DipesLink.ViewModels
             int index = sender != null ? (int)sender : -1;
             ActionButtonProcess(index, ActionButtonType.Trigger);
         }
+
+        private void SimulateButtonCommandHandler(object? sender, EventArgs e)
+        {
+            int index = sender != null ? (int)sender : -1;
+            ActionButtonProcess(index, ActionButtonType.Simulate);
+        }
+
         private void ExportButtonCommandHandler(object? sender, EventArgs e)
         {
             int index = sender != null ? (int)sender : -1;
             ActionButtonProcess(index, ActionButtonType.ExportResult);
         }
+
+
         internal  void ActionButtonProcess(int stationIndex, ActionButtonType buttonType)
         {
             try
