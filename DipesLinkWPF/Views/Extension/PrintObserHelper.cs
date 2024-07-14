@@ -19,7 +19,7 @@ namespace DipesLink.Views.Extension
         private DataGrid _dataGrid;
         private ObservableCollection<ExpandoObject>? printList = new();
         public ObservableCollection<ExpandoObject>? PrintList { get => printList; set { printList = value; OnPropertyChanged(); } }
-        private readonly Paginator paginator;
+        private readonly Paginator<ExpandoObject> paginator;
         public readonly string[] ColumnNames = Array.Empty<string>();
         private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(2000);
         private readonly List<string[]> _batchUpdateList = new();
@@ -39,7 +39,7 @@ namespace DipesLink.Views.Extension
             CreateDataTemplate();
             AddDataToCollection(PrintList, list[0], list.Skip(1).ToList());
             CounterPrintedFirstLoad(list);
-            paginator = new Paginator(PrintList, _MaxDatabaseLine);
+            paginator = new Paginator<ExpandoObject>(PrintList, _MaxDatabaseLine);
             LoadPageAsync(currentPage);
             CreateDataLookup();
             _dispatcherTimer = InitializeDispatcherTimer();

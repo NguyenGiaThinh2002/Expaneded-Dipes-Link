@@ -22,7 +22,7 @@ namespace DipesLink.Views.UserControls.MainUc
         //  private PrintingDataTableHelper _printingDataTableHelper = new();
         private JobOverview? _currentJob;
         private readonly ConcurrentQueue<string[]> _queueCheckedCode = new();
-        private PrintObserHelper? _PrintObserHelper;
+        private PrintObserHelper? _printObserHelper;
         private CheckedObserHelper _checkedObserHelper = new();
         private readonly ConcurrentQueue<string[]> _queuePrintedCode = new();
         private readonly CancellationTokenSource _ctsGetPrintedCode = new();
@@ -142,6 +142,7 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
+        private List<string[]> _dataList = new();
         private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e)
         {
             try
@@ -152,10 +153,10 @@ namespace DipesLink.Views.UserControls.MainUc
                     {
                         if (_currentJob != null)
                         {
-                            var dataList = dbList.FirstOrDefault().Item1;
+                            _dataList = dbList.FirstOrDefault().Item1;
                             var currentPage = dbList.FirstOrDefault().Item2;
-                            _PrintObserHelper = new(dataList, currentPage, DataGridDB);
-                            _currentJob.PrintedDataNumber = _PrintObserHelper.PrintedNumber.ToString();
+                            _printObserHelper = new(_dataList, currentPage, DataGridDB);
+                            _currentJob.PrintedDataNumber = _printObserHelper.PrintedNumber.ToString();
                             var vm = CurrentViewModel<JobOverview>();
                             if (vm != null)
                             {
@@ -225,7 +226,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         {
                             foreach (var data in tempData)
                             {
-                                _PrintObserHelper?.CheckAndUpdateStatusAsync(data);
+                                _printObserHelper?.CheckAndUpdateStatusAsync(data);
                             }
                         });
                     }
@@ -241,7 +242,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     {
                         foreach (var data in tempData)
                         {
-                            _PrintObserHelper?.CheckAndUpdateStatusAsync(data);
+                            _printObserHelper?.CheckAndUpdateStatusAsync(data);
                         }
                     });
                 }
@@ -318,34 +319,23 @@ namespace DipesLink.Views.UserControls.MainUc
             });
         }
 
-        private void ViewChekedResult_PreMouDown(object sender, MouseButtonEventArgs e)
+        private void CheckedData_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
-            //    _checkedObserHelper.CheckedList
                 if (_currentJob == null) return;
+             
+                CheckedInfo printInfo = new()
+                {
+                    list = _checkedObserHelper?.CheckedList,
+                    columnNames = _checkedObserHelper.ColumnNames,
+                    RawList = _dataList,
+                    PodFormat = _currentJob.PODFormat,
+                    CurrentJob = _currentJob,
+                };
 
-                //CheckedLogsWindow jobLogsWindow = new(_checkedObserHelper)
-                //{
-                //    DataContext = DataContext as JobOverview,
-                //    Num_TotalChecked = _currentJob.TotalRecDb
-                //};
-
-                //if (int.TryParse(_currentJob.PrintedDataNumber, out int printed))
-                //{
-                //    jobLogsWindow.Num_Printed = printed;
-                //}
-
-                //if (int.TryParse(TextBlockTotalChecked.Text, out int totalChecked))
-                //{
-                //    jobLogsWindow.Num_Verified = totalChecked;
-                //    if (int.TryParse(TextBlockTotalFailed.Text, out int failed))
-                //    {
-                //        jobLogsWindow.Num_Failed = failed;
-                //        jobLogsWindow.Num_Valid = totalChecked - failed;
-                //    }
-                //}
-                //jobLogsWindow.ShowDialog();
+                CheckedLogsWindow checkedLogsWindow = new(printInfo);
+                checkedLogsWindow.ShowDialog();
             }
             catch (Exception)
             {
@@ -359,8 +349,8 @@ namespace DipesLink.Views.UserControls.MainUc
                 if (_currentJob == null) return;
                 PrintingInfo printInfo = new()
                 {
-                    list = _PrintObserHelper?.PrintList,
-                    columnNames = _PrintObserHelper.ColumnNames,
+                    list = _printObserHelper?.PrintList,
+                    columnNames = _printObserHelper.ColumnNames,
                 };
 
                 PrintedLogsWindow printedLogsWindow = new(printInfo);

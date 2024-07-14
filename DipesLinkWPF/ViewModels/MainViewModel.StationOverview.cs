@@ -3,7 +3,12 @@ using DipesLink.Models;
 using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
 using SharedProgram.Models;
+using SharedProgram.Shared;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -45,7 +50,9 @@ namespace DipesLink.ViewModels
             
         }
 
+       
 
+        
         #region Button Control
 
         internal void UpdateJobInfo(int index)

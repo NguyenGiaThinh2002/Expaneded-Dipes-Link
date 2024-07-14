@@ -15,7 +15,7 @@ namespace DipesLink.Views.Extension
             Printed,
             Waiting
         }
-        public Paginator? Paginator { get; set; }
+      //  public Paginator? Paginator { get; set; }
         private DataTable? _miniDataTable;
         private DataTable? _originalDataTable;
         private bool disposedValue = false;
@@ -199,7 +199,7 @@ namespace DipesLink.Views.Extension
         public async Task ProcessMiniPageAsync(DataGrid dataGrid, DataTable dataTable)
         {
          ///   Paginator = new Paginator(dataTable);
-            if (Paginator == null) return;
+          //  if (Paginator == null) return;
             DataTable? pageTable = null;
             try
             {
@@ -256,32 +256,32 @@ namespace DipesLink.Views.Extension
 
         public async Task UpdateDataGridAsync(DataGrid dataGrid, int customPage = 0)
         {
-            if (Paginator != null)
-            {
-                if (customPage == 0) { }
-                else Paginator.CurrentPage = customPage - 1;
-                try
-                {
-                  //  _miniDataTable = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage)); // Load mini datatable by current page
-                    if (_miniDataTable != null)
-                    {
-                        Interlocked.Exchange(ref NumberItemInCurPage, _miniDataTable.Rows.Count);
-                        Application.Current.Dispatcher.Invoke(() =>  //Update UI Flow
-                        {
-                            dataGrid.AutoGenerateColumns = false;
-                            dataGrid.ItemsSource = _miniDataTable.DefaultView;
-                        });
-                    }
-                }
-                catch (Exception)
-                {
+            //if (Paginator != null)
+            //{
+            //    if (customPage == 0) { }
+            //    else Paginator.CurrentPage = customPage - 1;
+            //    try
+            //    {
+            //      //  _miniDataTable = await Task.Run(() => Paginator.GetPage(Paginator.CurrentPage)); // Load mini datatable by current page
+            //        if (_miniDataTable != null)
+            //        {
+            //            Interlocked.Exchange(ref NumberItemInCurPage, _miniDataTable.Rows.Count);
+            //            Application.Current.Dispatcher.Invoke(() =>  //Update UI Flow
+            //            {
+            //                dataGrid.AutoGenerateColumns = false;
+            //                dataGrid.ItemsSource = _miniDataTable.DefaultView;
+            //            });
+            //        }
+            //    }
+            //    catch (Exception)
+            //    {
 
-                }
-                finally
-                {
-                    _miniDataTable?.Dispose();
-                }
-            }
+            //    }
+            //    finally
+            //    {
+            //        _miniDataTable?.Dispose();
+            //    }
+            //}
         }
        
         protected virtual void Dispose(bool disposing)
@@ -295,8 +295,8 @@ namespace DipesLink.Views.Extension
                     _originalDataTable?.Dispose();
                     _miniDataTable = null;
                     _originalDataTable = null;
-                    Paginator?.Dispose();
-                    Paginator = null;
+                    //Paginator?.Dispose();
+                    //Paginator = null;
                 }
 
                 // Release unmanaged resources here.

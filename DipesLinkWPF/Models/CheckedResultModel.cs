@@ -10,11 +10,11 @@ namespace DipesLink.Models
     public class CheckedResultModel
     {
       
-        public string? Index { get; set; }
-        public string? ResultData { get; set; }
-        public string? Result {  get; set; }
-        public string? ProcessingTime { get; set; }
-        public string? DateTime { get; set; }
+        public string Index { get; set; } = string.Empty;
+        public string ResultData { get; set; } = string.Empty;
+        public string Result { get; set; } = string.Empty;
+        public string ProcessingTime { get; set; } = string.Empty;
+        public string DateTime { get; set; } = string.Empty;
         public CheckedResultModel(string[] data)
         {
             if (data.Length >= 5)
@@ -26,6 +26,10 @@ namespace DipesLink.Models
                 DateTime = data[4];
             }
         
+        }
+        public CheckedResultModel()
+        {
+            
         }
 
     }

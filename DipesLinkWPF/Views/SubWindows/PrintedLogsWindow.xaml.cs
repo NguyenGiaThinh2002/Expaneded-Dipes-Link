@@ -33,8 +33,8 @@ namespace DipesLink.Views.SubWindows
         private JobOverview? _currentJob;
         private int _MaxDatabaseLine = 500;
         private PrintingInfo? _printingInfo;
-        private  string[] _columnNames = Array.Empty<string>();
-        private Paginator? _paginator;
+        private string[] _columnNames = Array.Empty<string>();
+        private Paginator<ExpandoObject>? _paginator;
         public PrintedLogsWindow(PrintingInfo printingInfo)
         {
             _printingInfo = printingInfo;
@@ -47,7 +47,7 @@ namespace DipesLink.Views.SubWindows
         }
         private void InitPrintData()
         {
-            if (_printingInfo == null || _printingInfo.columnNames ==null) return;
+            if (_printingInfo == null || _printingInfo.columnNames == null) return;
             try
             {
                 filterList = _printingInfo.list;
@@ -65,11 +65,11 @@ namespace DipesLink.Views.SubWindows
             if (_printingInfo == null || _printingInfo.list == null) return;
             try
             {
-                _paginator = new Paginator(_printingInfo.list, _MaxDatabaseLine);
+                _paginator = new Paginator<ExpandoObject>(_printingInfo.list, _MaxDatabaseLine);
                 _ = LoadPageAsync(0);
                 UpdatePageInfo();
                 UpdateNumber();
-               
+
 
             }
             catch (Exception)
@@ -78,61 +78,19 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-
-        private async void PrintedLogsWindow_Closing(object? sender, CancelEventArgs e)
+        private void UpdateNumber()
         {
-            e.Cancel = true; // Cancel the default close operation
-            await Task.Run(async () =>
-             {
-                 await CleanupResourcesAsync();
-                 Dispatcher.Invoke(() =>  // Close the window on the UI thread after cleanup
-                 {
-                     Closing -= PrintedLogsWindow_Closing; // Prevent re-entry
-                     Close(); // Now close the window
-                 });
-             });
-        }
-
-        private async Task CleanupResourcesAsync()
-        {
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    if (PrintedDataTable != null)
-                    {
-                        PrintedDataTable?.Clear();
-                        PrintedDataTable?.Dispose();
-                        PrintedDataTable = null;
-                    }
-
-                    if (_jobLogsDataTableHelper != null)
-                    {
-                        _jobLogsDataTableHelper.Dispose();
-                        _jobLogsDataTableHelper = null;
-                    }
-
-                    _currentJob = null;
-                    GC.Collect();
-                    //GC.WaitForPendingFinalizers();
-                }
-                catch (Exception)
-                {
-
-                }
-
-            });
-        }
-
-        private T? CurrentViewModel<T>() where T : class
-        {
-            if (DataContext is T viewModel)
-            {
-                return viewModel;
+                if (_printingInfo == null || _printingInfo.list == null || _paginator == null) return;
+                TextBlockTotal.Text = _printingInfo.list.Count.ToString();
+                int countPrinted = _printingInfo.list.Count(item => ((IDictionary<string, object>)item)["Status"].ToString() == "Printed");
+                int countWaiting = _printingInfo.list.Count(item => ((IDictionary<string, object>)item)["Status"].ToString() == "Waiting");
+                TextBlockPrinted.Text = countPrinted.ToString();
+                TextBlockWait.Text = countWaiting.ToString();
             }
-            else
+            catch (Exception)
             {
-                return null;
             }
         }
 
@@ -184,7 +142,7 @@ namespace DipesLink.Views.SubWindows
             {
                 try
                 {
-                   // Thread.Sleep(5000); test load symbol
+                    // Thread.Sleep(5000); test load symbol
                     if (pageNumber < 0 || pageNumber >= _paginator.TotalPages) return;
                     ObservableCollection<ExpandoObject> pageData = _paginator.GetPage(pageNumber);
                     countDataPerPage = pageData.Count;
@@ -194,7 +152,7 @@ namespace DipesLink.Views.SubWindows
                         UpdatePageInfo();
                         ButtonPaginationVis();
                     });
-                   
+
                 }
                 catch (Exception)
                 {
@@ -206,54 +164,61 @@ namespace DipesLink.Views.SubWindows
         }
 
 
-        private void UpdateNumber()
+        //private async void PrintedLogsWindow_Closing(object? sender, CancelEventArgs e)
+        //{
+        //    //e.Cancel = true; // Cancel the default close operation
+        //    //await Task.Run(async () =>
+        //    // {
+        //    //     await CleanupResourcesAsync();
+        //    //     Dispatcher.Invoke(() =>  // Close the window on the UI thread after cleanup
+        //    //     {
+        //    //         Closing -= PrintedLogsWindow_Closing; // Prevent re-entry
+        //    //         Close(); // Now close the window
+        //    //     });
+        //    // });
+        //}
+
+        //private async Task CleanupResourcesAsync()
+        //{
+        //    //await Task.Run(() =>
+        //    //{
+        //    //    try
+        //    //    {
+        //    //        if (PrintedDataTable != null)
+        //    //        {
+        //    //            PrintedDataTable?.Clear();
+        //    //            PrintedDataTable?.Dispose();
+        //    //            PrintedDataTable = null;
+        //    //        }
+
+        //    //        if (_jobLogsDataTableHelper != null)
+        //    //        {
+        //    //            _jobLogsDataTableHelper.Dispose();
+        //    //            _jobLogsDataTableHelper = null;
+        //    //        }
+
+        //    //        _currentJob = null;
+        //    //        GC.Collect();
+        //    //        //GC.WaitForPendingFinalizers();
+        //    //    }
+        //    //    catch (Exception)
+        //    //    {
+
+        //    //    }
+
+        //    //});
+        //}
+
+        private T? CurrentViewModel<T>() where T : class
         {
-            try
+            if (DataContext is T viewModel)
             {
-                if (_printingInfo == null || _printingInfo.list == null ||_paginator == null) return;
-                TextBlockTotal.Text = _printingInfo.list.Count.ToString();
-                int countPrinted = _printingInfo.list.Count(item =>((IDictionary<string, object>)item)["Status"].ToString() == "Printed");
-                int countWaiting = _printingInfo.list.Count(item => ((IDictionary<string, object>)item)["Status"].ToString() == "Waiting");
-                TextBlockPrinted.Text = countPrinted.ToString();
-                TextBlockWait.Text = countWaiting.ToString();
+                return viewModel;
             }
-            catch (Exception)
+            else
             {
+                return null;
             }
-        }
-
-        private void PrintedLogsWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-
-
-            //    // thinh
-            //    ImageLoadingPrintedLog.Visibility = Visibility.Visible;
-            //    Stopwatch stopwatch = Stopwatch.StartNew();
-
-            //    // Start both independent tasks
-            //   // var createTemplateTask = Task.Run(() => CreateDataTemplate(DataGridResult));
-            //    Task<List<string[]>> printedStatusTask = InitDatabaseAndPrintedStatusAsync();
-
-            //    // Wait for the printed status to be fetched before initializing the database with it
-            //    List<string[]> printedStatus = await printedStatusTask;
-            //    PrintedDataTable = await InitDatabaseAsync(printedStatus);
-
-            //    // Wait for the template creation to finish if it hasn't already
-            //   // await createTemplateTask;
-
-            //    // Proceed only if the DataTableHelper is initialized and the PrintedDataTable is not null
-            //    if (_jobLogsDataTableHelper != null && PrintedDataTable != null)
-            //    {
-            //        // Initialize database asynchronously and update UI concurrently
-            //    //    var dbInitTask = _jobLogsDataTableHelper.InitDatabaseAsync(PrintedDataTable, DataGridResult);
-            ////        await dbInitTask; // Ensure database initialization is completed before finishing
-            //        ImageLoadingPrintedLog.Visibility = Visibility.Hidden;
-            //    }
-            //    UpdateNumber();
-            //    UpdatePageInfo();
-            //    ImageLoadingPrintedLog.Visibility = Visibility.Hidden;
-            //    stopwatch.Stop();
-            //    Debug.WriteLine($"Time loaded printed data: {stopwatch.ElapsedMilliseconds} ms");
         }
 
         private void UpdatePageInfo()
@@ -262,7 +227,7 @@ namespace DipesLink.Views.SubWindows
             try
             {
                 var currentPage = (_paginator?.CurrentPage + 1);
-                _pageInfo = string.Format("P {0} / {1} ({2})", currentPage, _paginator?.TotalPages, countDataPerPage);
+                _pageInfo = string.Format("Page {0} / {1} ({2})", currentPage, _paginator?.TotalPages, countDataPerPage);
                 TextBlockPageInfo.Text = _pageInfo;
                 TextBoxPage.Text = currentPage.ToString();
             }
@@ -278,37 +243,35 @@ namespace DipesLink.Views.SubWindows
             if (_paginator == null) return;
             try
             {
+                Button button = (Button)sender;
+                switch (button.Name)
+                {
+                    case "ButtonFirst":
+                        await LoadPageAsync(0);
+                        break;
 
-           
-            Button button = (Button)sender;
-            switch (button.Name)
-            {
-                case "ButtonFirst":
-                    await LoadPageAsync(0);
-                    break;
+                    case "ButtonBack":
+                        if (_paginator.CurrentPage > 0)
+                            await LoadPageAsync(--_paginator.CurrentPage);
+                        break;
 
-                case "ButtonBack":
-                    if (_paginator.CurrentPage > 0)
-                        await LoadPageAsync(--_paginator.CurrentPage);
-                    break;
+                    case "ButtonNext":
+                        if (_paginator.CurrentPage < _paginator.TotalPages - 1)
+                            await LoadPageAsync(++_paginator.CurrentPage);
+                        break;
 
-                case "ButtonNext":
-                    if (_paginator.CurrentPage < _paginator.TotalPages - 1)
-                        await LoadPageAsync(++_paginator.CurrentPage);
-                    break;
+                    case "ButtonEnd":
+                        await LoadPageAsync(_paginator.TotalPages - 1);
+                        break;
 
-                case "ButtonEnd":
-                    await LoadPageAsync(_paginator.TotalPages - 1);
-                    break;
-
-                case "ButtonGotoPage":
-                    GotoPageAction();
-                    break;
-                default:
-                    break;
-            }
-            ButtonPaginationVis();
-            UpdatePageInfo();
+                    case "ButtonGotoPage":
+                        GotoPageAction();
+                        break;
+                    default:
+                        break;
+                }
+                ButtonPaginationVis();
+                UpdatePageInfo();
             }
             catch (Exception)
             {
@@ -397,13 +360,13 @@ namespace DipesLink.Views.SubWindows
 
                 if (filterList != null && filterList?.Count > 0)
                 {
-                    _paginator = new Paginator(new ObservableCollection<ExpandoObject>(filterList), _MaxDatabaseLine);
+                    _paginator = new Paginator<ExpandoObject>(new ObservableCollection<ExpandoObject>(filterList), _MaxDatabaseLine);
                     _ = LoadPageAsync(0);
                     UpdatePageInfo();
                     ButtonPaginationVis();
 
                 }
-                
+
             }
             catch (Exception)
             {
@@ -411,27 +374,27 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-        private void ButtonSearch_ClickAsync(object sender, RoutedEventArgs e)
+        private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
-            SearchActionAsync();
+            SearchAction();
         }
 
-        private void SearchActionAsync()
+        private void SearchAction()
         {
-            if (_printingInfo == null || _printingInfo.list == null || _paginator?.SourceData ==null) return;
+            if (_printingInfo == null || _printingInfo.list == null || _paginator?.SourceData == null) return;
             try
             {
                 var searchValue = TextBoxSearch.Text;
                 var searchResults = filterList.Where(item =>
                 {
-                   
+
                     var expandoDict = (IDictionary<string, object>)item;
                     return expandoDict.Values.Any(value => value != null && value.ToString() == searchValue);
                 });
 
                 if (searchResults != null && searchResults?.Count() > 0)
                 {
-                    _paginator = new Paginator(new ObservableCollection<ExpandoObject>(searchResults), _MaxDatabaseLine);
+                    _paginator = new Paginator<ExpandoObject>(new ObservableCollection<ExpandoObject>(searchResults), _MaxDatabaseLine);
                     _ = LoadPageAsync(0);
 
                     UpdatePageInfo();
@@ -453,7 +416,7 @@ namespace DipesLink.Views.SubWindows
         {
 
             TextBoxSearch.Text = string.Empty;
-            if(ComboBoxFilter.SelectedIndex == 0)
+            if (ComboBoxFilter.SelectedIndex == 0)
             {
                 GetOriginalList();
             }
@@ -461,57 +424,7 @@ namespace DipesLink.Views.SubWindows
             {
                 ComboBoxFilter.SelectedIndex = 0;
             }
-           
             ButtonPaginationVis();
-
-
-        }
-
-        #region Get Cell Value
-
-        //public static DataGridCell? GetCell(DataGrid dataGrid, DataGridRow row, int column)
-        //{
-        //    if (row != null)
-        //    {
-        //        DataGridCellsPresenter presenter = FindVisualChild<DataGridCellsPresenter>(row);
-
-        //        if (presenter == null)
-        //        {
-        //            dataGrid.ScrollIntoView(row, dataGrid.Columns[column]);
-        //            presenter = FindVisualChild<DataGridCellsPresenter>(row);
-        //        }
-
-        //        DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
-        //        return cell;
-        //    }
-        //    return null;
-        //}
-        //public static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
-        //{
-        //    for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-        //    {
-        //        DependencyObject child = VisualTreeHelper.GetChild(parent, i);
-        //        if (child != null && child is T)
-        //            return (T)child;
-        //        else
-        //        {
-        //            T childOfChild = FindVisualChild<T>(child);
-        //            if (childOfChild != null)
-        //                return childOfChild;
-        //        }
-        //    }
-        //    return null;
-        //}
-        #endregion
-
-        private void DataGridResult_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            // Close all detail
-            //foreach (var item in DataGridResult.Items)
-            //{
-            //    DataGridRow row = (DataGridRow)DataGridResult.ItemContainerGenerator.ContainerFromItem(item);
-            //    if (row != null) row.DetailsVisibility = Visibility.Collapsed;
-            //}
         }
 
         private void ButtonRePrint_Click(object sender, RoutedEventArgs e)
@@ -520,32 +433,18 @@ namespace DipesLink.Views.SubWindows
             currentJob?.RaiseReprint(currentJob.Index);
         }
 
-        //private async Task<List<string[]>> InitDatabaseAndPrintedStatusAsync()
-        //{
-        //    //var path = SharedPaths.PathSubJobsApp + $"{_currentJob.Index + 1}\\" + "printedPathString";
-        //    //var pathstr = SharedFunctions.ReadStringOfPrintedResponePath(path);
-
-        //    //// Get path db and printed list
-        //    //var pathDatabase = _currentJob?.DatabasePath;
-        //    //var pathBackupPrintedResponse = SharedPaths.PathPrintedResponse + $"Job{_currentJob?.Index + 1}\\" + pathstr;
-
-        //    //// Init Databse from file, add index column, status column, and string "Feild"
-        //    //List<string[]> tmp = await Task.Run(() => { return SharedFunctions.InitDatabaseWithStatus(pathDatabase); });
-
-        //    //// Update Printed status
-        //    //if (pathstr != "" && File.Exists(_currentJob?.DatabasePath) && tmp.Count > 1)
-        //    //{
-        //    //    await Task.Run(() => { SharedFunctions.InitPrintedStatus(pathBackupPrintedResponse, tmp); });
-        //    //}
-        //    //return tmp;
-        //}
 
         private void TextBoxSearch_KeyDownAsync(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                SearchActionAsync();
+                SearchAction();
             }
+        }
+
+        private void DataGridResult_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // todo
         }
     }
 }

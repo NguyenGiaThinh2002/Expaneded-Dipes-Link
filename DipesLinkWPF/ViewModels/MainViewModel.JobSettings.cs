@@ -140,9 +140,9 @@ namespace DipesLink.ViewModels
                             }
 
 #if DEBUG
-                            //_jobModel.PrinterTemplate = "podtest";
-                            //_jobModel.TemplateListFirstFound = new List<string>();
-                            //_jobModel.TemplateListFirstFound.Add("podtest");
+                            _jobModel.PrinterTemplate = "podtest";
+                            _jobModel.TemplateListFirstFound = new List<string>();
+                            _jobModel.TemplateListFirstFound.Add("podtest");
 #endif
                             // Check printer template
                             if (_jobModel.PrinterTemplate == null ||

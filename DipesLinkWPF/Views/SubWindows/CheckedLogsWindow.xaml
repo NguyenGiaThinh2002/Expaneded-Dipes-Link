@@ -127,11 +127,11 @@
                             Orientation="Horizontal">
                             <Label
                                 Background="#17A66E"
-                                Content="Printed "
+                                Content="Unk"
                                 FontSize="15"
                                 Style="{StaticResource ArrowLabelStyle}" />
                         </StackPanel>
-                        <TextBlock x:Name="TextBlockPrinted" Style="{StaticResource TextBoxValueStyle}">2000,000</TextBlock>
+                        <TextBlock x:Name="TextBlockUnk" Style="{StaticResource TextBoxValueStyle}">2000,000</TextBlock>
                     </StackPanel>
                 </Border>
 
@@ -342,9 +342,8 @@
                         HeadersVisibility="Column"
                         HorizontalGridLinesBrush="#D3D3D3"
                         IsReadOnly="True"
-                        MouseDown="DataGridResult_MouseDown"
+                        MouseLeftButtonUp="DataGridCheckedLog_MouseLeftButtonUp"
                         RowDetailsVisibilityMode="Collapsed"
-                        SelectionChanged="DataGridResult_SelectionChanged"
                         VerticalGridLinesBrush="#D3D3D3"
                         VirtualizingPanel.VirtualizationMode="Recycling"
                         VirtualizingStackPanel.IsVirtualizing="True">

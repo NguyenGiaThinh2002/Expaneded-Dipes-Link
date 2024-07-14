@@ -604,6 +604,12 @@ namespace DipesLink.Models
             SimulateButtonCommand?.Invoke(Index, EventArgs.Empty);
         }
 
+        //public event EventHandler? OnFindUnkList;
+        //public void OnFindUnkListChanged()
+        //{
+        //    OnFindUnkList?.Invoke(Index, EventArgs.Empty);
+        //}
+
         #endregion End Events Register
 
         #region Functions

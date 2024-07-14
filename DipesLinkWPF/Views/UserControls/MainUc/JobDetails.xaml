@@ -504,7 +504,7 @@
                                 BorderBrush="#00ABE6"
                                 CornerRadius="15"
                                 IsEnabled="{Binding StatusStartButton}"
-                                PreviewMouseDown="ViewChekedResult_PreMouDown"
+                                PreviewMouseDown="CheckedData_PreviewMouseDown"
                                 SnapsToDevicePixels="True">
                                 <Border.Effect>
                                     <DropShadowEffect
