@@ -46,9 +46,10 @@ namespace DipesLink.Views.SubWindows
         public CheckedLogsWindow(CheckedInfo printingInfo)
         {
             _printingInfo = printingInfo;
-
             InitializeComponent();
+            DataContext = _printingInfo.CurrentJob;
             InitPrintData();
+
             //   Loaded += JobLogsWindow_LoadedAsync;
             //  Closing += JobLogsWindow_Closing;
         }
