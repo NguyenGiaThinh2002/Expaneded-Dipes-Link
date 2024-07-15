@@ -9,15 +9,15 @@ namespace DipesLink.ViewModels
 {
     public class ViewModelSharedEvents
     {
-        public static event EventHandler? MainListBoxMenuChange;
-        public static void OnMainListBoxMenuChange()
+        public static event EventHandler? OnMainListBoxMenu;
+        public static void OnMainListBoxMenuChanged()
         {
-            MainListBoxMenuChange?.Invoke(null, EventArgs.Empty);
+            OnMainListBoxMenu?.Invoke(null, EventArgs.Empty);
         }
 
 
         public static event EventHandler<int>? OnJobDetailChange; // event station detail usercontrol change
-        public static void OnJobDetailChangeHandler(int currentJob)
+        public static void OnJobDetailChanged(int currentJob)
         {
             OnJobDetailChange?.Invoke(null, currentJob);
         }

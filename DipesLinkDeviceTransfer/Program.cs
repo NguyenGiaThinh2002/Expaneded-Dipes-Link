@@ -158,7 +158,7 @@ namespace DipesLinkDeviceTransfer
             if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
                 return Task.FromResult(1);
 
-            if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected())
+            if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected() && SharedValues.SelectedJob.CompareType == SharedProgram.DataTypes.CommonDataType.CompareType.Database)
                 return Task.FromResult(2);
 
             return Task.FromResult(0);

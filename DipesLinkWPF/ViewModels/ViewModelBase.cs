@@ -320,7 +320,7 @@ namespace DipesLink.ViewModels
                 }
             }
         }
-        private bool _tabControlEnable;
+        private bool _tabControlEnable = true;
         public bool TabControlEnable
         {
             get { return _tabControlEnable; }

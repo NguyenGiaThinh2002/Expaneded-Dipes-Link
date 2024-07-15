@@ -24,7 +24,7 @@ namespace DipesLink.ViewModels
             {
 
                 var res = CusMsgBox.Show("Change number of station !", "Change Station", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Warning);
-                if (res)
+                if (res.Result)
                 {
 
                     ViewModelSharedValues.Settings.NumberOfStation = StationSelectedIndex + 1;
@@ -42,17 +42,15 @@ namespace DipesLink.ViewModels
             }
         }
 
-       internal void UIEnableControlByLoadingDb(int index , bool visible)
+        internal void UIEnableControlByLoadingDb(int index, bool visible)
         {
             TabControlEnable = visible;
             JobList[index].IsStartButtonEnable = visible;
-            
-            
         }
 
-       
 
-        
+
+
         #region Button Control
 
         internal void UpdateJobInfo(int index)
@@ -75,23 +73,24 @@ namespace DipesLink.ViewModels
         }
 
         private string _TitleApp = "Stations_Details";
-        
+
         public string TitleApp
         {
-            get {
-                return LanguageModel.Language?[_TitleApp].ToString(); 
+            get
+            {
+                return LanguageModel.Language?[_TitleApp].ToString();
             }
             set
             {
                 if (_TitleApp != value)
                 {
-                    
+
                     _TitleApp = value;
                     OnPropertyChanged();
                 }
             }
         }
-       
+
 
 
         internal void ChangeTitleMainWindow(TitleAppContext titleType)
@@ -99,7 +98,7 @@ namespace DipesLink.ViewModels
             switch (titleType)
             {
                 case TitleAppContext.Overview:
-                    TitleApp = "Stations_Overview"; 
+                    TitleApp = "Stations_Overview";
                     break;
                 case TitleAppContext.Home:
                     TitleApp = "Stations_Details";

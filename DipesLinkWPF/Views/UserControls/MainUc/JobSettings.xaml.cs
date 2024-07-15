@@ -32,7 +32,7 @@ namespace DipesLink.Views.UserControls.MainUc
             TextBoxPrinterIP.TextChanged += TextBox_ParamsChanged;
             TextBoxCamIP.TextChanged += TextBox_ParamsChanged;
             TextBoxControllerIP.TextChanged += TextBox_ParamsChanged;
-            ViewModelSharedEvents.MainListBoxMenuChange += ViewModelSharedEvents_MainListBoxMenuChange;
+            ViewModelSharedEvents.OnMainListBoxMenu += ViewModelSharedEvents_MainListBoxMenuChange;
             //ViewModelSharedEvents.MainListBoxMenuChange += ListBoxMenu_SelectionChanged;
         }
 
@@ -389,7 +389,7 @@ namespace DipesLink.Views.UserControls.MainUc
         private async void RestartButton_Click(object sender, RoutedEventArgs e)
         {
             var res = CusMsgBox.Show("Do you want to restart ?", "Restart Station", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
-            if (res)
+            if (res.Result)
             {
                 var vm = CurrentViewModel<MainViewModel>();
                 var job = vm?.JobList[CurrentIndex()];

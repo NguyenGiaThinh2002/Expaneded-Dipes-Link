@@ -3,6 +3,8 @@ using DipesLink.ViewModels;
 using LiveChartsCore;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView.Extensions;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace DipesLink.Models
 {
@@ -25,6 +27,7 @@ namespace DipesLink.Models
         {
             _gaugeItem = new GaugeItem(0, series =>
             {
+                series.Fill = new SolidColorPaint(SKColor.Parse("#00C752"));//00C752
                 series.MaxRadialColumnWidth = 10;
                 series.DataLabelsSize = 20;
                 series.DataLabelsFormatter = point => $"{point.PrimaryValue}%";

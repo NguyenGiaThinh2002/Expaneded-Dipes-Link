@@ -176,7 +176,7 @@ namespace DipesLinkDeviceTransfer
                         RePrintAsync();
                         break;
                     case ActionButtonType.ExportResult:
-                        await ExportResultAsync();
+                       // await ExportResultAsync();
                         break;
                     default:
                         break;
@@ -191,7 +191,7 @@ namespace DipesLinkDeviceTransfer
             Task<int> connectionCode = CheckDeviceConnectionAsync();
             if (connectionCode == null) return;
             int code = connectionCode.Result;
-            if (code == 0)
+            if (code == 0) // OKE
             {
                 if (startWithDB)
                 {
@@ -199,18 +199,19 @@ namespace DipesLinkDeviceTransfer
                 }
                 StartProcess();
             }
-            else if (code == 1)
+            else if (code == 1) // Camera not connect
             {
 #if DEBUG
                 await Console.Out.WriteLineAsync("Please check camera connection !");
 #endif
                 NotificationProcess(NotifyType.NotConnectCamera);
             }
-            else if (code == 2)
+            else if (code == 2) // Printer not connect
             {
 #if DEBUG
                 await Console.Out.WriteLineAsync("Please check printer connection !");
 #endif
+
                 NotificationProcess(NotifyType.NotConnectPrinter);
             }
         }
@@ -264,8 +265,10 @@ namespace DipesLinkDeviceTransfer
 
                     SharedFunctions.SaveStringOfPrintedResponePath(SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\","printedPathString", SharedValues.SelectedJob.PrintedResponePath);
                     SharedFunctions.SaveStringOfCheckedPath(SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\", "checkedPathString", SharedValues.SelectedJob.CheckedResultPath);
-                    
+
                     await InitDataAsync(SharedValues.SelectedJob);
+                    
+                   
                 }
             }
             catch (Exception ex) 

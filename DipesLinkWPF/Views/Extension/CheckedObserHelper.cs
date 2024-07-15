@@ -20,7 +20,8 @@ namespace DipesLink.Views.Extension
         public int TotalPassed { get; set; }
 
         public int TotalFailed { get; set; }
-        public string[] ColumnNames = { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
+
+        public string[]? ColumnNames = { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
 
         public ObservableCollection<CheckedResultModel> CheckedList { get; set; } = new();
 

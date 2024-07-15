@@ -50,7 +50,7 @@ namespace DipesLink.Views
             AllStationUc.DoneLoadUIEvent += AllStationUc_DoneLoadUIEvent;
             Shared.OnActionLoadingSplashScreen += Shared_OnActionLoadingSplashScreen;
             ListBoxMenu.SelectionChanged += ListBoxMenu_SelectionChanged;
-            ViewModelSharedEvents.OnDataTableLoading += DataTableLoading;
+           // ViewModelSharedEvents.OnDataTableLoading += DataTableLoading;
         }
 
         private void MoveToJobDetail(object? sender, EventArgs e)
@@ -69,30 +69,41 @@ namespace DipesLink.Views
           
         }
 
-        private void DataTableLoading(object sender, EventArgs e)
-        {
-            EnableMenuBox();
-        }
+        //private void DataTableLoading(object sender, EventArgs e)
+        //{
+        //   // EnableMenuBox();
+        //}
 
-        public void EnableMenuBox()
-        {
-            var vm = CurrentViewModel<MainViewModel>();
-            if (vm is null) return;
-           // bool enable = vm.JobList[currentStation].EnableUI;
-          //  ListBoxMenu.IsEnabled = enable;
-        }
+        //public void EnableMenuBox()
+        //{
+        //    var vm = CurrentViewModel<MainViewModel>();
+        //    if (vm is null) return;
+        //   // bool enable = vm.JobList[currentStation].EnableUI;
+        //  //  ListBoxMenu.IsEnabled = enable;
+        //}
 
 
         private void JobDetails_OnJobDetailChange(object? sender, int e)
         {
-            EnableMenuBox();
-            var CamIP = ViewModelSharedValues.Settings.SystemParamsList[e].CameraIP;
-            var PrinterIP = ViewModelSharedValues.Settings.SystemParamsList[e].PrinterIP;
-            var ControllerIP = ViewModelSharedValues.Settings.SystemParamsList[e].ControllerIP;
-            TextBlockControllerIP.Text = ControllerIP.ToString();
-            TextBlockPrinterIP.Text = PrinterIP.ToString();
-            TextBlockCamIP.Text = CamIP.ToString();
-            currentStation = e;
+            //  EnableMenuBox();
+            try
+            {
+                int index = e;
+                var camIP = ViewModelSharedValues.Settings.SystemParamsList[index].CameraIP;
+                var printerIP = ViewModelSharedValues.Settings.SystemParamsList[index].PrinterIP;
+                var controllerIP = ViewModelSharedValues.Settings.SystemParamsList[index].ControllerIP;
+
+                TextBlockControllerIP.Text = controllerIP.ToString();
+                TextBlockPrinterIP.Text = printerIP.ToString();
+                TextBlockCamIP.Text = camIP.ToString();
+                currentStation = index;
+            }
+            catch (Exception)
+            {
+
+               
+            }
+           
         }
 
         private bool CanApplicationClose()
@@ -110,8 +121,8 @@ namespace DipesLink.Views
             }
 
             // Confirm with the user before closing the application
-            bool isExit = CusMsgBox.Show("Do you want to exit the application?", "Exit Application", Enums.ViewEnums.ButtonStyleMessageBox.YesNo, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-            return isExit;  // Return true if user confirms to exit, else false
+            var isExit = CusMsgBox.Show("Do you want to exit the application?", "Exit Application", Enums.ViewEnums.ButtonStyleMessageBox.YesNo, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+            return isExit.Result;  // Return true if user confirms to exit, else false
         }
 
 
@@ -303,7 +314,7 @@ namespace DipesLink.Views
             if (isNotRunning)
             {
                 var res = CusMsgBox.Show("Do you want to logout ?", "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-                if (res)
+                if (res.Result)
                 {
                     Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                     Application.Current.Shutdown();
@@ -354,14 +365,14 @@ namespace DipesLink.Views
             if (ListBoxMenu.SelectedIndex != -1)
             {
                 StackPanelIPDisplay.Visibility = Visibility.Visible;
-                myToggleButton.IsChecked = false; // This will trigger the setter for True
+                ToggleButtonChangeView.IsChecked = false; // This will trigger the setter for True
 
             }
             else
             {
                 // or
                 StackPanelIPDisplay.Visibility = Visibility.Hidden;
-                myToggleButton.IsChecked = true; // This will trigger the setter for False
+                ToggleButtonChangeView.IsChecked = true; // This will trigger the setter for False
 
             }
         }
@@ -375,28 +386,23 @@ namespace DipesLink.Views
      
         private void ListBoxItem_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            //here
-            myToggleButton.IsChecked = false;
+            ToggleButtonChangeView.IsChecked = false;
             StackPanelIPDisplay.Visibility = Visibility.Visible;
-            //var vm = CurrentViewModel<MainViewModel>();
             JobDetails_OnJobDetailChange(sender, currentStation);
-
-            //CurrentViewModel<MainViewModel>().ConnectParamsList[currentStation].LockUISetting;
-            // EnableButtons()
-            ViewModelSharedEvents.OnMainListBoxMenuChange();
+            ViewModelSharedEvents.OnMainListBoxMenuChanged();
         }
 
-        private void ListBoxItem_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
+        //private void ListBoxItem_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        //{
 
-        }
+        //}
 
-        private void ListBoxItem_PreviewMouseDown_1(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            //AboutPopup popup = new AboutPopup();
-            var aboutPopup = new AboutPopup();
-            aboutPopup.ShowDialog();
-        }
+        //private void ListBoxItem_PreviewMouseDown_1(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        //{
+        //    //AboutPopup popup = new AboutPopup();
+        //    var aboutPopup = new AboutPopup();
+        //    aboutPopup.ShowDialog();
+        //}
 
         private void Eng_Button_Click(object sender, RoutedEventArgs e)
         {
