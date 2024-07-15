@@ -1,19 +1,21 @@
-﻿using DipesLink.Models;
+﻿using CommunityToolkit.Mvvm.Collections;
+using DipesLink.Models;
 using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
+using SharedProgram.Models;
 using SharedProgram.Shared;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
-using System.Dynamic;
 using System.IO;
-using System.Security.Cryptography.Pkcs;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLink.Views.SubWindows
 {
@@ -22,10 +24,8 @@ namespace DipesLink.Views.SubWindows
     /// </summary>
     public partial class CheckedLogsWindow : Window
     {
-        //  private JobLogsDataTableHelper? _jobLogsDataTableHelper = new();
-        private CheckedObserHelper? _checkedObserHelper = new();
+      
         public List<string[]>? CheckedResultList { get; set; }
-        public DataTable? CheckedDataTable { get; set; }
         private string? _pageInfo;
 
         public int Num_TotalChecked { get; set; }
@@ -33,14 +33,14 @@ namespace DipesLink.Views.SubWindows
         public int Num_Verified { get; set; }
         public int Num_Valid { get; set; }
         public int Num_Failed { get; set; }
-        private string[] _columnNames = Array.Empty<string>();
+
         private List<string>? _imageNameList;
-        private CheckedInfo? _printingInfo;
+        private readonly CheckedInfo? _printingInfo;
         private ObservableCollection<CheckedResultModel>? filterList = new();
         private Paginator<CheckedResultModel>? _paginator;
-        private int _MaxDatabaseLine = 500;
+        private readonly int _maxDatabaseLine = 500;
         private JobOverview? _currentJob;
-
+        private int countDataPerPage;
 
 
         public CheckedLogsWindow(CheckedInfo printingInfo)
@@ -49,9 +49,7 @@ namespace DipesLink.Views.SubWindows
             InitializeComponent();
             DataContext = _printingInfo.CurrentJob;
             InitPrintData();
-
-            //   Loaded += JobLogsWindow_LoadedAsync;
-            //  Closing += JobLogsWindow_Closing;
+            Closing += CheckedLogsWindow_Closing;
         }
 
         private void InitPrintData()
@@ -60,34 +58,26 @@ namespace DipesLink.Views.SubWindows
             try
             {
                 filterList = _printingInfo.list;
-                _columnNames = _printingInfo.columnNames;
                 _currentJob = _printingInfo.CurrentJob;
                 CreateDataTemplate();
                 GetOriginalList();
-
+                _imageNameList = GetImageNameList();
             }
-            catch (Exception)
-            {
-
-            }
+            catch (Exception) {}
         }
-
 
         private void GetOriginalList()
         {
             if (_printingInfo == null || _printingInfo.list == null) return;
             try
             {
-                _paginator = new Paginator<CheckedResultModel>(_printingInfo.list, _MaxDatabaseLine);
+                _paginator = new Paginator<CheckedResultModel>(_printingInfo.list, _maxDatabaseLine);
                 _ = LoadPageAsync(0);
                 UpdatePageInfo();
                 UpdateNumber();
-
-
             }
             catch (Exception)
             {
-
             }
         }
 
@@ -110,8 +100,7 @@ namespace DipesLink.Views.SubWindows
                 TextBlockValid.Text = countValid.ToString();
                 TextBlockVerified.Text = countVerified.ToString();
                 TextBlockFailed.Text = countFailed.ToString();
-                TextBlockUnk.Text = countMissed.ToString();
-
+                TextBlockUnk.Text = countMissed >0 ? countMissed.ToString(): countTotal.ToString();
             }
             catch (Exception)
             {
@@ -120,54 +109,61 @@ namespace DipesLink.Views.SubWindows
 
         private void CreateDataTemplate()
         {
-            DataGridCheckedLog.AutoGenerateColumns = false;
-            DataGridCheckedLog.Columns.Clear();
-            var properties = typeof(CheckedResultModel).GetProperties();
-            foreach (var property in properties)
+            try
             {
-                if (property.Name == "Result")
+                DataGridCheckedLog.AutoGenerateColumns = false;
+                DataGridCheckedLog.Columns.Clear();
+                var properties = typeof(CheckedResultModel).GetProperties();
+                foreach (var property in properties)
                 {
-                    DataGridTemplateColumn templateColumn = new() { Header = property.Name, Width = DataGridLength.Auto };
-                    DataTemplate template = new();
-                    FrameworkElementFactory factory = new(typeof(Image));
-
-                    Binding binding = new(property.Name)
+                    if (property.Name == "Result")
                     {
-                        Converter = new ResultCheckedImgConverter(),
-                        Mode = BindingMode.OneWay
-                    };
+                        DataGridTemplateColumn templateColumn = new() { Header = property.Name, Width = DataGridLength.Auto };
+                        DataTemplate template = new();
+                        FrameworkElementFactory factory = new(typeof(Image));
 
-                    factory.SetValue(Image.SourceProperty, binding);
-                    factory.SetValue(Image.HeightProperty, 20.0);
-                    factory.SetValue(Image.WidthProperty, 20.0);
+                        Binding binding = new(property.Name)
+                        {
+                            Converter = new ResultCheckedImgConverter(),
+                            Mode = BindingMode.OneWay
+                        };
 
-                    template.VisualTree = factory;
-                    templateColumn.CellTemplate = template;
-                    DataGridCheckedLog.Columns.Add(templateColumn);
-                }
-                else
-                {
-                    DataGridTextColumn textColumn = new()
+                        factory.SetValue(Image.SourceProperty, binding);
+                        factory.SetValue(Image.HeightProperty, 20.0);
+                        factory.SetValue(Image.WidthProperty, 20.0);
+
+                        template.VisualTree = factory;
+                        templateColumn.CellTemplate = template;
+                        DataGridCheckedLog.Columns.Add(templateColumn);
+                    }
+                    else
                     {
-                        Header = property.Name,
-                        Binding = new Binding(property.Name),
-                        Width = DataGridLength.Auto
-                    };
-                    DataGridCheckedLog.Columns.Add(textColumn);
+                        DataGridTextColumn textColumn = new()
+                        {
+                            Header = property.Name,
+                            Binding = new Binding(property.Name),
+                            Width = DataGridLength.Auto
+                        };
+                        DataGridCheckedLog.Columns.Add(textColumn);
+                    }
                 }
             }
+            catch (Exception)
+            {
+
+            }
+          
         }
 
-        private int countDataPerPage;
         public async Task LoadPageAsync(int pageNumber)
         {
-            //  ImageLoadingPrintedLog.Visibility = Visibility.Visible;
+            ImageLoadingJobLog.Visibility = Visibility.Visible;
             if (_paginator == null) return;
             await Task.Run(() =>
             {
                 try
                 {
-                    // Thread.Sleep(5000); test load symbol
+                   // Thread.Sleep(5000); 
                     if (pageNumber < 0 || pageNumber >= _paginator.TotalPages) return;
                     ObservableCollection<CheckedResultModel> pageData = _paginator.GetPage(pageNumber);
                     countDataPerPage = pageData.Count;
@@ -185,52 +181,42 @@ namespace DipesLink.Views.SubWindows
                 }
 
             });
-            //  ImageLoadingPrintedLog.Visibility = Visibility.Collapsed;
+            ImageLoadingJobLog.Visibility = Visibility.Collapsed;
         }
 
         private async Task CleanupResourcesAsync()
         {
-            //await Task.Run(() =>
-            //{
-            //    if (CheckedDataTable is not null)
-            //    {
-            //        CheckedDataTable.Clear();
-            //        CheckedDataTable.Dispose();
-            //        CheckedDataTable = null;
-            //    }
+            await Task.Run(() =>
+            {
+                try
+                {
+                    _printingInfo?.list?.Clear();
+                    _printingInfo?.RawList?.Clear();
+                    CheckedResultList?.Clear();
+                    _imageNameList?.Clear();
+                    filterList?.Clear();
+                    _paginator?.Dispose();
 
-            //    if (CheckedResultList is not null)
-            //    {
-            //        CheckedResultList.Clear();
-            //        CheckedResultList = null;
-            //    }
-            //    if (_jobLogsDataTableHelper != null)
-            //    {
-            //        _jobLogsDataTableHelper.Dispose();
-            //        _jobLogsDataTableHelper = null;
-            //    }
-
-            //    if (_imageNameList is not null)
-            //    {
-            //        _imageNameList.Clear();
-            //        _imageNameList = null;
-            //    }
-
-            //    GC.Collect();
-            //    GC.WaitForPendingFinalizers();
-            //});
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+                catch (Exception)
+                {
+                }
+               
+            });
         }
 
-        private async void JobLogsWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        private async void CheckedLogsWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = true; // Cancel the default close operation
+            e.Cancel = true; 
             await Task.Run(async () =>
             {
                 await CleanupResourcesAsync();
-                Dispatcher.Invoke(() =>  // Close the window on the UI thread after cleanup
+                await Dispatcher.InvokeAsync(() => 
                 {
-                    Closing -= JobLogsWindow_Closing; // Prevent re-entry
-                    Close(); // Now close the window
+                    Closing -= CheckedLogsWindow_Closing;
+                    Close(); 
                 });
             });
         }
@@ -245,25 +231,6 @@ namespace DipesLink.Views.SubWindows
             {
                 return null;
             }
-        }
-
-        private async void JobLogsWindow_LoadedAsync(object sender, RoutedEventArgs e)
-        {
-            //Stopwatch? stopwatch = Stopwatch.StartNew();
-            //ImageLoadingJobLog.Visibility = Visibility.Visible;
-            //if (_jobLogsDataTableHelper == null) return;
-            //await Task.Run(()=> { CheckedDataTable = _checkedObserHelper?.GetDataTableDBAsync().Result.Copy(); });
-            //if (CheckedDataTable != null)
-            //{
-            //    await _jobLogsDataTableHelper.InitDatabaseAsync(CheckedDataTable, DataGridResult);
-            //}
-            //UpdateParams();
-            //UpdatePageInfo();
-            //_imageNameList = GetImageNameList();
-            //ImageLoadingJobLog.Visibility = Visibility.Hidden;
-            //stopwatch.Stop();
-            //Debug.Write($"Time loaded checked data: {stopwatch.ElapsedMilliseconds} ms\n");
-            //stopwatch = null;
         }
 
         private void UpdateParams()
@@ -374,7 +341,6 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-
         private async void GotoPageAction()
         {
             if (_paginator == null) return;
@@ -432,14 +398,22 @@ namespace DipesLink.Views.SubWindows
                     default: break;
                 }
 
-                if (filterList != null && filterList?.Count > 0)
+                if (filterList != null)
                 {
-                    _paginator = new Paginator<CheckedResultModel>(new ObservableCollection<CheckedResultModel>(filterList), _MaxDatabaseLine);
+                    _paginator = new Paginator<CheckedResultModel>(new ObservableCollection<CheckedResultModel>(filterList), _maxDatabaseLine);
                     _ = LoadPageAsync(0);
                     UpdatePageInfo();
                     ButtonPaginationVis();
-
+                    if (filterList?.Count <= 0)
+                    {
+                        Application.Current.Dispatcher.InvokeAsync(() =>
+                        {
+                            DataGridCheckedLog.ItemsSource = null;
+                        });
+                        _ = CusMsgBox.Show("Not Found !", "Checked Logs", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    }
                 }
+               
 
             }
             catch (Exception)
@@ -494,17 +468,24 @@ namespace DipesLink.Views.SubWindows
 
         private void ButtonRF_Click(object sender, RoutedEventArgs e)
         {
-            TextBoxSearch.Text = string.Empty;
-            if (ComboBoxFilter.SelectedIndex == 0)
+            try
             {
-                GetOriginalList();
-            }
-            else
-            {
-                ComboBoxFilter.SelectedIndex = 0;
-            }
+                TextBoxSearch.Text = string.Empty;
+                if (ComboBoxFilter.SelectedIndex == 0)
+                {
+                    GetOriginalList();
+                }
+                else
+                {
+                    ComboBoxFilter.SelectedIndex = 0;
+                }
 
-            ButtonPaginationVis();
+                ButtonPaginationVis();
+            }
+            catch (Exception)
+            {
+            }
+           
         }
 
         private void SearchAction()
@@ -518,7 +499,7 @@ namespace DipesLink.Views.SubWindows
                     .ToList();
                 if (searchResults != null && searchResults?.Count> 0)
                 {
-                    _paginator = new Paginator<CheckedResultModel>(new ObservableCollection<CheckedResultModel>(searchResults), _MaxDatabaseLine);
+                    _paginator = new Paginator<CheckedResultModel>(new ObservableCollection<CheckedResultModel>(searchResults), _maxDatabaseLine);
                     _ = LoadPageAsync(0);
 
                     UpdatePageInfo();
@@ -536,19 +517,17 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-       
 
         private void GetCurrentImage(string imageId)
         {
             try
             {
+               
                 var firstLenght = imageId.Length;
                 for (int i = 0; i < 7 - firstLenght; i++)
                 {
                     imageId = "0" + imageId; // max 7 number
                 }
-
-               // var curJob = CurrentViewModel<JobOverview>();
                 if (_currentJob != null)
                 {
                     string? imgFileName = _imageNameList?.Find(x => x.Contains(imageId));
@@ -600,39 +579,54 @@ namespace DipesLink.Views.SubWindows
         #region Get Cell Value
         private string GetValueCellInDataGrid(object sender)
         {
-            var dg = sender as DataGrid;
-            if (dg?.SelectedItem == null) return "";
-            // Assuming you want to access the first column's value
-            if (dg.ItemContainerGenerator.ContainerFromItem(dg.SelectedItem) is DataGridRow row)
+            try
             {
-                DataGridCell cell = GetCell(dg, row, 0); // 0 for the first column
-                if (cell != null)
+                var dg = sender as DataGrid;
+                if (dg?.SelectedItem == null) return "";
+                if (dg.ItemContainerGenerator.ContainerFromItem(dg.SelectedItem) is DataGridRow row)
                 {
-                    if (cell.Content is TextBlock cellContent)
+                    DataGridCell cell = GetCell(dg, row, 0);
+                    if (cell != null)
                     {
-                        return cellContent.Text.Trim();
+                        if (cell.Content is TextBlock cellContent)
+                        {
+                            return cellContent.Text.Trim();
+                        }
                     }
                 }
+                return "";
             }
-            return "";
+            catch (Exception)
+            {
+                return "";
+            }
+           
         }
 
-        public DataGridCell GetCell(DataGrid dataGrid, DataGridRow row, int column)
+        public static DataGridCell GetCell(DataGrid dataGrid, DataGridRow row, int column)
         {
-            if (row != null)
+            try
             {
-                DataGridCellsPresenter presenter = FindVisualChild<DataGridCellsPresenter>(row);
-
-                if (presenter == null)
+                if (row != null)
                 {
-                    dataGrid.ScrollIntoView(row, dataGrid.Columns[column]);
-                    presenter = FindVisualChild<DataGridCellsPresenter>(row);
-                }
+                    DataGridCellsPresenter presenter = FindVisualChild<DataGridCellsPresenter>(row);
 
-                DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
-                return cell;
+                    if (presenter == null)
+                    {
+                        dataGrid.ScrollIntoView(row, dataGrid.Columns[column]);
+                        presenter = FindVisualChild<DataGridCellsPresenter>(row);
+                    }
+
+                    DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
+                    return cell;
+                }
+                return null;
             }
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
+           
         }
 
         public static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
@@ -653,8 +647,6 @@ namespace DipesLink.Views.SubWindows
         }
         #endregion
 
-       
-
         private void ButtonRePrint_Click(object sender, RoutedEventArgs e)
         {
             var currentJob = CurrentViewModel<JobOverview>();
@@ -667,41 +659,159 @@ namespace DipesLink.Views.SubWindows
             {
                 SearchAction();
             }
-
         }
-
-     
-
-        private bool isRowDetailShow = false;
+ 
         private void DataGridCheckedLog_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            string imageId = GetValueCellInDataGrid(sender);
-            GetCurrentImage(imageId);
-
-            // Close all detail
-            foreach (var item in DataGridCheckedLog.Items)
+            try
             {
-                DataGridRow row = (DataGridRow)DataGridCheckedLog.ItemContainerGenerator.ContainerFromItem(item);
-                if (row != null) row.DetailsVisibility = Visibility.Collapsed;
-            }
-
-            // Show Detail for Failed result in datagrid
-            var dataRow = DataGridCheckedLog.SelectedItem as CheckedResultModel;
-            if (dataRow != null && dataRow.Result != "Valid" && dataRow.Result != "Missed")
-            {
-                DataGridRow selectedRow = (DataGridRow)DataGridCheckedLog.ItemContainerGenerator.ContainerFromItem(DataGridCheckedLog.SelectedItem);
-                if (selectedRow != null && !isRowDetailShow)
+                string imageId = GetValueCellInDataGrid(sender);
+                GetCurrentImage(imageId);
+                foreach (var item in DataGridCheckedLog.Items)
                 {
-                    selectedRow.DetailsVisibility = Visibility.Visible;
-                    isRowDetailShow = true;
+                    DataGridRow row = (DataGridRow)DataGridCheckedLog.ItemContainerGenerator.ContainerFromItem(item);
+                    if (row != null) row.DetailsVisibility = Visibility.Collapsed;
+                }
+                var dataRow = DataGridCheckedLog.SelectedItem as CheckedResultModel;
+                if (dataRow != null && dataRow.Result != "Valid" && dataRow.Result != "Missed")
+                {
+                    DataGridRow selectedRow = (DataGridRow)DataGridCheckedLog.ItemContainerGenerator.ContainerFromItem(DataGridCheckedLog.SelectedItem);
+                    if (selectedRow != null)
+                    {
+                        selectedRow.DetailsVisibility = Visibility.Visible;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+           
+        }
+
+
+        private async void ExportResultAsync()
+        {
+            try
+            {
+                if (_currentJob?.Name == null)
+                {
+                    return;
+                }
+                string docFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "DPLink_LogFiles",
+                    $"Job{_currentJob.Index + 1}");
+                string fileName = _currentJob?.Name + $"_Logs_{DateTime.Now:yyyy_MM_dd}.csv";
+
+                if (!Directory.Exists(docFolderPath))
+                {
+                    Directory.CreateDirectory(docFolderPath);
+                }
+
+                if (fileName != null)
+                {
+                    string fullFilePath = System.IO.Path.Combine(docFolderPath, fileName);
+                    Task<bool> doneExportTask = Task.Run(() => { return ExportResult(fullFilePath, _printingInfo?.RawList, _printingInfo?.list, _printingInfo?.PodFormat); });
+
+                    if (!(await doneExportTask))
+                    {
+   
+                    }
+                    else
+                    {
+                        SharedFunctions.PrintConsoleMessage($"Job{_currentJob?.Index + 1} export successfully");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+        }
+
+        public static bool ExportResult(string fileName, List<string[]>? rawDatabaseList, ObservableCollection<CheckedResultModel>? checkedList, List<PODModel>? podList)
+        {
+            if (fileName == null || rawDatabaseList == null || checkedList == null || podList == null) return false;
+            try
+            {
+                var headerColumns = rawDatabaseList.FirstOrDefault();
+                var datas = rawDatabaseList.Skip(1).ToList();
+                // Create a dictionary to count the number of occurrences of each ResultData with "Duplicated" status
+                var duplicateCountDict = checkedList
+                    .Where(x => x.Result == "Duplicated")
+                    .GroupBy(x => x.ResultData)
+                    .ToDictionary(g => g.Key, g => g.Count());
+
+                // Create a dictionary to store the first valid results
+                var checkedResultDict = checkedList
+                    .Where(x => x.Result == "Valid")
+                    .GroupBy(x => x.ResultData)
+                    .ToDictionary(g => g.Key, g => g.First().DateTime);
+
+                if (File.Exists(fileName)) File.Delete(fileName);
+                using (StreamWriter writer = new(fileName, true, Encoding.UTF8))
+                {
+                    string header = string.Join(",", headerColumns.Select(Csv.Escape)) + ",VerifyDate";
+                    for (int i = 0; i < datas.Count; i++)
+                    {
+                        var record = datas[i];
+                        var compareString = SharedFunctions.GetCompareDataByPODFormat(record, podList);
+                        var writeValue = string.Join(",", record.Take(record.Length - 1).Select(Csv.Escape)) + ",";
+
+                        if (checkedResultDict.TryGetValue(compareString, out string dateVerify))
+                        {
+                           
+                            if (duplicateCountDict.TryGetValue(compareString, out int duplicateCount) && duplicateCount >= 1)
+                            {
+                                writeValue += "Duplicate";
+                            }
+                            else
+                            {
+                                writeValue += "Verified";
+                            }
+                            writeValue += "," + Csv.Escape(dateVerify);
+                            checkedResultDict.Remove(compareString);
+                        }
+                        else
+                        {
+                            string tmpValue = record[record.Length - 1];
+                            writeValue += tmpValue == "Printed" ? "Unverified" : tmpValue;
+                            writeValue += "," + "";
+                        }
+                        writer.WriteLine(writeValue);
+                    }
+                }
+                if (File.Exists(fileName))
+                {
+                    // Use Process.Start to open the folder and select the file
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "explorer",
+                        Arguments = $"/select,\"{fileName}\"",
+                        UseShellExecute = true
+                    });
+
                 }
                 else
                 {
-                    selectedRow.DetailsVisibility = Visibility.Collapsed;
-                    isRowDetailShow = false ;
+                    Console.WriteLine("File does not exist.");
+                    return false;
+
                 }
-                
+                checkedResultDict.Clear();
+                return true;
             }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+                return false;
+            }
+
+        }
+
+        private void ButtonExport_Click(object sender, RoutedEventArgs e)
+        {
+            ExportResultAsync();
         }
     }
 }

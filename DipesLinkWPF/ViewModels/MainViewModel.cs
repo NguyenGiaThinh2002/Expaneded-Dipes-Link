@@ -1067,11 +1067,21 @@ namespace DipesLink.ViewModels
             {
                 try
                 {
-                    if (totalChecked >= 0)
+                    if (totalChecked >= 0&& JobList[stationIndex].CompareType== CompareType.Database) // DB MODE
                     {
                         double percent = (double)totalChecked * 100 / JobList[stationIndex].TotalRecDb;
                         percent = Math.Round(percent, 2);
                         if (percent > 100) percent = 100;
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            JobList[stationIndex].CircleChart.Value = percent;
+                        });
+                    }
+                    else  // NO DB MODE
+                    {
+                        _ = double.TryParse(JobList[stationIndex].TotalPassed, out double pass);
+                        double percent = Math.Round(pass / (double)totalChecked * 100);
 
                         Application.Current.Dispatcher.Invoke(() =>
                         {

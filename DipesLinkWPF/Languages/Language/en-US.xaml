@@ -13,7 +13,7 @@
     <system:String x:Key="Stations_Settings">Stations Settings</system:String>
     <system:String x:Key="Stations_Jobs_Logs">Stations Jobs Logs</system:String>
     <system:String x:Key="Stations {x} _Jobs_Logs">Stations Jobs Logs</system:String>
-    <system:String x:Key="TemplateLoadError">Station {0}: Printer's not connected!</system:String>
+    <system:String x:Key="TemplateLoadError">Station {0}: Can't get printer template !</system:String>
     <system:String x:Key="StationNumber">Station {0}</system:String>
     <system:String x:Key="Home">Home</system:String>
     <system:String x:Key="Jobs">Jobs</system:String>

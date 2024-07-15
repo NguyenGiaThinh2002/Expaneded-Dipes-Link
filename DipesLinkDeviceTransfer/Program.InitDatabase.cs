@@ -38,13 +38,10 @@ namespace DipesLinkDeviceTransfer
              
                 //Send Database to UI async
                 Task transferDatabase = Task.Run(() => 
-                MemoryTransfer.SendDatabaseToUIFirstTime(_ipcDeviceToUISharedMemory_DB, 
-                    JobIndex, 
-                    DataConverter.ToByteArray(SharedValues.ListPrintedCodeObtainFromFile)));
+                MemoryTransfer.SendDatabaseToUIFirstTime(_ipcDeviceToUISharedMemory_DB, JobIndex, DataConverter.ToByteArray(SharedValues.ListPrintedCodeObtainFromFile)));
+
                 Task transferCheckedDatabase = Task.Run(() => //Send checked db to UI
-                    MemoryTransfer.SendCheckedDatabaseToUIFirstTime(_ipcDeviceToUISharedMemory_DB, 
-                    JobIndex, 
-                    DataConverter.ToByteArray(SharedValues.ListCheckedResultCode)));
+                    MemoryTransfer.SendCheckedDatabaseToUIFirstTime(_ipcDeviceToUISharedMemory_DB, JobIndex, DataConverter.ToByteArray(SharedValues.ListCheckedResultCode)));
                 await Task.WhenAll(transferDatabase, transferCheckedDatabase);
               
 
@@ -95,9 +92,11 @@ namespace DipesLinkDeviceTransfer
                     }
                 }
             }
-            else
+            else // for mode No use database
             {
                 SharedValues.ListCheckedResultCode = await InitCheckedResultDataAsync(selectedJob);
+                Task transferCheckedDatabase = Task.Run(() => //Send checked db to UI
+                    MemoryTransfer.SendCheckedDatabaseToUIFirstTime(_ipcDeviceToUISharedMemory_DB, JobIndex, DataConverter.ToByteArray(SharedValues.ListCheckedResultCode)));
             }
 
             TotalChecked = SharedValues.ListCheckedResultCode.Count; 

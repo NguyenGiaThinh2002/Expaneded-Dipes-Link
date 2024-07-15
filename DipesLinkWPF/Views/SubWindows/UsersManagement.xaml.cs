@@ -305,7 +305,7 @@ namespace DipesLink.Views.SubWindows
                 if (CheckInvalidInput())
                 {
                     var res = CusMsgBox.Show("Create new user ?", "Create new user", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
-                    if (res)
+                    if (res.Result)
                     {
                         CreateUser();
                         LoadAllUser();
@@ -325,7 +325,7 @@ namespace DipesLink.Views.SubWindows
                 if (!CheckCurrentUser(inputUsername))
                 {
                     var res = CusMsgBox.Show($"Delete user: {inputUsername} ?", "Delete User", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
-                    if (res)
+                    if (res.Result)
                     {
                         DeleteUser(inputUsername);
                         LoadAllUser();

@@ -24,6 +24,8 @@
             <converter:FromEnumtoStringConverter x:Key="FromEnumtoStringConverter" />
             <converter:AddOne x:Key="AddOneConverter" />
             <converter:BooleanToVisibilityConverter x:Key="BolToVis" />
+            <converter:TextToVisibilityConverter x:Key="TextToVis" />
+
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
             <Color x:Key="DataTagColorGraBot">White</Color>
@@ -134,6 +136,7 @@
                                     FontSize="16"
                                     Text="{DynamicResource ResourceKey=Job_Type}" />
                                 <TextBox
+                                    x:Name="TextBoxJobType"
                                     Grid.Row="1"
                                     Height="30"
                                     Margin="10,0,10,0"
@@ -158,6 +161,7 @@
                                     FontSize="16"
                                     Text="{DynamicResource ResourceKey=Compare_Type}" />
                                 <TextBox
+                                    x:Name="TextBoxCompareType"
                                     Grid.Row="1"
                                     Height="30"
                                     Margin="10,0,10,0"
@@ -170,11 +174,35 @@
 
 
 
-                        <!--  Totals  -->
+                        <!--  Totals or Static Text  -->
                         <Grid
                             Grid.Row="2"
                             Background="Transparent"
-                            ShowGridLines="False">
+                            ShowGridLines="False"
+                            Visibility="{Binding Text, ElementName=TextBoxCompareType, Converter={StaticResource TextToVis}, ConverterParameter=StaticText}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition MaxHeight="20" />
+                                <RowDefinition MaxHeight="40" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Static Text" />
+                            <TextBox
+                                Grid.Row="1"
+                                Height="30"
+                                Margin="10,0,10,0"
+                                FontSize="16"
+                                IsReadOnly="True"
+                                Style="{StaticResource TextBoxStyle1}"
+                                Text="{Binding StaticText}" />
+                        </Grid>
+                        <Grid
+                            Grid.Row="2"
+                            Background="Transparent"
+                            ShowGridLines="False"
+                            Visibility="{Binding Text, ElementName=TextBoxCompareType, Converter={StaticResource TextToVis}, ConverterParameter=Database}">
                             <Grid.RowDefinitions>
                                 <RowDefinition MaxHeight="20" />
                                 <RowDefinition MaxHeight="40" />
@@ -198,7 +226,8 @@
                         <Grid
                             Grid.Row="3"
                             Background="Transparent"
-                            ShowGridLines="False">
+                            ShowGridLines="False"
+                            Visibility="{Binding Text, ElementName=TextBoxCompareType, Converter={StaticResource TextToVis}, ConverterParameter=Database}">
                             <Grid.RowDefinitions>
                                 <RowDefinition MaxHeight="20" />
                                 <RowDefinition MaxHeight="40" />
@@ -245,6 +274,8 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#00ABE6"
                                 Text="{DynamicResource ResourceKey=Code_Data}" />
                             <TextBox
                                 Grid.Row="1"
@@ -288,6 +319,8 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#00ABE6"
                                 Text="{DynamicResource ResourceKey=Time_(ms)}" />
                             <TextBox
                                 Grid.Row="1"
@@ -326,6 +359,8 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#00ABE6"
                                 Text="{DynamicResource ResourceKey=Checked_Result}" />
                             <TextBox
                                 x:Name="CheckResultColor"
@@ -498,12 +533,12 @@
                                 <RowDefinition Height="100" />
                             </Grid.RowDefinitions>
 
+                            <!--  IsEnabled="{Binding StatusStartButton}"  -->
                             <Border
                                 Margin="2"
                                 Background="#00ABE6"
                                 BorderBrush="#00ABE6"
                                 CornerRadius="15"
-                                IsEnabled="{Binding StatusStartButton}"
                                 PreviewMouseDown="CheckedData_PreviewMouseDown"
                                 SnapsToDevicePixels="True">
                                 <Border.Effect>
@@ -651,7 +686,8 @@
                                     <TextBlock
                                         Margin="10,0,0,0"
                                         HorizontalAlignment="Left"
-                                        FontSize="15" VerticalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="15"
                                         Foreground="Green"
                                         Text="{Binding CycleTimePOD, FallbackValue=15ms}" />
                                 </StackPanel>
@@ -779,7 +815,6 @@
                                 Width="70"
                                 Height="30"
                                 Margin="10,0,0,0"
-                                Click="ButtonSimulate_Click"
                                 Command="{Binding SimulateCommandJob}"
                                 Content="Simulate"
                                 Style="{StaticResource ModernButtonDel}"
@@ -788,12 +823,12 @@
 
                     </Border>
 
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="1" Margin="0,10,0,0">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="{Binding RowHeightDatabaseTitle, FallbackValue=18}" />
+                            <RowDefinition Height="{Binding RowHeightDatabase, FallbackValue=*}" />
                             <RowDefinition Height="18" />
-                            <RowDefinition Height="2*" />
-                            <RowDefinition Height="18" />
-                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock
                             Height="23"

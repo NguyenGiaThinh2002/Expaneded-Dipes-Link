@@ -991,7 +991,7 @@
                                         Text="{Binding StaticText}" />
                                 </StackPanel>
 
-                                <GroupBox
+                                <GroupBox x:Name="GroupBoxTemplate"
                                     Grid.Row="6"
                                     Width="470"
                                     Height="200"

@@ -13,6 +13,7 @@ using System.Runtime.Intrinsics.Arm;
 using System.Windows.Forms;
 using System.Windows.Shapes;
 using static SharedProgram.DataTypes.CommonDataType;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.LinkLabel;
 using PrinterStatus = SharedProgram.DataTypes.CommonDataType.PrinterStatus;
 namespace DipesLinkDeviceTransfer
@@ -100,13 +101,13 @@ namespace DipesLinkDeviceTransfer
                 {
                     return CheckCondition.MissingParameterActivation;
                 }
-            }
 
-            // Check list POD code for Print and Check
-            if (_CodeListPODFormat == null || _CodeListPODFormat.IsEmpty)
-            {
-                Console.WriteLine("_CodeListPODFormat is null" + _CodeListPODFormat);
-                return CheckCondition.MissingParameterActivation;
+                // Check list POD code for Print and Check
+                if (_CodeListPODFormat == null || _CodeListPODFormat.IsEmpty)
+                {
+                    Console.WriteLine("_CodeListPODFormat is null" + _CodeListPODFormat);
+                    return CheckCondition.MissingParameterActivation;
+                }
             }
 
             return CheckCondition.Success;
@@ -211,8 +212,8 @@ namespace DipesLinkDeviceTransfer
                 SharedValues.SelectedJob.JobStatus != JobStatus.Accomplished)
                 {
                     RynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
-                    Thread.Sleep(5);
-                    RynanRPrinterDeviceHandler.SendData("CLPB"); //send clear buffer command to printer
+                    Thread.Sleep(50);
+                 //   RynanRPrinterDeviceHandler.SendData("CLPB"); //send clear buffer command to printer
                     string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
                     string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
                     Thread.Sleep(50);
@@ -223,7 +224,7 @@ namespace DipesLinkDeviceTransfer
             {
                 SharedValues.OperStatus = OperationStatus.Running;
             }
-
+            bool isNonePrinted = SharedValues.SelectedJob.CompareType == CompareType.CanRead || SharedValues.SelectedJob.CompareType == CompareType.StaticText;
             SharedValues.SelectedJob.JobStatus = JobStatus.Unfinished;
 
             SaveJobChangedSettings(SharedValues.SelectedJob);
@@ -841,7 +842,7 @@ namespace DipesLinkDeviceTransfer
             await Task.Run(async () =>
             {
                 int currentCheckedIndex = -1;
-                //  string staticText = "";
+                string staticText = SharedValues.SelectedJob.StaticText ?? string.Empty;
                 bool isAutoComplete = SharedValues.SelectedJob.CompareType == CompareType.Database;
 
                 bool isReprint =
@@ -924,54 +925,54 @@ namespace DipesLinkDeviceTransfer
                         {
                             measureTimeStopw = Stopwatch.StartNew();
 
-                            // CAN READ COMPARE
-                            if (SharedValues.SelectedJob.CompareType == CompareType.CanRead)
+                            switch (SharedValues.SelectedJob.CompareType)
                             {
+                                case CompareType.None:
+                                    break;
+                                case CompareType.CanRead:
+                                    detectModel.CompareResult = CanreadCompare(detectModel.Text);
+                                    break;
+                                case CompareType.StaticText:
+                                    detectModel.CompareResult = StaticTextCompare(detectModel.Text, staticText);
+                                    break;
+                                case CompareType.Database:
+                                    bool isNeedToCheckPrintedResponse = true; // mặc định true nếu không phải on production
 
-                            }
-
-                            //STATIC TEXT COMPARE
-                            else if (SharedValues.SelectedJob.CompareType == CompareType.StaticText)
-                            {
-
-                            }
-                            // DATABASE COMPARE
-                            else if (SharedValues.SelectedJob.CompareType == CompareType.Database)
-                            {
-                                bool isNeedToCheckPrintedResponse = true; // mặc định true nếu không phải on production
-
-                                if (_IsOnProductionMode)  // On Production
-                                {
-                                    lock (_PrintedResponseLocker) // lắng nghe tín hiệu RSPF từ máy in (biến check phản hồi)
+                                    if (_IsOnProductionMode)  // On Production
                                     {
-                                        isNeedToCheckPrintedResponse = _IsPrintedResponse;
-                                        _IsPrintedResponse = false;
-                                    }
-                                }
-
-                                if (!isNeedToCheckPrintedResponse || _CodeListPODFormat == null) // Invalid nếu máy in không phản hồi
-                                {
-                                    detectModel.CompareResult = ComparisonResult.Invalided;
-                                }
-                                else // nếu máy in có phản hồi thì tiến hành so sánh
-                                {
-                                    detectModel.CompareResult = DatabaseCompare(detectModel.Text, ref currentCheckedIndex); // Conclude Compare Result
-
-                                    if (_IsOnProductionMode)
-                                    {
-                                        lock (_CheckLocker)
+                                        lock (_PrintedResponseLocker) // lắng nghe tín hiệu RSPF từ máy in (biến check phản hồi)
                                         {
-                                            _CheckedResult = detectModel.CompareResult;
-                                            _IsCheckedWait = false;
-                                            Monitor.PulseAll(_CheckLocker); // Mở khoá các lock ở phần cập nhật UI
+                                            isNeedToCheckPrintedResponse = _IsPrintedResponse;
+                                            _IsPrintedResponse = false;
                                         }
                                     }
-                                }
 
-                                if (_IsVerifyAndPrintMode)
-                                {
-                                    VerifyAndPrintProcessing(detectModel, ref currentCheckedIndex);
-                                }
+                                    if (!isNeedToCheckPrintedResponse || _CodeListPODFormat == null) // Invalid nếu máy in không phản hồi
+                                    {
+                                        detectModel.CompareResult = ComparisonResult.Invalided;
+                                    }
+                                    else // nếu máy in có phản hồi thì tiến hành so sánh
+                                    {
+                                        detectModel.CompareResult = DatabaseCompare(detectModel.Text, ref currentCheckedIndex); // Conclude Compare Result
+
+                                        if (_IsOnProductionMode)
+                                        {
+                                            lock (_CheckLocker)
+                                            {
+                                                _CheckedResult = detectModel.CompareResult;
+                                                _IsCheckedWait = false;
+                                                Monitor.PulseAll(_CheckLocker); // Mở khoá các lock ở phần cập nhật UI
+                                            }
+                                        }
+                                    }
+
+                                    if (_IsVerifyAndPrintMode)
+                                    {
+                                        VerifyAndPrintProcessing(detectModel, ref currentCheckedIndex);
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
 
                             // Output trigger for Camera
@@ -1178,7 +1179,7 @@ namespace DipesLinkDeviceTransfer
         private void SendVerifiedDataToPrinter(object? sender, EventArgs e)
         {
             string command = "DATA;";
-            string[] arr = sender as string[];
+            string[]? arr = sender as string[];
 
             if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) // is basic
             {
@@ -1201,8 +1202,6 @@ namespace DipesLinkDeviceTransfer
             if (RynanRPrinterDeviceHandler != null)
             {
                 RynanRPrinterDeviceHandler.SendData(command);
-
-                // Count Sent and push to Queue
                 NumberOfSentPrinter++;
                 Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
                 _QueueSentCodeNumber.Enqueue(_countSentCode);
@@ -1216,23 +1215,9 @@ namespace DipesLinkDeviceTransfer
 
         #endregion End VerifyAndPrint
 
-        private ComparisonResult CanreadCompare(string txt)
-        {
-            return ComparisonResult.Valid;
-        }
+        private static ComparisonResult CanreadCompare(string text) => (text.Equals(string.Empty)) ? ComparisonResult.Invalided : ComparisonResult.Valid;
 
-        private ComparisonResult StaticTextCompare(string txt, string staticText)
-        {
-            // Verify data static text
-            if (staticText != "" && txt == staticText)
-            {
-                return ComparisonResult.Valid;
-            }
-            else
-            {
-                return ComparisonResult.Invalided;
-            }
-        }
+        private ComparisonResult StaticTextCompare(string text, string staticText) => (!text.Equals(string.Empty) && text.Equals(staticText)) ? ComparisonResult.Valid : ComparisonResult.Invalided;
 
         private ComparisonResult DatabaseCompare(string data, ref int currentValidIndex)
         {
@@ -1632,9 +1617,9 @@ namespace DipesLinkDeviceTransfer
 
                         // Cycle time POD transfer 
                         MemoryTransfer.SendCycleTimePODTransferToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(_cycleTimePODDataTransfer));
-                        
-                         await Task.Delay(1);
-    
+
+                        await Task.Delay(1);
+
                     }
                 }
                 catch (OperationCanceledException)
@@ -1813,10 +1798,10 @@ namespace DipesLinkDeviceTransfer
 
         public async void SimulationPerformanceTestAsync()
         {
-           
+
             _VirtualCTS = new CancellationTokenSource();
             var token = _VirtualCTS.Token;
-          //  Stopwatch stopwatch_Sim;
+            //  Stopwatch stopwatch_Sim;
             await Task.Run(async () =>
             {
                 var codes = new List<string[]>();
@@ -1851,6 +1836,7 @@ namespace DipesLinkDeviceTransfer
                         DetectModel detectModel = new()
                         {
                             ImageBytes = imageBytes,
+                            Image = new(SharedFunctions.GetImageFromImageByte(imageBytes)),
                             Text = SharedFunctions.GetCompareDataByPODFormat(codeModel, SharedValues.SelectedJob.PODFormat)
                         };
                         _QueueBufferPrinterReceivedData.Enqueue(podDataModel);

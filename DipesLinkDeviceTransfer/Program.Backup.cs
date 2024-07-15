@@ -231,45 +231,7 @@ namespace DipesLinkDeviceTransfer
 
        
      
-        private async Task ExportResultAsync() 
-        {
-            try
-            {
-                if (SharedValues.SelectedJob?.Name == null)
-                {
-                    NotificationProcess(NotifyType.ExportResultFail);
-                    return;
-                }
-                string docFolderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "DPLink_LogFiles",
-                    $"Job{SharedValues.SelectedJob?.Index+1}");
-                string fileName = SharedValues.SelectedJob?.Name + $"_Logs_{DateTime.Now:yyyy_MM_dd}.csv";
-               
-                if (!Directory.Exists(docFolderPath))
-                {
-                    Directory.CreateDirectory(docFolderPath);
-                }
-
-                if (fileName != null)
-                {
-                    string fullFilePath = System.IO.Path.Combine(docFolderPath, fileName);
-                    Task<bool> doneExportTask = Task.Run(() => { return SharedFunctions.ExportResult(fullFilePath); });
-
-                    if (!(await doneExportTask))
-                    {
-                        NotificationProcess(NotifyType.ExportResultFail);
-                    }
-                    else
-                    {
-                        SharedFunctions.PrintConsoleMessage($"Job{SharedValues.SelectedJob?.Index + 1} export successfully");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
-            }
-        }
+       
 
     }
 }

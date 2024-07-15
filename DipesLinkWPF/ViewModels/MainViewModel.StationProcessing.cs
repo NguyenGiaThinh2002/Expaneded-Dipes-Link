@@ -21,7 +21,7 @@ namespace DipesLink.ViewModels
         {
             int index = sender != null ? (int)sender : -1;
             var cusMessForStop = CusMsgBox.Show($"Do you want to stop station {index} ?", "", Views.Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Views.Enums.ViewEnums.ImageStyleMessageBox.Warning);
-            if (cusMessForStop)
+            if (cusMessForStop.Result)
                 ActionButtonProcess(index, ActionButtonType.Stop);
         }
        

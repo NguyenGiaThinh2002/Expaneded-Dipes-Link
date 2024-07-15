@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:gif="http://wpfanimatedgif.codeplex.com"
+    xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="1025"
@@ -328,79 +329,94 @@
 
                 <!--  DataView  -->
                 <Grid Grid.Row="1">
-                    <DataGrid
-                        x:Name="DataGridCheckedLog"
-                        Grid.Row="3"
-                        Margin="20,20,20,12"
-                        AlternatingRowBackground="#F5F5F5"
-                        BorderBrush="LightGray"
-                        BorderThickness="1"
-                        ColumnWidth="150"
-                        EnableColumnVirtualization="True"
-                        EnableRowVirtualization="True"
-                        GridLinesVisibility="All"
-                        HeadersVisibility="Column"
-                        HorizontalGridLinesBrush="#D3D3D3"
-                        IsReadOnly="True"
-                        MouseLeftButtonUp="DataGridCheckedLog_MouseLeftButtonUp"
-                        RowDetailsVisibilityMode="Collapsed"
-                        VerticalGridLinesBrush="#D3D3D3"
-                        VirtualizingPanel.VirtualizationMode="Recycling"
-                        VirtualizingStackPanel.IsVirtualizing="True">
+                    <StackPanel>
 
-                        <!--  Row Image detail  -->
-                        <DataGrid.RowDetailsTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="10">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock
-                                            FontSize="14"
-                                            FontWeight="Bold"
-                                            Text="Failed Image: " />
-                                        <TextBlock FontSize="14" Text="{Binding DataContext.NameOfFailedImage, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                        <DataGrid
+                            x:Name="DataGridCheckedLog"
+                            Height="300"
+                            Margin="20,20,20,12"
+                            AlternatingRowBackground="#F5F5F5"
+                            BorderBrush="LightGray"
+                            BorderThickness="1"
+                            CanUserSortColumns="False"
+                            ColumnWidth="150"
+                            EnableColumnVirtualization="True"
+                            EnableRowVirtualization="True"
+                            GridLinesVisibility="All"
+                            HeadersVisibility="Column"
+                            HorizontalGridLinesBrush="#D3D3D3"
+                            IsReadOnly="True"
+                            MouseLeftButtonUp="DataGridCheckedLog_MouseLeftButtonUp"
+                            RowDetailsVisibilityMode="Collapsed"
+                            VerticalGridLinesBrush="#D3D3D3"
+                            VirtualizingPanel.VirtualizationMode="Recycling"
+                            VirtualizingStackPanel.IsVirtualizing="True">
+
+                            <!--  Row Image detail  -->
+                            <DataGrid.RowDetailsTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="10">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                FontSize="14"
+                                                FontWeight="Bold"
+                                                Text="Failed Image: " />
+                                            <TextBlock FontSize="14" Text="{Binding DataContext.NameOfFailedImage, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                                        </StackPanel>
+
+                                        <Border
+                                            Width="200"
+                                            Height="100"
+                                            Padding="2"
+                                            BorderBrush="Gray"
+                                            BorderThickness="1"
+                                            CornerRadius="5">
+                                            <Image Source="{Binding DataContext.PathOfFailedImage, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                                        </Border>
                                     </StackPanel>
+                                </DataTemplate>
+                            </DataGrid.RowDetailsTemplate>
 
-                                    <Border
-                                        Width="200"
-                                        Height="100"
-                                        Padding="2"
-                                        BorderBrush="Gray"
-                                        BorderThickness="1"
-                                        CornerRadius="5">
-                                        <Image Source="{Binding DataContext.PathOfFailedImage, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
-                                    </Border>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGrid.RowDetailsTemplate>
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="ContentTemplate">
+                                        <Setter.Value>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Margin="5"
+                                                        FontWeight="Bold"
+                                                        Text="{Binding}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.CellStyle>
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#44C2ED" />
+                                            <Setter Property="Foreground" Value="White" />
+                                            <Setter Property="BorderBrush" Value="Transparent" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.CellStyle>
+                        </DataGrid>
+                        <Button HorizontalAlignment="Right"
+                            x:Name="ButtonReloadPrinterTemplate"
+                            Width="60" 
+                            Height="30"
+                            Margin="0,0,20,0"
+                            Click="ButtonExport_Click"
+                            Content="{fa:Icon Download,
+                                              Foreground=White}"
+                            FontSize="20"
+                            Style="{StaticResource ModernButton3}" />
+                    </StackPanel>
 
-                        <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="ContentTemplate">
-                                    <Setter.Value>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock
-                                                    Margin="5"
-                                                    FontWeight="Bold"
-                                                    Text="{Binding}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </DataGrid.ColumnHeaderStyle>
-                        <DataGrid.CellStyle>
-                            <Style TargetType="{x:Type DataGridCell}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#44C2ED" />
-                                        <Setter Property="Foreground" Value="White" />
-                                        <Setter Property="BorderBrush" Value="Transparent" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.CellStyle>
-                    </DataGrid>
                 </Grid>
                 <Image
                     x:Name="ImageLoadingJobLog"

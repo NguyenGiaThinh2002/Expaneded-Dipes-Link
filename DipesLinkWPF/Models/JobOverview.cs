@@ -500,6 +500,35 @@ namespace DipesLink.Models
             }
         }
 
+
+        private GridLength _rowHeightDatabaseTitle= new(0, GridUnitType.Pixel);
+        public GridLength RowHeightDatabaseTitle
+        {
+            get { return _rowHeightDatabaseTitle; }
+            set
+            {
+                if (_rowHeightDatabaseTitle != value)
+                {
+                    _rowHeightDatabaseTitle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private GridLength _rowHeightDatabase = new(1, GridUnitType.Star);
+        public GridLength RowHeightDatabase
+        {
+            get { return _rowHeightDatabase; }
+            set
+            {
+                if (_rowHeightDatabase != value)
+                {
+                    _rowHeightDatabase = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public bool IsDBExist { get; set; }
         public CircleChartModel CircleChart { get; set; } = new();
         public byte[]? CameraStsBytes { get; set; }

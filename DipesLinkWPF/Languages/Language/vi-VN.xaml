@@ -12,7 +12,7 @@
     <system:String x:Key="Station_Jobs_Operations">Hoạt động việc làm trạm</system:String>
     <system:String x:Key="Stations_Settings">Cài đặt trạm</system:String>
     <system:String x:Key="Stations_Jobs_Logs">Nhật ký việc làm trạm</system:String>
-    <system:String x:Key="TemplateLoadError">Trạm {0}: Máy in không được kết nối!</system:String>
+    <system:String x:Key="TemplateLoadError">Trạm {0}: Không thể lấy giao diện bản tin !</system:String>
     <system:String x:Key="StationNumber">Trạm {0}</system:String>
     <system:String x:Key="Home">Trang chủ</system:String>
     <system:String x:Key="Jobs">Công việc</system:String>

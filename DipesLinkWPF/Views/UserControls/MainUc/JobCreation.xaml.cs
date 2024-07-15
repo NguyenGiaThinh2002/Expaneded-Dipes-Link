@@ -19,7 +19,7 @@ namespace DipesLink.Views.UserControls.MainUc
         public JobCreation()
         {
             InitializeComponent();
-            ViewModelSharedEvents.MainListBoxMenuChange += ViewModelSharedEvents_MainListBoxMenuChange; 
+            ViewModelSharedEvents.OnMainListBoxMenu += ViewModelSharedEvents_MainListBoxMenuChange; 
         }
 
       
@@ -55,19 +55,14 @@ namespace DipesLink.Views.UserControls.MainUc
         }
         private void ListBoxMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            LoadJobList();
+            CallbackCommand(vm => vm.LoadJobList(ListBoxMenu.SelectedIndex)); // Update Job on UI
         }
         private void ViewModelSharedEvents_MainListBoxMenuChange(object? sender, EventArgs e)
         {
-            LoadJobList();
+            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenu.SelectedIndex);
         }
 
-        private void LoadJobList()
-        {
-                int index = ListBoxMenu.SelectedIndex;
-                CallbackCommand(vm => vm.LoadJobList(index)); // Update Job on UI
-                CurrentViewModel<MainViewModel>()?.LockUI(index);
-        }
+    
         //ClearTextBoxes(myGroupBox);
 
         //private void ClearTextBoxes(GroupBox groupBox)
@@ -253,14 +248,13 @@ namespace DipesLink.Views.UserControls.MainUc
             CallbackCommand(vm => vm.LoadJobList(jobIndex)); // Update Job on UI
         }
 
-        private void RadioButtonRynanSeries_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
+ 
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             var rad = sender as RadioButton;
+            var vm = CurrentViewModel<MainViewModel>();
+            if (rad == null || vm == null) return;
             switch (rad.Name)
             {
                 case "RadioButtonStandalone":
@@ -270,7 +264,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     RadioButtonAfterProduction.IsChecked = false;
                     RadioButtonOnProduction.IsChecked = false;
                     RadioButtonVerifyAndPrint.IsChecked = false;
-                    CurrentViewModel<MainViewModel>().CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
+                    vm.CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
                     break;
                 case "RadioButtonRynanSeries":
                     GroupBoxJobType.IsEnabled = true;
@@ -282,19 +276,18 @@ namespace DipesLink.Views.UserControls.MainUc
                 case "RadioButtonCanRead":
                 case "RadioButtonStaticText":
                     GroupBoxDatabaseType.IsEnabled = false;
+                    GroupBoxTemplate.IsEnabled = false;
                     break;
                 case "RadioButtonDatabase":
                     GroupBoxDatabaseType.IsEnabled = true;
+                    GroupBoxTemplate.IsEnabled = true;
                     break;
                 default:
                     break;
             }
         }
 
-        private void ListViewJobTemplate_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-
-        }
+        
 
         private void ListViewJobTemplate_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
         {

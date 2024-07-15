@@ -66,7 +66,7 @@ namespace DipesLink.ViewModels
                     break;
             }
             EnableButtons(ConnectParamsList[stationIndex].LockUISetting);
-            LoadJobListAction(stationIndex);
+            LoadJobListActionAsync(stationIndex);
         }
 
         #region Job Selection and create new
@@ -260,8 +260,9 @@ namespace DipesLink.ViewModels
 
         internal void LoadJobList(int jobIndex)
         {
-            Thread ThreadLoadJobList = new(new ParameterizedThreadStart(LoadJobListAction));
-            ThreadLoadJobList.Start(jobIndex);
+            //Thread ThreadLoadJobList = new(new ParameterizedThreadStart(LoadJobListAction));
+            //ThreadLoadJobList.Start(jobIndex);
+            Task.Run(() => LoadJobListActionAsync(jobIndex));
         }
 
         public void EnableButtons(bool isEnable)
@@ -277,10 +278,10 @@ namespace DipesLink.ViewModels
             //ConnectParamsList[stationIndex].LockUISetting
         }
       
-        private void LoadJobListAction(object? obj)
+        private async Task LoadJobListActionAsync(object? obj)
         {
             // thinh 
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            await Application.Current.Dispatcher.InvokeAsync(new Action(() =>
             {
                 numberOfSelectedJobList = 0;
                 int index = (int)obj;
@@ -332,7 +333,7 @@ namespace DipesLink.ViewModels
                     // string selectedfilePath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}" + "\\" + jobModel.Name + SharedValues.Settings.JobFileExtension;
 
                     var MsgBoxDelJob = CusMsgBox.Show("Do you want to delete this Job ? ", "Job Deletion", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Warning);
-                    if (MsgBoxDelJob)
+                    if (MsgBoxDelJob.Result)
                     {
                         // Check Job Delete whether is selected job and Delete at the same time Selected Job
                         string folderPath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}";

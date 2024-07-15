@@ -19,20 +19,19 @@ namespace DipesLink.Views.UserControls.MainUc
     public partial class JobDetails : UserControl
     {
 
-        //  private PrintingDataTableHelper _printingDataTableHelper = new();
         private JobOverview? _currentJob;
         private readonly ConcurrentQueue<string[]> _queueCheckedCode = new();
         private PrintObserHelper? _printObserHelper;
         private CheckedObserHelper _checkedObserHelper = new();
         private readonly ConcurrentQueue<string[]> _queuePrintedCode = new();
         private readonly CancellationTokenSource _ctsGetPrintedCode = new();
-
+        private readonly TimeBaseExecution _timeBasedExecution = new(TimeSpan.FromMilliseconds(500));
 
         public JobDetails()
         {
             InitializeComponent();
             Loaded += StationDetailUc_Loaded;
-
+  
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
             InitValues();
@@ -55,8 +54,7 @@ namespace DipesLink.Views.UserControls.MainUc
             if (_currentJob is not null && _currentJob.Index == jobIndex)
             {
                 Debug.WriteLine($"Clear data of Job: {jobIndex}");
-                // _printingDataTableHelper?.Dispose();
-                //   _printingDataTableHelper = new();
+                ChangeLayoutDataGrid();
                 InitValues();
 
                 DataGridDB.ItemsSource = null;
@@ -72,6 +70,21 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
+        private void ChangeLayoutDataGrid()
+        {
+            if (_currentJob == null) return;
+            if (_currentJob.CompareType != SharedProgram.DataTypes.CommonDataType.CompareType.Database)
+            {
+                _currentJob.RowHeightDatabase = new(0, GridUnitType.Pixel);
+                _currentJob.RowHeightDatabaseTitle = new(0, GridUnitType.Pixel);
+            }
+            else
+            {
+                _currentJob.RowHeightDatabase = new(1, GridUnitType.Star);
+                _currentJob.RowHeightDatabaseTitle = new(18, GridUnitType.Pixel);
+            }
+        }
+
         public void InitValues()
         {
             TextBlockTotalChecked.Text = "0";
@@ -84,7 +97,8 @@ namespace DipesLink.Views.UserControls.MainUc
 
             EventRegister();
             if (_currentJob == null) return;
-            ViewModelSharedEvents.OnJobDetailChangeHandler(_currentJob.Index);
+            ChangeLayoutDataGrid();
+            ViewModelSharedEvents.OnJobDetailChanged(_currentJob.Index);
             if (!_currentJob.IsDBExist)
             {
                 //  Debug.WriteLine("Event load database was called: " + _currentJob.Index);
@@ -251,7 +265,7 @@ namespace DipesLink.Views.UserControls.MainUc
             }
 
         }
-
+        
         private async Task TaskAddDataAsync()
         {
             var tempDataList = new List<string[]>();
@@ -276,7 +290,9 @@ namespace DipesLink.Views.UserControls.MainUc
                                 _checkedObserHelper?.AddNewData(data);
                             }
                         });
+                       
                     }
+                  
                     await Task.Delay(1);
                 }
 
@@ -293,9 +309,9 @@ namespace DipesLink.Views.UserControls.MainUc
                         }
                     });
 
-                    UpdateCheckedNumber();
+                    
                 }
-
+                _timeBasedExecution.ExecuteActionIfAllowed(() => UpdateCheckedNumber());
                 await Task.Delay(batchDelay);
             }
         }
@@ -324,16 +340,19 @@ namespace DipesLink.Views.UserControls.MainUc
             try
             {
                 if (_currentJob == null) return;
-             
                 CheckedInfo printInfo = new()
                 {
-                    list = _checkedObserHelper?.CheckedList,
-                    columnNames = _checkedObserHelper.ColumnNames,
-                    RawList = _dataList,
+                    list = new(_checkedObserHelper?.CheckedList),
+                    columnNames = _checkedObserHelper?.ColumnNames,
+                    RawList = new(_dataList),
                     PodFormat = _currentJob.PODFormat,
                     CurrentJob = _currentJob,
                 };
-
+                if(_currentJob.CompareType != SharedProgram.DataTypes.CommonDataType.CompareType.Database)
+                {
+                    printInfo.RawList.Clear();
+                    printInfo.PodFormat.Clear();
+                }
                 CheckedLogsWindow checkedLogsWindow = new(printInfo);
                 checkedLogsWindow.ShowDialog();
             }
@@ -349,7 +368,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 if (_currentJob == null) return;
                 PrintingInfo printInfo = new()
                 {
-                    list = _printObserHelper?.PrintList,
+                    list = new(_printObserHelper?.PrintList),
                     columnNames = _printObserHelper.ColumnNames,
                 };
 
@@ -361,9 +380,6 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void ButtonSimulate_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+   
     }
 }

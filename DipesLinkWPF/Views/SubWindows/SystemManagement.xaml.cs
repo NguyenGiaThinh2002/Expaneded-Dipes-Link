@@ -82,8 +82,8 @@ namespace DipesLink.Views.SubWindows
 
         private bool isChangeLanguageAccepted()
         {
-            bool res = CusMsgBox.Show("Do you want to change language and logout?", "Change Language", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-            return res;
+            var res = CusMsgBox.Show("Do you want to change language and logout?", "Change Language", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+            return res.Result;
         }
     }
 }
