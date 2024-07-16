@@ -13,7 +13,7 @@ namespace SharedProgram.Models
         //[ObservableProperty]
         //private ObservableCollection<string>? _JobFileList;
 
-        private ObservableCollection<string>? _JobFileList;
+        private ObservableCollection<string>? _JobFileList = new();
 
         public ObservableCollection<string>? JobFileList
         {
@@ -21,11 +21,11 @@ namespace SharedProgram.Models
             set { _JobFileList = value; OnPropertyChanged(); }
         }
 
-        private bool _isButtonEnable;
-        public bool IsButtonEnable
+        private bool _isButtonOperationJobEnable = true;
+        public bool IsButtonOperationJobEnable
         {
-            get { return _isButtonEnable; }
-            set { _isButtonEnable = value; OnPropertyChanged(); }
+            get { return _isButtonOperationJobEnable; }
+            set { _isButtonOperationJobEnable = value; OnPropertyChanged(); }
         }
 
 

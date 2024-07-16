@@ -653,7 +653,7 @@ namespace DipesLink.Views.SubWindows
             currentJob?.RaiseReprint(currentJob.Index);
         }
 
-        private void Search_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void Search_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -698,10 +698,18 @@ namespace DipesLink.Views.SubWindows
                 {
                     return;
                 }
+
+                var confirmSaved = CusMsgBox.Show("Confirm you want to export report file ?", "Export Checked Result", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                if (!confirmSaved.Result)
+                {
+                    return;
+                }
+
                 string docFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                     "DPLink_LogFiles",
                     $"Job{_currentJob.Index + 1}");
-                string fileName = _currentJob?.Name + $"_Logs_{DateTime.Now:yyyy_MM_dd}.csv";
+
+                string fileName = _currentJob?.Name + $"_Logs_{DateTime.Now:yyyyMMdd_hhmmss}.csv";
 
                 if (!Directory.Exists(docFolderPath))
                 {
@@ -710,12 +718,11 @@ namespace DipesLink.Views.SubWindows
 
                 if (fileName != null)
                 {
-                    string fullFilePath = System.IO.Path.Combine(docFolderPath, fileName);
+                    string fullFilePath = Path.Combine(docFolderPath, fileName);
                     Task<bool> doneExportTask = Task.Run(() => { return ExportResult(fullFilePath, _printingInfo?.RawList, _printingInfo?.list, _printingInfo?.PodFormat); });
-
                     if (!(await doneExportTask))
                     {
-   
+
                     }
                     else
                     {
@@ -736,6 +743,7 @@ namespace DipesLink.Views.SubWindows
             {
                 var headerColumns = rawDatabaseList.FirstOrDefault();
                 var datas = rawDatabaseList.Skip(1).ToList();
+
                 // Create a dictionary to count the number of occurrences of each ResultData with "Duplicated" status
                 var duplicateCountDict = checkedList
                     .Where(x => x.Result == "Duplicated")
@@ -774,7 +782,7 @@ namespace DipesLink.Views.SubWindows
                         }
                         else
                         {
-                            string tmpValue = record[record.Length - 1];
+                            string tmpValue = record[^1];
                             writeValue += tmpValue == "Printed" ? "Unverified" : tmpValue;
                             writeValue += "," + "";
                         }

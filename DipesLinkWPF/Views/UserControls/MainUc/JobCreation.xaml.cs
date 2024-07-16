@@ -19,29 +19,9 @@ namespace DipesLink.Views.UserControls.MainUc
         public JobCreation()
         {
             InitializeComponent();
-            ViewModelSharedEvents.OnMainListBoxMenu += ViewModelSharedEvents_MainListBoxMenuChange; 
+            ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange; 
         }
 
-      
-
-        public void CallbackCommand(Action<MainViewModel> execute)
-        {
-            try
-            {
-                if (DataContext is MainViewModel model)
-                {
-                    execute?.Invoke(model);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch (Exception)
-            {
-                return;
-            }
-        }
         private T? CurrentViewModel<T>() where T : class
         {
             if (DataContext is T viewModel)
@@ -53,58 +33,33 @@ namespace DipesLink.Views.UserControls.MainUc
                 return null;
             }
         }
-        private void ListBoxMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListBoxMenuJobCreate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CallbackCommand(vm => vm.LoadJobList(ListBoxMenu.SelectedIndex)); // Update Job on UI
+            CurrentViewModel<MainViewModel>()?.LoadJobList(ListBoxMenuJobCreate.SelectedIndex); // Update Job on UI
+            LockUIPreventChangeJobWhenRun();
+            CurrentViewModel<MainViewModel>()?.GetDetailInfoJobList(ListBoxMenuJobCreate.SelectedIndex, true);  // default load info of selected Job
         }
-        private void ViewModelSharedEvents_MainListBoxMenuChange(object? sender, EventArgs e)
+        private void MainListBoxMenuChange(object? sender, EventArgs e)
         {
-            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenu.SelectedIndex);
+            if(sender is int indexMenu)
+            {
+                if(indexMenu == 1)
+                {
+                    LockUIPreventChangeJobWhenRun();
+                }
+            }
+            
         }
 
-    
-        //ClearTextBoxes(myGroupBox);
-
-        //private void ClearTextBoxes(GroupBox groupBox)
-        //{
-
-        //    // Iterate through all child controls within the GroupBox
-        //    foreach (var control in FindVisualChildren<TextBox>(groupBox))
-        //    {
-        //        control.Text = ""; // Set the text of each TextBox to an empty string
-        //    }
-        //}
-
-        //// Helper method to find all visual children of a specific type within a parent control
-        //public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
-        //{
-        //    if (depObj != null)
-        //    {
-        //        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-        //        {
-        //            DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-        //            if (child != null && child is T)
-        //            {
-        //                yield return (T)child;
-        //            }
-
-        //            foreach (T childOfChild in FindVisualChildren<T>(child))
-        //            {
-        //                yield return childOfChild;
-        //            }
-        //        }
-        //    }
-        //}
-
-        private int CurrentIndex() => ListBoxMenu.SelectedIndex;
+        private int CurrentIndex() => ListBoxMenuJobCreate.SelectedIndex;
         private void ButtonSaveJob_Click(object sender, RoutedEventArgs e)
         {
             var vm = CurrentViewModel<MainViewModel>();
-            int jobIndex = ListBoxMenu.SelectedIndex;
+            int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
             
            
-            CallbackCommand(vm => vm.SaveJob(jobIndex));
-            CallbackCommand(vm => vm.LoadJobList(jobIndex)); // Update Job on UI
+            CurrentViewModel<MainViewModel>()?.SaveJob(jobIndex);
+            CurrentViewModel<MainViewModel>()?.LoadJobList(jobIndex); // Update Job on UI
             //MainViewModel.SelectJob.JobFileList = new();
             var isSaveJob = vm.isSaveJob;
 
@@ -124,7 +79,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ButtonBrowseDb_Click(object sender, RoutedEventArgs e)
         {
-            CallbackCommand(vm => vm.BrowseDatabasePath());
+            CurrentViewModel<MainViewModel>()?.BrowseDatabasePath();
             RenewData();
         }
         private void RenewData()
@@ -146,17 +101,15 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ButtonAutoNamed_Click(object sender, RoutedEventArgs e)
         {
-            CallbackCommand(vm=>vm.AutoNamedForJob(CurrentIndex()));
+            CurrentViewModel<MainViewModel>()?.AutoNamedForJob(CurrentIndex());
         }
 
         private void ButtonReloadPrinterTemplate_Click(object sender, RoutedEventArgs e)
         {
-            int jobIndex = ListBoxMenu.SelectedIndex;
-            CallbackCommand(vm => vm.RefreshTemplatName(jobIndex));
+            int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
+            CurrentViewModel<MainViewModel>()?.RefreshTemplatName(jobIndex);
             
         }
-
-       
 
         private void TabControlJobSettings_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -164,14 +117,23 @@ namespace DipesLink.Views.UserControls.MainUc
             //CallbackCommand(vm => vm.LoadJobList(jobIndex));
         }
 
+        private void LockUIPreventChangeJobWhenRun()
+        {
+         
+      
+            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuJobCreate.SelectedIndex);
+        }
+
         private void ListViewJobTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            LockUIPreventChangeJobWhenRun();
             if (e.AddedItems.Count > 0)// avoid Multi event action for ListView
             {
-                int jobIndex = ListBoxMenu.SelectedIndex;
-                CallbackCommand(vm => vm.GetDetailJobList(jobIndex));
+                int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
+                CurrentViewModel<MainViewModel>()?.GetDetailInfoJobList(jobIndex);
+                ListViewSelectedJob.SelectedIndex = jobIndex; // Lost focus 
             }
-            ListViewSelectedJob.SelectedItem = null; // Lost focus 
+           
 
 
         }
@@ -215,40 +177,38 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ButtonChooseImagePath_Click(object sender, RoutedEventArgs e)
         {
-            CallbackCommand(vm => vm.SelectImageExportPath());
+            CurrentViewModel<MainViewModel>()?.SelectImageExportPath();
         }
 
         private void Button_SaveAllClick(object sender, RoutedEventArgs e)
         {
-            CallbackCommand(vm => vm.SaveAllJob());
+            CurrentViewModel<MainViewModel>()?.SaveAllJob();
         }
 
         private void ListViewSelectedJob_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
-                int jobIndex = ListBoxMenu.SelectedIndex;
-                CallbackCommand(vm => vm.GetDetailJobList(jobIndex,true));
+                int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
+                   CurrentViewModel<MainViewModel>()?.GetDetailInfoJobList(jobIndex, true);
             }
             ListViewJobTemplate.SelectedItem = null; // Lost focus
         }
 
         private void TextBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CallbackCommand(vm => vm.SearchText = ((System.Windows.Controls.TextBox)sender).Text);
+            CurrentViewModel<MainViewModel>()?.UpdateSearchText(((TextBox)sender).Text);
         }
 
         private void ButtonDelJob_Click(object sender, RoutedEventArgs e)
         {
             
-            int jobIndex = ListBoxMenu.SelectedIndex;
+            int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
             CurrentViewModel<MainViewModel>()?.DeleteJobAction(jobIndex);
             CurrentViewModel<MainViewModel>()?.UpdateJobInfo(jobIndex);
             ViewModelSharedEvents.OnChangeJobHandler(ButtonDelJob.Name, jobIndex);
-            CallbackCommand(vm => vm.LoadJobList(jobIndex)); // Update Job on UI
+            CurrentViewModel<MainViewModel>()?.LoadJobList(jobIndex); // Update Job on UI
         }
-
- 
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
@@ -287,9 +247,7 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        
-
-        private void ListViewJobTemplate_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
+        private void ListViewJobTemplate_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Button_AddJobClick(sender, e);
         }
@@ -300,10 +258,12 @@ namespace DipesLink.Views.UserControls.MainUc
             ButtonAddJob.IsEnabled = false;
         }
 
-        private void ListViewJobTemplate_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void ListViewJobTemplate_MouseEnter(object sender, MouseEventArgs e)
         {
+            ListViewSelectedJob.SelectedItem = null;
             ButtonDelJob.IsEnabled = true;
             ButtonAddJob.IsEnabled = true;
+
         }
     }
 }

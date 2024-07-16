@@ -56,8 +56,8 @@ namespace DipesLink.ViewModels
         }
 
 
-        protected SelectJobModel? _SelectJob;
-        public SelectJobModel? SelectJob
+        protected SelectJobModel? _SelectJob = new();
+        public SelectJobModel? JobSelection
         {
             get { return _SelectJob; }
             set

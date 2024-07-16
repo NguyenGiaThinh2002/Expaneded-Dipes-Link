@@ -25,7 +25,7 @@ namespace DipesLink.ViewModels
     public partial class MainViewModel : ViewModelBase
     {
 
-       
+
         public event EventHandler? OnSomethingHappened;
         protected virtual void RaiseSomethingHappened(EventArgs e)
         {
@@ -33,7 +33,7 @@ namespace DipesLink.ViewModels
         }
         #region SingletonInit
 
-       
+
         public static MainViewModel GetIntance()
         {
             _instance ??= new MainViewModel();
@@ -58,7 +58,7 @@ namespace DipesLink.ViewModels
             InitJobConnectionSettings();
             InitStations(_NumberOfStation);
 
-           _updateTimer ??= InitializeDispatcherTimer();
+            _updateTimer ??= InitializeDispatcherTimer();
         }
 
         private void EventRegister()
@@ -163,11 +163,12 @@ namespace DipesLink.ViewModels
 
         internal void GetCurrentJobDetail(int index)
         {
-            JobModel? jobModel;
-            if (!CheckJobExisting(index, out jobModel))
+            if (!CheckJobExisting(index, out JobModel? jobModel))
             {
                 jobModel = new();
             }
+            if (jobModel == null) return;
+
             JobList[index].Name = jobModel.Name;
             JobList[index].PrinterSeries = jobModel.PrinterSeries;
             JobList[index].JobType = jobModel.JobType;
@@ -176,12 +177,12 @@ namespace DipesLink.ViewModels
             JobList[index].DatabasePath = jobModel.DatabasePath;
             JobList[index].DataCompareFormat = jobModel.DataCompareFormat;
             JobList[index].TotalRecDb = jobModel.TotalRecDb;
+            JobList[index].CompleteCondition = jobModel.CompleteCondition;
             JobList[index].PrinterTemplate = jobModel.PrinterTemplate;
             JobList[index].CameraSeries = jobModel.CameraSeries;
             JobList[index].ImageExportPath = jobModel.ImageExportPath;
             JobList[index].PODFormat = jobModel.PODFormat;
-            // thinh them status
-            //JobList[index].OperationStatus = jobModel.OperationStatus;
+
 
             // Events for Button Start/Stop/Trigger
             JobList[index].StartButtonCommand -= StartButtonCommandEventHandler;
@@ -205,7 +206,7 @@ namespace DipesLink.ViewModels
 
         }
 
-      
+
 
         private void LoadDbEventHandler(object? sender, EventArgs e)
         {
@@ -354,7 +355,7 @@ namespace DipesLink.ViewModels
                 while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                 {
                     //SharedFunctions.PrintDebugMessage($"Queue print Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
-                     await Task.Run(() => ProcessItem(result, stationIndex));
+                    await Task.Run(() => ProcessItem(result, stationIndex));
                 }
                 await Task.Delay(1);
             }
@@ -913,9 +914,9 @@ namespace DipesLink.ViewModels
                     while (ipc.MessageQueue.TryDequeue(out byte[]? result))
                     {
                         //  SharedFunctions.PrintDebugMessage($"Queue Realtime Data {stationIndex}: " + ipc.MessageQueue.Count().ToString());
-                          await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
+                        await Task.Run(() => ProcessItemDetectModel(result, stationIndex));
                         //ProcessItemDetectModel(result, stationIndex);
-                       // await Task.Delay(1);
+                        // await Task.Delay(1);
                     }
                     await Task.Delay(1);
                 }
@@ -1067,27 +1068,43 @@ namespace DipesLink.ViewModels
             {
                 try
                 {
-                    if (totalChecked >= 0&& JobList[stationIndex].CompareType== CompareType.Database) // DB MODE
+                    double percent = 0;
+                    if (totalChecked >= 0 && JobList[stationIndex].CompareType == CompareType.Database) // DB MODE
                     {
-                        double percent = (double)totalChecked * 100 / JobList[stationIndex].TotalRecDb;
-                        percent = Math.Round(percent, 2);
-                        if (percent > 100) percent = 100;
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        switch (JobList[stationIndex].CompleteCondition)
                         {
-                            JobList[stationIndex].CircleChart.Value = percent;
-                        });
+                            case CompleteCondition.None:
+                                // Do nothing
+                                break;
+                            case CompleteCondition.TotalPassed:
+                                if (double.TryParse(JobList[stationIndex].TotalPassed, out double pass) && 
+                                    double.TryParse(JobList[stationIndex].TotalRecDb.ToString(), out double totalRecDb) && totalRecDb != 0)
+                                {
+                                    percent = Math.Round(pass / totalRecDb * 100, 3);
+                                }else percent = 0;
+                                break;
+                            case CompleteCondition.TotalChecked:
+                                percent = Math.Round((double)totalChecked * 100 / JobList[stationIndex].TotalRecDb, 3);
+                                break;
+                            default:
+                                break;
+                        }
+
                     }
                     else  // NO DB MODE
                     {
                         _ = double.TryParse(JobList[stationIndex].TotalPassed, out double pass);
-                        double percent = Math.Round(pass / (double)totalChecked * 100);
-
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            JobList[stationIndex].CircleChart.Value = percent;
-                        });
+                        percent = Math.Round(pass / totalChecked * 100);
                     }
+
+                    // Show to UI
+                    if (percent > 100) percent = 100;
+                    if (percent < 0) percent = 0;
+                    Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        JobList[stationIndex].CircleChart.Value = percent;
+                    });
                 }
                 catch (Exception ex)
                 {

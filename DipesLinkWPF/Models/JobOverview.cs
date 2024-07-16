@@ -108,6 +108,9 @@ namespace DipesLink.Models
             }
         }
 
+
+       
+
         private string _receivedDataNumber = "0";
         public string ReceivedDataNumber
         {
@@ -546,6 +549,7 @@ namespace DipesLink.Models
         public ConcurrentQueue<byte[]> QueueReceivedNumberBytes { get; set; } = new();
         public ConcurrentQueue<byte[]> QueuePrintedNumberBytes { get; set; } = new();
         public JobSystemSettings JobSystemSettings { get; set; }
+        public bool IsLockUISetting { get; internal set; }
 
 
         #endregion

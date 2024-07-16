@@ -35,11 +35,11 @@ namespace SharedProgram.Models
 
 
 
-        private bool _lockUISetting;
-        public bool LockUISetting
+        private bool _IsLockUISetting;
+        public bool IsLockUISetting
         {
-            get { return _lockUISetting; }
-            set { _lockUISetting = value; OnPropertyChanged(); }
+            get { return _IsLockUISetting; }
+            set { _IsLockUISetting = value; OnPropertyChanged(); }
         }
 
         // thinh

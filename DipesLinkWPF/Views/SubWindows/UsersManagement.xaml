@@ -26,13 +26,13 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="90" />
+            <RowDefinition Height="50" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            FontSize="18"
+            FontSize="18" Foreground="#808080"
             FontWeight="Bold">
             USERS MANAGEMENT
         </TextBlock>

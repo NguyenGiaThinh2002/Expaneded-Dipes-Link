@@ -141,7 +141,7 @@ namespace DipesLink.Views
 
         private void ListBoxMenu_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-     
+            ViewModelSharedEvents.OnMainListBoxMenuChanged(ListBoxMenu.SelectedIndex);
             ViewModelSharedEvents.OnListBoxMenuSelectionChangeHandler(ListBoxMenu.SelectedIndex);
             if (ListBoxMenu.SelectedIndex != -1)
                 ComboBoxSelectView.SelectedIndex = 0;
@@ -389,7 +389,7 @@ namespace DipesLink.Views
             ToggleButtonChangeView.IsChecked = false;
             StackPanelIPDisplay.Visibility = Visibility.Visible;
             JobDetails_OnJobDetailChange(sender, currentStation);
-            ViewModelSharedEvents.OnMainListBoxMenuChanged();
+          //  ViewModelSharedEvents.OnMainListBoxMenuChanged(ListBoxMenu.SelectedIndex);
         }
 
         //private void ListBoxItem_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
