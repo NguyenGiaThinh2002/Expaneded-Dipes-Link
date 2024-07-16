@@ -441,13 +441,17 @@
                                                 Height="200"
                                                 Margin="10"
                                                 FontWeight="Normal"
-                                                ItemsSource="{Binding JobFileList}" MouseEnter="ListViewJobTemplate_MouseEnter"
+                                                ItemsSource="{Binding JobFileList}"
                                                 MouseDoubleClick="ListViewJobTemplate_MouseDoubleClick"
-                                               SelectedItem="{Binding SelectedJob}"
+                                                MouseEnter="ListViewJobTemplate_MouseEnter"
+                                                SelectedItem="{Binding SelectedJob}"
+                                                SelectionChanged="ListViewJobTemplate_SelectionChanged"
                                                 Style="{StaticResource ModernListViewStyle}" />
-                                            <!--PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
-   SelectedItem="{Binding SelectedJob}"
-SelectionChanged="ListViewJobTemplate_SelectionChanged"-->
+                                            <!--
+                                                PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
+                                                SelectedItem="{Binding SelectedJob}"
+                                                SelectionChanged="ListViewJobTemplate_SelectionChanged"
+                                            -->
 
                                         </StackPanel>
 
@@ -465,7 +469,6 @@ SelectionChanged="ListViewJobTemplate_SelectionChanged"-->
                                                 Width="70"
                                                 Height="30"
                                                 Margin="0,10,0,0"
-                                               
                                                 Click="ButtonDelJob_Click"
                                                 Content="{DynamicResource ResourceKey=DELETE}"
                                                 IsEnabled="{Binding IsButtonOperationJobEnable}"
@@ -993,7 +996,8 @@ SelectionChanged="ListViewJobTemplate_SelectionChanged"-->
                                         Text="{Binding StaticText}" />
                                 </StackPanel>
 
-                                <GroupBox x:Name="GroupBoxTemplate"
+                                <GroupBox
+                                    x:Name="GroupBoxTemplate"
                                     Grid.Row="6"
                                     Width="470"
                                     Height="200"

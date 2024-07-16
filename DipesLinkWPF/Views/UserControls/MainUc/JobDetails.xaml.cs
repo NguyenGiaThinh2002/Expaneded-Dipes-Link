@@ -325,9 +325,9 @@ namespace DipesLink.Views.UserControls.MainUc
             _currentJob.RaisePercentageChange(_currentJob.Index);
         }
 
-        private async void UpdateCheckedNumber()
+        private void UpdateCheckedNumber()
         {
-            await Application.Current.Dispatcher.InvokeAsync(() =>
+            Application.Current?.Dispatcher.InvokeAsync(() =>
             {
                 TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
                 TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();

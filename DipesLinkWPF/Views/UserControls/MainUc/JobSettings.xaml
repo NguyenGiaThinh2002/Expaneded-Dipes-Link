@@ -263,7 +263,7 @@
                                     <GroupBox.Header>
                                         <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Settings}" />
                                     </GroupBox.Header>
-                            
+
                                     <StackPanel Margin="5,10,0,0">
                                         <StackPanel
                                             Margin="0,10,0,0"
@@ -278,7 +278,7 @@
                                                 Width="200"
                                                 Height="30"
                                                 Text="{Binding PrinterIP}" />
-                                          
+
                                         </StackPanel>
 
                                         <StackPanel
@@ -722,10 +722,11 @@
                                             </StackPanel>
                                         </GroupBox>
 
-                                        <GroupBox
+                                        <!--<GroupBox
                                             Grid.Column="1"
                                             Height="236"
-                                            Margin="0,20,0,0">
+                                            Margin="0,20,0,0"
+                                            Visibility="Collapsed">
                                             <GroupBox.Header>
                                                 <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Select_Number_of_Stations}" />
                                             </GroupBox.Header>
@@ -751,7 +752,8 @@
                                                     </ComboBox>
                                                 </StackPanel>
                                                 <StackPanel Margin="240,110,10,10" IsEnabled="{Binding LockUISetting}">
-                                                    <Button
+                                        -->
+                                        <!--<Button
                                                         Width="120"
                                                         Height="40"
                                                         Background="AliceBlue"
@@ -765,10 +767,32 @@
                                                                 Icon="RotateBack" />
                                                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource ResourceKey=Restart}" />
                                                         </StackPanel>
-                                                    </Button>
+                                                    </Button>-->
+                                        <!--
                                                 </StackPanel>
                                             </StackPanel>
-                                        </GroupBox>
+                                        </GroupBox>-->
+                                        <Grid Grid.Row="1" Height="200">
+                                            <Button
+                                                Width="120"
+                                                Height="40"
+                                                Margin="0,0,10,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Style="{StaticResource ModernButtonRs}"
+                                                Click="RestartButton_Click">
+                                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                    <fa:IconImage
+                                                        Width="16"
+                                                        Height="16"
+                                                        Margin="0,0,5,0"
+                                                        Foreground="#00ABE6"
+                                                        Icon="RotateBack" />
+                                                    <TextBlock VerticalAlignment="Center" Text="{DynamicResource ResourceKey=Restart}" />
+                                                </StackPanel>
+                                            </Button>
+                                        </Grid>
+
                                     </StackPanel>
                                 </Grid>
                             </Grid>

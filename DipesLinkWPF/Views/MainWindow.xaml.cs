@@ -204,25 +204,6 @@ namespace DipesLink.Views
             });
         }
 
-        public void CallbackCommand(Action<MainViewModel> execute)
-        {
-            try
-            {
-                if (DataContext is MainViewModel model)
-                {
-                    execute?.Invoke(model);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch (Exception)
-            {
-                return;
-            }
-        }
-
         private T? CurrentViewModel<T>() where T : class
         {
             if (DataContext is T viewModel)
@@ -254,7 +235,7 @@ namespace DipesLink.Views
         private void DeviceStatListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             var index = DeviceStatListBox.SelectedIndex;
-            CallbackCommand(vm => vm.ChangeJobByDeviceStatSymbol(index));
+            CurrentViewModel<MainViewModel>()?.ChangeJobByDeviceStatSymbol(index);
         }
 
         private void ComboBoxStationNum_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -277,13 +258,7 @@ namespace DipesLink.Views
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            // thinh 2
             var viewModel = CurrentViewModel<MainViewModel>();
-
-            // Count the number of running stations
-            int runningPrintersCount = viewModel.PrinterStateList.Count(printerState => printerState.State != "Stopped" && printerState.State != "Dừng");
-            bool isNotRunning = runningPrintersCount > 0 ? false : true;
-
             var menuItem = sender as MenuItem;
             if (menuItem != null)
             {
@@ -298,11 +273,11 @@ namespace DipesLink.Views
                         aboutPopup.ShowDialog();
                         break;
                     case "System Management":
-                        var systemManagement = new SystemManagement(isNotRunning);
+                        var systemManagement = new SystemManagement(viewModel);
                         systemManagement.ShowDialog();
                         break;
                     case "Logout": //Restart
-                        Logout(isNotRunning);
+                        Logout(viewModel.JobList.Count(job => job.OperationStatus == SharedProgram.DataTypes.CommonDataType.OperationStatus.Running)<0);
                         break;
                     default:
                         break;
