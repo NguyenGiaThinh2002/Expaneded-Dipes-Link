@@ -19,6 +19,8 @@
         <ResourceDictionary>
             <converter:OperationStatusToBool x:Key="OperationStatusToBool" />
             <converter:AddOne x:Key="AddOneConverter" />
+            <converter:TextUpperCaseConverter x:Key="TextUppercase"/>
+            <converter:ForegroundColorConverter x:Key="ForegroundColorConverter"/>
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
             <Color x:Key="DataTagColorGraBot">White</Color>
@@ -34,7 +36,7 @@
         </Border.Background>
         <Grid Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="180" />
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -74,15 +76,17 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#4cc9f0"
-                            Text="Job Name: " />
+                            FontSize="16"
+                            Foreground="Black"
+                            Text="Name: " />
                         <TextBlock
+                            Width="120"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#00ABE6"
-                            Text="{Binding Name}" />
+                            FontSize="16"
+                            Foreground="#0286de"
+                            Text="{Binding Name, FallbackValue=#############}"
+                            TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="2">
@@ -90,15 +94,17 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#4cc9f0"
-                            Text="Job Type: " />
+                            FontSize="16"
+                            Foreground="Black"
+                            Text="Type: " />
                         <TextBlock
+                            Width="120"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#00ABE6"
-                            Text="{Binding JobType}" />
+                            FontSize="16"
+                            Foreground="#0286de"
+                            Text="{Binding JobType,FallbackValue=After Production}"
+                            TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="3">
@@ -106,15 +112,17 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#4cc9f0"
-                            Text="Total Record: " />
+                            FontSize="16"
+                            Foreground="Black"
+                            Text="Total Data: " />
                         <TextBlock
+                            Width="120"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#00ABE6"
-                            Text="{Binding TotalRecDb}" />
+                            FontSize="16"
+                            Foreground="#0286de"
+                            Text="{Binding TotalRecDb, FallbackValue=1000000}"
+                            TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="4">
@@ -122,20 +130,23 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#4cc9f0"
+                            FontSize="16"
+                            Foreground="Black"
                             Text="Status: " />
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#00ABE6"
-                            Text="{Binding OperationStatus}" />
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="{Binding OperationStatus, Converter={StaticResource ForegroundColorConverter}}"
+                            Text="{Binding OperationStatus,Converter={StaticResource TextUppercase}}" >
+                            
+                        </TextBlock>
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Row="5">
-                    <!--  IsEnabled="{Binding OperationStatus}"  -->
-                    <Button
+                <!--<Grid Grid.Row="5">-->
+                <!--  IsEnabled="{Binding OperationStatus}"  -->
+                <!--<Button
                         d:DataContext="{d:DesignInstance Type=models1:ConnectParamsModel}"
                         Background="Transparent"
                         Click="ExportButton_Click"
@@ -154,9 +165,9 @@
                                 Foreground="#00ABE6"
                                 Text="Export File" />
                         </StackPanel>
-                    </Button>
+                    </Button>-->
 
-                </Grid>
+                <!--</Grid>-->
             </Grid>
 
             <lvc:PieChart

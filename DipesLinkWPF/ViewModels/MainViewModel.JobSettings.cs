@@ -18,6 +18,7 @@ using DipesLink.Views.Models;
 using DipesLink.Views.UserControls.MainUc;
 using DipesLink.Models;
 using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace DipesLink.ViewModels
 {
@@ -39,7 +40,10 @@ namespace DipesLink.ViewModels
                 FilterListViewPrinterTemplate();
             }
         }
-
+        internal void UpdateSearchText(string text)
+        {
+            SearchText = text;
+        }
         internal void LockChoosingStation()
         {
             int t = 0;
@@ -54,19 +58,21 @@ namespace DipesLink.ViewModels
             switch (JobList[stationIndex].OperationStatus)
             {
                 case OperationStatus.Running:
-                    ConnectParamsList[stationIndex].LockUISetting = false;
+                    JobList[stationIndex].IsLockUISetting = false;
                     break;
                 case OperationStatus.Processing:
-                    ConnectParamsList[stationIndex].LockUISetting = false;
+                    JobList[stationIndex].IsLockUISetting = false;
                     break;
                 case OperationStatus.Stopped:
-                    ConnectParamsList[stationIndex].LockUISetting = true;
+                    JobList[stationIndex].IsLockUISetting = true;
                     break;
                 default:
                     break;
             }
-            EnableButtons(ConnectParamsList[stationIndex].LockUISetting);
-            LoadJobListActionAsync(stationIndex);
+
+            JobSelection.IsButtonOperationJobEnable = JobList[stationIndex].IsLockUISetting;
+            ConnectParamsList[stationIndex].IsLockUISetting = JobList[stationIndex].IsLockUISetting;
+            _ = LoadJobListActionAsync(stationIndex);
         }
 
         #region Job Selection and create new
@@ -260,73 +266,51 @@ namespace DipesLink.ViewModels
 
         internal void LoadJobList(int jobIndex)
         {
-            //Thread ThreadLoadJobList = new(new ParameterizedThreadStart(LoadJobListAction));
-            //ThreadLoadJobList.Start(jobIndex);
             Task.Run(() => LoadJobListActionAsync(jobIndex));
         }
 
-        public void EnableButtons(bool isEnable)
-        {
-            // thinh
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                SelectJob = new();
-                SelectJob.IsButtonEnable = new();
-                SelectJob.IsButtonEnable = isEnable;
-            }));
-
-            //ConnectParamsList[stationIndex].LockUISetting
-        }
-      
         private async Task LoadJobListActionAsync(object? obj)
         {
-            // thinh 
+            if (obj == null) return;
+            int index = (int)obj;
+            numberOfSelectedJobList = 0;
             await Application.Current.Dispatcher.InvokeAsync(new Action(() =>
             {
-                numberOfSelectedJobList = 0;
-                int index = (int)obj;
-                SelectJob = new();
+                JobSelection?.JobFileList?.Clear();
+                JobSelection?.SelectedJobFileList?.Clear();
                 ObservableCollection<string> templateJobList = GetJobNameList(index);
-                SelectJob.JobFileList = new();
+                //SelectJob.JobFileList = new();
                 // thinh
-                SelectJob.IsButtonEnable = new();
-                SelectJob.IsButtonEnable = ConnectParamsList[index].LockUISetting;
+                // SelectJob.IsButtonOperationJobEnable = new();
+                //   SelectJob.IsButtonOperationJobEnable = ConnectParamsList[index].LockUISetting;
                 foreach (string templateJobName in templateJobList)
                 {
                     JobModel? jobModel = SharedFunctions.GetJob(templateJobName, index);
                     if (jobModel != null && jobModel.JobStatus != JobStatus.Deleted) // Exclude deleted templates
-                        SelectJob.JobFileList.Add(templateJobName);  // update ListTemplate to UI 
+                        JobSelection?.JobFileList?.Add(templateJobName);  // update ListTemplate to UI 
                 }
 
-                // Lấy trong danh sách Job được chọn (chỉ chứa 1 job)
+                // Get from the selected Job list (contains only 1 job)
                 ObservableCollection<string> templateSelectedJobList = SharedFunctions.GetSelectedJobNameList(index);
-                SelectJob.SelectedJobFileList = new ObservableCollection<string>();
+                JobSelection.SelectedJobFileList = new ObservableCollection<string>();
                 foreach (var item in templateSelectedJobList)
                 {
-                    SelectJob.SelectedJobFileList.Add(item);
+                    JobSelection.SelectedJobFileList.Add(item);
                 }
-            
-                numberOfSelectedJobList = SelectJob.SelectedJobFileList.Count;
-                //if (SelectJob.SelectedJobFileList.Count <= 0)
-                //{
-                //    //SelectJob.JobType = ;
-
-                //}
+                numberOfSelectedJobList = JobSelection.SelectedJobFileList.Count;
 
             }));
         }
-
-
 
         internal void DeleteJobAction(int jobIndex)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 JobModel? jobModel;
-                if (SelectJob.SelectedJob == null) return;
+                if (JobSelection.SelectedJob == null) return;
                 try
                 {
-                    jobModel = SharedFunctions.GetJob(SelectJob.SelectedJob, jobIndex);
+                    jobModel = SharedFunctions.GetJob(JobSelection.SelectedJob, jobIndex);
                     if (jobModel == null) return;
                     jobModel.JobStatus = JobStatus.Deleted;
                     string filePath = SharedPaths.PathSubJobsApp + (jobIndex + 1) + "\\" + jobModel.Name + SharedValues.Settings.JobFileExtension;
@@ -376,40 +360,38 @@ namespace DipesLink.ViewModels
             catch (Exception) { return new ObservableCollection<string>(); }
         }
 
-
-        internal void GetDetailJobList(int jobIndex, bool isSelectedWorkJob = false)
+        internal void GetDetailInfoJobList(int jobIndex, bool isSelectedWorkJob = false)
         {
             JobModel? jobModel;
             if (!isSelectedWorkJob)
             {
-                jobModel = SharedFunctions.GetJob(SelectJob.SelectedJob, jobIndex);
+              //  ObservableCollection<string> templateJobList = GetJobNameList(jobIndex);
+                jobModel = SharedFunctions.GetJob(JobSelection?.SelectedJob, jobIndex);
             }
             else
             {
-                jobModel = SharedFunctions.GetJobSelected(SelectJob.SelectedWorkJob, jobIndex);
+               ObservableCollection<string> templateSelectedJobList = SharedFunctions.GetSelectedJobNameList(jobIndex); 
+               jobModel = SharedFunctions.GetJobSelected(templateSelectedJobList.FirstOrDefault(), jobIndex);
             }
 
-            if (jobModel == null) return;
-            // thinh
+            if (jobModel == null || JobSelection == null) { JobSelection = new(); return; }
 
-            SelectJob.Name = jobModel.Name;
-            SelectJob.PrinterSeries = jobModel.PrinterSeries;
-            SelectJob.JobType = jobModel.JobType;
-            SelectJob.CompareType = jobModel.CompareType;
-            SelectJob.StaticText = jobModel.StaticText;
-            SelectJob.DatabasePath = jobModel.DatabasePath;
-            SelectJob.DataCompareFormat = jobModel.DataCompareFormat;
-            SelectJob.PrinterTemplate = jobModel.PrinterTemplate;
-            SelectJob.CompleteCondition = jobModel.CompleteCondition;
-            SelectJob.OutputCamera = jobModel.OutputCamera;
-            SelectJob.IsImageExport = jobModel.IsImageExport;
-            SelectJob.ImageExportPath = jobModel.ImageExportPath;
-            SelectJob.TotalRecDb = jobModel.TotalRecDb;
-            SelectJob.JobStatus = jobModel.JobStatus;
+            JobSelection.Name = jobModel.Name;
+            JobSelection.PrinterSeries = jobModel.PrinterSeries;
+            JobSelection.JobType = jobModel.JobType;
+            JobSelection.CompareType = jobModel.CompareType;
+            JobSelection.StaticText = jobModel.StaticText;
+            JobSelection.DatabasePath = jobModel.DatabasePath;
+            JobSelection.DataCompareFormat = jobModel.DataCompareFormat;
+            JobSelection.PrinterTemplate = jobModel.PrinterTemplate;
+            JobSelection.CompleteCondition = jobModel.CompleteCondition;
+            JobSelection.OutputCamera = jobModel.OutputCamera;
+            JobSelection.IsImageExport = jobModel.IsImageExport;
+            JobSelection.ImageExportPath = jobModel.ImageExportPath;
+            JobSelection.TotalRecDb = jobModel.TotalRecDb;
+            JobSelection.JobStatus = jobModel.JobStatus;
         }
 
-
-        // Thêm selected job vào thư mục 
         internal void AddSelectedJob(int jobIndex)
         {
             try
@@ -429,11 +411,11 @@ namespace DipesLink.ViewModels
                 //        File.Delete(file);
                 //    }
                 //}
-                if (SelectJob.SelectedJob == null) return;
+                if (JobSelection.SelectedJob == null) return;
                 DeleteSeletedJob(jobIndex);
                 
                 // Save the selected job 
-                var selectJobName = SelectJob.SelectedJob;
+                var selectJobName = JobSelection.SelectedJob;
                 JobModel? _jobModel = SharedFunctions.GetJob(selectJobName, jobIndex);
                 string filePath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}\\" + _jobModel?.Name + SharedValues.Settings.JobFileExtension; // Save Job
                 _jobModel?.SaveJobFile(filePath);
@@ -473,9 +455,6 @@ namespace DipesLink.ViewModels
             }
             catch (Exception) { }
         }
-
-
-
 
         internal void SelectImageExportPath()
         {

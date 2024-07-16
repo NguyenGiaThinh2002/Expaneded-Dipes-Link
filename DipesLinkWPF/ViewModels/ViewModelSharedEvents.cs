@@ -10,9 +10,9 @@ namespace DipesLink.ViewModels
     public class ViewModelSharedEvents
     {
         public static event EventHandler? OnMainListBoxMenu;
-        public static void OnMainListBoxMenuChanged()
+        public static void OnMainListBoxMenuChanged(int menuIndex)
         {
-            OnMainListBoxMenu?.Invoke(null, EventArgs.Empty);
+            OnMainListBoxMenu?.Invoke(menuIndex, EventArgs.Empty);
         }
 
 

@@ -32,11 +32,17 @@ namespace DipesLink.Views.UserControls.MainUc
             TextBoxPrinterIP.TextChanged += TextBox_ParamsChanged;
             TextBoxCamIP.TextChanged += TextBox_ParamsChanged;
             TextBoxControllerIP.TextChanged += TextBox_ParamsChanged;
-            ViewModelSharedEvents.OnMainListBoxMenu += ViewModelSharedEvents_MainListBoxMenuChange;
+            ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange;
+          
             //ViewModelSharedEvents.MainListBoxMenuChange += ListBoxMenu_SelectionChanged;
         }
+        private void LockUIPreventChangeJobWhenRun()
+        {
+            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuStationSetting.SelectedIndex);
+        }
 
-        private void ViewModelSharedEvents_MainListBoxMenuChange(object? sender, EventArgs e)
+
+        private void MainListBoxMenuChange(object? sender, EventArgs e)
         {
             CurrentViewModel<MainViewModel>()?.LockChoosingStation();
             ListBoxMenu_SelectionChanged(sender, null);
@@ -82,7 +88,7 @@ namespace DipesLink.Views.UserControls.MainUc
             vm?.LockChoosingStation();
         }
 
-        private int CurrentIndex() => ListBoxMenu.SelectedIndex;
+        private int CurrentIndex() => ListBoxMenuStationSetting.SelectedIndex;
 
 
         private void TextBox_ParamsChanged(object sender, TextChangedEventArgs e)
@@ -201,7 +207,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
               try
             {
-                int index = ListBoxMenu.SelectedIndex;
+                int index = ListBoxMenuStationSetting.SelectedIndex;
                 var domain = CurrentViewModel<MainViewModel>()?.ConnectParamsList[index].PrinterIP;
                 PrinterWebView pww = new()
                 {

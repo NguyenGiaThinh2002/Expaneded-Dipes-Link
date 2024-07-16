@@ -232,6 +232,11 @@
                                 <RowDefinition MaxHeight="20" />
                                 <RowDefinition MaxHeight="40" />
                             </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
@@ -245,6 +250,19 @@
                                 IsReadOnly="True"
                                 Style="{StaticResource TextBoxStyle1}"
                                 Text="{Binding DataCompareFormat, Converter={StaticResource FromEnumtoStringConverter}, ConverterParameter=0}" />
+                            <TextBlock Grid.Column="1"
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="Complete by" />
+                            <TextBox Grid.Column="1"
+                                Grid.Row="1"
+                                Height="30"
+                                Margin="10,0,10,0"
+                                FontSize="16"
+                                IsReadOnly="True"
+                                Style="{StaticResource TextBoxStyle1}"
+                                Text="{Binding CompleteCondition, Converter={StaticResource FromEnumtoStringConverter}, ConverterParameter=0}" />
                         </Grid>
 
                         <!--  Static Text  -->
