@@ -2,30 +2,27 @@
 using DipesLink.Views.SubWindows;
 using SharedProgram.Shared;
 using System.Diagnostics;
-using System.Globalization;
 using System.Windows;
-using System.Windows.Markup;
-using System.Windows.Media.Imaging;
 
 namespace DipesLink
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        #region Init
+        enum ProcessType
+        {
+            All,
+            MainApp,
+            DeviceTransfer
+        }
+        #endregion
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer });
             SQLitePCL.Batteries_V2.Init();
             ShutdownMode = ShutdownMode.OnMainWindowClose;
-
-            //this.Icon = new Icon("pack://application:,,,/DipesLink;component/Images/Duplicated_res.png");
-
-
             var loginWindow = new LoginWindow();
-            //MainWindow.Icon = new BitmapImage(new Uri("pack://application:,,,/DipesLink;component/Images/statistic_1.png"));
             loginWindow.ShowDialog();
             if (loginWindow.IsLoggedIn)
             {
@@ -36,10 +33,7 @@ namespace DipesLink
                     MainWindow.Show();
                     loginWindow.Close();
                 }
-                catch (Exception)
-                {
-                    Debug.Write("Login Failed!");
-                }
+                catch (Exception){}
             }
             else
             {
@@ -49,20 +43,33 @@ namespace DipesLink
 
         protected override void OnExit(ExitEventArgs e)
         {
-            base.OnExit(e);
-            ShutdownProcess();
+            KillProcessByName(new ProcessType[] { ProcessType.All });
+        }
+       
+        private static void KillProcessByName(ProcessType[] processType)
+        {
+            try
+            {
+                if (processType != null && processType.Length > 0)
+                {
+                    if (processType.Any(x => x == ProcessType.DeviceTransfer || x == ProcessType.All))
+                    {
+                        foreach (Process process in Process.GetProcessesByName($"{SharedValues.DeviceTransferName}"))
+                        {
+                            process.Kill();
+                        }
+                    }
+                    if (processType.Any(x => x == ProcessType.MainApp || x == ProcessType.All))
+                    {
+                        foreach (Process process in Process.GetProcessesByName($"{SharedValues.DeviceTransferName}"))
+                        {
+                            process.Kill();
+                        }
+                    }
+                }
+            }
+            catch (Exception) {}
         }
 
-        private static void ShutdownProcess()
-        {
-            foreach (Process process in Process.GetProcessesByName($"{SharedValues.DeviceTransferName}"))
-            {
-                process.Kill();
-            }
-            foreach (Process process in Process.GetProcessesByName($"DipesLink"))
-            {
-                process.Kill();
-            }
-        }
     }
 }

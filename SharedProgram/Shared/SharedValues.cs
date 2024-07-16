@@ -14,6 +14,8 @@ namespace SharedProgram.Shared
         public static string AppName = "DipesLink";
 
         public static string DeviceTransferName = "DipesLinkDeviceTransfer";
+  
+        
 
         public static readonly string[] ColumnNames = new string[] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
         

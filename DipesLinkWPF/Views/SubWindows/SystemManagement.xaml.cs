@@ -9,21 +9,24 @@ using static DipesLink.Views.Enums.ViewEnums;
 
 namespace DipesLink.Views.SubWindows
 {
-    /// <summary>
-    /// Interaction logic for SystemManagement
-    /// </summary>
+
     public partial class SystemManagement : Window
     {
         public static bool IsInitializing = true;
-        private bool _isStoptopAll;
-        public SystemManagement(bool isStopAll)
+        private MainViewModel _viewModel;
+        public SystemManagement(MainViewModel viewModel)
         {
-            _isStoptopAll = isStopAll;
+            _viewModel = viewModel;
             InitializeComponent();
-            setCurrentLanguage();
+            InitControls();
+            SetCurrentLanguage();
         }
-
-        private void setCurrentLanguage()
+        private void InitControls()
+        {
+            ComboBoxStationNumber.SelectedIndex = _viewModel.StationSelectedIndex;
+            TextBoxTemplateName.Text = _viewModel.CreateNewJob.Name;
+        }
+        private void SetCurrentLanguage()
         {
             IsInitializing = true;
             try
@@ -49,41 +52,61 @@ namespace DipesLink.Views.SubWindows
         private void ComboBoxLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (IsInitializing) return;
-            if (!_isStoptopAll)
+            var comboBox = sender as ComboBox;
+            if (comboBox == null) return;
+            var selectedIndex = comboBox.SelectedIndex;
+
+            // Count the number of running stations
+            int numStationRun = _viewModel.JobList.Count(job => job.OperationStatus == SharedProgram.DataTypes.CommonDataType.OperationStatus.Running);
+            if (numStationRun>0)
             {
                 CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
-                setCurrentLanguage();
-                return;  // Prevent the window from closing
+                SetCurrentLanguage();
+                return; 
             }
            
-            var comboBox = sender as ComboBox;
-            if(comboBox == null) return;
-
-            var selectedIndex = comboBox.SelectedIndex;
             var languageModel = new LanguageModel();
             string selectedLanguage = selectedIndex == 0 ? "en-US" : "vi-VN";
 
-            if (isChangeLanguageAccepted())
+            if (IsChangeLanguageAccepted())
             {
                 languageModel.UpdateApplicationLanguage(selectedLanguage);
-                restartLanguageSelection();
+                RestartLanguageSelection();
             }
             else
             {
-                setCurrentLanguage();
+                SetCurrentLanguage();
             }
         }
 
-        private void restartLanguageSelection()
+        private void RestartLanguageSelection()
         {
             Process.Start(Process.GetCurrentProcess().MainModule.FileName);
             Application.Current.Shutdown();
         }
 
-        private bool isChangeLanguageAccepted()
+        private bool IsChangeLanguageAccepted()
         {
-            var res = CusMsgBox.Show("Do you want to change language and logout?", "Change Language", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+            var res = CusMsgBox.Show("Do you want to change language and logout?", "Change Language", ButtonStyleMessageBox.OKCancel,ImageStyleMessageBox.Warning);
             return res.Result;
+        }
+
+        private void ComboBoxLanguage_StationNumberChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cbb = sender as ComboBox;
+            if(_viewModel is null || cbb ==null) return;
+            _viewModel.StationSelectedIndex = cbb.SelectedIndex;
+            _viewModel.CheckStationChange();
+            cbb.SelectedIndex = _viewModel.StationSelectedIndex;
+        }
+        private void ComboBoxStationNum_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //var cbb = sender as ComboBox;
+            //var vm = CurrentViewModel<MainViewModel>();
+            //if (vm is null) return;
+            //vm.StationSelectedIndex = cbb.SelectedIndex;
+            //vm.CheckStationChange();
+            //cbb.SelectedIndex = vm.StationSelectedIndex;
         }
     }
 }

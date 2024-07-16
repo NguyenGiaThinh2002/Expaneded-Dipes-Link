@@ -11,9 +11,6 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
-    /// <summary>
-    /// Interaction logic for JobDetails.xaml
-    /// </summary>
     public partial class JobCreation : System.Windows.Controls.UserControl
     {
         public JobCreation()
@@ -38,6 +35,7 @@ namespace DipesLink.Views.UserControls.MainUc
             CurrentViewModel<MainViewModel>()?.LoadJobList(ListBoxMenuJobCreate.SelectedIndex); // Update Job on UI
             LockUIPreventChangeJobWhenRun();
             CurrentViewModel<MainViewModel>()?.GetDetailInfoJobList(ListBoxMenuJobCreate.SelectedIndex, true);  // default load info of selected Job
+            CurrentViewModel<MainViewModel>()?.AutoNamedForJob(CurrentIndex());
         }
         private void MainListBoxMenuChange(object? sender, EventArgs e)
         {
@@ -126,16 +124,13 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ListViewJobTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            LockUIPreventChangeJobWhenRun();
+       
             if (e.AddedItems.Count > 0)// avoid Multi event action for ListView
             {
                 int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
                 CurrentViewModel<MainViewModel>()?.GetDetailInfoJobList(jobIndex);
                 ListViewSelectedJob.SelectedIndex = jobIndex; // Lost focus 
             }
-           
-
-
         }
 
         private void ListBoxMenu_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -265,5 +260,7 @@ namespace DipesLink.Views.UserControls.MainUc
             ButtonAddJob.IsEnabled = true;
 
         }
+
+     
     }
 }

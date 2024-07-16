@@ -616,7 +616,7 @@ namespace DipesLink.ViewModels
                     if (!JobList[stationIndex].QueueReceivedNumberBytes.TryDequeue(out var resultReceived)) resultReceived = null;
                     if (!JobList[stationIndex].QueuePrintedNumberBytes.TryDequeue(out var resultPrinted)) resultPrinted = null;
 
-                    _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                    _ = Application.Current?.Dispatcher.InvokeAsync(() =>
                      {
                          string nullString = "\0\0\0\0\0\0\0";
                          if (resultSent != null)

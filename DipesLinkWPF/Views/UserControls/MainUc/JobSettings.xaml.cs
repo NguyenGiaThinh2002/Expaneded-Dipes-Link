@@ -57,7 +57,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 if (vm is null) return;
 
                 vm.SaveConnectionSetting();
-                ComboBoxStationNum.SelectedIndex = vm.StationSelectedIndex;
+                //ComboBoxStationNum.SelectedIndex = vm.StationSelectedIndex;
                 RadBasic.IsChecked = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
                 InputArea.IsEnabled = vm.ConnectParamsList[CurrentIndex()].EnController;
             }
