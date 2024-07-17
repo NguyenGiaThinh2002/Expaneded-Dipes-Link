@@ -44,7 +44,6 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void MainListBoxMenuChange(object? sender, EventArgs e)
         {
-            CurrentViewModel<MainViewModel>()?.LockChoosingStation();
             ListBoxMenu_SelectionChanged(sender, null);
         }
 
@@ -85,7 +84,6 @@ namespace DipesLink.Views.UserControls.MainUc
             var vm = CurrentViewModel<MainViewModel>();
             vm?.SelectionChangeSystemSettings(CurrentIndex());
             vm?.LockUI(CurrentIndex());// Lock UI when running
-            vm?.LockChoosingStation();
         }
 
         private int CurrentIndex() => ListBoxMenuStationSetting.SelectedIndex;
@@ -323,7 +321,7 @@ namespace DipesLink.Views.UserControls.MainUc
             var rad = sender as RadioButton;
             try
             {
-                rad?.Dispatcher.BeginInvoke(new Action(() =>
+                rad?.Dispatcher.Invoke(new Action(() =>
                 {
                     var vm = CurrentViewModel<MainViewModel>();
                     if (vm == null) return;

@@ -10,7 +10,7 @@ namespace SharedProgram.Models
     {
         public int Index { get; set; }
 
-        private string? _name = "Template";
+        private string? _name;
         public string? Name
         {
             get { return _name; }

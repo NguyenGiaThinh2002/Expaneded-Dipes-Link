@@ -7,12 +7,14 @@
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
+     xmlns:local="clr-namespace:DipesLink.ViewModels"
     xmlns:uc="clr-namespace:DipesLink.Views.UserControls.MainUc"
     Title="DP-Link 1.0.0"
     MinWidth="1280"
     MinHeight="768"
     d:Height="1080"
     d:Width="1920"
+    d:DataContext="{d:DesignInstance Type=local:MainViewModel, IsDesignTimeCreatable=False}"
     Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
     WindowState="Maximized"
     mc:Ignorable="d">
@@ -29,6 +31,7 @@
 
             <!--  Style for the ToggleButton  -->
             <Style x:Key="ViewToggleButtonStyle" TargetType="ToggleButton">
+                <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ToggleButton">
@@ -116,6 +119,7 @@
                     Style="{DynamicResource ListBoxStyleMenu}">
                     <ListBoxItem
                         Height="{StaticResource MenuItemHeight}"
+                        Cursor="Hand"
                         IsTabStop="False"
                         PreviewMouseDown="ListBoxItem_MouseDown">
                         <StackPanel
@@ -137,7 +141,10 @@
                                 Text="{DynamicResource ResourceKey=Home}" />
                         </StackPanel>
                     </ListBoxItem>
-                    <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
+                    <ListBoxItem
+                        Height="{StaticResource MenuItemHeight}"
+                        Cursor="Hand"
+                        PreviewMouseDown="ListBoxItem_MouseDown">
                         <StackPanel
                             Width="{StaticResource MenuItemSize}"
                             Height="{StaticResource MenuItemSize}"
@@ -156,7 +163,10 @@
                                 Text="{DynamicResource ResourceKey=Jobs}" />
                         </StackPanel>
                     </ListBoxItem>
-                    <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
+                    <ListBoxItem
+                        Height="{StaticResource MenuItemHeight}"
+                        Cursor="Hand"
+                        PreviewMouseDown="ListBoxItem_MouseDown">
                         <StackPanel
                             Width="{StaticResource MenuItemSize}"
                             Height="{StaticResource MenuItemSize}"
@@ -175,7 +185,10 @@
                                 Text="{DynamicResource ResourceKey=Settings}" />
                         </StackPanel>
                     </ListBoxItem>
-                    <ListBoxItem Height="{StaticResource MenuItemHeight}" PreviewMouseDown="ListBoxItem_MouseDown">
+                    <ListBoxItem
+                        Height="{StaticResource MenuItemHeight}"
+                        Cursor="Hand"
+                        PreviewMouseDown="ListBoxItem_MouseDown">
                         <StackPanel
                             Width="{StaticResource MenuItemSize}"
                             Height="{StaticResource MenuItemSize}"

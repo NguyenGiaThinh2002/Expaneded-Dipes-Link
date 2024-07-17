@@ -5,20 +5,24 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="SystemManagement"
     Width="600"
     Height="500"
-    Icon="pack://application:,,,/DipesLink;component/Images/statistic_1.png"
+    Icon="pack://application:,,,/DipesLink;component/Images/SystemSettings.png"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>
-        <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/TextBoxResDict.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-
+            <RowDefinition Height="40" />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -27,18 +31,32 @@
             </Grid.ColumnDefinitions>
         </Grid>
 
-        <GroupBox Grid.Column="1" Margin="0,20,0,0">
+        <TextBlock
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="18"
+            FontWeight="Bold"
+            Foreground="#808080">
+            System Settings
+        </TextBlock>
+
+        <GroupBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="10"
+            FontSize="16">
             <GroupBox.Header>
                 <TextBlock FontWeight="Bold" Text="Select Your Language" />
             </GroupBox.Header>
-            <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical" Margin="10">
                 <!--  Station Number  -->
                 <StackPanel
                     Margin="0,10,10,0"
                     IsEnabled="{Binding LockChoosingStation}"
                     Orientation="Horizontal">
                     <TextBlock
-                        Width="100"
+                        Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
                         Text="Station Number: " />
@@ -60,7 +78,7 @@
                     IsEnabled="{Binding LockChoosingStation}"
                     Orientation="Horizontal">
                     <TextBlock
-                        Width="100"
+                        Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
                         Text="Language: " />
@@ -81,17 +99,21 @@
                     IsEnabled="{Binding LockChoosingStation}"
                     Orientation="Horizontal">
                     <TextBlock
-                        Width="100"
+                        Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
                         Text="DateTime Format: " />
                     <ComboBox
+                        x:Name="ComboBoxDateTimeFormat"
                         Width="230"
                         Height="30"
-                        SelectionChanged="ComboBoxLanguage_SelectionChanged"
+                        SelectionChanged="ComboBoxDateTimeFormat_SelectionChanged"
                         Style="{StaticResource ComboBoxStyle2}">
-                        <ComboBoxItem>English</ComboBoxItem>
-                        <ComboBoxItem>Vietnamese</ComboBoxItem>
+                        <ComboBoxItem>yyyyMMdd_HHmmss</ComboBoxItem>
+                        <ComboBoxItem>ddMMyyyy_HHmmss</ComboBoxItem>
+                        <ComboBoxItem>MMddyyyy_HHmmss</ComboBoxItem>
+                        <ComboBoxItem>MMyyyydd_HHmmss</ComboBoxItem>
+                        <ComboBoxItem>ddyyyyMM_HHmmss</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
 
@@ -102,11 +124,16 @@
                     IsEnabled="{Binding LockChoosingStation}"
                     Orientation="Horizontal">
                     <TextBlock
-                        Width="100"
+                        Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
                         Text="Template Name: " />
-                    <TextBox x:Name="TextBoxTemplateName" Width="230" Height="30" />
+                    <TextBox
+                        x:Name="TextBoxTemplateName"
+                        Width="230"
+                        Height="30"
+                        Style="{StaticResource TextBoxStyle2}"
+                        TextChanged="TextBoxTemplateName_TextChanged" />
                     <!--<ComboBox
                         Width="230"
                         Height="30"

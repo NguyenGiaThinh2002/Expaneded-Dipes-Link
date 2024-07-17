@@ -9,6 +9,14 @@
             User,
             Guest
         }
+
+        public enum LoggingTitle
+        {
+            Operation,
+            Printer,
+            Camera,
+            Database
+        }
     
     }
 }

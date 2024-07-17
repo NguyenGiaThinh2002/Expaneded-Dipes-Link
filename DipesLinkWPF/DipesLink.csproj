@@ -15,18 +15,24 @@
     <None Remove="Images\icon.ico" />
     <None Remove="Images\icon.png" />
     <None Remove="Images\Image_Not_Found.jpg" />
+    <None Remove="Images\Information.png" />
     <None Remove="Images\Info_Event.png" />
     <None Remove="Images\Invalid_res.png" />
     <None Remove="Images\loading.gif" />
     <None Remove="Images\LoadingIcon.gif" />
+    <None Remove="Images\Logs.png" />
     <None Remove="Images\Missed_res.png" />
     <None Remove="Images\Null_res.png" />
+    <None Remove="Images\PODCompareFormat.png" />
     <None Remove="Images\printed.png" />
-    <None Remove="Images\statistic_1.png" />
-    <None Remove="Images\statistic_2.png" />
+    <None Remove="Images\SystemSettings.png" />
+    <None Remove="Images\userGroup.png" />
     <None Remove="Images\Valid_res.png" />
+    <None Remove="Images\ViewModeDetail.png" />
+    <None Remove="Images\ViewModeOverview.png" />
     <None Remove="Images\waiting.png" />
     <None Remove="Images\Warning_Event.png" />
+    <None Remove="Images\WebBrowser.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,7 +45,7 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2478.35" />
     <PackageReference Include="sqlite-net-sqlcipher" Version="1.9.172" />
     <PackageReference Include="TAlex.WPF.Controls" Version="3.0.3" />
-    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,19 +78,27 @@
     <Resource Include="Images\icon.ico" />
     <Resource Include="Images\icon.png" />
     <Resource Include="Images\Image_Not_Found.jpg" />
+    <Resource Include="Images\Information.png" />
     <Resource Include="Images\Info_Event.png" />
     <Resource Include="Images\Invalid_res.png" />
-    <Resource Include="Images\LoadingIcon.gif" />
+    <Resource Include="Images\LoadingIcon.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Logs.png" />
       <!--<CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>-->
     <Resource Include="Images\Missed_res.png" />
     <Resource Include="Images\Null_res.png" />
-    <Resource Include="Images\printed.png" />
-    <Resource Include="Images\statistic_1.png" />
-    <Resource Include="Images\statistic_2.png" />
+    <Resource Include="Images\PODCompareFormat.png" />
+    <Resource Include="Images\Printed.png" />
+    <Resource Include="Images\SystemSettings.png" />
+    <Resource Include="Images\ViewModeDetail.png" />
+    <Resource Include="Images\ViewModeOverview.png" />
+    <Resource Include="Images\UserGroup.png" />
     <Resource Include="Images\Valid_res.png" />
-    <Resource Include="Images\waiting.png" />
+    <Resource Include="Images\Waiting.png" />
     <Resource Include="Images\Warning_Event.png" />
+    <Resource Include="Images\WebBrowser.png" />
   </ItemGroup>
 
   <ItemGroup>

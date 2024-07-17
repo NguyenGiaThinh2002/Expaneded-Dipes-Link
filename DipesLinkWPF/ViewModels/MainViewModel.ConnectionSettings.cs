@@ -15,7 +15,7 @@ namespace DipesLink.ViewModels
         internal void SaveConnectionSetting()
         {
            // ConnectParamsList = ViewModelSharedValues.Settings.SystemParamsList;
-            for (int i = 0; i < _NumberOfStation; i++)
+            for (int i = 0; i < _numberOfStation; i++)
             {
                 SendConnectionParamsToDeviceTransfer(i);
    
@@ -38,6 +38,8 @@ namespace DipesLink.ViewModels
             }
 
             ViewModelSharedValues.Settings.NumberOfStation = StationSelectedIndex + 1;
+            
+
             ViewModelSharedFunctions.SaveSetting();
         }
 

@@ -9,7 +9,7 @@
     Title="POD Compare Format"
     Width="1025"
     Height="600"
-    Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
+    Icon="pack://application:,,,/DipesLink;component/Images/PODCompareFormat.png"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

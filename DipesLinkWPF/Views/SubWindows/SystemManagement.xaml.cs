@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using static DipesLink.Views.Enums.ViewEnums;
+using static SharedProgram.DataTypes.CommonDataType;
 
 
 namespace DipesLink.Views.SubWindows
@@ -23,9 +24,14 @@ namespace DipesLink.Views.SubWindows
         }
         private void InitControls()
         {
+            TextBoxTemplateName.Text = _viewModel.TemplateName;
+            ComboBoxStationNumber.IsEnabled = !_viewModel.JobList.Any(job => job.OperationStatus != OperationStatus.Stopped);
             ComboBoxStationNumber.SelectedIndex = _viewModel.StationSelectedIndex;
-            TextBoxTemplateName.Text = _viewModel.CreateNewJob.Name;
+            ComboBoxDateTimeFormat.SelectedIndex = _viewModel.DateTimeFormatSelectedIndex;
+           
         }
+      
+
         private void SetCurrentLanguage()
         {
             IsInitializing = true;
@@ -107,6 +113,21 @@ namespace DipesLink.Views.SubWindows
             //vm.StationSelectedIndex = cbb.SelectedIndex;
             //vm.CheckStationChange();
             //cbb.SelectedIndex = vm.StationSelectedIndex;
+        }
+
+        private void ComboBoxDateTimeFormat_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cbb = sender as ComboBox;
+            if (_viewModel is null || cbb == null) return;
+            _viewModel.DateTimeFormatSelectedIndex = cbb.SelectedIndex;
+            _viewModel.CheckDateTimeFormat();
+        }
+
+        private void TextBoxTemplateName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_viewModel is null || TextBoxTemplateName == null) return;
+            _viewModel.TemplateName = TextBoxTemplateName.Text;
+            _viewModel.CheckTemplateName();
         }
     }
 }

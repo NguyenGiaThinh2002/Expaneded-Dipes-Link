@@ -20,7 +20,7 @@
     <system:String x:Key="Settings">Settings</system:String>
     <system:String x:Key="Logs">Logs</system:String>
     <system:String x:Key="Exit">Exit</system:String>
-    <system:String x:Key="Station_Status">Station Status:</system:String>
+    <system:String x:Key="Station_Status">Operation Status:</system:String>
     <system:String x:Key="Printer_IP">Printer IP:</system:String>
     <system:String x:Key="Camera_IP">Camera IP:</system:String>
     <system:String x:Key="Controller_IP">Controller IP:</system:String>

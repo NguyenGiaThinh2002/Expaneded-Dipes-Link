@@ -442,11 +442,12 @@
                                                 Margin="10"
                                                 FontWeight="Normal"
                                                 ItemsSource="{Binding JobFileList}"
-                                                MouseDoubleClick="ListViewJobTemplate_MouseDoubleClick"
-                                                MouseEnter="ListViewJobTemplate_MouseEnter"
+                                               
+                                              PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
                                                 SelectedItem="{Binding SelectedJob}"
                                                 SelectionChanged="ListViewJobTemplate_SelectionChanged"
                                                 Style="{StaticResource ModernListViewStyle}" />
+                                            <!--MouseEnter="ListViewJobTemplate_MouseEnter"-->
                                             <!--
                                                 PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
                                                 SelectedItem="{Binding SelectedJob}"

@@ -277,7 +277,7 @@ namespace DipesLink.Views
                         systemManagement.ShowDialog();
                         break;
                     case "Logout": //Restart
-                        Logout(viewModel.JobList.Count(job => job.OperationStatus == SharedProgram.DataTypes.CommonDataType.OperationStatus.Running)<0);
+                        Logout(viewModel.JobList.Any(job => job.OperationStatus != SharedProgram.DataTypes.CommonDataType.OperationStatus.Stopped));
                         break;
                     default:
                         break;
@@ -286,7 +286,7 @@ namespace DipesLink.Views
         }
         private void Logout(bool isNotRunning)
         {
-            if (isNotRunning)
+            if (!isNotRunning)
             {
                 var res = CusMsgBox.Show("Do you want to logout ?", "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 if (res.Result)

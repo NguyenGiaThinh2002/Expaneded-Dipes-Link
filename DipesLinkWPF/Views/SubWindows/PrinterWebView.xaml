@@ -7,7 +7,7 @@
     xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     Width="1280"
     Height="768"
-    Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
+    Icon="pack://application:,,,/DipesLink;component/Images/WebBrowser.png"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid x:Name="Grid1">

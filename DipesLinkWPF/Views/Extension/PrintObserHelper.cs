@@ -14,14 +14,14 @@ using System.Windows.Threading;
 
 namespace DipesLink.Views.Extension
 {
-    public class PrintObserHelper : ObservableObject
+    public class PrintObserHelper : ObservableObject, IDisposable
     {
         private DataGrid _dataGrid;
         private ObservableCollection<ExpandoObject>? printList = new();
         public ObservableCollection<ExpandoObject>? PrintList { get => printList; set { printList = value; OnPropertyChanged(); } }
         private readonly Paginator<ExpandoObject> paginator;
         public readonly string[] ColumnNames = Array.Empty<string>();
-        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(2000);
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(1000);
         private readonly List<string[]> _batchUpdateList = new();
         private ConcurrentQueue<string[]> _batchUpdateQueue = new();
         private readonly object _lock = new();
@@ -30,6 +30,8 @@ namespace DipesLink.Views.Extension
         private CancellationTokenSource cts_UpdateUI = new();
         private int _MaxDatabaseLine = 500;
         private DispatcherTimer _dispatcherTimer;
+        private bool disposedValue;
+
         public int PrintedNumber { get; set; }
 
         public PrintObserHelper(List<string[]> list, int currentPage, DataGrid dataGrid)
@@ -205,6 +207,30 @@ namespace DipesLink.Views.Extension
                     break;
                 }
             }
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _batchUpdateList?.Clear();
+                    _batchUpdateQueue?.Clear();
+                    _dataLookup?.Clear();
+                    paginator?.Dispose();
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        PrintList?.Clear();
+                    });
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
     }

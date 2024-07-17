@@ -5,7 +5,7 @@
     xmlns:converter="clr-namespace:DipesLink.Views.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-    xmlns:gif="http://wpfanimatedgif.codeplex.com"
+   xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
     xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:Background="White"
@@ -557,6 +557,7 @@
                                 Background="#00ABE6"
                                 BorderBrush="#00ABE6"
                                 CornerRadius="15"
+                                Cursor="Hand"
                                 PreviewMouseDown="CheckedData_PreviewMouseDown"
                                 SnapsToDevicePixels="True">
                                 <Border.Effect>
@@ -758,6 +759,7 @@
                         <Border
                             Grid.Column="2"
                             Margin="5,0,5,5"
+                            Cursor="Hand"
                             BorderBrush="#00ABE6"
                             BorderThickness="1,1,0,0"
                             CornerRadius="5"
@@ -836,7 +838,7 @@
                                 Command="{Binding SimulateCommandJob}"
                                 Content="Simulate"
                                 Style="{StaticResource ModernButtonDel}"
-                                Visibility="{Binding DataContext.IsDebugMode, Converter={StaticResource BolToVis}, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                 />
                         </StackPanel>
 
                     </Border>
@@ -869,7 +871,8 @@
                             Height="90"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            gif:ImageBehavior.AnimatedSource="/Images/LoadingIcon.gif"
+                            gif:AnimationBehavior.AnimateInDesignMode="True"
+                            gif:AnimationBehavior.SourceUri="pack://application:,,,/DipesLink;component/Images/LoadingIcon.gif"
                             Stretch="Uniform"
                             Visibility="{Binding IsShowLoadingDB}" />
 
@@ -897,7 +900,8 @@
                             Height="90"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            gif:ImageBehavior.AnimatedSource="/Images/LoadingIcon.gif"
+                             gif:AnimationBehavior.AnimateInDesignMode="True"
+                            gif:AnimationBehavior.SourceUri="pack://application:,,,/DipesLink;component/Images/LoadingIcon.gif"
                             Stretch="Uniform"
                             Visibility="{Binding IsShowLoadingChecked}" />
                     </Grid>

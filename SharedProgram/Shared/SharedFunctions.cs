@@ -215,9 +215,9 @@ namespace SharedProgram.Shared
             }
         }
 
-        public static void AutoGenerateFileName(int index, out string? jobName)
+        public static void AutoGenerateFileName(int index, out string? jobName, string dateTimeFormat, string templateName)
         {
-            jobName = string.Format("{1}_{0}", DateTime.Now.ToString("yyyyMMdd_HHmmss"), $"JobFile_{index + 1}");
+            jobName = string.Format("{1}_{0}", DateTime.Now.ToString($"{dateTimeFormat}"), $"{templateName}{index + 1}");
         }
 
         public static byte[] StringToFixedLengthByteArray(string inputString, int fixedLength)

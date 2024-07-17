@@ -1,4 +1,5 @@
-﻿using DipesLink.Extensions;
+﻿using DipesLink.Datatypes;
+using DipesLink.Extensions;
 using DipesLink.Languages;
 using DipesLink.Models;
 using DipesLink.Views.Extension;
@@ -8,6 +9,7 @@ using IPCSharedMemory;
 using Microsoft.VisualBasic;
 using SharedProgram.Models;
 using SharedProgram.Shared;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -44,23 +46,23 @@ namespace DipesLink.ViewModels
         public MainViewModel()
         {
 
-#if DEBUG
-            IsDebugMode = true;
-#else
-        IsDebugMode = false;
-#endif
 
             EventRegister();
             ViewModelSharedFunctions.LoadSetting();
-            _NumberOfStation = ViewModelSharedValues.Settings.NumberOfStation;
-            StationSelectedIndex = _NumberOfStation > 0 ? _NumberOfStation - 1 : StationSelectedIndex;
+            RetrieveSettingValues();
             InitDir();
             InitJobConnectionSettings();
-            InitStations(_NumberOfStation);
+            InitStations(_numberOfStation);
 
             _updateTimer ??= InitializeDispatcherTimer();
         }
-
+        private void RetrieveSettingValues()
+        {
+            _numberOfStation = ViewModelSharedValues.Settings.NumberOfStation;
+            StationSelectedIndex = _numberOfStation > 0 ? _numberOfStation - 1 : StationSelectedIndex;
+            DateTimeFormatSelectedIndex = ViewModelSharedValues.Settings.DateTimeFormatSelectedIndex;
+            TemplateName = ViewModelSharedValues.Settings.TemplateName;
+        }
         private void EventRegister()
         {
             ViewModelSharedEvents.OnEnableUIChange += EnableUIChange;
@@ -86,7 +88,7 @@ namespace DipesLink.ViewModels
                 Directory.CreateDirectory(SharedPaths.PathAccountsDb);
             }
 
-            for (int i = 0; i < _NumberOfStation; i++)
+            for (int i = 0; i < _numberOfStation; i++)
             {
                 SharedPaths.InitCommonPathByIndex(i);
             }
@@ -134,7 +136,7 @@ namespace DipesLink.ViewModels
             string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {i + 1}" : $"Station {i + 1}";
             JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = t }); // Job List Creation
             JobDeviceStatusList.Add(new JobDeviceStatus() { Index = i, Name = $"Devices{i + 1}" }); // Device Status List Creation
-            PrinterStateList.Add(new PrinterState() { Name = $"{i + 1}:", State = "" }); // Printer State List Creation
+            PrinterStateList.Add(new PrinterState() { Name = $"Station {i + 1}: ", State = "" }); // Printer State List Creation
 
         }
 
@@ -715,139 +717,196 @@ namespace DipesLink.ViewModels
             CusAlert.Show(message, ImageStyleMessageBox.Warning);
         }
 
-        private static void JobMessageStatusProcess(int stationIndex, NotifyType nt)
+        private void JobMessageStatusProcess(int stationIndex, NotifyType nt)
         {
-            switch (nt)
+            try
             {
-                case NotifyType.Unk:
+                string msg = string.Empty;
+                switch (nt)
+                {
+                    case NotifyType.Unk:
+                        break;
+                    case NotifyType.LeastOneAction:
+                        break;
+                    case NotifyType.MissingParameterActivation:
+                        break;
+                    case NotifyType.MissingParameterPrinting:
+                        break;
+                    case NotifyType.Unknown:
+                        break;
+                    case NotifyType.CannotCreatePodDataList:
+                        break;
+                    case NotifyType.NotConnectServer:
+                        break;
+                    case NotifyType.MissingParameterWarehouseInput:
+                        break;
+                    case NotifyType.MissingParameterWarehouseOutput:
+                        break;
+                    case NotifyType.CreatingWarehouseInputReceipt:
+                        break;
+                    case NotifyType.PauseSystem:
+                        break;
+                    case NotifyType.DeviceDBLoaded:
+                        break;
+                    case NotifyType.CameraConnectionFail:
+                        break;
+                    case NotifyType.PrinterConnectionFail:
+                        break;
+                    case NotifyType.CompleteLoadDB:
+                        break;
+                    case NotifyType.ExportResultFail:
+                        break;
+                    case NotifyType.StartSync:
+                        msg = $"Station {stationIndex + 1}: system is running !"; 
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Warning);
+                        break;
+                    case NotifyType.DatabaseUnknownError:
+                        msg = $"Station {stationIndex + 1}: Database unknown error!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.PrintedStatusUnknownError:
+                        msg = $"Station {stationIndex + 1}: Printed status unknown error!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.CheckedResultUnknownError:
+                        msg = $"Station {stationIndex + 1}: Checked result unknown error!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.CannotAccessDatabase:
+                        msg = $"Station {stationIndex + 1}: Can not access database!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.CannotAccessCheckedResult:
+                        msg = $"Station {stationIndex + 1}: Can not access checked result!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.CannotAccessPrintedResponse:
+                        msg = $"Station {stationIndex + 1}: Can not access printed response!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.DatabaseDoNotExist:
+                        msg = $"Station {stationIndex + 1}: Database do not exist!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.CheckedResultDoNotExist:
+                        msg = $"Station {stationIndex + 1}: Checked result do not exist!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.PrintedResponseDoNotExist:
+                        msg = $"Station {stationIndex + 1}: Printed response do not exist!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.DuplicateData:
+                        msg = $"Station {stationIndex + 1}: The database has duplicate fields!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Warning);
+                        break;
+                    case NotifyType.NoJobsSelected:
+                        msg = $"Station {stationIndex + 1}: Job not found!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.NotLoadDatabase:
+                        msg = $"Station {stationIndex + 1}: Not load Database!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
+                        break;
+                    case NotifyType.NotLoadTemplate:
+                        msg = $"Station {stationIndex + 1}: Not load Template!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.NotConnectCamera:
+                        msg = $"Station {stationIndex + 1}: Camera's not connected!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Camera, EventsLogType.Error);
+                        break;
+                    case NotifyType.MissingParameter:
+                        msg = $"Station {stationIndex + 1}: Missing params!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.NotConnectPrinter:
+                        msg = $"Station {stationIndex + 1}: Printer's not connected!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.ProcessCompleted:
+                        msg = $"Station {stationIndex + 1}: Process is completed!";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Info);
+                        break;
+                    case NotifyType.StopSystem: // Spare
+                       // msg = $"Station {stationIndex + 1}: System was Stopped!";
+                      //  ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Info);
+                        break;
+                    case NotifyType.PrinterSuddenlyStop:
+                        msg = $"Station {stationIndex + 1}: Printer suddenly Stop";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.StartEndPageInvalid:
+                        msg = $"Station {stationIndex + 1}: Printer Start/End Page Invalid";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.NoPrintheadSelected:
+                        msg = $"Station {stationIndex + 1}: No Print Head Selected";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.PrinterSpeedLimit:
+                        msg = $"Station {stationIndex + 1}: Printer speed limit";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.PrintheadDisconnected:
+                        msg = $"Station {stationIndex + 1}: Printhead Disconnected";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.UnknownPrinthead:
+                        msg = $"Station {stationIndex + 1}: Printer Unknown Printhead";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.NoCartridges:
+                        msg = $"Station {stationIndex + 1}: Printer No Cartridges";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
+                        break;
+                    case NotifyType.InvalidCartridges:
+                        msg = $"Station {stationIndex + 1}: Printer Invalid Cartridges";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.OutOfInk:
+                        msg = $"Station {stationIndex + 1}: Printer Out Of Ink";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.CartridgesLocked:
+                        msg = $"Station {stationIndex + 1}: Cartridges Locked";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.InvalidVersion:
+                        msg = $"Station {stationIndex + 1}: Printer Invalid Version";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.IncorrectPrinthead:
+                        msg = $"Station {stationIndex + 1}: Printer Incorrect Printhead";
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    default:break;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+        private void ProcessErrorMessage(int index,string errMsg, CommonDataType.LoggingTitle errTitle, EventsLogType eventLogType)
+        {
+            ImageStyleMessageBox imgMsg = ImageStyleMessageBox.Info;
+            switch (eventLogType)
+            {
+                case EventsLogType.Info:
+                    imgMsg = ImageStyleMessageBox.Info;
                     break;
-                case NotifyType.CameraConnectionFail:
+                case EventsLogType.Warning:
+                    imgMsg = ImageStyleMessageBox.Warning;
                     break;
-                case NotifyType.PrinterConnectionFail:
+                case EventsLogType.Error:
+                    imgMsg = ImageStyleMessageBox.Error;
                     break;
-                case NotifyType.StartSync:
-                    CusMsgBox.Show("The system has started !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Info);
-                    break;
-                case NotifyType.CompleteLoadDB:
-                    break;
-                case NotifyType.DatabaseUnknownError:
-                    break;
-                case NotifyType.PrintedStatusUnknownError:
-                    break;
-                case NotifyType.CheckedResultUnknownError:
-                    break;
-                case NotifyType.CannotAccessDatabase:
-                    CusMsgBox.Show("Can not access database !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                    break;
-                case NotifyType.CannotAccessCheckedResult:
-                    CusMsgBox.Show("Can not access checked result !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                    break;
-                case NotifyType.CannotAccessPrintedResponse:
-                    CusMsgBox.Show("Can not access printed response !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                    break;
-                case NotifyType.DatabaseDoNotExist:
-                    CusMsgBox.Show("Database do not exist !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                    break;
-                case NotifyType.CheckedResultDoNotExist:
-                    // CusMsgBox.Show("Checked result do not exist !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                    CusAlert.Show($"Station {stationIndex + 1}: Checked result do not exist !", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.PrintedResponseDoNotExist:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer's not connected!", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.DuplicateData:
-                    CusAlert.Show($"Station {stationIndex + 1}: Input Database duplicate!", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.NoJobsSelected:
-                    CusMsgBox.Show("No job selected !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                    break;
-                case NotifyType.NotLoadDatabase:
-                    break;
-                case NotifyType.NotLoadTemplate:
-                    CusAlert.Show($"Station {stationIndex + 1}: Can't load template printer!", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.NotConnectCamera:
-                    CusAlert.Show($"Station {stationIndex + 1}: Camera's not connected!", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.MissingParameter:
-                    CusMsgBox.Show("Missing params !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                    break;
-                case NotifyType.NotConnectPrinter:
-                    //CusAlert.Show($"Station {stationIndex + 1}: Printer's not connected!", ImageStyleMessageBox.Warning);
-                    // thinh
-                    ShowTemplateLoadError(stationIndex);
-                    break;
-                case NotifyType.LeastOneAction:
-                    break;
-                case NotifyType.MissingParameterActivation:
-                    break;
-                case NotifyType.MissingParameterPrinting:
-                    break;
-                case NotifyType.Unknown:
-                    break;
-                case NotifyType.ProcessCompleted:
-                    CusAlert.Show($"Station {stationIndex + 1}: Process is completed!", ImageStyleMessageBox.Info);
-                    // CusMsgBox.Show("Process is completed!", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Info);
-                    break;
-                case NotifyType.CannotCreatePodDataList:
-                    break;
-                case NotifyType.NotConnectServer:
-                    break;
-                case NotifyType.MissingParameterWarehouseInput:
-                    break;
-                case NotifyType.MissingParameterWarehouseOutput:
-                    break;
-                case NotifyType.CreatingWarehouseInputReceipt:
-                    break;
-                case NotifyType.PauseSystem:
-                    // JobList[stationIndex].IsDBExist = true;
-                    break;
-                case NotifyType.DeviceDBLoaded:
-                    //JobList[stationIndex].IsDBExist = true;
-                    break;
-                case NotifyType.StopSystem:
-                    //JobList[stationIndex].IsDBExist = false;
-                    break;
-                case NotifyType.PrinterSuddenlyStop:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer suddenly Stop", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.StartEndPageInvalid:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer Start/End Page Invalid", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.NoPrintheadSelected:
-                    CusAlert.Show($"Station {stationIndex + 1}: No Print Head Selected", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.PrinterSpeedLimit:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer speed limit", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.PrintheadDisconnected:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printhead Disconnected", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.UnknownPrinthead:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer Unknown Printhead", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.NoCartridges:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer No Cartridges", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.InvalidCartridges:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer Invalid Cartridges", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.OutOfInk:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer Out Of Ink", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.CartridgesLocked:
-                    CusAlert.Show($"Station {stationIndex + 1}: Cartridges Locked", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.InvalidVersion:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer Invalid Version", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.IncorrectPrinthead:
-                    CusAlert.Show($"Station {stationIndex + 1}: Printer Incorrect Printhead", ImageStyleMessageBox.Warning);
-                    break;
-                case NotifyType.ExportResultFail:
-                    CusAlert.Show($"Station {stationIndex + 1}: Can't export", ImageStyleMessageBox.Warning);
+                default:
                     break;
             }
+            LoggerHelper.SetLogProperties(index+1, JobList[index].Name, errTitle.ToString(), errMsg, eventLogType);
+            CusAlert.Show(errMsg, imgMsg);
         }
 
         private async Task GetOperationStatusAsync(int stationIndex)
@@ -861,7 +920,6 @@ namespace DipesLink.ViewModels
                     while (true)
                     {
                         PrinterStateList[stationIndex].State = LanguageModel.Language?[JobList[stationIndex].OperationStatus.ToString()].ToString();
-
                         switch (JobList[stationIndex].OperationStatus)
                         {
                             case OperationStatus.Processing:
@@ -882,8 +940,8 @@ namespace DipesLink.ViewModels
                         if (isRunning != isRunningCmp)
                         {
                             isRunning = isRunningCmp;
-                            if (isRunning) LoggerHelper.SetLogProperties(stationIndex, JobList[stationIndex].Name, "Operation", "System is Running !", EventsLogType.Warning);
-                            else LoggerHelper.SetLogProperties(stationIndex, JobList[stationIndex].Name, "Operation", "System is Stopped !", EventsLogType.Info);
+                            if (isRunning) LoggerHelper.SetLogProperties(stationIndex, JobList[stationIndex].Name, CommonDataType.LoggingTitle.Operation.ToString(), "System is Running !", EventsLogType.Warning);
+                            else LoggerHelper.SetLogProperties(stationIndex, JobList[stationIndex].Name, CommonDataType.LoggingTitle.Operation.ToString(), "System is Stopped !", EventsLogType.Info);
                         }
 
                         await Task.Delay(100);
@@ -1078,11 +1136,12 @@ namespace DipesLink.ViewModels
                                 // Do nothing
                                 break;
                             case CompleteCondition.TotalPassed:
-                                if (double.TryParse(JobList[stationIndex].TotalPassed, out double pass) && 
+                                if (double.TryParse(JobList[stationIndex].TotalPassed, out double pass) &&
                                     double.TryParse(JobList[stationIndex].TotalRecDb.ToString(), out double totalRecDb) && totalRecDb != 0)
                                 {
                                     percent = Math.Round(pass / totalRecDb * 100, 3);
-                                }else percent = 0;
+                                }
+                                else percent = 0;
                                 break;
                             case CompleteCondition.TotalChecked:
                                 percent = Math.Round((double)totalChecked * 100 / JobList[stationIndex].TotalRecDb, 3);
