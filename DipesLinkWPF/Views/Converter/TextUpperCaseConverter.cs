@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DipesLink.Languages;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace DipesLink.Views.Converter
         {
             if (value.ToString() is string str)
             {
-               return str.ToUpper(culture);
+                return LanguageModel.GetLanguage(str).ToUpper(culture);
             }
             return value;
         }

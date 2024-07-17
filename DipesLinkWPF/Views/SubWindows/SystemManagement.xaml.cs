@@ -64,13 +64,13 @@ namespace DipesLink.Views.SubWindows
 
             // Count the number of running stations
             int numStationRun = _viewModel.JobList.Count(job => job.OperationStatus == SharedProgram.DataTypes.CommonDataType.OperationStatus.Running);
-            if (numStationRun>0)
+            if (numStationRun > 0)
             {
-                CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
+                CusAlert.Show(LanguageModel.GetLanguage("StopAllStations"), ImageStyleMessageBox.Warning);
                 SetCurrentLanguage();
-                return; 
+                return;
             }
-           
+
             var languageModel = new LanguageModel();
             string selectedLanguage = selectedIndex == 0 ? "en-US" : "vi-VN";
 
@@ -93,7 +93,7 @@ namespace DipesLink.Views.SubWindows
 
         private bool IsChangeLanguageAccepted()
         {
-            var res = CusMsgBox.Show("Do you want to change language and logout?", "Change Language", ButtonStyleMessageBox.OKCancel,ImageStyleMessageBox.Warning);
+            var res = CusMsgBox.Show(LanguageModel.GetLanguage("ChangeLanguageAndLogoutConfirmation"), "Change Language", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Warning);
             return res.Result;
         }
 

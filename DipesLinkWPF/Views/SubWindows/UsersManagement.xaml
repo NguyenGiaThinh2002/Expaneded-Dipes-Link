@@ -6,8 +6,8 @@
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="800"
-    Icon="pack://application:,,,/DipesLink;component/Images/userGroup.png"
     Height="450"
+    Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -32,10 +32,10 @@
         <TextBlock
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            FontSize="18" Foreground="#808080"
-            FontWeight="Bold">
-            Users Management
-        </TextBlock>
+            FontSize="18"
+            FontWeight="Bold"
+            Foreground="#808080"
+            Text="{DynamicResource ResourceKey=USERS_MANAGEMENT}" />
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -46,7 +46,7 @@
 
             <DataGrid
                 x:Name="DataGridUsers"
-                Margin="10"
+                Margin="10,10,10,10"
                 AutoGenerateColumns="False"
                 CellStyle="{DynamicResource DataGridCellStyle1}"
                 ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}"
@@ -57,7 +57,7 @@
                     <DataGridTextColumn
                         Width="*"
                         Binding="{Binding username}"
-                        Header="Username" />
+                        Header="{DynamicResource ResourceKey=Username}" />
                     <!--<DataGridTextColumn
                         Width="*"
                         Binding="{Binding Password}"
@@ -72,7 +72,7 @@
                     <DataGridTextColumn
                         Width="*"
                         Binding="{Binding role}"
-                        Header="Role" />
+                        Header="{DynamicResource ResourceKey=Role}" />
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -89,30 +89,27 @@
                         <RadioButton
                             x:Name="RadNew"
                             Checked="Red_Checked"
+                            Content="{DynamicResource ResourceKey=Create_New_User}"
                             FontSize="16"
                             GroupName="RadGr"
                             IsChecked="True"
-                            Style="{StaticResource RadioButtonStyle1}">
-                            Create New User
-                        </RadioButton>
+                            Style="{StaticResource RadioButtonStyle1}" />
                         <RadioButton
                             x:Name="RadDel"
                             Margin="10,0,0,0"
                             Checked="Red_Checked"
+                            Content="{DynamicResource ResourceKey=Delete_User}"
                             FontSize="16"
                             GroupName="RadGr"
-                            Style="{StaticResource RadioButtonStyle1}">
-                            Delete User
-                        </RadioButton>
+                            Style="{StaticResource RadioButtonStyle1}" />
                         <RadioButton
                             x:Name="RadEdit"
                             Margin="10,0,0,0"
                             Checked="Red_Checked"
+                            Content="{DynamicResource ResourceKey=Edit_User}"
                             FontSize="16"
                             GroupName="RadGr"
-                            Style="{StaticResource RadioButtonStyle1}">
-                            Edit User
-                        </RadioButton>
+                            Style="{StaticResource RadioButtonStyle1}" />
                     </StackPanel>
 
                     <StackPanel
@@ -122,13 +119,12 @@
                         <TextBlock
                             Width="130"
                             VerticalAlignment="Center"
-                            Text="Username" />
+                            Text="{DynamicResource ResourceKey=Username}" />
                         <TextBox
                             x:Name="TextBoxUsername"
                             Width="150"
                             Height="30"
-                            Style="{StaticResource TextBoxStyle2}"
-                            />
+                            Style="{StaticResource TextBoxStyle2}" />
                     </StackPanel>
 
                     <StackPanel
@@ -139,7 +135,7 @@
                             x:Name="TextPassword"
                             Width="130"
                             VerticalAlignment="Center"
-                            Text="New Password" />
+                            Text="{DynamicResource ResourceKey=New_Password}" />
                         <TextBox
                             x:Name="TextBoxPassword"
                             Width="150"
@@ -157,7 +153,7 @@
                             x:Name="ConfirmPassword"
                             Width="130"
                             VerticalAlignment="Center"
-                            Text="Confirm Password" />
+                            Text="{DynamicResource ResourceKey=Confirm_Password}" />
                         <TextBox
                             x:Name="ConfirmBoxPassword"
                             Width="150"
@@ -175,7 +171,7 @@
                         <TextBlock
                             Width="130"
                             VerticalAlignment="Center"
-                            Text="Role" />
+                            Text="{DynamicResource ResourceKey=Role}" />
                         <ComboBox
                             x:Name="ComboBoxRole"
                             Width="150"
@@ -183,8 +179,8 @@
                             FontSize="14"
                             SelectedIndex="1"
                             Style="{StaticResource ComboBoxStyle2}">
-                            <ComboBoxItem Content="Administrator" />
-                            <ComboBoxItem Content="Operator" />
+                            <ComboBoxItem Content="{DynamicResource ResourceKey=Administrator}" />
+                            <ComboBoxItem Content="{DynamicResource ResourceKey=Operator}" />
                         </ComboBox>
                     </StackPanel>
                     <StackPanel
@@ -198,7 +194,7 @@
                             Height="30"
                             Margin="130,0,0,0"
                             Click="SubmitClick"
-                            Content="SUBMIT"
+                            Content="{DynamicResource ResourceKey=SUBMIT}"
                             Style="{StaticResource ModernButton1}" />
                     </StackPanel>
 

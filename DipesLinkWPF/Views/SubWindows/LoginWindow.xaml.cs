@@ -1,4 +1,6 @@
 ﻿using DipesLink.Extensions;
+using DipesLink.Languages;
+using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using RelationalDatabaseHelper.SQLite;
 using SharedProgram.Shared;
@@ -24,8 +26,19 @@ namespace DipesLink.Views.SubWindows
             InitializeComponent();
             CreateDefaultUser.Init();
             GetRememberLoginInfo();
-
+            setLanguage();
         }
+
+        private void setLanguage()
+        {
+            ViewModelSharedFunctions.LoadSetting();
+            var lang = ViewModelSharedValues.Settings;
+            AppDescriptionText.Text = lang.Language == "vi-VN" ? "Hệ thống xác nhận mã vạch đa dòng" : "Multi-Line Barcode Verification System";
+            UserLoginText.Text = lang.Language == "vi-VN" ? "NGƯỜI DÙNG ĐĂNG NHẬP" : "USER LOGIN";
+            CheckBoxRememberme.Content = lang.Language == "vi-VN" ? "Ghi nhớ đăng nhập" : "Remember me";
+            ButtonLogin.Content = lang.Language == "vi-VN" ? "ĐĂNG NHẬP" : "LOGIN";
+        }
+
         private void GetRememberLoginInfo()
         {
             var info = SecureStorage.ReadCredentials();
@@ -85,18 +98,18 @@ namespace DipesLink.Views.SubWindows
                         }
                         else
                         {
-                            CusMsgBox.Show("Username or password is incorrect !", "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                            CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
                         }
                     }
                 }
                 else
                 {
-                    CusMsgBox.Show("Username or password is incorrect !", "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                    CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
                 }
             }
             catch (Exception)
             {
-                CusMsgBox.Show("Username or password is incorrect !", "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
             }
         }
 

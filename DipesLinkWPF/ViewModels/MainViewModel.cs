@@ -312,7 +312,7 @@ namespace DipesLink.ViewModels
                 {
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
                     ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, true);
-                    CusAlert.Show($"Station {stationIndex}:No data found", ImageStyleMessageBox.Info, true);
+                    CusAlert.Show(LanguageModel.GetLanguage("NoDataFound", stationIndex), ImageStyleMessageBox.Info, true);
                 }
 
             }
@@ -538,7 +538,7 @@ namespace DipesLink.ViewModels
                             // If Running but Camera Disconnected => Show Alert
                             if (JobList[stationIndex].OperationStatus != OperationStatus.Stopped && !_detectCamDisconnected)
                             {
-                                CusAlert.Show($"Station {stationIndex}:Camera's Disconnected !", ImageStyleMessageBox.Error);
+                                CusAlert.Show(LanguageModel.GetLanguage("CameraDisconnected", stationIndex), ImageStyleMessageBox.Error);
                                 _detectCamDisconnected = true;
                             }
                         }
@@ -560,7 +560,7 @@ namespace DipesLink.ViewModels
 
                             if (JobList[stationIndex].OperationStatus != OperationStatus.Stopped && !_detectPrinterDisconnected)
                             {
-                                CusAlert.Show($"Station {stationIndex}: Printer's Disconnected !", ImageStyleMessageBox.Error);
+                                CusAlert.Show(LanguageModel.GetLanguage("PrinterDisconnected", stationIndex), ImageStyleMessageBox.Error);
                                 _detectPrinterDisconnected = true;
                             }
                         }

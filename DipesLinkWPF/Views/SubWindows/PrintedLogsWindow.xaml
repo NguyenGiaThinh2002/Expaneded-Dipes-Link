@@ -3,13 +3,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
-    xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="1025"
     Height="600"
-    Icon="pack://application:,,,/DipesLink;component/Images/Logs.png"
+    Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
     ResizeMode="NoResize"
     Topmost="True"
     WindowStartupLocation="CenterScreen"
@@ -38,7 +38,7 @@
             FontSize="25"
             FontWeight="Bold"
             Foreground="Gray"
-            Text="PRINTED LOG" />
+            Text="{DynamicResource ResourceKey=PRINTED_LOG}" />
         <!--  Content  -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -91,7 +91,7 @@
                             <Label
                                 HorizontalAlignment="Left"
                                 Background="#15A3EF"
-                                Content="Total"
+                                Content="{DynamicResource ResourceKey=Total}"
                                 FontSize="15"
                                 Style="{StaticResource ArrowLabelStyle}" />
                         </StackPanel>
@@ -121,7 +121,7 @@
                             Orientation="Horizontal">
                             <Label
                                 Background="#17A66E"
-                                Content="Printed"
+                                Content="{DynamicResource ResourceKey=Printed}"
                                 FontSize="15"
                                 Style="{StaticResource ArrowLabelStyle}" />
                         </StackPanel>
@@ -152,7 +152,7 @@
                             Orientation="Horizontal">
                             <Label
                                 Background="#0461A9"
-                                Content="Waiting"
+                                Content="{DynamicResource ResourceKey=Waiting}"
                                 FontSize="15"
                                 Style="{StaticResource ArrowLabelStyle}" />
                         </StackPanel>
@@ -238,7 +238,7 @@
                             <TextBlock
                                 Margin="10,0,0,0"
                                 FontSize="20"
-                                Text="Filter" />
+                                Text="{DynamicResource ResourceKey=Filter}" />
                             <ComboBox
                                 x:Name="ComboBoxFilter"
                                 Width="250"
@@ -248,9 +248,9 @@
                                 SelectedIndex="0"
                                 SelectionChanged="ComboBoxFilter_SelectionChanged"
                                 Style="{StaticResource ComboBoxStyle2}">
-                                <ComboBoxItem Content="All" />
-                                <ComboBoxItem Content="Waiting" />
-                                <ComboBoxItem Content="Printed" />
+                                <ComboBoxItem Content="{DynamicResource ResourceKey=All}" />
+                                <ComboBoxItem Content="{DynamicResource ResourceKey=Waiting}" />
+                                <ComboBoxItem Content="{DynamicResource ResourceKey=Printed}" />
                             </ComboBox>
                         </StackPanel>
                     </Border>
@@ -278,7 +278,7 @@
                                 Width="80"
                                 Height="30"
                                 Click="ButtonRF_Click"
-                                Content="Refresh"
+                                Content="{DynamicResource ResourceKey=Refresh}"
                                 Style="{StaticResource ModernButton2}" />
                             <Button
                                 x:Name="ButtonSearch"
@@ -286,7 +286,7 @@
                                 Width="80"
                                 Height="30"
                                 Click="ButtonSearch_Click"
-                                Content="Search"
+                                Content="{DynamicResource ResourceKey=Search}"
                                 Style="{StaticResource ModernButton2}" />
                         </Grid>
                         <TextBox
@@ -309,10 +309,10 @@
                         AlternatingRowBackground="#F5F5F5"
                         BorderBrush="LightGray"
                         BorderThickness="1"
+                        CanUserSortColumns="False"
                         ColumnWidth="150"
                         EnableColumnVirtualization="True"
                         EnableRowVirtualization="True"
-                        CanUserSortColumns="False"
                         GridLinesVisibility="All"
                         HeadersVisibility="Column"
                         HorizontalGridLinesBrush="#D3D3D3"
@@ -396,7 +396,7 @@
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"
-                            Content="First"
+                            Content="{DynamicResource ResourceKey=First}"
                             Style="{StaticResource ModernButton2}" />
                         <Button
                             x:Name="ButtonBack"
@@ -404,7 +404,7 @@
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"
-                            Content="Back"
+                            Content="{DynamicResource ResourceKey=Back}"
                             Style="{StaticResource ModernButton2}" />
                         <Button
                             x:Name="ButtonNext"
@@ -412,7 +412,7 @@
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"
-                            Content="Next"
+                            Content="{DynamicResource ResourceKey=Next}"
                             Style="{StaticResource ModernButton2}" />
                         <Button
                             x:Name="ButtonEnd"
@@ -420,12 +420,12 @@
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"
-                            Content="End"
+                            Content="{DynamicResource ResourceKey=End}"
                             Style="{StaticResource ModernButton2}" />
                         <TextBlock
                             VerticalAlignment="Center"
                             FontSize="16"
-                            Text="Goto Page" />
+                            Text="{DynamicResource ResourceKey=Goto_Page}" />
                         <!--<ComboBox
                         Width="70"
                         Height="30"
@@ -443,7 +443,7 @@
                             Height="30"
                             Margin="20,0,10,0"
                             Click="PageAction_Click"
-                            Content="GO"
+                            Content="{DynamicResource ResourceKey=GO}"
                             Style="{StaticResource ModernButton2}" />
                     </StackPanel>
 

@@ -116,13 +116,13 @@ namespace DipesLink.Views
 
             if (runningPrintersCount > 0)
             {
-                CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
+                CusAlert.Show(LanguageModel.GetLanguage("StopAllStations"), ImageStyleMessageBox.Warning);
                 return false;  // Prevent the window from closing
             }
 
             // Confirm with the user before closing the application
-            var isExit = CusMsgBox.Show("Do you want to exit the application?", "Exit Application", Enums.ViewEnums.ButtonStyleMessageBox.YesNo, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-            return isExit.Result;  // Return true if user confirms to exit, else false
+            var isExit = CusMsgBox.Show(LanguageModel.GetLanguage("ExitConfirmation"), "Exit Application", Enums.ViewEnums.ButtonStyleMessageBox.YesNo, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+            return isExit.Result;   // Return true if user confirms to exit, else false
         }
 
 
@@ -264,18 +264,22 @@ namespace DipesLink.Views
             {
                 switch (menuItem.Header)
                 {
+                    case "Quản lý tài khoản":
                     case "Account Management":
                         UsersManagement um = new();
                         um.Show();
                         break;
+                    case "Về DP-Link":
                     case "About DP-Link":
                         var aboutPopup = new AboutPopup();
                         aboutPopup.ShowDialog();
                         break;
+                    case "Quản lý hệ thống":
                     case "System Management":
                         var systemManagement = new SystemManagement(viewModel);
                         systemManagement.ShowDialog();
                         break;
+                    case "Đăng xuất":
                     case "Logout": //Restart
                         Logout(viewModel.JobList.Any(job => job.OperationStatus != SharedProgram.DataTypes.CommonDataType.OperationStatus.Stopped));
                         break;
@@ -288,7 +292,7 @@ namespace DipesLink.Views
         {
             if (!isNotRunning)
             {
-                var res = CusMsgBox.Show("Do you want to logout ?", "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                var res = CusMsgBox.Show(LanguageModel.GetLanguage("LogoutConfirmation"), "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 if (res.Result)
                 {
                     Process.Start(Process.GetCurrentProcess().MainModule.FileName);
@@ -297,7 +301,7 @@ namespace DipesLink.Views
             }
             else
             {
-                CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
+                CusAlert.Show(LanguageModel.GetLanguage("StopAllStations"), ImageStyleMessageBox.Warning);
             }
         }
 

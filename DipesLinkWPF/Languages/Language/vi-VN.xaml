@@ -3,6 +3,76 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!--  BACKEND  -->
+    <system:String x:Key="CannotGetPrinterTemplate">Trạm {0}: Không thể lấy giao diện bản tin !</system:String>
+    <system:String x:Key="StopStationNotification">Bạn có muốn dừng trạm {0} ?</system:String>
+    <system:String x:Key="JobNotFoundNotification">Trạm {0}: Không tìm thấy công việc</system:String>
+    <system:String x:Key="SystemStarted">Hệ thống đã khởi động !</system:String>
+    <system:String x:Key="CannotAccessDatabase">Không thể truy cập cơ sở dữ liệu !</system:String>
+    <system:String x:Key="CannotAccessCheckedResult">Không thể truy cập kết quả đã kiểm tra !</system:String>
+    <system:String x:Key="CannotAccessPrintedResponse">Không thể truy cập phản hồi đã in !</system:String>
+    <system:String x:Key="DatabaseDoesNotExist">Cơ sở dữ liệu không tồn tại !</system:String>
+    <system:String x:Key="NoJobSelected">Không có công việc nào được chọn !</system:String>
+    <system:String x:Key="CheckedResultDoesNotExist">Trạm {0}: Kết quả đã kiểm tra không tồn tại !</system:String>
+    <system:String x:Key="PrinterNotConnected">Trạm {0}: Máy in không kết nối!</system:String>
+    <system:String x:Key="InputDatabaseDuplicate">Trạm {0}: Cơ sở dữ liệu đầu vào bị trùng lặp!</system:String>
+    <system:String x:Key="CannotLoadTemplatePrinter">Trạm {0}: Không thể tải máy in mẫu!</system:String>
+    <system:String x:Key="CameraNotConnected">Trạm {0}: Camera không kết nối!</system:String>
+    <system:String x:Key="ProcessCompleted">Trạm {0}: Quy trình đã hoàn tất!</system:String>
+    <system:String x:Key="MissingParams">Thiếu tham số !</system:String>
+    <system:String x:Key="PrinterSuddenlyStopped">Trạm {0}: Máy in đột ngột dừng lại</system:String>
+    <system:String x:Key="PrinterStartEndPageInvalid">Trạm {0}: Trang bắt đầu/kết thúc của máy in không hợp lệ</system:String>
+    <system:String x:Key="NoPrintHeadSelected">Trạm {0}: Không có đầu in được chọn</system:String>
+    <system:String x:Key="PrinterSpeedLimit">Trạm {0}: Giới hạn tốc độ máy in</system:String>
+    <system:String x:Key="PrintHeadDisconnected">Trạm {0}: Đầu in bị ngắt kết nối</system:String>
+    <system:String x:Key="PrinterUnknownPrintHead">Trạm {0}: Đầu in không xác định</system:String>
+    <system:String x:Key="PrinterNoCartridges">Trạm {0}: Máy in hết mực</system:String>
+    <system:String x:Key="PrinterInvalidCartridges">Trạm {0}: Máy in có mực không hợp lệ</system:String>
+    <system:String x:Key="PrinterOutOfInk">Trạm {0}: Máy in hết mực</system:String>
+    <system:String x:Key="CartridgesLocked">Trạm {0}: Mực bị khóa</system:String>
+    <system:String x:Key="PrinterInvalidVersion">Trạm {0}: Phiên bản máy in không hợp lệ</system:String>
+    <system:String x:Key="PrinterIncorrectPrintHead">Trạm {0}: Đầu in không chính xác</system:String>
+    <system:String x:Key="CantExport">Trạm {0}: Không thể xuất dữ liệu</system:String>
+    <system:String x:Key="PrinterDisconnected">Trạm {0}: Máy in đã ngắt kết nối !</system:String>
+    <system:String x:Key="CameraDisconnected">Trạm {0}: Camera đã ngắt kết nối !</system:String>
+    <system:String x:Key="FileNotFound">Không tìm thấy tập tin !</system:String>
+    <system:String x:Key="ExitConfirmation">Bạn có muốn thoát khỏi ứng dụng không?</system:String>
+    <system:String x:Key="StopAllStations">Vui lòng dừng tất cả các trạm đang chạy!</system:String>
+    <system:String x:Key="LogoutConfirmation">Bạn có muốn đăng xuất không?</system:String>
+    <system:String x:Key="PageNotFound">Không tìm thấy trang !</system:String>
+    <system:String x:Key="NotFound">Không tìm thấy !</system:String>
+    <system:String x:Key="ExportConfirmation">Xác nhận bạn muốn xuất tập tin báo cáo?</system:String>
+    <system:String x:Key="IncorrectUsernameOrPassword">Tên đăng nhập hoặc mật khẩu không đúng !</system:String>
+    <system:String x:Key="NoResultsFound">Không tìm thấy kết quả nào !</system:String>
+    <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Bạn có muốn thay đổi ngôn ngữ và đăng xuất không?</system:String>
+    <system:String x:Key="UsernameInvalid">Tên đăng nhập không hợp lệ</system:String>
+    <system:String x:Key="InvalidUser">Người dùng không hợp lệ</system:String>
+    <system:String x:Key="CreateUserDone">Tạo người dùng thành công !</system:String>
+    <system:String x:Key="ChangeUserInfoSuccess">Thay đổi thông tin người dùng thành công !</system:String>
+    <system:String x:Key="UserNotFoundForUpdate">Không tìm thấy người dùng để cập nhật</system:String>
+    <system:String x:Key="UnmatchedPassword">Mật khẩu không khớp</system:String>
+    <system:String x:Key="ChangeUserInfoFailed">Thay đổi thông tin người dùng thất bại !</system:String>
+    <system:String x:Key="ChangeInfoSuccessFor">Thay đổi thông tin thành công cho</system:String>
+    <system:String x:Key="DeleteUserSuccess">Xóa người dùng thành công !</system:String>
+    <system:String x:Key="UserNotFound">Không tìm thấy người dùng !</system:String>
+    <system:String x:Key="DeleteUserFailed">Xóa người dùng thất bại !</system:String>
+    <system:String x:Key="DeleteUserDone">Hoàn tất xóa người dùng !</system:String>
+    <system:String x:Key="CreateNewUserQuestion">Tạo người dùng mới ?</system:String>
+    <system:String x:Key="DeleteUserPrompt">Xóa người dùng:</system:String>
+    <system:String x:Key="CannotDeleteCurrentUser">Không thể xóa người dùng hiện tại!</system:String>
+    <system:String x:Key="RestartConfirmation">Bạn có muốn khởi động lại không ?</system:String>
+    <system:String x:Key="NoDataFound">Trạm {0}: Không tìm thấy dữ liệu</system:String>
+    <system:String x:Key="ExportFileSuccess">Xuất tập tin thành công</system:String>
+    <system:String x:Key="RestartFailed">Trạm {0}: Khởi động lại thất bại!</system:String>
+    <system:String x:Key="RestartSuccessfully">Trạm {0}: Khởi động lại thành công!</system:String>
+    <system:String x:Key="Page">Trang</system:String>
+    <!--  FRONTEND  -->
+    <system:String x:Key="StationNumber">Trạm {0}</system:String>
+    <system:String x:Key="Home">Trang chủ</system:String>
+    <system:String x:Key="Jobs">Công việc</system:String>
+    <system:String x:Key="Settings">Cài đặt</system:String>
+    <system:String x:Key="Logs">Bản ghi</system:String>
+    <system:String x:Key="Exit">Thoát</system:String>
     <system:String x:Key="Language_Code">vi-VN</system:String>
     <system:String x:Key="Setting_Apply">Ap dung</system:String>
     <system:String x:Key="Setting_Choose_Your_Language">Chon ngon ngu cua ban:</system:String>
@@ -12,13 +82,6 @@
     <system:String x:Key="Station_Jobs_Operations">Hoạt động việc làm trạm</system:String>
     <system:String x:Key="Stations_Settings">Cài đặt trạm</system:String>
     <system:String x:Key="Stations_Jobs_Logs">Nhật ký việc làm trạm</system:String>
-    <system:String x:Key="TemplateLoadError">Trạm {0}: Không thể lấy giao diện bản tin !</system:String>
-    <system:String x:Key="StationNumber">Trạm {0}</system:String>
-    <system:String x:Key="Home">Trang chủ</system:String>
-    <system:String x:Key="Jobs">Công việc</system:String>
-    <system:String x:Key="Settings">Cài đặt</system:String>
-    <system:String x:Key="Logs">Bản ghi</system:String>
-    <system:String x:Key="Exit">Thoát</system:String>
     <system:String x:Key="Station_Status">Trạng thái trạm:</system:String>
     <system:String x:Key="Printer_IP">Máy in IP:</system:String>
     <system:String x:Key="Camera_IP">Máy ảnh IP:</system:String>
@@ -33,7 +96,7 @@
     <system:String x:Key="Received_Data">Dữ liệu nhận</system:String>
     <system:String x:Key="Total_Checked">Tổng số kiểm tra</system:String>
     <system:String x:Key="Passed">Thành công</system:String>
-    <system:String x:Key="Failed">Không thành công</system:String>
+    <system:String x:Key="Failed">Thất bại</system:String>
     <system:String x:Key="LINE_JOB">THÔNG TIN CÔNG VIỆC</system:String>
     <system:String x:Key="VERIFICATION_INFO">THÔNG TIN XÁC THỰC</system:String>
     <system:String x:Key="VERIFICATION_RESULT">KẾT QUẢ XÁC THỰC</system:String>
@@ -90,8 +153,6 @@
     <system:String x:Key="Image_Export_Path">Đ.Dẫn Xuất H.Ảnh</system:String>
     <system:String x:Key="Total_Record_DB">Tổng Số Bản Ghi DB</system:String>
     <system:String x:Key="Job_Status">Tình Trạng Công Việc</system:String>
-
-
     <system:String x:Key="After_Production">Sau Sản Xuất</system:String>
     <system:String x:Key="On_Production">Trong Sản Xuất</system:String>
     <system:String x:Key="Verify_And_Print">Kiểm Tra và In</system:String>
@@ -104,11 +165,63 @@
     <system:String x:Key="CREATE">TẠO</system:String>
     <system:String x:Key="Enable">Kích Hoạt</system:String>
     <system:String x:Key="Disable">Vô Hiệu Hóa</system:String>
-
-
-
-
-
+    <system:String x:Key="Multi_Line_Barcode_Verification_System">Hệ thống xác nhận mã vạch đa dòng</system:String>
+    <system:String x:Key="User_Login">NGƯỜI DÙNG ĐĂNG NHẬP</system:String>
+    <system:String x:Key="Remember_Me">Ghi nhớ đăng nhập</system:String>
+    <system:String x:Key="LOGIN">ĐĂNG NHẬP</system:String>
+    <system:String x:Key="CHECKED_LOG">BẢNG GHI ĐÃ KIỂM</system:String>
+    <system:String x:Key="Total">Tổng</system:String>
+    <system:String x:Key="Unknow">Không rõ</system:String>
+    <system:String x:Key="Verified">Xác minh</system:String>
+    <system:String x:Key="Valid">Hợp lệ</system:String>
+    <system:String x:Key="Filter">Bộ lọc</system:String>
+    <system:String x:Key="Reprint">In lại</system:String>
+    <system:String x:Key="Refresh">Làm mới</system:String>
+    <system:String x:Key="Search">Tìm kiếm</system:String>
+    <system:String x:Key="First">Đầu</system:String>
+    <system:String x:Key="Back">Quay lại</system:String>
+    <system:String x:Key="Next">Tiếp theo</system:String>
+    <system:String x:Key="End">Cuối</system:String>
+    <system:String x:Key="Goto_Page">Đi tới trang</system:String>
+    <system:String x:Key="GO">ĐI</system:String>
+    <system:String x:Key="All">Tất cả</system:String>
+    <system:String x:Key="Invalided">Không hợp lệ</system:String>
+    <system:String x:Key="Duplicated">Trùng lặp</system:String>
+    <system:String x:Key="Null">Rỗng</system:String>
+    <system:String x:Key="Unknown_Missed">Không rõ / Thiếu</system:String>
+    <system:String x:Key="Printed">Đã In</system:String>
+    <system:String x:Key="Waiting">Đang Chờ</system:String>
+    <system:String x:Key="PRINTED_LOG">BẢN GHI ĐÃ IN</system:String>
+    <system:String x:Key="STATION">TRẠM</system:String>
+    <system:String x:Key="Name">Tên:</system:String>
+    <system:String x:Key="Type">Loại:</system:String>
+    <system:String x:Key="Total_Data">Tổng dữ liệu:</system:String>
+    <system:String x:Key="Status">Trạng thái:</system:String>
+    <system:String x:Key="PRINTED">ĐÃ IN</system:String>
+    <system:String x:Key="CHECKED">ĐÃ KIỂM TRA</system:String>
+    <system:String x:Key="PASSED">THÀNH CÔNG</system:String>
+    <system:String x:Key="FAILED">THẤT BẠI</system:String>
+    <system:String x:Key="None">Trống</system:String>
+    <system:String x:Key="AfterProduction">Sau sản xuất</system:String>
+    <system:String x:Key="OnProduction">Trong s.xuất</system:String>
+    <system:String x:Key="VerifyAndPrint">Kiểm tra và In</system:String>
+    <system:String x:Key="StandAlone">StandAlone</system:String>
+    <!--  Độc lập  -->
+    <system:String x:Key="Account_Management">Quản lý tài khoản</system:String>
+    <system:String x:Key="System_Management">Quản lý hệ thống</system:String>
+    <system:String x:Key="About_DP_Link">Về DP-Link</system:String>
+    <system:String x:Key="Logout">Đăng xuất</system:String>
+    <system:String x:Key="USERS_MANAGEMENT">QUẢN LÝ NGƯỜI DÙNG</system:String>
+    <system:String x:Key="Create_New_User">Thêm N.Dùng</system:String>
+    <system:String x:Key="Delete_User">Xóa N.Dùng</system:String>
+    <system:String x:Key="Edit_User">Chỉnh Sửa</system:String>
+    <system:String x:Key="Username">Tên người dùng</system:String>
+    <system:String x:Key="New_Password">Mật khẩu mới</system:String>
+    <system:String x:Key="Role">Vai trò</system:String>
+    <system:String x:Key="Administrator">Quản trị viên</system:String>
+    <system:String x:Key="Operator">Người vận hành</system:String>
+    <system:String x:Key="SUBMIT">GỬI</system:String>
+    <system:String x:Key="Confirm_Password">Xác nhận mk</system:String>
 
     <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
 </ResourceDictionary>
