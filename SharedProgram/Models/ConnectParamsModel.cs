@@ -42,13 +42,7 @@ namespace SharedProgram.Models
             set { _IsLockUISetting = value; OnPropertyChanged(); }
         }
 
-        // thinh
-        private bool _lockChoosingStation;
-        public bool LockChoosingStation
-        {
-            get { return _lockChoosingStation; }
-            set { _lockChoosingStation = value; OnPropertyChanged(); }
-        }
+      
 
         private ObservableCollection<string> _responseMessList = new();
 

@@ -712,7 +712,7 @@ namespace DipesLinkDeviceTransfer
                         break;
                     case "005":
                         message = "Printhead disconnected";
-                        notifyType = NotifyType.PrintheadDisconnected;
+                        notifyType = NotifyType.PrintheadDisconnected;   
                         break;
                     case "006":
                         message = "Unknown printhead";

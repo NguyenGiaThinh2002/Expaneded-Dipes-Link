@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace SharedProgram.Models
 {
-    public class CommonSettingsModel : ViewModelBase
+    public class CommonSettingsModel : ObservableObject
     {
         private static void CheckPathAndCreateNew(string path)
         {

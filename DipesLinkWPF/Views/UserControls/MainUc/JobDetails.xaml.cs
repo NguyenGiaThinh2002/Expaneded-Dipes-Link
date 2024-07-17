@@ -31,12 +31,21 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             InitializeComponent();
             Loaded += StationDetailUc_Loaded;
-  
+
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
             InitValues();
             Task.Run(TaskAddDataAsync);
             Task.Run(TaskChangePrintStatusAsync);
+        }
+
+        private void DebugModeAction()
+        {
+#if DEBUG
+ ButtonSimulate.Visibility = Visibility.Visible;
+#else // Release mode
+            ButtonSimulate.Visibility = Visibility.Collapsed;
+#endif
         }
 
         private void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
@@ -53,7 +62,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             if (_currentJob is not null && _currentJob.Index == jobIndex)
             {
-                Debug.WriteLine($"Clear data of Job: {jobIndex}");
+                //Debug.WriteLine($"Clear data of Job: {jobIndex}");
                 ChangeLayoutDataGrid();
                 InitValues();
 
@@ -62,7 +71,8 @@ namespace DipesLink.Views.UserControls.MainUc
 
                 DataGridResult.ItemsSource = null;
                 DataGridResult.Columns.Clear();
-
+                _checkedObserHelper.Dispose();
+                _printObserHelper?.Dispose();
                 if (sender is not null && (string)sender == "ButtonAddJob")
                 {
                     ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
@@ -94,7 +104,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         public async void StationDetailUc_Loaded(object sender, RoutedEventArgs e)
         {
-
+            DebugModeAction();
             EventRegister();
             if (_currentJob == null) return;
             ChangeLayoutDataGrid();
@@ -265,7 +275,7 @@ namespace DipesLink.Views.UserControls.MainUc
             }
 
         }
-        
+
         private async Task TaskAddDataAsync()
         {
             var tempDataList = new List<string[]>();
@@ -290,9 +300,9 @@ namespace DipesLink.Views.UserControls.MainUc
                                 _checkedObserHelper?.AddNewData(data);
                             }
                         });
-                       
+
                     }
-                  
+
                     await Task.Delay(1);
                 }
 
@@ -309,7 +319,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         }
                     });
 
-                    
+
                 }
                 _timeBasedExecution.ExecuteActionIfAllowed(() => UpdateCheckedNumber());
                 await Task.Delay(batchDelay);
@@ -348,7 +358,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     PodFormat = _currentJob.PODFormat,
                     CurrentJob = _currentJob,
                 };
-                if(_currentJob.CompareType != SharedProgram.DataTypes.CommonDataType.CompareType.Database)
+                if (_currentJob.CompareType != SharedProgram.DataTypes.CommonDataType.CompareType.Database)
                 {
                     printInfo.RawList.Clear();
                     printInfo.PodFormat.Clear();
@@ -380,6 +390,6 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-   
+
     }
 }

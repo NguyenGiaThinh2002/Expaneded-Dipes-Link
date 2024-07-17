@@ -42,6 +42,38 @@ namespace DipesLink.ViewModels
             }
         }
 
+        internal void CheckDateTimeFormat()
+        {
+            switch (DateTimeFormatSelectedIndex)
+            {
+                case 0:
+                    DateTimeFormat = "yyyyMMdd_HHmmss";
+                    break;
+                case 1:
+                    DateTimeFormat = "ddMMyyyy_HHmmss";
+                    break;
+                case 2:
+                    DateTimeFormat = "MMddyyyy_HHmmss";
+                    break;
+                case 3:
+                    DateTimeFormat = "MMyyyydd_HHmmss";
+                    break;
+                case 4:
+                    DateTimeFormat = "ddyyyyMM_HHmmss";
+                    break;
+                default:
+                    break;
+            }
+            ViewModelSharedValues.Settings.DateTimeFormat = DateTimeFormat;
+            ViewModelSharedValues.Settings.DateTimeFormatSelectedIndex = DateTimeFormatSelectedIndex;
+            ViewModelSharedFunctions.SaveSetting();
+        }
+        internal void CheckTemplateName()
+        {
+            ViewModelSharedValues.Settings.TemplateName = TemplateName;
+            ViewModelSharedFunctions.SaveSetting();
+        }
+
         internal void UIEnableControlByLoadingDb(int index, bool visible)
         {
             TabControlEnable = visible;

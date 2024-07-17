@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="800"
-    Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
+    Icon="pack://application:,,,/DipesLink;component/Images/userGroup.png"
     Height="450"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -34,7 +34,7 @@
             VerticalAlignment="Center"
             FontSize="18" Foreground="#808080"
             FontWeight="Bold">
-            USERS MANAGEMENT
+            Users Management
         </TextBlock>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

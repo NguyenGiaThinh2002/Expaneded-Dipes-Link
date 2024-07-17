@@ -1,85 +1,19 @@
-﻿using DipesLink.Models;
-using DipesLink.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DipesLink.Models;
 using DipesLink.Views.Converter;
 using SharedProgram.Shared;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DipesLink.Views.Extension
 {
     public class JobEventsLogHelper : ObservableObject
     {
-       // private readonly string[] _ColumnNames = new string[] {"EventType", "Title", "Message", "DateTime" };
         public ObservableCollection<EventsLogModel>? EventsList { get; set; } = new();
-        
-        public List<string[]> InitEventsLogDatabase(string path)
-        {
-            List<string[]> result = new();
-            if (!File.Exists(path))
-            {
-                return result;
-            }
-            try
-            {
-                Regex rexCsvSplitter = path.EndsWith(".csv") ? new Regex(@",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))") : new Regex(@"[\t]");
-                using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using var reader = new StreamReader(fileStream);
-               // using var reader = new StreamReader(path, Encoding.UTF8, true);
-                bool isFirstline = false;
-                while (!reader.EndOfStream)
-                {
-                    var data = reader.ReadLine();
-                    if (data == null) { continue; };
-
-                    if (!isFirstline)
-                    {
-                        isFirstline = true; // Reject first line (header line)
-                    }
-                    else
-                    {
-                        string[] line = rexCsvSplitter.Split(data).Select(x => Csv.Unescape(x)).ToArray();
-                        if (line.Length == 1 && line[0] == "") { continue; }; // ignore empty line 
-                        if (line.Length < SharedValues.ColumnNames.Length)
-                        {
-                            string[] checkedResult = GetTheRightString(line);
-                            result.Add(checkedResult);
-                        }
-                        else
-                        {
-                            result.Add(line); // Add checked result to list
-                        }
-                    }
-                }
-                EventsList = ConvertListToObservableCol(result);
-                if (EventsList?.Count > 0)
-                {
-                    GetNewestNumberRow();
-                }
-            }
-            catch (IOException){}
-            catch (Exception){}
-            return result;
-        }
-
-        private string[] GetTheRightString(string[] line)
-        {
-            var code = new string[SharedValues.ColumnNames.Length];
-            for (int i = 0; i < code.Length; i++)
-            {
-                if (i < line.Length)
-                    code[i] = line[i];
-                else
-                    code[i] = "";
-            }
-            return code;
-        }
-
         private ObservableCollection<EventsLogModel>? _DisplayList = new();
         public ObservableCollection<EventsLogModel>? DisplayList
         {
@@ -93,85 +27,161 @@ namespace DipesLink.Views.Extension
                 }
             }
         }
-        public ObservableCollection<EventsLogModel> ConvertListToObservableCol(List<string[]> list)
+
+        public List<string[]> InitEventsLogDatabase(string path)
+        {
+            List<string[]> result = new();
+            if (!File.Exists(path))
+            {
+                return result;
+            }
+            try
+            {
+                Regex rexCsvSplitter = path.EndsWith(".csv") ? new Regex(@",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))") : new Regex(@"[\t]");
+                using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using var reader = new StreamReader(fileStream);
+                while (!reader.EndOfStream)
+                {
+                    var data = reader.ReadLine();
+                    if (data == null) { continue; };
+                        string[] line = rexCsvSplitter.Split(data).Select(x => Csv.Unescape(x)).ToArray();
+                        if (line.Length == 1 && line[0] == "") { continue; }; // ignore empty line 
+                        if (line.Length < SharedValues.ColumnNames.Length)
+                        {
+                            string[] checkedResult = GetTheRightString(line);
+                            result.Add(checkedResult);
+                        }
+                        else
+                        {
+                            result.Add(line); 
+                        }
+                }
+                EventsList = ConvertListToObservableCol(result);
+                if (EventsList?.Count > 0)
+                {
+                    GetNewestNumberRow();
+                }
+            }
+            catch (IOException){}
+            catch (Exception){}
+            return result;
+        }
+
+        private static string[] GetTheRightString(string[] line)
+        {
+            try
+            {
+                var code = new string[SharedValues.ColumnNames.Length];
+                for (int i = 0; i < code.Length; i++)
+                {
+                    if (i < line.Length)
+                        code[i] = line[i];
+                    else
+                        code[i] = "";
+                }
+                return code;
+            }
+            catch (Exception)
+            {
+                return Array.Empty<string>();
+            }
+        }
+
+        public static ObservableCollection<EventsLogModel> ConvertListToObservableCol(List<string[]> list)
         {
              return new ObservableCollection<EventsLogModel>(list.Select(data => new EventsLogModel(data)));
         }
 
-        public void GetNewestNumberRow() // Get 100 newest row
+        public void GetNewestNumberRow() // Get 1000 newest row
         {
-            var newestItems = EventsList?.OrderByDescending(x => x.DateTime).Take(100).ToList();
-            if (DisplayList != null && newestItems != null)
+            try
             {
-                DisplayList.Clear();
-                foreach (var item in newestItems)
+                var newestItems = EventsList?.OrderByDescending(x => x.DateTime).Take(1000).ToList();
+                if (DisplayList != null && newestItems != null)
                 {
-                    DisplayList.Add(item);
+                    DisplayList.Clear();
+                    foreach (var item in newestItems)
+                    {
+                        DisplayList.Add(item);
+                    }
                 }
             }
+            catch (Exception)
+            {
+
+            }
+           
         }
 
-        public void CreateDataTemplate(DataGrid dataGrid)
+        public static void CreateDataTemplate(DataGrid dataGrid)
         {
-            dataGrid.Columns.Clear();
-            var properties = typeof(EventsLogModel).GetProperties(); // get all properties of EventsLogModel
-
-            foreach (var property in properties)
+            try
             {
-                if (property.Name == "EventType") // Create template for "EventType" column
+                dataGrid.Columns.Clear();
+                var properties = typeof(EventsLogModel).GetProperties(); // get all properties of EventsLogModel
+
+                foreach (var property in properties)
                 {
-                    DataGridTemplateColumn templateColumn = new() { Header = property.Name, Width = 100 };
-                    DataTemplate template = new();
-                    FrameworkElementFactory factory = new(typeof(Image));
-
-                    Binding binding = new(property.Name)
+                    if (property.Name == "EventType") // Create template for "EventType" column
                     {
-                        Converter = new EventsLogImgConverter(),
-                        Mode = BindingMode.OneWay
-                    };
+                        DataGridTemplateColumn templateColumn = new() { Header = property.Name, Width = 100 };
+                        DataTemplate template = new();
+                        FrameworkElementFactory factory = new(typeof(Image));
 
-                    factory.SetValue(Image.SourceProperty, binding);
-                    factory.SetValue(Image.HeightProperty, 20.0);
-                    factory.SetValue(Image.WidthProperty, 20.0);
-
-                    template.VisualTree = factory;
-                    templateColumn.CellTemplate = template;
-                    dataGrid.Columns.Add(templateColumn);
-                }
-                else
-                {
-                    DataGridTextColumn textColumn = new();
-                    if (property.Name == "Title")
-                    {
-                        textColumn = new()
+                        Binding binding = new(property.Name)
                         {
-                            Header = property.Name,
-                            Binding = new Binding(property.Name),
-                            Width = 100
+                            Converter = new EventsLogImgConverter(),
+                            Mode = BindingMode.OneWay
                         };
-                    }
-                    else if(property.Name == "Message")
-                    {
-                        textColumn = new()
-                        {
-                            Header = property.Name,
-                            Binding = new Binding(property.Name),
-                            Width = 300
-                        };
+
+                        factory.SetValue(Image.SourceProperty, binding);
+                        factory.SetValue(Image.HeightProperty, 20.0);
+                        factory.SetValue(Image.WidthProperty, 20.0);
+
+                        template.VisualTree = factory;
+                        templateColumn.CellTemplate = template;
+                        dataGrid.Columns.Add(templateColumn);
                     }
                     else
                     {
-                        textColumn = new()
+                        DataGridTextColumn textColumn = new();
+                        if (property.Name == "Title")
                         {
-                            Header = property.Name,
-                            Binding = new Binding(property.Name),
-                            Width = 200
-                        };
+                            textColumn = new()
+                            {
+                                Header = property.Name,
+                                Binding = new Binding(property.Name),
+                                Width = 100
+                            };
+                        }
+                        else if (property.Name == "Message")
+                        {
+                            textColumn = new()
+                            {
+                                Header = property.Name,
+                                Binding = new Binding(property.Name),
+                                Width = 300
+                            };
+                        }
+                        else
+                        {
+                            textColumn = new()
+                            {
+                                Header = property.Name,
+                                Binding = new Binding(property.Name),
+                                Width = 200
+                            };
+                        }
+
+                        dataGrid.Columns.Add(textColumn);
                     }
-                   
-                    dataGrid.Columns.Add(textColumn);
                 }
             }
+            catch (Exception)
+            {
+
+            }
+           
         }
     }
 }

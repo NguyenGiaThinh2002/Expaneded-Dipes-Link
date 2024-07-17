@@ -19,7 +19,7 @@ namespace DipesLink.ViewModels
     public partial class ViewModelBase : ObservableObject
     {
         #region Fields
-        protected int _NumberOfStation;
+        protected int _numberOfStation;
         protected int _MaxDatabaseLine = 500;
         protected static MainViewModel? _instance;
         public static int StationNumber = 4;
@@ -30,9 +30,23 @@ namespace DipesLink.ViewModels
         protected internal bool isSaveJob = false;
         protected readonly List<PODModel> _PODFormat = new();
         protected readonly List<PODModel> _TempPODFormat = new();
+
         #endregion
 
         #region Properties
+        public string DateTimeFormat { get; set; } = string.Empty;
+        public string TemplateName { get; set; } = string.Empty;
+
+
+        // thinh
+        private bool _lockStationChange;
+        public bool LockStationChange
+        {
+            get { return _lockStationChange; }
+            set { _lockStationChange = value; OnPropertyChanged(); }
+        }
+
+
         protected JobModel? _jobModel;
 
         protected JobModel _createNewJob = new()
@@ -161,16 +175,7 @@ namespace DipesLink.ViewModels
             }
         }
 
-        private bool isDebugMode;
-        public bool IsDebugMode
-        {
-            get => isDebugMode;
-            set
-            {
-                isDebugMode = value;
-                OnPropertyChanged();
-            }
-        }
+      
 
         private JobOverview? _currentJob;
         public JobOverview? CurrentJob
@@ -292,6 +297,20 @@ namespace DipesLink.ViewModels
                 }
             }
         }
+        private int _dateTimeFormatSelectedIndex;
+        public int DateTimeFormatSelectedIndex
+        {
+            get { return _dateTimeFormatSelectedIndex; }
+            set
+            {
+                if (_dateTimeFormatSelectedIndex != value)
+                {
+                    _dateTimeFormatSelectedIndex = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         private ObservableCollection<TabItemModel> _tabStation = new();
         public ObservableCollection<TabItemModel> TabStation

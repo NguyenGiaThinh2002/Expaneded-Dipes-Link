@@ -30,13 +30,11 @@
                 Width="auto"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Background="Transparent">
-               
-            </StackPanel>
+                Background="Transparent" />
         </ScrollViewer>
     </Grid>
 
 
-   
+
 
 </UserControl>

@@ -11,8 +11,18 @@ namespace SharedProgram.Models
     public class SettingsModel : CommonSettingsModel
     {
         public int NumberOfStation {  get; set; }
+
         public string JobFileExtension { get; set; } = ".rvis";
-        public string Language { get; set; } = "en-US";
+
+        public string Language { get; set; } = "en-US"; 
+
+        public string DateTimeFormat { get; set; } = string.Empty;
+
+        public int DateTimeFormatSelectedIndex { get; set; }
+
+        
+
+        public string TemplateName { get; set; } = string.Empty;
         //public List<ConnectParamsModel> SystemParamsList { get; set; } = new();
 
         private List<ConnectParamsModel> _SystemParamsList = new();

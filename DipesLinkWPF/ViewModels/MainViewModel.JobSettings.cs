@@ -44,15 +44,7 @@ namespace DipesLink.ViewModels
         {
             SearchText = text;
         }
-        internal void LockChoosingStation()
-        {
-            int t = 0;
-            for (int i = 0; i < JobList.Count; i++)
-                if (JobList[i].OperationStatus != OperationStatus.Stopped) t++;
-
-            for (int i = 0; i < JobList.Count; i++)
-                ConnectParamsList[i].LockChoosingStation = t <= 0;  // use ternary
-        }
+        
         internal void LockUI(int stationIndex)
         {
             switch (JobList[stationIndex].OperationStatus)
@@ -471,7 +463,7 @@ namespace DipesLink.ViewModels
         {
             try
             {
-                SharedFunctions.AutoGenerateFileName(index, out string? jobName);
+                SharedFunctions.AutoGenerateFileName(index, out string? jobName,ViewModelSharedValues.Settings.DateTimeFormat, ViewModelSharedValues.Settings.TemplateName);
                 CreateNewJob.Name = jobName;
             }
             catch (Exception) { }

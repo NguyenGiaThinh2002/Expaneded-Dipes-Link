@@ -178,7 +178,7 @@ namespace DipesLink_SDK_Cameras
             try
             {
 #if DEBUG
-                if (DeviceSharedValues.CameraIP == "127.0.0.1") // Simulate allow local IP addess connected
+                if (DeviceSharedValues.CameraIP == "1.1.1.1") // Simulate allow local IP addess connected
                 {
                     _IsConnected = true;
 #if DEBUG
