@@ -33,10 +33,12 @@ namespace DipesLink.Views.SubWindows
         {
             ViewModelSharedFunctions.LoadSetting();
             var lang = ViewModelSharedValues.Settings;
-            AppDescriptionText.Text = lang.Language == "vi-VN" ? "Hệ thống xác nhận mã vạch đa dòng" : "Multi-Line Barcode Verification System";
-            UserLoginText.Text = lang.Language == "vi-VN" ? "NGƯỜI DÙNG ĐĂNG NHẬP" : "USER LOGIN";
-            CheckBoxRememberme.Content = lang.Language == "vi-VN" ? "Ghi nhớ đăng nhập" : "Remember me";
-            ButtonLogin.Content = lang.Language == "vi-VN" ? "ĐĂNG NHẬP" : "LOGIN";
+            var currentLang = LanguageModel.LoadLanguageResourceDictionary(lang.Language);
+
+            AppDescriptionText.Text = currentLang["Multi_Line_Barcode_Verification_System"] as string;
+            UserLoginText.Text = currentLang["User_Login"] as string;
+            CheckBoxRememberme.Content = currentLang["Remember_Me"] as string;
+            ButtonLogin.Content = currentLang["LOGIN"] as string;
         }
 
         private void GetRememberLoginInfo()

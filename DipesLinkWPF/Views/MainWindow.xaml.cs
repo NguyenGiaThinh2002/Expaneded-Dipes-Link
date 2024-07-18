@@ -262,24 +262,20 @@ namespace DipesLink.Views
             var menuItem = sender as MenuItem;
             if (menuItem != null)
             {
-                switch (menuItem.Header)
+                switch (menuItem.Name)
                 {
-                    case "Quản lý tài khoản":
-                    case "Account Management":
+                    case "Account_Management":
                         UsersManagement um = new();
                         um.Show();
                         break;
-                    case "Về DP-Link":
-                    case "About DP-Link":
+                    case "About_DP_Link":
                         var aboutPopup = new AboutPopup();
                         aboutPopup.ShowDialog();
                         break;
-                    case "Quản lý hệ thống":
-                    case "System Management":
+                    case "System_Management":
                         var systemManagement = new SystemManagement(viewModel);
                         systemManagement.ShowDialog();
                         break;
-                    case "Đăng xuất":
                     case "Logout": //Restart
                         Logout(viewModel.JobList.Any(job => job.OperationStatus != SharedProgram.DataTypes.CommonDataType.OperationStatus.Stopped));
                         break;

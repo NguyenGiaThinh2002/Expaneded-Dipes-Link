@@ -8,10 +8,10 @@
     <system:String x:Key="StopStationNotification">Do you want to stop station {0} ?</system:String>
     <system:String x:Key="JobNotFoundNotification">Station {0}: Job not found</system:String>
     <system:String x:Key="SystemStarted">The system has started !</system:String>
-    <system:String x:Key="CannotAccessDatabase">Can not access database !</system:String>
-    <system:String x:Key="CannotAccessCheckedResult">Can not access checked result !</system:String>
-    <system:String x:Key="CannotAccessPrintedResponse">Can not access printed response !</system:String>
-    <system:String x:Key="DatabaseDoesNotExist">Database does not exist !</system:String>
+    <system:String x:Key="CannotAccessDatabase">Station {0}: Can not access database !</system:String>
+    <system:String x:Key="CannotAccessCheckedResult">Station {0}: Can not access checked result !</system:String>
+    <system:String x:Key="CannotAccessPrintedResponse">Station {0}: Can not access printed response !</system:String>
+    <system:String x:Key="DatabaseDoesNotExist">Station {0}: Database does not exist !</system:String>
     <system:String x:Key="NoJobSelected">No job selected !</system:String>
     <system:String x:Key="CheckedResultDoesNotExist">Station {0}: Checked result does not exist !</system:String>
     <system:String x:Key="PrinterNotConnected">Station {0}: Printer's not connected!</system:String>
@@ -19,7 +19,7 @@
     <system:String x:Key="CannotLoadTemplatePrinter">Station {0}: Can't load template printer!</system:String>
     <system:String x:Key="CameraNotConnected">Station {0}: Camera's not connected!</system:String>
     <system:String x:Key="ProcessCompleted">Station {0}: Process is completed!</system:String>
-    <system:String x:Key="MissingParams">Missing params !</system:String>
+    <system:String x:Key="MissingParams">Station {0}: Missing params !</system:String>
     <system:String x:Key="PrinterSuddenlyStopped">Station {0}: Printer suddenly stopped</system:String>
     <system:String x:Key="PrinterStartEndPageInvalid">Station {0}: Printer Start/End Page Invalid</system:String>
     <system:String x:Key="NoPrintHeadSelected">Station {0}: No Print Head Selected</system:String>
@@ -35,7 +35,7 @@
     <system:String x:Key="CantExport">Station {0}: Can't export</system:String>
     <system:String x:Key="PrinterDisconnected">Station {0}: Printer's Disconnected !</system:String>
     <system:String x:Key="CameraDisconnected">Station {0}: Camera's Disconnected !</system:String>
-    <system:String x:Key="FileNotFound">File not found !</system:String>
+    <system:String x:Key="FileNotFound">Station {0}: File not found !</system:String>
     <system:String x:Key="ExitConfirmation">Do you want to exit the application?</system:String>
     <system:String x:Key="StopAllStations">Please stop all running stations!</system:String>
     <system:String x:Key="LogoutConfirmation">Do you want to logout?</system:String>
@@ -67,6 +67,19 @@
     <system:String x:Key="RestartSuccessfully">Station {0}: Restart Successfully!</system:String>
     <system:String x:Key="StationNumber">Station {0}</system:String>
     <system:String x:Key="Page">Page</system:String>
+    <system:String x:Key="SystemRunning">Station {0}: system is running !</system:String>
+    <system:String x:Key="DatabaseUnknownError">Station {0}: Database unknown error!</system:String>
+    <system:String x:Key="PrintedStatusUnknownError">Station {0}: Printed status unknown error!</system:String>
+    <system:String x:Key="CheckedResultUnknownError">Station {0}: Checked result unknown error!</system:String>
+    <system:String x:Key="PrintedResponseDoesNotExist">Station {0}: Printed response do not exist!</system:String>
+    <system:String x:Key="DatabaseDuplicateFields">Station {0}: The database has duplicate fields!</system:String>
+    <system:String x:Key="JobNotFound">Station {0}: Job not found!</system:String>
+    <system:String x:Key="NotLoadDatabase">Station {0}: Not load Database!</system:String>
+    <system:String x:Key="NotLoadTemplate">Station {0}: Not load Template!</system:String>
+
+
+
+
     <!--  FRONTEND  -->
     <system:String x:Key="Language_Code">en-US</system:String>
     <system:String x:Key="Setting_Apply">Apply</system:String>
@@ -222,6 +235,7 @@
     <system:String x:Key="Operator">Operator</system:String>
     <system:String x:Key="SUBMIT">SUBMIT</system:String>
     <system:String x:Key="Confirm_Password">Confirm Password</system:String>
+    <system:String x:Key="Complete_By">Complete by</system:String>
 
 
 </ResourceDictionary>

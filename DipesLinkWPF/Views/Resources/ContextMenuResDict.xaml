@@ -1,10 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ContextMenu x:Key="MyContextMenu">
-        <MenuItem Header="{DynamicResource ResourceKey=Account_Management}" />
-        <MenuItem Header="{DynamicResource ResourceKey=System_Management}" />
-        <MenuItem Header="{DynamicResource ResourceKey=About_DP_Link}" />
-        <MenuItem Header="{DynamicResource ResourceKey=Logout}" />
+        <MenuItem x:Name="Account_Management" Header="{DynamicResource ResourceKey=Account_Management}" />
+        <MenuItem x:Name="System_Management" Header="{DynamicResource ResourceKey=System_Management}" />
+        <MenuItem x:Name="About_DP_Link" Header="{DynamicResource ResourceKey=About_DP_Link}" />
+        <MenuItem x:Name="Logout" Header="{DynamicResource ResourceKey=Logout}" />
     </ContextMenu>
 
     <Style TargetType="ContextMenu">

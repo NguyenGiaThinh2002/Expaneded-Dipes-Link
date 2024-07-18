@@ -8,18 +8,18 @@
     <system:String x:Key="StopStationNotification">Bạn có muốn dừng trạm {0} ?</system:String>
     <system:String x:Key="JobNotFoundNotification">Trạm {0}: Không tìm thấy công việc</system:String>
     <system:String x:Key="SystemStarted">Hệ thống đã khởi động !</system:String>
-    <system:String x:Key="CannotAccessDatabase">Không thể truy cập cơ sở dữ liệu !</system:String>
-    <system:String x:Key="CannotAccessCheckedResult">Không thể truy cập kết quả đã kiểm tra !</system:String>
-    <system:String x:Key="CannotAccessPrintedResponse">Không thể truy cập phản hồi đã in !</system:String>
-    <system:String x:Key="DatabaseDoesNotExist">Cơ sở dữ liệu không tồn tại !</system:String>
-    <system:String x:Key="NoJobSelected">Không có công việc nào được chọn !</system:String>
+    <system:String x:Key="CannotAccessDatabase">Trạm {0}: Không thể truy cập cơ sở dữ liệu !</system:String>
+    <system:String x:Key="CannotAccessCheckedResult">Trạm {0}: Không thể truy cập kết quả đã kiểm tra !</system:String>
+    <system:String x:Key="CannotAccessPrintedResponse">Trạm {0}: Không thể truy cập phản hồi đã in !</system:String>
+    <system:String x:Key="DatabaseDoesNotExist">Trạm {0}: Cơ sở dữ liệu không tồn tại !</system:String>
+    <system:String x:Key="NoJobSelected">Trạm {0}: Không có công việc nào được chọn !</system:String>
     <system:String x:Key="CheckedResultDoesNotExist">Trạm {0}: Kết quả đã kiểm tra không tồn tại !</system:String>
     <system:String x:Key="PrinterNotConnected">Trạm {0}: Máy in không kết nối!</system:String>
     <system:String x:Key="InputDatabaseDuplicate">Trạm {0}: Cơ sở dữ liệu đầu vào bị trùng lặp!</system:String>
     <system:String x:Key="CannotLoadTemplatePrinter">Trạm {0}: Không thể tải máy in mẫu!</system:String>
     <system:String x:Key="CameraNotConnected">Trạm {0}: Camera không kết nối!</system:String>
     <system:String x:Key="ProcessCompleted">Trạm {0}: Quy trình đã hoàn tất!</system:String>
-    <system:String x:Key="MissingParams">Thiếu tham số !</system:String>
+    <system:String x:Key="MissingParams">Trạm {0}: Thiếu tham số !</system:String>
     <system:String x:Key="PrinterSuddenlyStopped">Trạm {0}: Máy in đột ngột dừng lại</system:String>
     <system:String x:Key="PrinterStartEndPageInvalid">Trạm {0}: Trang bắt đầu/kết thúc của máy in không hợp lệ</system:String>
     <system:String x:Key="NoPrintHeadSelected">Trạm {0}: Không có đầu in được chọn</system:String>
@@ -35,7 +35,7 @@
     <system:String x:Key="CantExport">Trạm {0}: Không thể xuất dữ liệu</system:String>
     <system:String x:Key="PrinterDisconnected">Trạm {0}: Máy in đã ngắt kết nối !</system:String>
     <system:String x:Key="CameraDisconnected">Trạm {0}: Camera đã ngắt kết nối !</system:String>
-    <system:String x:Key="FileNotFound">Không tìm thấy tập tin !</system:String>
+    <system:String x:Key="FileNotFound">Trạm {0}: Không tìm thấy tập tin !</system:String>
     <system:String x:Key="ExitConfirmation">Bạn có muốn thoát khỏi ứng dụng không?</system:String>
     <system:String x:Key="StopAllStations">Vui lòng dừng tất cả các trạm đang chạy!</system:String>
     <system:String x:Key="LogoutConfirmation">Bạn có muốn đăng xuất không?</system:String>
@@ -66,6 +66,19 @@
     <system:String x:Key="RestartFailed">Trạm {0}: Khởi động lại thất bại!</system:String>
     <system:String x:Key="RestartSuccessfully">Trạm {0}: Khởi động lại thành công!</system:String>
     <system:String x:Key="Page">Trang</system:String>
+
+    <system:String x:Key="SystemRunning">Trạm {0}: hệ thống đang chạy !</system:String>
+    <system:String x:Key="DatabaseUnknownError">Trạm {0}: Lỗi không xác định của cơ sở dữ liệu!</system:String>
+    <system:String x:Key="PrintedStatusUnknownError">Trạm {0}: Lỗi không xác định của trạng thái in!</system:String>
+    <system:String x:Key="CheckedResultUnknownError">Trạm {0}: Lỗi không xác định của kết quả kiểm tra!</system:String>
+    <system:String x:Key="PrintedResponseDoesNotExist">Trạm {0}: Phản hồi đã in không tồn tại!</system:String>
+    <system:String x:Key="DatabaseDuplicateFields">Trạm {0}: Cơ sở dữ liệu có các trường trùng lặp!</system:String>
+    <system:String x:Key="JobNotFound">Trạm {0}: Không tìm thấy công việc!</system:String>
+    <system:String x:Key="NotLoadDatabase">Trạm {0}: Không tải được cơ sở dữ liệu!</system:String>
+    <system:String x:Key="NotLoadTemplate">Trạm {0}: Không tải được mẫu!</system:String>
+
+
+
     <!--  FRONTEND  -->
     <system:String x:Key="StationNumber">Trạm {0}</system:String>
     <system:String x:Key="Home">Trang chủ</system:String>
@@ -222,6 +235,7 @@
     <system:String x:Key="Operator">Người vận hành</system:String>
     <system:String x:Key="SUBMIT">GỬI</system:String>
     <system:String x:Key="Confirm_Password">Xác nhận mk</system:String>
+    <system:String x:Key="Complete_By">Hoàn thành bởi</system:String>
 
     <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
 </ResourceDictionary>

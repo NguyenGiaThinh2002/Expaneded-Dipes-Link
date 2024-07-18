@@ -18,6 +18,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/vi-VN.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/en-US.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ToolTipsResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>

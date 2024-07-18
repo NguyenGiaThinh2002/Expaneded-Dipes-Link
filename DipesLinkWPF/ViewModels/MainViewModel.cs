@@ -757,75 +757,75 @@ namespace DipesLink.ViewModels
                     case NotifyType.ExportResultFail:
                         break;
                     case NotifyType.StartSync:
-                        msg = $"Station {stationIndex + 1}: system is running !"; 
+                        msg = LanguageModel.GetLanguage("SystemRunning", stationIndex); 
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Warning);
                         break;
                     case NotifyType.DatabaseUnknownError:
-                        msg = $"Station {stationIndex + 1}: Database unknown error!";
+                        msg = LanguageModel.GetLanguage("DatabaseUnknownError", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.PrintedStatusUnknownError:
-                        msg = $"Station {stationIndex + 1}: Printed status unknown error!";
+                        msg = LanguageModel.GetLanguage("PrintedStatusUnknownError", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     case NotifyType.CheckedResultUnknownError:
-                        msg = $"Station {stationIndex + 1}: Checked result unknown error!";
+                        msg = LanguageModel.GetLanguage("CheckedResultUnknownError", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.CannotAccessDatabase:
-                        msg = $"Station {stationIndex + 1}: Can not access database!";
+                        msg = LanguageModel.GetLanguage("CannotAccessDatabase", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.CannotAccessCheckedResult:
-                        msg = $"Station {stationIndex + 1}: Can not access checked result!";
+                        msg = LanguageModel.GetLanguage("CannotAccessCheckedResult", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.CannotAccessPrintedResponse:
-                        msg = $"Station {stationIndex + 1}: Can not access printed response!";
+                        msg = LanguageModel.GetLanguage("CannotAccessPrintedResponse", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.DatabaseDoNotExist:
-                        msg = $"Station {stationIndex + 1}: Database do not exist!";
+                        msg = LanguageModel.GetLanguage("DatabaseDoesNotExist", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.CheckedResultDoNotExist:
-                        msg = $"Station {stationIndex + 1}: Checked result do not exist!";
+                        msg = LanguageModel.GetLanguage("CheckedResultDoesNotExist", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.PrintedResponseDoNotExist:
-                        msg = $"Station {stationIndex + 1}: Printed response do not exist!";
+                        msg = LanguageModel.GetLanguage("PrintedResponseDoesNotExist", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.DuplicateData:
-                        msg = $"Station {stationIndex + 1}: The database has duplicate fields!";
+                        msg = LanguageModel.GetLanguage("DatabaseDuplicateFields", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Warning);
                         break;
                     case NotifyType.NoJobsSelected:
-                        msg = $"Station {stationIndex + 1}: Job not found!";
+                        msg = LanguageModel.GetLanguage("JobNotFound", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.NotLoadDatabase:
-                        msg = $"Station {stationIndex + 1}: Not load Database!";
+                        msg = LanguageModel.GetLanguage("NotLoadDatabase", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Database, EventsLogType.Error);
                         break;
                     case NotifyType.NotLoadTemplate:
-                        msg = $"Station {stationIndex + 1}: Not load Template!";
+                        msg = LanguageModel.GetLanguage("NotLoadTemplate", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     case NotifyType.NotConnectCamera:
-                        msg = $"Station {stationIndex + 1}: Camera's not connected!";
+                        msg = LanguageModel.GetLanguage("CameraNotConnected", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Camera, EventsLogType.Error);
                         break;
                     case NotifyType.MissingParameter:
-                        msg = $"Station {stationIndex + 1}: Missing params!";
+                        msg = LanguageModel.GetLanguage("MissingParams", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.NotConnectPrinter:
-                        msg = $"Station {stationIndex + 1}: Printer's not connected!";
+                        msg = LanguageModel.GetLanguage("PrinterNotConnected", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     case NotifyType.ProcessCompleted:
-                        msg = $"Station {stationIndex + 1}: Process is completed!";
+                        msg = LanguageModel.GetLanguage("ProcessCompleted", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Info);
                         break;
                     case NotifyType.StopSystem: // Spare
@@ -833,51 +833,51 @@ namespace DipesLink.ViewModels
                       //  ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Info);
                         break;
                     case NotifyType.PrinterSuddenlyStop:
-                        msg = $"Station {stationIndex + 1}: Printer suddenly Stop";
+                        msg = LanguageModel.GetLanguage("PrinterSuddenlyStopped", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.StartEndPageInvalid:
-                        msg = $"Station {stationIndex + 1}: Printer Start/End Page Invalid";
+                        msg = LanguageModel.GetLanguage("PrinterStartEndPageInvalid", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.NoPrintheadSelected:
-                        msg = $"Station {stationIndex + 1}: No Print Head Selected";
+                        msg = LanguageModel.GetLanguage("NoPrintHeadSelected", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.PrinterSpeedLimit:
-                        msg = $"Station {stationIndex + 1}: Printer speed limit";
+                        msg = LanguageModel.GetLanguage("PrinterSpeedLimit", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.PrintheadDisconnected:
-                        msg = $"Station {stationIndex + 1}: Printhead Disconnected";
+                        msg = LanguageModel.GetLanguage("PrintHeadDisconnected", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.UnknownPrinthead:
-                        msg = $"Station {stationIndex + 1}: Printer Unknown Printhead";
+                        msg = LanguageModel.GetLanguage("PrinterUnknownPrintHead", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.NoCartridges:
-                        msg = $"Station {stationIndex + 1}: Printer No Cartridges";
+                        msg = LanguageModel.GetLanguage("PrinterNoCartridges", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Warning);
                         break;
                     case NotifyType.InvalidCartridges:
-                        msg = $"Station {stationIndex + 1}: Printer Invalid Cartridges";
+                        msg = LanguageModel.GetLanguage("PrinterInvalidCartridges", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     case NotifyType.OutOfInk:
-                        msg = $"Station {stationIndex + 1}: Printer Out Of Ink";
+                        msg = LanguageModel.GetLanguage("PrinterOutOfInk", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     case NotifyType.CartridgesLocked:
-                        msg = $"Station {stationIndex + 1}: Cartridges Locked";
+                        msg = LanguageModel.GetLanguage("CartridgesLocked", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     case NotifyType.InvalidVersion:
-                        msg = $"Station {stationIndex + 1}: Printer Invalid Version";
+                        msg = LanguageModel.GetLanguage("PrinterInvalidVersion", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     case NotifyType.IncorrectPrinthead:
-                        msg = $"Station {stationIndex + 1}: Printer Incorrect Printhead";
+                        msg = LanguageModel.GetLanguage("PrinterIncorrectPrintHead", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
                     default:break;

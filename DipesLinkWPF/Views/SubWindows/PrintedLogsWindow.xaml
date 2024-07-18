@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="1025"
     Height="600"
-    Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
+    Icon="pack://application:,,,/DipesLink;component/Images/Logs.png"
     ResizeMode="NoResize"
     Topmost="True"
     WindowStartupLocation="CenterScreen"
