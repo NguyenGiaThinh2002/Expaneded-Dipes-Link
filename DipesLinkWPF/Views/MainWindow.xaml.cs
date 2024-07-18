@@ -237,6 +237,8 @@ namespace DipesLink.Views
         {
             try
             {
+                var viewModel = CurrentViewModel<MainViewModel>();
+                var menuItem = sender as MenuItem;
                 switch (menuItem.Name)
                 {
                     case "Account_Management":
