@@ -223,7 +223,6 @@
     <system:String x:Key="System_Management">System Management</system:String>
     <system:String x:Key="About_DP_Link">About DP-Link</system:String>
     <system:String x:Key="Logout">Logout</system:String>
-
     <system:String x:Key="USERS_MANAGEMENT">USERS MANAGEMENT</system:String>
     <system:String x:Key="Create_New_User">Create New User</system:String>
     <system:String x:Key="Delete_User">Delete User</system:String>
@@ -236,6 +235,11 @@
     <system:String x:Key="SUBMIT">SUBMIT</system:String>
     <system:String x:Key="Confirm_Password">Confirm Password</system:String>
     <system:String x:Key="Complete_By">Complete by</system:String>
-
+    <system:String x:Key="System_Settings">System Settings</system:String>
+    <system:String x:Key="Select_Your_Language">Select Your Language</system:String>
+    <system:String x:Key="Station_Number">Station Number:</system:String>
+    <system:String x:Key="Language">Language:</system:String>
+    <system:String x:Key="DateTime_Format">DateTime Format:</system:String>
+    <system:String x:Key="Template_Name:">Template Name:</system:String>
 
 </ResourceDictionary>

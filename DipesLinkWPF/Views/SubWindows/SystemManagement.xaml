@@ -37,9 +37,8 @@
             VerticalAlignment="Center"
             FontSize="18"
             FontWeight="Bold"
-            Foreground="#808080">
-            System Settings
-        </TextBlock>
+            Foreground="#808080"
+            Text="{DynamicResource ResourceKey=System_Settings}" />
 
         <GroupBox
             Grid.Row="1"
@@ -47,9 +46,9 @@
             Margin="10"
             FontSize="16">
             <GroupBox.Header>
-                <TextBlock FontWeight="Bold" Text="Select Your Language" />
+                <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Select_Your_Language}" />
             </GroupBox.Header>
-            <StackPanel Orientation="Vertical" Margin="10">
+            <StackPanel Margin="10" Orientation="Vertical">
                 <!--  Station Number  -->
                 <StackPanel
                     Margin="0,10,10,0"
@@ -59,7 +58,7 @@
                         Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
-                        Text="Station Number: " />
+                        Text="{DynamicResource ResourceKey=Station_Number}" />
                     <ComboBox
                         x:Name="ComboBoxStationNumber"
                         Width="230"
@@ -81,7 +80,7 @@
                         Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
-                        Text="Language: " />
+                        Text="{DynamicResource ResourceKey=Language}" />
                     <ComboBox
                         x:Name="ComboBoxLanguages"
                         Width="230"
@@ -102,7 +101,7 @@
                         Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
-                        Text="DateTime Format: " />
+                        Text="{DynamicResource ResourceKey=DateTime_Format}" />
                     <ComboBox
                         x:Name="ComboBoxDateTimeFormat"
                         Width="230"
@@ -127,7 +126,7 @@
                         Width="130"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
-                        Text="Template Name: " />
+                        Text="{DynamicResource ResourceKey=Template_Name:}" />
                     <TextBox
                         x:Name="TextBoxTemplateName"
                         Width="230"

@@ -236,6 +236,12 @@
     <system:String x:Key="SUBMIT">GỬI</system:String>
     <system:String x:Key="Confirm_Password">Xác nhận mk</system:String>
     <system:String x:Key="Complete_By">Hoàn thành bởi</system:String>
+    <system:String x:Key="System_Settings">Cài đặt Hệ thống</system:String>
+    <system:String x:Key="Select_Your_Language">Chọn Ngôn ngữ</system:String>
+    <system:String x:Key="Station_Number">Số Trạm:</system:String>
+    <system:String x:Key="Language">Ngôn ngữ:</system:String>
+    <system:String x:Key="DateTime_Format">Đ.dạng Ngày Giờ:</system:String>
+    <system:String x:Key="Template_Name:">Tên Template</system:String>
 
     <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
 </ResourceDictionary>
