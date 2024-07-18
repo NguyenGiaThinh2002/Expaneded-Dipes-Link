@@ -5,13 +5,9 @@ using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.MainUc;
-using LiveChartsCore.VisualElements;
-using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using static DipesLink.Views.Enums.ViewEnums;
 using Application = System.Windows.Application;
 
@@ -37,7 +33,7 @@ namespace DipesLink.Views
             }
             var lg = new LanguageModel();
             lg.UpdateApplicationLanguage("");
-            
+
         }
 
         private void EventRegister()
@@ -50,7 +46,6 @@ namespace DipesLink.Views
             AllStationUc.DoneLoadUIEvent += AllStationUc_DoneLoadUIEvent;
             Shared.OnActionLoadingSplashScreen += Shared_OnActionLoadingSplashScreen;
             ListBoxMenu.SelectionChanged += ListBoxMenu_SelectionChanged;
-           // ViewModelSharedEvents.OnDataTableLoading += DataTableLoading;
         }
 
         private void MoveToJobDetail(object? sender, EventArgs e)
@@ -66,26 +61,10 @@ namespace DipesLink.Views
             catch (Exception)
             {
             }
-          
         }
-
-        //private void DataTableLoading(object sender, EventArgs e)
-        //{
-        //   // EnableMenuBox();
-        //}
-
-        //public void EnableMenuBox()
-        //{
-        //    var vm = CurrentViewModel<MainViewModel>();
-        //    if (vm is null) return;
-        //   // bool enable = vm.JobList[currentStation].EnableUI;
-        //  //  ListBoxMenu.IsEnabled = enable;
-        //}
-
 
         private void JobDetails_OnJobDetailChange(object? sender, int e)
         {
-            //  EnableMenuBox();
             try
             {
                 int index = e;
@@ -100,31 +79,33 @@ namespace DipesLink.Views
             }
             catch (Exception)
             {
-
-               
             }
-           
+
         }
 
         private bool CanApplicationClose()
         {
-            var viewModel = CurrentViewModel<MainViewModel>();
-            if (viewModel == null) return false;  // Ensure viewModel is not null
-
-            // Count the number of running stations
-            int runningPrintersCount = viewModel.PrinterStateList.Count(printerState => printerState.State != "Stopped" && printerState.State != "Dừng");
-
-            if (runningPrintersCount > 0)
+            try
             {
-                CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
-                return false;  // Prevent the window from closing
+                var viewModel = CurrentViewModel<MainViewModel>();
+                if (viewModel == null) return false;  // Ensure viewModel is not null
+                int runningPrintersCount = viewModel.PrinterStateList.Count(printerState => printerState.State != "Stopped" && printerState.State != "Dừng");
+                if (runningPrintersCount > 0)
+                {
+                    CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
+                    return false;  // Prevent the window from closing
+                }
+
+                // Confirm with the user before closing the application
+                var isExit = CusMsgBox.Show("Do you want to exit the application?", "Exit Application", Enums.ViewEnums.ButtonStyleMessageBox.YesNo, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                return isExit.Result;  // Return true if user confirms to exit, else false
+            }
+            catch (Exception)
+            {
+                return false;
             }
 
-            // Confirm with the user before closing the application
-            var isExit = CusMsgBox.Show("Do you want to exit the application?", "Exit Application", Enums.ViewEnums.ButtonStyleMessageBox.YesNo, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-            return isExit.Result;  // Return true if user confirms to exit, else false
         }
-
 
         private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -141,32 +122,39 @@ namespace DipesLink.Views
 
         private void ListBoxMenu_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            ViewModelSharedEvents.OnMainListBoxMenuChanged(ListBoxMenu.SelectedIndex);
-            ViewModelSharedEvents.OnListBoxMenuSelectionChangeHandler(ListBoxMenu.SelectedIndex);
-            if (ListBoxMenu.SelectedIndex != -1)
-                ComboBoxSelectView.SelectedIndex = 0;
-            if (sender is ListBox lb)
+            try
             {
-                var vm = CurrentViewModel<MainViewModel>();
-                switch (lb.SelectedIndex)
+                ViewModelSharedEvents.OnMainListBoxMenuChanged(ListBoxMenu.SelectedIndex);
+                ViewModelSharedEvents.OnListBoxMenuSelectionChangeHandler(ListBoxMenu.SelectedIndex);
+                if (ListBoxMenu.SelectedIndex != -1)
+                    ComboBoxSelectView.SelectedIndex = 0;
+                if (sender is ListBox lb)
                 {
-                    case -1:
-                        vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Overview);
-                        break;
-                    case 0:
-                        vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Home);
-                        break;
-                    case 1:
-                        vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Jobs); break;
-                    case 2:
-                        vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Setting);
-                        break;
-                    case 3:
-                        vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Logs);
-                        break;
+                    var vm = CurrentViewModel<MainViewModel>();
+                    switch (lb.SelectedIndex)
+                    {
+                        case -1:
+                            vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Overview);
+                            break;
+                        case 0:
+                            vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Home);
+                            break;
+                        case 1:
+                            vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Jobs); break;
+                        case 2:
+                            vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Setting);
+                            break;
+                        case 3:
+                            vm?.ChangeTitleMainWindow(Enums.ViewEnums.TitleAppContext.Logs);
+                            break;
+                    }
                 }
+
             }
-          
+            catch (Exception)
+            {
+            }
+
 
 
         }
@@ -219,17 +207,7 @@ namespace DipesLink.Views
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             double actualWidth = ActualWidth;
-            //MainViewModel viewModel = (MainViewModel)DataContext;
-            //viewModel.ActualWidthMainWindow = actualWidth;
-            //CallbackCommand(vm => vm.MinusWidth());
             MainWindowSizeChangeCustomEvent?.Invoke(ActualWidth, EventArgs.Empty);
-        }
-
-       
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void DeviceStatListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -258,32 +236,39 @@ namespace DipesLink.Views
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = CurrentViewModel<MainViewModel>();
-            var menuItem = sender as MenuItem;
-            if (menuItem != null)
+            try
             {
-                switch (menuItem.Header)
+                var viewModel = CurrentViewModel<MainViewModel>();
+                var menuItem = sender as MenuItem;
+                if (menuItem != null)
                 {
-                    case "Account Management":
-                        UsersManagement um = new();
-                        um.Show();
-                        break;
-                    case "About DP-Link":
-                        var aboutPopup = new AboutPopup();
-                        aboutPopup.ShowDialog();
-                        break;
-                    case "System Management":
-                        var systemManagement = new SystemManagement(viewModel);
-                        systemManagement.ShowDialog();
-                        break;
-                    case "Logout": //Restart
-                        Logout(viewModel.JobList.Any(job => job.OperationStatus != SharedProgram.DataTypes.CommonDataType.OperationStatus.Stopped));
-                        break;
-                    default:
-                        break;
+                    switch (menuItem.Header)
+                    {
+                        case "Account Management":
+                            UsersManagement um = new();
+                            um.Show();
+                            break;
+                        case "About DP-Link":
+                            var aboutPopup = new AboutPopup();
+                            aboutPopup.ShowDialog();
+                            break;
+                        case "System Management":
+                            var systemManagement = new SystemManagement(viewModel);
+                            systemManagement.ShowDialog();
+                            break;
+                        case "Logout": //Restart
+                            Logout(viewModel.JobList.Any(job => job.OperationStatus != SharedProgram.DataTypes.CommonDataType.OperationStatus.Stopped));
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
+            catch (Exception)
+            {
+            }
         }
+
         private void Logout(bool isNotRunning)
         {
             if (!isNotRunning)
@@ -303,81 +288,84 @@ namespace DipesLink.Views
 
         private void BorderUser_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Find the button that was clicked
-            var userUI = sender as Border;
-            if (userUI != null)
+            try
             {
-                // Find the ContextMenu resource
-                ContextMenu contextMenu = this.FindResource("MyContextMenu") as ContextMenu;
-                if (contextMenu != null)
+
+                // Find the button that was clicked
+                var userUI = sender as Border;
+                if (userUI != null)
                 {
-                    foreach (var item in contextMenu.Items)
+                    // Find the ContextMenu resource
+                    ContextMenu contextMenu = this.FindResource("MyContextMenu") as ContextMenu;
+                    if (contextMenu != null)
                     {
-                        if (item is MenuItem menuItem)
+                        foreach (var item in contextMenu.Items)
                         {
-                            menuItem.Click -= MenuItem_Click;
-                            menuItem.Click += MenuItem_Click;
+                            if (item is MenuItem menuItem)
+                            {
+                                menuItem.Click -= MenuItem_Click;
+                                menuItem.Click += MenuItem_Click;
+                            }
+                        }
+
+
+                        // Set the placement target and open the context menu
+                        contextMenu.PlacementTarget = userUI;
+                        contextMenu.IsOpen = true;
+
+                        TextBlock adminTextBlock = contextMenu.Template.FindName("UsernameTextBlock", contextMenu) as TextBlock;
+                        if (adminTextBlock != null)
+                        {
+                            adminTextBlock.Text = (string)Application.Current.Properties["Username"]; // Thay đổi nội dung
                         }
                     }
-
-
-                    // Set the placement target and open the context menu
-                    contextMenu.PlacementTarget = userUI;
-                    contextMenu.IsOpen = true;
-
-                    TextBlock adminTextBlock = contextMenu.Template.FindName("UsernameTextBlock", contextMenu) as TextBlock;
-                    if (adminTextBlock != null)
-                    {
-                        adminTextBlock.Text = (string)Application.Current.Properties["Username"]; // Thay đổi nội dung
-                    }
                 }
+
+            }
+            catch (Exception)
+            {
+
             }
         }
+
         private void ChangeView()
         {
-
-            ListBoxMenu.SelectedIndex = ListBoxMenu.SelectedIndex != -1 ? -1 : 0;
-            if (ListBoxMenu.SelectedIndex != -1)
+            try
             {
-                StackPanelIPDisplay.Visibility = Visibility.Visible;
-                ToggleButtonChangeView.IsChecked = false; // This will trigger the setter for True
 
+
+                ListBoxMenu.SelectedIndex = ListBoxMenu.SelectedIndex != -1 ? -1 : 0;
+                if (ListBoxMenu.SelectedIndex != -1)
+                {
+                    StackPanelIPDisplay.Visibility = Visibility.Visible;
+                    ToggleButtonChangeView.IsChecked = false; // This will trigger the setter for True
+
+                }
+                else
+                {
+                    // or
+                    StackPanelIPDisplay.Visibility = Visibility.Hidden;
+                    ToggleButtonChangeView.IsChecked = true; // This will trigger the setter for False
+
+                }
             }
-            else
+            catch (Exception)
             {
-                // or
-                StackPanelIPDisplay.Visibility = Visibility.Hidden;
-                ToggleButtonChangeView.IsChecked = true; // This will trigger the setter for False
 
             }
         }
+
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
-
             ChangeView();
         }
 
-
-     
         private void ListBoxItem_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ToggleButtonChangeView.IsChecked = false;
             StackPanelIPDisplay.Visibility = Visibility.Visible;
             JobDetails_OnJobDetailChange(sender, currentStation);
-          //  ViewModelSharedEvents.OnMainListBoxMenuChanged(ListBoxMenu.SelectedIndex);
         }
-
-        //private void ListBoxItem_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        //{
-
-        //}
-
-        //private void ListBoxItem_PreviewMouseDown_1(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        //{
-        //    //AboutPopup popup = new AboutPopup();
-        //    var aboutPopup = new AboutPopup();
-        //    aboutPopup.ShowDialog();
-        //}
 
         private void Eng_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -391,6 +379,5 @@ namespace DipesLink.Views
             lg.UpdateApplicationLanguage("vi-VN");
         }
 
-       
     }
 }
