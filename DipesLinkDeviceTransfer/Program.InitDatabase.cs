@@ -136,6 +136,7 @@ namespace DipesLinkDeviceTransfer
             List<(int index, string[] data)> result = new(); // List to store index and data
             if (csvPath == null || !File.Exists(csvPath))
             {
+                Console.WriteLine("kiem tra lan 1");
                 _InitDataErrorList.Add(NotifyType.DatabaseDoNotExist);
                 return result.Select(t => t.data).ToList();
             }

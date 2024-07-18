@@ -54,7 +54,9 @@ namespace DipesLink.Views.UserControls.MainUc
             var selectedIndex = (int)sender;
             if (selectedIndex == 0 || selectedIndex == 1)
             {
+                
                 EventRegister();
+                UpdateCheckedNumber();
             }
         }
 
@@ -73,6 +75,8 @@ namespace DipesLink.Views.UserControls.MainUc
                 DataGridResult.Columns.Clear();
                 _checkedObserHelper.Dispose();
                 _printObserHelper?.Dispose();
+
+                UpdateCheckedNumber();  
                 if (sender is not null && (string)sender == "ButtonAddJob")
                 {
                     ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);

@@ -168,6 +168,10 @@ namespace DipesLink.ViewModels
             if (!CheckJobExisting(index, out JobModel? jobModel))
             {
                 jobModel = new();
+                JobList[index].TotalChecked = "0";
+                JobList[index].TotalPassed = "0";
+                JobList[index].TotalFailed = "0";
+                JobList[index].CircleChart.Value = 0;
             }
             if (jobModel == null) return;
 
@@ -184,6 +188,7 @@ namespace DipesLink.ViewModels
             JobList[index].CameraSeries = jobModel.CameraSeries;
             JobList[index].ImageExportPath = jobModel.ImageExportPath;
             JobList[index].PODFormat = jobModel.PODFormat;
+            
 
 
             // Events for Button Start/Stop/Trigger

@@ -16,17 +16,14 @@ namespace SharedProgram.Models
 
         public string Language { get; set; } = "en-US"; 
 
-        public string DateTimeFormat { get; set; } = string.Empty;
+        public string DateTimeFormat { get; set; } = "yyyyMMdd_HHmmss";
 
         public int DateTimeFormatSelectedIndex { get; set; }
 
-        
+        public string TemplateName { get; set; } = "JobFile";
 
-        public string TemplateName { get; set; } = string.Empty;
-        //public List<ConnectParamsModel> SystemParamsList { get; set; } = new();
 
         private List<ConnectParamsModel> _SystemParamsList = new();
-
         public List<ConnectParamsModel> SystemParamsList
         {
             get { return _SystemParamsList; }
@@ -40,15 +37,7 @@ namespace SharedProgram.Models
             }
         }
 
-       // public List<SettingStationsModel> StationList { get; set; } = new();
-
-        //public SettingStationsModel CurrentStation { get; set; } = new SettingStationsModel();
-
-        /// <summary>
-        /// Load SettingsModel Instance from file name
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
+    
         public static SettingsModel? LoadSetting(string fileName)
         {
             SettingsModel? info = null;

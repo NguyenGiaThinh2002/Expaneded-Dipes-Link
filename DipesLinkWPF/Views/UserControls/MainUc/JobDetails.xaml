@@ -765,7 +765,7 @@
                             BorderThickness="1,1,0,0"
                             CornerRadius="5"
                             Cursor="Hand"
-                            IsEnabled="{Binding StatusStartButton}"
+                            
                             PreviewMouseDown="PrintedData_PreviewMouseDown">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">

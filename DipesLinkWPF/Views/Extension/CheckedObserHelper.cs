@@ -46,7 +46,7 @@ namespace DipesLink.Views.Extension
 
         private readonly ConcurrentQueue<CheckedResultModel> _batchUpdateQueue = new();
 
-        private bool disposedValue = false;
+      
 
         public CheckedObserHelper()
         {
@@ -192,12 +192,16 @@ namespace DipesLink.Views.Extension
             }
         }
 
+        private bool disposedValue = false;
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
+                    TotalChecked = 0;
+                    TotalPassed = 0;
+                    TotalFailed = 0;
                     CheckedList.Clear();
                     Application.Current.Dispatcher.Invoke(() =>
                     {

@@ -442,8 +442,8 @@
                                                 Margin="10"
                                                 FontWeight="Normal"
                                                 ItemsSource="{Binding JobFileList}"
-                                               
-                                              PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
+                                                MouseDoubleClick="ListViewJobTemplate_MouseDoubleClick"
+                                                PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
                                                 SelectedItem="{Binding SelectedJob}"
                                                 SelectionChanged="ListViewJobTemplate_SelectionChanged"
                                                 Style="{StaticResource ModernListViewStyle}" />
@@ -826,7 +826,7 @@
                                                 Checked="RadioButton_Checked"
                                                 Content="Standalone"
                                                 GroupName="PrinterSeriesGr"
-                                                IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=1}"
+                                               IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=1}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
                                         </StackPanel>
                                     </GroupBox>

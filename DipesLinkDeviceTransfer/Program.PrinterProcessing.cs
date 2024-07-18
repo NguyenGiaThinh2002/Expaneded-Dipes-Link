@@ -142,6 +142,7 @@ namespace DipesLinkDeviceTransfer
                 Console.WriteLine("Database doesn't exist !");
 #endif
                 NotificationProcess(NotifyType.DatabaseDoNotExist);
+                Console.WriteLine("kiem tra lan 2");
                 return;
             }
 

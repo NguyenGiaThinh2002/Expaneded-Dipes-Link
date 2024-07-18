@@ -12,34 +12,32 @@ namespace DipesLink.Views.Converter
 {
     public class PrinterSeriesToBool : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) // value => state
         {
             var val = (PrinterSeries)value;
             var par = int.Parse((string)parameter);
-            if (par == 0)
+            if (par == 0) // rad 1
             {
-                // || val == PrinterSeries.None
-                if (val == PrinterSeries.RynanSeries) { return true; }
+                if (val == PrinterSeries.RynanSeries) { return true; } // in rad 1, value == rnp => true (view)
                 else return false;
             }
-            else if (par == 1)
+            else if (par == 1) // rad 2
             {
-                // || val == PrinterSeries.None
-                if (val == PrinterSeries.RynanSeries) { return false; }
+                if (val == PrinterSeries.RynanSeries) { return false; }  // int rad 2 ,  value != rnp => true (view)
                 else return true;
             }
             else { return false; }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) // state => value
         {
             var val = (bool)value;
             var par = int.Parse((string)parameter);
-            if (par == 0)
+            if (par == 0) // rad 1
             {
-                return val == true ? PrinterSeries.RynanSeries : PrinterSeries.Standalone;
+                return val == true ? PrinterSeries.RynanSeries : PrinterSeries.Standalone; // value
             }
-            else
+            else //rad 2
             {
                 return val == true ? PrinterSeries.Standalone : PrinterSeries.RynanSeries;
             }
