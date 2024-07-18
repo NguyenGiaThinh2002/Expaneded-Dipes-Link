@@ -757,6 +757,7 @@ namespace DipesLink.ViewModels
                     case NotifyType.ExportResultFail:
                         break;
                     case NotifyType.StartSync:
+                        // thinh - Add more language, commit again
                         msg = LanguageModel.GetLanguage("SystemRunning", stationIndex); 
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Warning);
                         break;
