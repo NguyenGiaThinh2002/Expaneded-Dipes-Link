@@ -288,7 +288,7 @@
                         Width="100"
                         Height="30"
                         SelectedIndex="{Binding StationSelectedIndex}"
-                        SelectionChanged="ComboBoxStationNum_SelectionChanged"
+                       
                         Style="{StaticResource ComboBoxStyle1}">
                         <ComboBoxItem>1</ComboBoxItem>
                         <ComboBoxItem>2</ComboBoxItem>

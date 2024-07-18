@@ -298,48 +298,48 @@ namespace DipesLink.Models
             }
         }
 
-        private string _totalChecked = "0";
-        public string TotalChecked
-        {
-            get { return _totalChecked; }
-            set
-            {
-                if (_totalChecked != value)
-                {
-                    _totalChecked = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        //private string _totalChecked = "0";
+        //public string TotalChecked
+        //{
+        //    get { return _totalChecked; }
+        //    set
+        //    {
+        //        if (_totalChecked != value)
+        //        {
+        //            _totalChecked = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
 
 
-        private string _totalPassed = "0";
-        public string TotalPassed
-        {
-            get { if (!int.TryParse(_totalPassed, out _)) return "0"; return _totalPassed; }
-            set
-            {
-                if (_totalPassed != value)
-                {
-                    _totalPassed = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        //private string _totalPassed = "0";
+        //public string TotalPassed
+        //{
+        //    get { if (!int.TryParse(_totalPassed, out _)) return "0"; return _totalPassed; }
+        //    set
+        //    {
+        //        if (_totalPassed != value)
+        //        {
+        //            _totalPassed = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
 
-        private string _totalFailed = "0";
-        public string TotalFailed
-        {
-            get { if (!int.TryParse(_totalFailed, out _)) return "0"; return _totalFailed; }
-            set
-            {
-                if (_totalFailed != value)
-                {
-                    _totalFailed = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        //private string _totalFailed = "0";
+        //public string TotalFailed
+        //{
+        //    get { if (!int.TryParse(_totalFailed, out _)) return "0"; return _totalFailed; }
+        //    set
+        //    {
+        //        if (_totalFailed != value)
+        //        {
+        //            _totalFailed = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
 
 
         private DataTable _MiniDataTable = new();
@@ -614,9 +614,9 @@ namespace DipesLink.Models
         }
 
         public event EventHandler? OnPercentageChange;
-        public void RaisePercentageChange(object index)
+        public void RaisePercentageChange(object currentJob)
         {
-            OnPercentageChange?.Invoke(index, EventArgs.Empty);
+            OnPercentageChange?.Invoke(currentJob, EventArgs.Empty);
         }
 
         public event EventHandler? OnReprint;

@@ -13,15 +13,33 @@ namespace DipesLink.Views.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isChecked = (bool)value;
-            string radioValue = parameter as string;
-            return isChecked.ToString().Equals(radioValue);
+            int radioParams = int.Parse(parameter.ToString());
+            if(radioParams == 0) // Rad 1
+            {
+                if(isChecked) return true;
+                return false;
+            }
+            else // Rad 2
+            {
+                if (isChecked) return false;
+                return true;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ((bool)value)
-                return parameter.ToString().Equals("True");
-            return false;
+            bool isChecked = (bool)value;
+            int radioParams = int.Parse(parameter.ToString());
+            if (radioParams == 0) // Rad 1
+            {
+                if (isChecked) return true;
+                return false;
+            }
+            else // Rad 2
+            {
+                if (isChecked) return false;
+                return true;
+            }
         }
     }
 }

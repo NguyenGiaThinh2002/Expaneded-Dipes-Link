@@ -655,22 +655,24 @@
                                                             x:Name="RadBasic"
                                                             Width="100"
                                                             HorizontalAlignment="Center"
-                                                            Checked="ModeSendCheckedChange"
+                                                      
                                                             Content="{DynamicResource ResourceKey=Basic}"
                                                             FontSize="16"
-                                                            GroupName="PrinterSeriesGr"
-                                                            IsChecked="{Binding Path=VerifyAndPrintBasicSentMethod_UI, Converter={StaticResource BoolToRadioButtonConverter}, Mode=TwoWay, ConverterParameter=True}"
+                                                            Click="RadBasic_Click"
+
                                                             Style="{StaticResource RadioButtonStyle1}" />
 
                                                         <RadioButton
                                                             x:Name="RadCompare"
                                                             Width="150"
                                                             Margin="10,0,0,0"
-                                                            Checked="ModeSendCheckedChange"
+                                                   
+                                                            
                                                             Content="{DynamicResource ResourceKey=Compare}"
                                                             FontSize="16"
-                                                            GroupName="PrinterSeriesGr"
-                                                            IsChecked="{Binding Path=VerifyAndPrintBasicSentMethod_UI, Converter={StaticResource BoolToRadioButtonConverter}, Mode=TwoWay, ConverterParameter=False}"
+                                                            Click="RadCompare_Click"
+                                                  
+                                                           
                                                             Style="{StaticResource RadioButtonStyle1}" />
                                                         <!--  IsChecked="{Binding VerifyAndPrintBasicSentMethod, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"  -->
                                                     </StackPanel>

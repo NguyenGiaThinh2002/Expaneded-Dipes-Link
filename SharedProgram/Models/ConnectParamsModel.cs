@@ -120,7 +120,7 @@ namespace SharedProgram.Models
             }
         }
 
-        private string _FailedDataSentToPrinter;
+        private string _FailedDataSentToPrinter = "Failure";
         
 
         public string FailedDataSentToPrinter

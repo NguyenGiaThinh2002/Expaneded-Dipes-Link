@@ -3,6 +3,7 @@ using DipesLink.Models;
 using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -26,53 +27,57 @@ namespace DipesLink.Views.UserControls.MainUc
         private readonly ConcurrentQueue<string[]> _queuePrintedCode = new();
         private readonly CancellationTokenSource _ctsGetPrintedCode = new();
         private readonly TimeBaseExecution _timeBasedExecution = new(TimeSpan.FromMilliseconds(500));
+        private List<string[]> _dataList = new();
 
         public JobDetails()
         {
             InitializeComponent();
-            Loaded += StationDetailUc_Loaded;
-
-            ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
-            ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
+            EventRegisterFirstTime();
             InitValues();
             Task.Run(TaskAddDataAsync);
             Task.Run(TaskChangePrintStatusAsync);
         }
-
+        void EventRegisterFirstTime()
+        {
+            Loaded += StationDetailUc_Loaded;
+            ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
+            ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
+        }
         private void DebugModeAction()
         {
 #if DEBUG
- ButtonSimulate.Visibility = Visibility.Visible;
+            ButtonSimulate.Visibility = Visibility.Visible;
 #else // Release mode
             ButtonSimulate.Visibility = Visibility.Collapsed;
 #endif
         }
 
-        private void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
+        private async void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
         {
             if (sender == null) return;
             var selectedIndex = (int)sender;
             if (selectedIndex == 0 || selectedIndex == 1)
             {
-                EventRegister();
+                await Task.Delay(100);
+                await ActionChange();
             }
         }
 
         private void OnChangeJobHandler(object? sender, int jobIndex)
         {
+
             if (_currentJob is not null && _currentJob.Index == jobIndex)
             {
-                //Debug.WriteLine($"Clear data of Job: {jobIndex}");
-                ChangeLayoutDataGrid();
+                _currentJob = null;
                 InitValues();
-
                 DataGridDB.ItemsSource = null;
                 DataGridDB.Columns.Clear();
-
                 DataGridResult.ItemsSource = null;
                 DataGridResult.Columns.Clear();
                 _checkedObserHelper.Dispose();
                 _printObserHelper?.Dispose();
+                _checkedObserHelper = new();
+
                 if (sender is not null && (string)sender == "ButtonAddJob")
                 {
                     ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
@@ -104,16 +109,26 @@ namespace DipesLink.Views.UserControls.MainUc
 
         public async void StationDetailUc_Loaded(object sender, RoutedEventArgs e)
         {
-            DebugModeAction();
-            EventRegister();
+            await ActionChange();
+        }
+
+        async Task ActionChange()
+        {
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+             {
+                 DebugModeAction();
+                 EventRegisterForJobEveryLoadUI();
+             });
+
             if (_currentJob == null) return;
-            ChangeLayoutDataGrid();
+
             ViewModelSharedEvents.OnJobDetailChanged(_currentJob.Index);
             if (!_currentJob.IsDBExist)
             {
                 //  Debug.WriteLine("Event load database was called: " + _currentJob.Index);
                 await PerformLoadDbAfterDelay();
             }
+
         }
 
         private async Task PerformLoadDbAfterDelay()
@@ -123,13 +138,13 @@ namespace DipesLink.Views.UserControls.MainUc
 
         }
 
-        public void EventRegister()
+        public void EventRegisterForJobEveryLoadUI()
         {
             try
             {
-
                 if (_currentJob == null)
                 {
+                    //  Thread.Sleep(1000); 
                     _currentJob = CurrentViewModel<JobOverview>();
                     if (_currentJob == null) return;
                     _currentJob.OnLoadCompleteDatabase -= Shared_OnLoadCompleteDatabase;
@@ -149,7 +164,11 @@ namespace DipesLink.Views.UserControls.MainUc
                             ViewModelSharedEvents.OnEnableUIChangeHandler(_currentJob.Index, true);
                         }
                     }
+
                 }
+                ChangeLayoutDataGrid();
+
+
             }
             catch (Exception) { }
         }
@@ -165,8 +184,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 return null;
             }
         }
-
-        private List<string[]> _dataList = new();
+    
         private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e)
         {
             try
@@ -207,7 +225,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     CheckedObserHelper.CreateDataTemplate(DataGridResult);
                     _checkedObserHelper.TakeFirtloadCollection();
                     DataGridResult.ItemsSource = _checkedObserHelper.DisplayList;
-                    UpdateCheckedNumber();
+                    // UpdateCheckedNumber();
                     FirtLoadForChartPercent();
                 }));
             }
@@ -332,7 +350,7 @@ namespace DipesLink.Views.UserControls.MainUc
             _currentJob.TotalChecked = _checkedObserHelper.TotalChecked.ToString();
             _currentJob.TotalPassed = _checkedObserHelper.TotalPassed.ToString();
             _currentJob.TotalFailed = _checkedObserHelper.TotalFailed.ToString();
-            _currentJob.RaisePercentageChange(_currentJob.Index);
+            _currentJob.RaisePercentageChange(_currentJob);
         }
 
         private void UpdateCheckedNumber()
@@ -342,6 +360,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
                 TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
                 TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
+                FirtLoadForChartPercent();
             });
         }
 

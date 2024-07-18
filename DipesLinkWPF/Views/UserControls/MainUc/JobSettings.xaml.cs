@@ -6,6 +6,7 @@ using DipesLink.Views.UserControls.CustomControl;
 using SharedProgram.Models;
 using SharedProgram.Shared;
 using System.Diagnostics;
+using System.Net.WebSockets;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -24,17 +25,20 @@ namespace DipesLink.Views.UserControls.MainUc
         public JobSettings()
         {
             InitializeComponent();
+           
             EventRegister();
         }
 
-      private void EventRegister()
+     
+
+        private void EventRegister()
         {
             Loaded += SettingsUc_Loaded;
             TextBoxPrinterIP.TextChanged += TextBox_ParamsChanged;
             TextBoxCamIP.TextChanged += TextBox_ParamsChanged;
             TextBoxControllerIP.TextChanged += TextBox_ParamsChanged;
             ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange;
-          
+
             //ViewModelSharedEvents.MainListBoxMenuChange += ListBoxMenu_SelectionChanged;
         }
         private void LockUIPreventChangeJobWhenRun()
@@ -55,15 +59,12 @@ namespace DipesLink.Views.UserControls.MainUc
                 IsInitializing = false;
                 var vm = CurrentViewModel<MainViewModel>();
                 if (vm is null) return;
-
                 vm.SaveConnectionSetting();
-                //ComboBoxStationNum.SelectedIndex = vm.StationSelectedIndex;
-                RadBasic.IsChecked = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
                 InputArea.IsEnabled = vm.ConnectParamsList[CurrentIndex()].EnController;
+                UpdateSendModeVerifyAndPrint(vm);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -78,13 +79,21 @@ namespace DipesLink.Views.UserControls.MainUc
                 return null;
             }
         }
-       
+
 
         private void ListBoxMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var vm = CurrentViewModel<MainViewModel>();
             vm?.SelectionChangeSystemSettings(CurrentIndex());
             vm?.LockUI(CurrentIndex());// Lock UI when running
+            UpdateSendModeVerifyAndPrint(vm);
+        }
+
+        void UpdateSendModeVerifyAndPrint(MainViewModel vm)
+        {
+            var isBasicSendMode = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
+            RadBasic.IsChecked = isBasicSendMode == true;
+            RadCompare.IsChecked = isBasicSendMode == false;
         }
 
         private int CurrentIndex() => ListBoxMenuStationSetting.SelectedIndex;
@@ -92,9 +101,9 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void TextBox_ParamsChanged(object sender, TextChangedEventArgs e)
         {
-           
+
             if (IsInitializing) return;
-            if(sender is IpAddressControl textBoxIp)
+            if (sender is IpAddressControl textBoxIp)
             {
                 TextBoxIpParamsHandler(textBoxIp);
             }
@@ -144,7 +153,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     case "NumEncoderDia":
                         vm.ConnectParamsList[CurrentIndex()].EncoderDiameter = double.Parse(textBox.Text);
                         break;
-                    
+
                     default:
                         break;
                 }
@@ -204,7 +213,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ButtonWebView_Click(object sender, RoutedEventArgs e)
         {
-              try
+            try
             {
                 int index = ListBoxMenuStationSetting.SelectedIndex;
                 var domain = CurrentViewModel<MainViewModel>()?.ConnectParamsList[index].PrinterIP;
@@ -229,7 +238,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     var vm = CurrentViewModel<MainViewModel>();
                     if (vm == null) return;
-                  
+
                     switch (integerUpDown.Name)
                     {
                         case "NumDelaySensor":
@@ -267,7 +276,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     var vm = CurrentViewModel<MainViewModel>();
                     if (vm == null) return;
-        
+
                     switch (doubleUpDown.Name)
                     {
                         case "NumEncoderDia":
@@ -316,31 +325,8 @@ namespace DipesLink.Views.UserControls.MainUc
             CurrentViewModel<MainViewModel>()?.ConnectParamsList[CurrentIndex()].ResponseMessList.Clear();
         }
 
-        private void ModeSendCheckedChange(object sender, RoutedEventArgs e)
-        {
-            if (IsInitializing) return;
-            var rad = sender as RadioButton;
-            try
-            {
-                rad?.Dispatcher.Invoke(new Action(() =>
-                {
-                    var vm = CurrentViewModel<MainViewModel>();
-                    if (vm == null) return;
-                   
-                    if (rad.Name == "RadBasic" && rad.IsChecked == true)
-                    {
-                       vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod = true;
-                    }
-                    else
-                    {
-                        vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod = false;
-                    }
-                    vm.AutoSaveConnectionSetting(CurrentIndex());
-                }), DispatcherPriority.Background);
-            }
-            catch (Exception){}
-        }
-        
+  
+
 
         private void SelectPrintField(object sender, RoutedEventArgs e) // Select fields for verify and print send
         {
@@ -353,7 +339,7 @@ namespace DipesLink.Views.UserControls.MainUc
             };
 
             var res = verifyAndPrintPODFormat.ShowDialog(); // Show diaglog select POD
-            if(res == true)
+            if (res == true)
             {
                 List<PODModel> _PODFormat = verifyAndPrintPODFormat._PODFormat;
                 vm.ConnectParamsList[CurrentIndex()].PrintFieldForVerifyAndPrint = _PODFormat;
@@ -365,8 +351,8 @@ namespace DipesLink.Views.UserControls.MainUc
         private void DefaultClick(object sender, RoutedEventArgs e)
         {
             var vm = CurrentViewModel<MainViewModel>();
-            if(vm is null) return;
-            vm.ConnectParamsList[CurrentIndex()].FailedDataSentToPrinter = "Failure";    
+            if (vm is null) return;
+            vm.ConnectParamsList[CurrentIndex()].FailedDataSentToPrinter = "Failure";
 
         }
 
@@ -415,5 +401,42 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
+        private void RadBasic_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void RadBasic_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeVNPCompareMode();
+        }
+
+        private void RadCompare_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeVNPCompareMode();
+        }
+        private void ChangeVNPCompareMode()
+        {
+           
+            try
+            {
+              
+                var vm = CurrentViewModel<MainViewModel>();
+                if (vm == null) return;
+
+                if (RadBasic.IsChecked == true)
+                {
+                    vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod = true;
+                }
+                if (RadCompare.IsChecked == true)
+                {
+                    vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod = false;
+                }
+
+                vm.AutoSaveConnectionSetting(CurrentIndex());
+               
+            }
+            catch (Exception) { }
+        }
     }
 }

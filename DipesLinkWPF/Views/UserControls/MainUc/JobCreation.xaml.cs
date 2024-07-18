@@ -12,6 +12,12 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             InitializeComponent();
             ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange;
+            Loaded += JobCreation_Loaded;
+        }
+
+        private void JobCreation_Loaded(object sender, RoutedEventArgs e)
+        {
+            RadioButtonRynanSeries.IsChecked = true;
         }
 
         private T? CurrentViewModel<T>() where T : class
@@ -164,16 +170,10 @@ namespace DipesLink.Views.UserControls.MainUc
                 var vm = CurrentViewModel<MainViewModel>();
                 if (vm is null) return;
                 vm.JobList[CurrentIndex()].IsDBExist = false;    // Reset flag for load db
-
-                //JobDetails.isAddbutton = true;  
                 vm.AddSelectedJob(CurrentIndex());
-                vm.LoadJobList(CurrentIndex()); // Update Job on UI
-                                                //  CallbackCommand(vm => vm.RestartDeviceTransfer(jobIndex)); // Update Job on UI
-                vm.UpdateJobInfo(CurrentIndex());
-
-                ViewModelSharedEvents.OnChangeJobHandler(ButtonAddJob.Name, CurrentIndex()); // trigger change job detection event
-
-                //Task.Run(async () => { await PerformLoadDbAfterDelay(vm); });
+                vm.LoadJobList(CurrentIndex());                             
+              //  vm.UpdateJobInfo(CurrentIndex());
+                ViewModelSharedEvents.OnChangeJobHandler(ButtonAddJob.Name, CurrentIndex()); 
                 _ = PerformLoadDbAfterDelay(vm);
             }
             catch (Exception)
@@ -226,49 +226,75 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                var rad = sender as RadioButton;
+             //   var rad = sender as RadioButton;
                 var vm = CurrentViewModel<MainViewModel>();
-                if (rad == null || vm == null) return;
-                switch (rad.Name)
+                if (vm == null) return;
+                if (RadioButtonStandalone.IsChecked==true)
                 {
-                    case "RadioButtonStandalone":
-                        GroupBoxJobType.IsEnabled = false;
-                        RadioButtonCanRead.IsEnabled = true;
-                        RadioButtonStaticText.IsEnabled = true;
-                        RadioButtonAfterProduction.IsChecked = false;
-                        RadioButtonOnProduction.IsChecked = false;
-                        RadioButtonVerifyAndPrint.IsChecked = false;
-                        vm.CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
-                        break;
-                    case "RadioButtonRynanSeries":
-                        GroupBoxJobType.IsEnabled = true;
-                        RadioButtonCanRead.IsEnabled = false;
-                        RadioButtonStaticText.IsEnabled = false;
-                        RadioButtonDatabase.IsChecked = true;
-                        RadioButtonAfterProduction.IsChecked = true;
-                        break;
-                    case "RadioButtonCanRead":
-                    case "RadioButtonStaticText":
-                        GroupBoxDatabaseType.IsEnabled = false;
-                        GroupBoxTemplate.IsEnabled = false;
-                        break;
-                    case "RadioButtonDatabase":
-                        GroupBoxDatabaseType.IsEnabled = true;
-                        GroupBoxTemplate.IsEnabled = true;
-                        break;
-                    default:
-                        break;
+                    GroupBoxJobType.IsEnabled = false;
+                    RadioButtonCanRead.IsEnabled = true;
+                    RadioButtonStaticText.IsEnabled = true;
+                    RadioButtonAfterProduction.IsChecked = false;
+                    RadioButtonOnProduction.IsChecked = false;
+                    RadioButtonVerifyAndPrint.IsChecked = false;
+                    vm.CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
                 }
+                if (RadioButtonRynanSeries.IsChecked==true)
+                {
+                    RadioButtonStandalone.IsChecked = false;
+                    GroupBoxJobType.IsEnabled = true;
+                    RadioButtonCanRead.IsEnabled = false;
+                    RadioButtonStaticText.IsEnabled = false;
+                    RadioButtonDatabase.IsChecked = true;
+                    RadioButtonAfterProduction.IsChecked = true;
+                }
+                if (RadioButtonCanRead.IsChecked == true || RadioButtonStaticText.IsChecked==true)
+                {
+                    GroupBoxDatabaseType.IsEnabled = false;
+                    GroupBoxTemplate.IsEnabled = false;
+                }
+                if (RadioButtonDatabase.IsChecked == true)
+                {
+                    GroupBoxDatabaseType.IsEnabled = true;
+                    GroupBoxTemplate.IsEnabled = true;
+                }
+                //switch (rad.Name)
+                //{
+                //    case "RadioButtonStandalone":
+                //        GroupBoxJobType.IsEnabled = false;
+                //        RadioButtonCanRead.IsEnabled = true;
+                //        RadioButtonStaticText.IsEnabled = true;
+                //        RadioButtonAfterProduction.IsChecked = false;
+                //        RadioButtonOnProduction.IsChecked = false;
+                //        RadioButtonVerifyAndPrint.IsChecked = false;
+                //        vm.CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
+                //        break;
+                //    case "RadioButtonRynanSeries":
+                //        GroupBoxJobType.IsEnabled = true;
+                //        RadioButtonCanRead.IsEnabled = false;
+                //        RadioButtonStaticText.IsEnabled = false;
+                //        RadioButtonDatabase.IsChecked = true;
+                //        RadioButtonAfterProduction.IsChecked = true;
+                //        break;
+                //    case "RadioButtonCanRead":
+                //    case "RadioButtonStaticText":
+                //        GroupBoxDatabaseType.IsEnabled = false;
+                //        GroupBoxTemplate.IsEnabled = false;
+                //        break;
+                //    case "RadioButtonDatabase":
+                //        GroupBoxDatabaseType.IsEnabled = true;
+                //        GroupBoxTemplate.IsEnabled = true;
+                //        break;
+                //    default:
+                //        break;
+                //}
             }
             catch (Exception)
             {
             }
         }
 
-        private void ListViewJobTemplate_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            Button_AddJobClick(sender, e);
-        }
+      
 
         private void ListViewSelectedJob_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -292,6 +318,11 @@ namespace DipesLink.Views.UserControls.MainUc
             {
             }
 
+        }
+
+        private void ListViewJobTemplate_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Button_AddJobClick(sender, e);
         }
     }
 }
