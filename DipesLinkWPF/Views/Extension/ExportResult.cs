@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Win32;
 using static DipesLink.Views.Enums.ViewEnums;
+using DipesLink.Languages;
 namespace DipesLink.Views.Extension
 {
     public class ExportResult
@@ -42,7 +43,7 @@ namespace DipesLink.Views.Extension
                 }
                 catch (IOException file)
                 {
-                    CusMsgBox.Show("File not found !", "File Error", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    CusMsgBox.Show(LanguageModel.GetLanguage("FileNotFound"), "File Error", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 }
                 catch (Exception)
                 {
@@ -105,7 +106,7 @@ namespace DipesLink.Views.Extension
 
             // Write the output CSV
             File.WriteAllLines(outputCsvPath, outputCsv);
-            CusAlert.Show($"Export File Successfully", ImageStyleMessageBox.Info,true);
+            CusAlert.Show(LanguageModel.GetLanguage("ExportFileSuccess"), ImageStyleMessageBox.Info, true);
             sw.Stop();
             Debug.WriteLine($"The Export Result is done within {sw.ElapsedMilliseconds} ms");
         }

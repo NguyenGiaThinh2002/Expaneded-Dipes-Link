@@ -1,4 +1,5 @@
-﻿using DipesLink.ViewModels;
+﻿using DipesLink.Languages;
+using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.CustomControl;
@@ -392,23 +393,23 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private async void RestartButton_Click(object sender, RoutedEventArgs e)
         {
-            var res = CusMsgBox.Show("Do you want to restart ?", "Restart Station", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
+            var res = CusMsgBox.Show(LanguageModel.GetLanguage("RestartConfirmation"), "Restart Station", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
             if (res.Result)
             {
                 var vm = CurrentViewModel<MainViewModel>();
                 var job = vm?.JobList[CurrentIndex()];
                 await ViewModelSharedFunctions.RestartDeviceTransfer(job);
 
-                if(job?.DeviceTransferID == null || job?.DeviceTransferID == 0)
+                if (job?.DeviceTransferID == null || job?.DeviceTransferID == 0)
                 {
-                    CusAlert.Show($"Station {job?.Index + 1}: Restart Failed!", ImageStyleMessageBox.Error, true);
+                    CusAlert.Show(LanguageModel.GetLanguage("RestartFailed", job?.Index), ImageStyleMessageBox.Error, true);
                 }
                 else
                 {
                     vm?.DeleteSeletedJob(CurrentIndex());
                     vm?.UpdateJobInfo(CurrentIndex());
                     ViewModelSharedEvents.OnChangeJobHandler(((Button)sender).Name, CurrentIndex()); // event trigger for clear data job detail
-                    CusAlert.Show($"Station {job?.Index + 1}: Restart Successfully!", ImageStyleMessageBox.Info, true);
+                    CusAlert.Show(LanguageModel.GetLanguage("RestartSuccessfully", job?.Index), ImageStyleMessageBox.Info, true);
                 }
                 vm?.AutoSaveConnectionSetting(CurrentIndex());
             }

@@ -17,8 +17,8 @@ namespace DipesLink.Languages
     {
         public const string ApplicationDefaultLanguage = "en-US";
         //ViewModelSharedValues
-       
-        
+
+
         public static ResourceDictionary? _langResource = LoadLanguageResourceDictionary(ApplicationDefaultLanguage) ??
                                                LoadLanguageResourceDictionary();
         public static ResourceDictionary? Language
@@ -26,7 +26,7 @@ namespace DipesLink.Languages
             get { return _langResource; }
             set
             {
-               
+
                 if (_langResource != value)
                 {
                     _langResource = value;
@@ -40,6 +40,24 @@ namespace DipesLink.Languages
         //{
         //    return Language?[key]?.ToString();
         //}
+        public static string GetFormattedString(string resourceKey, params object[] args)
+        {
+            var resourceString = Application.Current.Resources[resourceKey] as string;
+            return string.Format(resourceString, args);
+        }
+
+        public static string GetLanguage(string newString, int? stationIndex = null)
+        {
+            if (stationIndex.HasValue)
+            {
+                return GetFormattedString(newString, stationIndex.Value + 1);
+            }
+            else
+            {
+                return GetFormattedString(newString);
+            }
+        }
+
 
         public static ResourceDictionary? LoadLanguageResourceDictionary(String? lang = null)
         {
@@ -56,7 +74,7 @@ namespace DipesLink.Languages
                 return null;
             }
         }
-        
+
 
 
         public void UpdateApplicationLanguage(string choosenLanguage)
@@ -66,7 +84,7 @@ namespace DipesLink.Languages
             {
                 newLanguage = ApplicationDefaultLanguage;
             }
-            
+
             if (!string.IsNullOrEmpty(choosenLanguage))
             {
                 newLanguage = choosenLanguage;
@@ -86,7 +104,7 @@ namespace DipesLink.Languages
             // Add new language.
             OnPropertyChanged(nameof(Language));
             Application.Current.Resources.MergedDictionaries.Add(Language);
-            
+
         }
     }
 }

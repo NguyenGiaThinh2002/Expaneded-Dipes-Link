@@ -18,6 +18,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/vi-VN.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/en-US.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ToolTipsResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -313,9 +315,10 @@
                     Foreground="White"
                     Text="DP-LINK" />
                 <TextBlock
+                    x:Name="AppDescriptionText"
                     FontSize="15"
                     Foreground="White"
-                    Text="Multi-Line Barcode Verification System" />
+                    Text="{DynamicResource ResourceKey=Multi_Line_Barcode_Verification_System}" />
             </StackPanel>
 
         </Grid>
@@ -326,10 +329,12 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <TextBlock
+                x:Name="UserLoginText"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="25" Foreground="#00ABE6"
+                FontSize="25"
                 FontWeight="Bold"
+                Foreground="#00ABE6"
                 Text="USER LOGIN" />
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
@@ -361,7 +366,10 @@
                     Grid.Row="2"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal">
-                    <CheckBox x:Name="CheckBoxRememberme" Style="{DynamicResource CheckBoxStyle1}">Remember me</CheckBox>
+                    <CheckBox
+                        x:Name="CheckBoxRememberme"
+                        Content="{DynamicResource ResourceKey=Remember_Me}"
+                        Style="{DynamicResource CheckBoxStyle1}" />
                 </StackPanel>
                 <Button
                     x:Name="ButtonLogin"
@@ -370,7 +378,7 @@
                     Height="35"
                     Margin="0,15,0,0"
                     Click="ButtonLogin_Click"
-                    Content="LOGIN"
+                    Content="{DynamicResource ResourceKey=LOGIN}"
                     Style="{StaticResource ModernButton2}" />
             </Grid>
             <Button

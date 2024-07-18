@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Collections;
+using DipesLink.Languages;
 using DipesLink.Models;
 using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
@@ -24,7 +25,7 @@ namespace DipesLink.Views.SubWindows
     /// </summary>
     public partial class CheckedLogsWindow : Window
     {
-      
+
         public List<string[]>? CheckedResultList { get; set; }
         private string? _pageInfo;
 
@@ -63,7 +64,7 @@ namespace DipesLink.Views.SubWindows
                 GetOriginalList();
                 _imageNameList = GetImageNameList();
             }
-            catch (Exception) {}
+            catch (Exception) { }
         }
 
         private void GetOriginalList()
@@ -100,7 +101,7 @@ namespace DipesLink.Views.SubWindows
                 TextBlockValid.Text = countValid.ToString();
                 TextBlockVerified.Text = countVerified.ToString();
                 TextBlockFailed.Text = countFailed.ToString();
-                TextBlockUnk.Text = countMissed >0 ? countMissed.ToString(): countTotal.ToString();
+                TextBlockUnk.Text = countMissed > 0 ? countMissed.ToString() : countTotal.ToString();
             }
             catch (Exception)
             {
@@ -152,7 +153,7 @@ namespace DipesLink.Views.SubWindows
             {
 
             }
-          
+
         }
 
         public async Task LoadPageAsync(int pageNumber)
@@ -163,7 +164,7 @@ namespace DipesLink.Views.SubWindows
             {
                 try
                 {
-                   // Thread.Sleep(5000); 
+                    // Thread.Sleep(5000); 
                     if (pageNumber < 0 || pageNumber >= _paginator.TotalPages) return;
                     ObservableCollection<CheckedResultModel> pageData = _paginator.GetPage(pageNumber);
                     countDataPerPage = pageData.Count;
@@ -203,20 +204,20 @@ namespace DipesLink.Views.SubWindows
                 catch (Exception)
                 {
                 }
-               
+
             });
         }
 
         private async void CheckedLogsWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = true; 
+            e.Cancel = true;
             await Task.Run(async () =>
             {
                 await CleanupResourcesAsync();
-                await Dispatcher.InvokeAsync(() => 
+                await Dispatcher.InvokeAsync(() =>
                 {
                     Closing -= CheckedLogsWindow_Closing;
-                    Close(); 
+                    Close();
                 });
             });
         }
@@ -255,7 +256,8 @@ namespace DipesLink.Views.SubWindows
             try
             {
                 var currentPage = (_paginator?.CurrentPage + 1);
-                _pageInfo = string.Format("Page {0} / {1} ({2})", currentPage, _paginator?.TotalPages, countDataPerPage);
+                string page = LanguageModel.GetLanguage("Page");
+                _pageInfo = $"{page} {currentPage} / {_paginator?.TotalPages} ({countDataPerPage})";
                 TextBlockPageInfo.Text = _pageInfo;
                 TextBoxPage.Text = currentPage.ToString();
             }
@@ -354,7 +356,7 @@ namespace DipesLink.Views.SubWindows
                         return;
                     }
                 }
-                CusMsgBox.Show("Page not found !", "Goto Page", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                CusMsgBox.Show(LanguageModel.GetLanguage("PageNotFound"), "Goto Page", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
             }
             catch (Exception)
             {
@@ -410,10 +412,10 @@ namespace DipesLink.Views.SubWindows
                         {
                             DataGridCheckedLog.ItemsSource = null;
                         });
-                        _ = CusMsgBox.Show("Not Found !", "Checked Logs", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                        _ = CusMsgBox.Show(LanguageModel.GetLanguage("NotFound"), "Checked Logs", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     }
                 }
-               
+
 
             }
             catch (Exception)
@@ -485,7 +487,7 @@ namespace DipesLink.Views.SubWindows
             catch (Exception)
             {
             }
-           
+
         }
 
         private void SearchAction()
@@ -497,7 +499,7 @@ namespace DipesLink.Views.SubWindows
                 var searchResults = filterList?.Where(item => item.GetType().GetProperties()
                     .Any(prop => prop.GetValue(item)?.ToString().Contains(searchValue) == true))
                     .ToList();
-                if (searchResults != null && searchResults?.Count> 0)
+                if (searchResults != null && searchResults?.Count > 0)
                 {
                     _paginator = new Paginator<CheckedResultModel>(new ObservableCollection<CheckedResultModel>(searchResults), _maxDatabaseLine);
                     _ = LoadPageAsync(0);
@@ -522,7 +524,7 @@ namespace DipesLink.Views.SubWindows
         {
             try
             {
-               
+
                 var firstLenght = imageId.Length;
                 for (int i = 0; i < 7 - firstLenght; i++)
                 {
@@ -600,7 +602,7 @@ namespace DipesLink.Views.SubWindows
             {
                 return "";
             }
-           
+
         }
 
         public static DataGridCell GetCell(DataGrid dataGrid, DataGridRow row, int column)
@@ -626,7 +628,7 @@ namespace DipesLink.Views.SubWindows
             {
                 return null;
             }
-           
+
         }
 
         public static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
@@ -660,7 +662,7 @@ namespace DipesLink.Views.SubWindows
                 SearchAction();
             }
         }
- 
+
         private void DataGridCheckedLog_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             try
@@ -686,7 +688,7 @@ namespace DipesLink.Views.SubWindows
             {
 
             }
-           
+
         }
 
 
@@ -699,7 +701,7 @@ namespace DipesLink.Views.SubWindows
                     return;
                 }
 
-                var confirmSaved = CusMsgBox.Show("Confirm you want to export report file ?", "Export Checked Result", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                var confirmSaved = CusMsgBox.Show(LanguageModel.GetLanguage("ExportConfirmation"), "Export Checked Result", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
                 if (!confirmSaved.Result)
                 {
                     return;
@@ -768,7 +770,7 @@ namespace DipesLink.Views.SubWindows
 
                         if (checkedResultDict.TryGetValue(compareString, out string dateVerify))
                         {
-                           
+
                             if (duplicateCountDict.TryGetValue(compareString, out int duplicateCount) && duplicateCount >= 1)
                             {
                                 writeValue += "Duplicate";

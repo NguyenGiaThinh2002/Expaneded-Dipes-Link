@@ -14,12 +14,12 @@
                 <ControlTemplate TargetType="Label">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="94" />
+                            <ColumnDefinition Width="94" />
                         </Grid.ColumnDefinitions>
                         <Border
                             Grid.Column="0"
-                            Width="76"
+                            Width="90"
                             Height="30"
                             Padding="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

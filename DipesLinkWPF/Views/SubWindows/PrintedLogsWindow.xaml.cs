@@ -1,4 +1,5 @@
-﻿using DipesLink.Models;
+﻿using DipesLink.Languages;
+using DipesLink.Models;
 using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
 using System.Collections.ObjectModel;
@@ -117,7 +118,7 @@ namespace DipesLink.Views.SubWindows
                 }
             }
         }
-       
+
         public async Task LoadPageAsync(int pageNumber)
         {
             ImageLoadingPrintedLog.Visibility = Visibility.Visible;
@@ -148,16 +149,16 @@ namespace DipesLink.Views.SubWindows
 
         private async void PrintedLogsWindow_Closing(object? sender, CancelEventArgs e)
         {
-            e.Cancel = true; 
+            e.Cancel = true;
             await Task.Run(async () =>
-             {
-                 await CleanupResourcesAsync();
-                 await Dispatcher.InvokeAsync(() => 
-                 {
-                     Closing -= PrintedLogsWindow_Closing; 
-                     Close(); 
-                 });
-             });
+            {
+                await CleanupResourcesAsync();
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    Closing -= PrintedLogsWindow_Closing;
+                    Close();
+                });
+            });
         }
 
         private async Task CleanupResourcesAsync()
@@ -195,8 +196,11 @@ namespace DipesLink.Views.SubWindows
             if (_paginator == null) return;
             try
             {
+
                 var currentPage = (_paginator?.CurrentPage + 1);
-                _pageInfo = string.Format("Page {0} / {1} ({2})", currentPage, _paginator?.TotalPages, countDataPerPage);
+                string page = LanguageModel.GetLanguage("Page");
+                _pageInfo = $"{page} {currentPage} / {_paginator?.TotalPages} ({countDataPerPage})";
+                //_pageInfo = string.Format("Page {0} / {1} ({2})", currentPage, _paginator?.TotalPages, countDataPerPage);
                 TextBlockPageInfo.Text = _pageInfo;
                 TextBoxPage.Text = currentPage.ToString();
             }
@@ -297,7 +301,7 @@ namespace DipesLink.Views.SubWindows
                         return;
                     }
                 }
-                CusMsgBox.Show("Page not found !", "Goto Page", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                CusMsgBox.Show(LanguageModel.GetLanguage("PageNotFound"), "Goto Page", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
             }
             catch (Exception)
             {
@@ -337,7 +341,7 @@ namespace DipesLink.Views.SubWindows
                         {
                             DataGridPrintLog.ItemsSource = null;
                         });
-                        _ = CusMsgBox.Show("Not Found !", "Printed Logs", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                        _ = CusMsgBox.Show(LanguageModel.GetLanguage("NotFound"), "Printed Logs", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     }
                 }
             }
@@ -374,7 +378,7 @@ namespace DipesLink.Views.SubWindows
                 }
                 else
                 {
-                    CusMsgBox.Show("No results were found !", "Search", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    CusMsgBox.Show(LanguageModel.GetLanguage("NoResultsFound"), "Search", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 }
             }
             catch (Exception)
