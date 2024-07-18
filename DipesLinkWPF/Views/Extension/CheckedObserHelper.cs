@@ -16,17 +16,11 @@ namespace DipesLink.Views.Extension
     public class CheckedObserHelper : ObservableObject, IDisposable
     {
         public int TotalChecked { get; set; }
-
         public int TotalPassed { get; set; }
-
         public int TotalFailed { get; set; }
-
         public string[]? ColumnNames = { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
-
         public ObservableCollection<CheckedResultModel> CheckedList { get; set; } = new();
-
         private ObservableCollection<CheckedResultModel> _DisplayList = new();
-
         public ObservableCollection<CheckedResultModel> DisplayList
         {
             get { return _DisplayList; }
@@ -39,14 +33,9 @@ namespace DipesLink.Views.Extension
                 }
             }
         }
-
         private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(2000);
-
         private DispatcherTimer _updateTimer;
-
         private readonly ConcurrentQueue<CheckedResultModel> _batchUpdateQueue = new();
-
-      
 
         public CheckedObserHelper()
         {
@@ -86,7 +75,6 @@ namespace DipesLink.Views.Extension
         {
             return await Task.Run(() =>
             {
-                
                 var dataTable = new DataTable();
 
                 foreach (var columnName in ColumnNames)

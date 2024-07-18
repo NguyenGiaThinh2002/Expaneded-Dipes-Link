@@ -614,9 +614,9 @@ namespace DipesLink.Models
         }
 
         public event EventHandler? OnPercentageChange;
-        public void RaisePercentageChange(object index)
+        public void RaisePercentageChange(object currentJob)
         {
-            OnPercentageChange?.Invoke(index, EventArgs.Empty);
+            OnPercentageChange?.Invoke(currentJob, EventArgs.Empty);
         }
 
         public event EventHandler? OnReprint;

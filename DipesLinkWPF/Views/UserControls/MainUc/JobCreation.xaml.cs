@@ -170,16 +170,10 @@ namespace DipesLink.Views.UserControls.MainUc
                 var vm = CurrentViewModel<MainViewModel>();
                 if (vm is null) return;
                 vm.JobList[CurrentIndex()].IsDBExist = false;    // Reset flag for load db
-
-                //JobDetails.isAddbutton = true;  
                 vm.AddSelectedJob(CurrentIndex());
-                vm.LoadJobList(CurrentIndex()); // Update Job on UI
-                                                //  CallbackCommand(vm => vm.RestartDeviceTransfer(jobIndex)); // Update Job on UI
-                vm.UpdateJobInfo(CurrentIndex());
-
-                ViewModelSharedEvents.OnChangeJobHandler(ButtonAddJob.Name, CurrentIndex()); // trigger change job detection event
-
-                //Task.Run(async () => { await PerformLoadDbAfterDelay(vm); });
+                vm.LoadJobList(CurrentIndex());                             
+              //  vm.UpdateJobInfo(CurrentIndex());
+                ViewModelSharedEvents.OnChangeJobHandler(ButtonAddJob.Name, CurrentIndex()); 
                 _ = PerformLoadDbAfterDelay(vm);
             }
             catch (Exception)

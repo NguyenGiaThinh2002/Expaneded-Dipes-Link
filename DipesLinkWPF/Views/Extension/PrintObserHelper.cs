@@ -28,7 +28,7 @@ namespace DipesLink.Views.Extension
         private DateTime _lastUpdateTime = DateTime.MinValue;
         private readonly Dictionary<string, (ExpandoObject Item, int PageNumber)> _dataLookup = new();
         private CancellationTokenSource cts_UpdateUI = new();
-        private int _MaxDatabaseLine = 500;
+        private int _maxDatabaseLine = 500;
         private DispatcherTimer _dispatcherTimer;
         private bool disposedValue;
 
@@ -41,7 +41,7 @@ namespace DipesLink.Views.Extension
             CreateDataTemplate();
             AddDataToCollection(PrintList, list[0], list.Skip(1).ToList());
             CounterPrintedFirstLoad(list);
-            paginator = new Paginator<ExpandoObject>(PrintList, _MaxDatabaseLine);
+            paginator = new Paginator<ExpandoObject>(PrintList, _maxDatabaseLine);
             LoadPageAsync(currentPage);
             CreateDataLookup();
             _dispatcherTimer = InitializeDispatcherTimer();

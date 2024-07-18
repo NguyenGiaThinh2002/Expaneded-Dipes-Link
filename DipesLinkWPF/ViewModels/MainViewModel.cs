@@ -168,10 +168,14 @@ namespace DipesLink.ViewModels
             if (!CheckJobExisting(index, out JobModel? jobModel))
             {
                 jobModel = new();
+            
+                JobList[index].PrintedDataNumber = "0"; 
                 JobList[index].TotalChecked = "0";
                 JobList[index].TotalPassed = "0";
                 JobList[index].TotalFailed = "0";
                 JobList[index].CircleChart.Value = 0;
+                JobList[index].CircleChart.Series = new CircleChartModel().Series;
+                
             }
             if (jobModel == null) return;
 
@@ -241,9 +245,9 @@ namespace DipesLink.ViewModels
 
         private void PercentageChangeHandler(object? sender, EventArgs e)
         {
-            if (sender is int stationIndex)
+            if (sender is JobOverview curJob)
             {
-                UpdatePercentForCircleChart(stationIndex);
+                UpdatePercentForCircleChart(curJob);
             }
         }
 
@@ -1064,7 +1068,7 @@ namespace DipesLink.ViewModels
                         ComparisonResult? compareStatus = dm?.CompareResult;
 
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        Application.Current?.Dispatcher.Invoke(() =>
                         {
                             if (img != null) JobList[stationIndex].ImageResult = SharedFunctions.ConvertToBitmapImage(img);
                             if (currentCode != null) JobList[stationIndex].CurrentCodeData = currentCode;
@@ -1084,49 +1088,54 @@ namespace DipesLink.ViewModels
 
         private void GetCheckedStatistics(int stationIndex)
         {
-            Application.Current?.Dispatcher.Invoke(async () =>
-            {
-                try
-                {
-                    while (true)
-                    {
-                        var result = JobList[stationIndex].CheckedStatisticNumberBytes;
-                        if (result != null)
-                        {
-                            // Total Checked
-                            byte[] totalCheckedBytes = new byte[7];
-                            Array.Copy(result, 0, totalCheckedBytes, 0, 7);
+            //Application.Current?.Dispatcher.Invoke(async () =>
+            //{
+//                try
+//                {
+//                    while (true)
+//                    {
+//                        //var result = JobList[stationIndex].CheckedStatisticNumberBytes;
+//                        //if (result != null)
+//                        //{
+//                        //    // Total Checked
+//                        //    byte[] totalCheckedBytes = new byte[7];
+//                        //    Array.Copy(result, 0, totalCheckedBytes, 0, 7);
 
-                            //// Total Passed
-                            byte[] totalPassedBytes = new byte[7];
-                            Array.Copy(result, totalCheckedBytes.Length, totalPassedBytes, 0, 7);
-                            var totalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
+//                        //    //// Total Passed
+//                        //    byte[] totalPassedBytes = new byte[7];
+//                        //    Array.Copy(result, totalCheckedBytes.Length, totalPassedBytes, 0, 7);
+//                        //    var totalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
 
-                            // Total Fail
-                            byte[] totalFailBytes = new byte[7];
-                            Array.Copy(result, totalCheckedBytes.Length + totalPassedBytes.Length, totalFailBytes, 0, 7);
+//                        //    // Total Fail
+//                        //    byte[] totalFailBytes = new byte[7];
+//                        //    Array.Copy(result, totalCheckedBytes.Length + totalPassedBytes.Length, totalFailBytes, 0, 7);
 
-                            JobList[stationIndex].TotalChecked = Encoding.ASCII.GetString(totalCheckedBytes).Trim();
-                            JobList[stationIndex].TotalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
-                            JobList[stationIndex].TotalFailed = Encoding.ASCII.GetString(totalFailBytes).Trim();
+//                          //  JobList[stationIndex].TotalChecked = Encoding.ASCII.GetString(totalCheckedBytes).Trim();
+//                         //   JobList[stationIndex].TotalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
+//                         //   JobList[stationIndex].TotalFailed = Encoding.ASCII.GetString(totalFailBytes).Trim();
 
-                            //Update Percent
-                            UpdatePercentForCircleChart(stationIndex);
-                        }
-                        await Task.Delay(1);
-                    }
-                }
-                catch (Exception ex)
-                {
-#if DEBUG
-                    Debug.WriteLine("GetCheckedStatistics Error" + ex.Message);
-#endif
-                }
-            });
+//                            //Update Percent
+//                          //  UpdatePercentForCircleChart(stationIndex);
+//                        }
+//                       // await Task.Delay(1);
+//                    }
+//                }
+//                catch (Exception ex)
+//                {
+//#if DEBUG
+//                    Debug.WriteLine("GetCheckedStatistics Error" + ex.Message);
+//#endif
+//                }
+       //     });
         }
 
-        private void UpdatePercentForCircleChart(int stationIndex)
+        private void UpdatePercentForCircleChart(JobOverview curJob)
         {
+            var stationIndex = curJob.Index;
+            JobList[stationIndex].TotalChecked = curJob.TotalChecked;
+            JobList[stationIndex].TotalPassed = curJob.TotalPassed;
+            JobList[stationIndex].TotalFailed = curJob.TotalFailed;
+
             if (int.TryParse(JobList[stationIndex].TotalChecked, out int totalChecked))
             {
                 try
@@ -1159,7 +1168,8 @@ namespace DipesLink.ViewModels
                     else  // NO DB MODE
                     {
                         _ = double.TryParse(JobList[stationIndex].TotalPassed, out double pass);
-                        percent = Math.Round(pass / totalChecked * 100);
+                        if (totalChecked <= 0) percent = 0; 
+                        else percent = Math.Round(pass / totalChecked * 100);
                     }
 
                     // Show to UI

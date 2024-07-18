@@ -20,24 +20,18 @@ namespace DipesLink.Views
     {
         public static event EventHandler<EventArgs>? MainWindowSizeChangeCustomEvent;
         public static SplashScreenLoading? SplashScreenLoading = new();
-
-        public static int currentStation = 0;
+        private static int currentStation = 0;
         public MainWindow()
         {
             InitializeComponent();
             DataContext = MainViewModel.GetIntance();
             EventRegister();
-            if (AuthorizationHelper.IsAdmin())
-            {
-                ComboBoxSelectView.IsEnabled = false;
-            }
-            var lg = new LanguageModel();
-            lg.UpdateApplicationLanguage("");
-
+            new LanguageModel().UpdateApplicationLanguage("");
         }
 
         private void EventRegister()
         {
+            ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnJobDetailChange += JobDetails_OnJobDetailChange;
             ViewModelSharedEvents.OnMoveToJobDetail += MoveToJobDetail;
             SizeChanged += MainWindow_SizeChanged;
@@ -46,6 +40,13 @@ namespace DipesLink.Views
             AllStationUc.DoneLoadUIEvent += AllStationUc_DoneLoadUIEvent;
             Shared.OnActionLoadingSplashScreen += Shared_OnActionLoadingSplashScreen;
             ListBoxMenu.SelectionChanged += ListBoxMenu_SelectionChanged;
+        }
+
+        private void OnChangeJobHandler(object? sender, int e)
+        {
+            var vm = CurrentViewModel<MainViewModel>();
+            if (vm is null) return;
+            vm.GetCurrentJobDetail(e);
         }
 
         private void MoveToJobDetail(object? sender, EventArgs e)
@@ -153,9 +154,6 @@ namespace DipesLink.Views
             catch (Exception)
             {
             }
-
-
-
         }
 
         private void MainWindow_Closed(object? sender, EventArgs e)
@@ -215,11 +213,6 @@ namespace DipesLink.Views
             CurrentViewModel<MainViewModel>()?.ChangeJobByDeviceStatSymbol(index);
         }
 
-        private void ComboBoxStationNum_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            //CurrentViewModel<MainViewModel>().CheckStationChange();
-        }
-
         private void ComboBoxSelectView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             var cbb = (System.Windows.Controls.ComboBox)sender;
@@ -267,19 +260,28 @@ namespace DipesLink.Views
 
         private void Logout(bool isNotRunning)
         {
-            if (!isNotRunning)
+            try
             {
-                var res = CusMsgBox.Show(LanguageModel.GetLanguage("LogoutConfirmation"), "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-                if (res.Result)
+                if (!isNotRunning)
                 {
-                    Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                    Application.Current.Shutdown();
+                    var res = CusMsgBox.Show(LanguageModel.GetLanguage("LogoutConfirmation"), "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    if (res.Result)
+                    {
+                        Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                        Application.Current.Shutdown();
+                    }
+                }
+                else
+                {
+                    CusAlert.Show(LanguageModel.GetLanguage("StopAllStations"), ImageStyleMessageBox.Warning);
                 }
             }
-            else
+            catch (Exception)
             {
-                CusAlert.Show(LanguageModel.GetLanguage("StopAllStations"), ImageStyleMessageBox.Warning);
+
+
             }
+           
         }
 
         private void BorderUser_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -365,14 +367,12 @@ namespace DipesLink.Views
 
         private void Eng_Button_Click(object sender, RoutedEventArgs e)
         {
-            var lg = new LanguageModel();
-            lg.UpdateApplicationLanguage("en-US");
+            new LanguageModel().UpdateApplicationLanguage("en-US");
         }
 
         private void Vi_Button_Click(object sender, RoutedEventArgs e)
         {
-            var lg = new LanguageModel();
-            lg.UpdateApplicationLanguage("vi-VN");
+            new LanguageModel().UpdateApplicationLanguage("vi-VN");
         }
 
     }
