@@ -22,11 +22,7 @@ namespace SharedProgram.Shared
             return JobModel.LoadFile(filePath);
         }
 
-        /// <summary>
-        /// Get all file name job in selected job path (usually there is only one job)
-        /// </summary>
-        /// <param name="jobIndex"></param>
-        /// <returns></returns>
+
         public static ObservableCollection<string> GetSelectedJobNameList(int jobIndex)
         {
             try
@@ -49,12 +45,7 @@ namespace SharedProgram.Shared
             catch (Exception) { return new ObservableCollection<string>(); }
         }
 
-        /// <summary>
-        /// Get selected job from selected job path
-        /// </summary>
-        /// <param name="templateNameWithExtension"></param>
-        /// <param name="jobIndex"></param>
-        /// <returns></returns>
+       
         public static JobModel? GetJobSelected(string? templateNameWithExtension, int jobIndex)
         {
             string filePath = $"{SharedPaths.PathSelectedJobApp}{"Job" + (jobIndex + 1)}\\{templateNameWithExtension}";
@@ -183,10 +174,6 @@ namespace SharedProgram.Shared
             }
         }
 
-        /// <summary>
-        /// Kill process by process id
-        /// </summary>
-        /// <param name="id"></param>
         public static void DeviceTransferKillProcess(int id)
         {
             try
@@ -296,94 +283,14 @@ namespace SharedProgram.Shared
             Debug.WriteLine(message);
         }
 
-        public static List<string[]> InitDatabaseWithStatus(string? csvPath)
-        {
-            List<(int index, string[] data)> result = new(); // List to store index and data
-            if (csvPath == null || !File.Exists(csvPath))
-            {
-                return result.Select(t => t.data).ToList();
-            }
-            try
-            {
-                string[] lines = File.ReadAllLines(csvPath);
-                int columnCount = 0;
-                if (lines.Length > 0)
-                {
-                    string[] firstLine = SplitLine(lines[0], csvPath.EndsWith(".csv"));
-                    columnCount = firstLine.Length + 2;
-                    string[] headerRow = new string[columnCount];
-                    headerRow[0] = "Index";
-                    headerRow[^1] = "Status";
-                    for (int i = 1; i < headerRow.Length - 1; i++)
-                    {
-                        headerRow[i] = firstLine[i - 1] + $" - Field{i}";
-                    }
-                    result.Add((0, headerRow));
-                }
+       
 
-                Parallel.ForEach(lines.Skip(1), (line, state, index) =>
-                {
-                    string[] columns = SplitLine(line, csvPath.EndsWith(".csv"));
-                    string[] row = new string[columnCount];
-                    row[0] = (index + 1).ToString();
-                    row[^1] = "Waiting";
-                    for (int i = 1; i < row.Length - 1; i++)
-                    {
-                        row[i] = i - 1 < columns.Length ? Csv.Unescape(columns[i - 1]) : "";
-                    }
-                    lock (result)
-                    {
-                        result.Add(((int)index + 1, row));
-                    }
-                });
-            }
-            catch (IOException) { }
-            catch (Exception) { }
-
-            List<string[]> sortedAndTransformed = result.AsParallel()
-                                 .OrderBy(item => item.index)
-                                 .Select(item => item.data)
-                                 .ToList();
-            return sortedAndTransformed;
-        }
-
-        private static string[] SplitLine(string line, bool isCsv)
+        public static string[] SplitLine(string line, bool isCsv)
         {
             return isCsv ? line.Split(',') : line.Split('\t');
         }
 
-        public static void InitPrintedStatus(string pathBackupPrinted, List<string[]> dbList)
-        {
-            if (!File.Exists(pathBackupPrinted))
-            {
-                return;
-            }
-
-            // Use FileStream with buffering
-            using FileStream fs = new(pathBackupPrinted, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
-            using StreamReader reader = new(fs, Encoding.UTF8, true);
-
-            // Read all lines at once
-            string[] lines = reader.ReadToEnd().Split(Environment.NewLine);
-
-            if (lines.Length < 2) return; // If there are less than 2 lines, there's nothing to process
-
-            // Skip the first line (header) and process the rest in parallel
-            Parallel.For(1, lines.Length, i =>
-            {
-                if (string.IsNullOrWhiteSpace(lines[i])) return;
-                string line = lines[i];
-                string[] columns = line.Split(',');
-                if (columns.Length > 0)
-                {
-                    string indexString = Csv.Unescape(columns[0]);
-                    if (int.TryParse(indexString, out int index))
-                    {
-                        dbList[index][^1] = "Printed"; // Get rows by index and update the last column with "Printed"
-                    }
-                }
-            });
-        }
+       
 
         public static string GetCompareDataByPODFormat(string[] row, List<PODModel> pODFormat, int addingIndex = 0)
         {
@@ -403,22 +310,6 @@ namespace SharedProgram.Shared
             return compareString;
         }
 
-        private void FindUnknownData(List<string[]> rawDatabaseList, List<string[]> checkedList)
-        {
-            // Create a dictionary to count the number of occurrences of each ResultData with "Duplicated" status
-            var duplicateCountDict = checkedList
-                .Where(x => x[2] == "Duplicated")
-                .GroupBy(x => x[1])
-                .ToDictionary(g => g.Key, g => g.Count());
-
-            // Create a dictionary to store the first valid results
-            var checkedResultDict = checkedList
-                .Where(x => x[2] == "Valid")
-                .GroupBy(x => x[1])
-                .ToDictionary(g => g.Key, g => g.First()[SharedValues.ColumnNames.Length - 1]);
-        }
-       
-
         public static byte[] ReadByteArrayFromFile(string filePath)
         {
             try
@@ -428,7 +319,7 @@ namespace SharedProgram.Shared
             catch (Exception ex)
             {
                 Console.WriteLine($"Error reading byte array from file: {ex.Message}");
-                return null;
+                return Array.Empty<byte>();
             }
         }
        public  static void SaveByteArrayToFile(string filePath, byte[] byteArray)

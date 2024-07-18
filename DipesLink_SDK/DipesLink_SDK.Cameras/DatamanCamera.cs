@@ -160,9 +160,9 @@ namespace DipesLink_SDK_Cameras
                     };
                 }
 #if DEBUG
-                Console.WriteLine("Name: " + camera.Info.Name);
-                Console.WriteLine("Serial Number: " + camera.Info.SerialNumber);
-                Console.WriteLine("Type: " + camera.Info.Type);
+                //Console.WriteLine("Name: " + camera.Info.Name);
+                //Console.WriteLine("Serial Number: " + camera.Info.SerialNumber);
+                //Console.WriteLine("Type: " + camera.Info.Type);
 #endif
                 var arrInfo = DataConverter.ToByteArray(camera);
                 MemoryTransfer.SendCameraStatusToUI(_ipc, _index, arrInfo);
