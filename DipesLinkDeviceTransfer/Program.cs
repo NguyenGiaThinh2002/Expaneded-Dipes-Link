@@ -3,7 +3,6 @@ using DipesLink_SDK_PLC;
 using DipesLink_SDK_Printers;
 using IPCSharedMemory;
 using SharedProgram.DeviceTransfer;
-using SharedProgram.Models;
 using SharedProgram.Shared;
 
 namespace DipesLinkDeviceTransfer
@@ -35,6 +34,7 @@ namespace DipesLinkDeviceTransfer
             }
             catch (Exception)  // for Device transfer only 
             {
+#if debug
                 DeviceSharedValues.Index = 0;
                 DeviceSharedValues.CameraIP = "192.168.15.93";
                 DeviceSharedValues.PrinterIP = "192.168.15.49"; //192.168.3.52
@@ -50,11 +50,13 @@ namespace DipesLinkDeviceTransfer
                         new() { Index = 1,Type=PODModel.TypePOD.FIELD, PODName="", Value=""}
                     }
                 };
+#endif
             }
+
         }
 
-
-        static void Main(string[] args)
+        static CancellationTokenSource cts;
+        static async Task Main(string[] args)
         {
             try
             {
@@ -64,56 +66,77 @@ namespace DipesLinkDeviceTransfer
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
 
-            #region Hold control Readkey
-            Thread consoleReadThread = new(() =>
-            {
-                while (true)
-                {
-                    var key = Console.ReadLine();
-                    if (key == "start")
-                    {
-                        keyStep = "start";
-                    }
-                    if (key == "v")
-                    {
-                        keyStep = "v";
-                    }
-                    if (key == "f")
-                    {
-                        keyStep = "f";
-                    }
-                    if (key == "d")
-                    {
-                        keyStep = "d";
-                    }
-                    if (key == "n")
-                    {
-                        keyStep = "n";
-                    }
-                    if (key == "e")
-                    {
-                        keyStep = "e";
-                    }
-                    if (key == "loaddb")
-                    {
-                        keyStep = "loaddb";
-                    }
-                    Thread.Sleep(10);
-                }
-            });
-            consoleReadThread.Start();
+            cts = new CancellationTokenSource();
+            await HoldConsoleAsync(cts.Token);
+
+            #region Simulation Key
+            //consoleReadThread.Start();
+            //_ =  Task.Run(() =>
+            // {
+
+            //         while (true)
+            //         {
+            //             var key = Console.ReadLine();
+            //             if (key == "start")
+            //             {
+            //                 keyStep = "start";
+            //             }
+            //             if (key == "v")
+            //             {
+            //                 keyStep = "v";
+            //             }
+            //             if (key == "f")
+            //             {
+            //                 keyStep = "f";
+            //             }
+            //             if (key == "d")
+            //             {
+            //                 keyStep = "d";
+            //             }
+            //             if (key == "n")
+            //             {
+            //                 keyStep = "n";
+            //             }
+            //             if (key == "e")
+            //             {
+            //                 keyStep = "e";
+            //             }
+            //             if (key == "loaddb")
+            //             {
+            //                 keyStep = "loaddb";
+            //             }
+            //             Thread.Sleep(10);
+            //         }
+
+            // });
             #endregion
+        }
+        static async Task HoldConsoleAsync(CancellationToken token)
+        {
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                   var key = Console.ReadLine();
+                   await Task.Delay(10, token);
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
         }
 
         private void ProcessExitHandler(object? sender, EventArgs e)
         {
+            cts?.Cancel();   
             ReleaseResource();
         }
 
-        public async void NonStaticMainProgram()
+        public void NonStaticMainProgram()
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExitHandler);
             InitInstanceIPC();
@@ -123,6 +146,9 @@ namespace DipesLinkDeviceTransfer
             RynanRPrinterDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
             ControllerDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
             InitEvents();
+
+
+#if debug
 
             Thread t = new(() =>
             {
@@ -151,17 +177,27 @@ namespace DipesLinkDeviceTransfer
             });
 
             t.Start();
+#endif
         }
 
         public Task<int> CheckDeviceConnectionAsync() // 0 OK, 1 Cam connect fail, 2 Printer connect fail
         {
-            if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
-                return Task.FromResult(1);
+            try
+            {
+                if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
+                    return Task.FromResult(1);
 
-            if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected() && SharedValues.SelectedJob.CompareType == SharedProgram.DataTypes.CommonDataType.CompareType.Database)
+                if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected()
+                    && SharedValues.SelectedJob.CompareType == SharedProgram.DataTypes.CommonDataType.CompareType.Database)
+                    return Task.FromResult(2);
+
+                return Task.FromResult(0);
+            }
+            catch (Exception)
+            {
                 return Task.FromResult(2);
+            }
 
-            return Task.FromResult(0);
         }
 
         public void InitEvents()
@@ -169,21 +205,5 @@ namespace DipesLinkDeviceTransfer
             PrinterEventInit();
             CameraEventInit();
         }
-
-
-        public void SimulateJobInformation(JobModel jobIn, out JobModel jobOut)
-        {
-            jobIn.Name = "MyJob";
-            jobIn.DatabasePath = "D:\\Program\\DPLink\\SampleDB\\OneMillion.csv";
-            jobIn.CheckedResultPath = "240313163302_DPLINK_AfterProduction_Template.csv";
-            jobIn.PrintedResponePath = "240313163303_Printed_DPLINK_AfterProduction_Template.csv";
-            jobIn.PrinterTemplate = "podtest";
-            jobIn.PODFormat = new List<PODModel>
-            {
-               new() { Index = 1, PODName="Data" ,Type = PODModel.TypePOD.FIELD,Value ="" }
-            };
-            jobOut = jobIn;
-        }
-
     }
 }

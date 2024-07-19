@@ -20,7 +20,8 @@
                 HorizontalAlignment="Center"
                 FontSize="24"
                 FontWeight="Bold"
-                Text="About This Software" />
+                Foreground="#808080"
+                Text="About Us" />
 
             <!--  Description Text  -->
             <GroupBox>

@@ -47,7 +47,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                Application.Current?.Dispatcher.InvokeAsync(new Action(() =>
+                Application.Current?.Dispatcher.Invoke(new Action(() =>
                 {
                     int index = ListBoxMenu.SelectedIndex;
                     _jobEventsLogHelper?.DisplayList?.Clear();
