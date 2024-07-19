@@ -134,6 +134,7 @@ namespace DipesLink.Views.UserControls.MainUc
         private async Task PerformLoadDbAfterDelay()
         {
             await Task.Delay(100);
+            Debug.WriteLine("JOB DETAIL LOAD DB");
             _currentJob?.RaiseLoadDb(_currentJob.Index);
 
         }

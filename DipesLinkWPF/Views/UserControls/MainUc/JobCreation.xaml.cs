@@ -1,5 +1,6 @@
 ﻿using DipesLink.ViewModels;
 using DipesLink.Views.SubWindows;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -161,7 +162,8 @@ namespace DipesLink.Views.UserControls.MainUc
         private async Task PerformLoadDbAfterDelay(MainViewModel vm)
         {
             await Task.Delay(1000); // waiting for 3s connection completed
-            vm.JobList[CurrentIndex()].RaiseLoadDb(CurrentIndex());
+       //     Debug.WriteLine("JOB CREATION LOAD DB");
+        //    vm.JobList[CurrentIndex()].RaiseLoadDb(CurrentIndex());
         }
         private void Button_AddJobClick(object sender, RoutedEventArgs e)
         {
@@ -174,7 +176,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 vm.LoadJobList(CurrentIndex());                             
               //  vm.UpdateJobInfo(CurrentIndex());
                 ViewModelSharedEvents.OnChangeJobHandler(ButtonAddJob.Name, CurrentIndex()); 
-                _ = PerformLoadDbAfterDelay(vm);
+              //  _ = PerformLoadDbAfterDelay(vm);
             }
             catch (Exception)
             {

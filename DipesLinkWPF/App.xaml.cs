@@ -2,6 +2,7 @@
 using DipesLink.Views.SubWindows;
 using SharedProgram.Shared;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 
 namespace DipesLink
@@ -19,6 +20,12 @@ namespace DipesLink
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (!InitializeMutex())
+            {
+                NotifyAndShutdown();
+                return;
+            }
+
             KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer });
             SQLitePCL.Batteries_V2.Init();
             ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -33,7 +40,7 @@ namespace DipesLink
                     MainWindow.Show();
                     loginWindow.Close();
                 }
-                catch (Exception){}
+                catch (Exception) { }
             }
             else
             {
@@ -43,9 +50,10 @@ namespace DipesLink
 
         protected override void OnExit(ExitEventArgs e)
         {
+            ReleaseMutex();
             KillProcessByName(new ProcessType[] { ProcessType.All });
         }
-       
+
         private static void KillProcessByName(ProcessType[] processType)
         {
             try
@@ -68,8 +76,36 @@ namespace DipesLink
                     }
                 }
             }
-            catch (Exception) {}
+            catch (Exception) { }
         }
 
+
+        #region Prevent Start App One More Times
+        private static Mutex? mutex;
+        private bool InitializeMutex()
+        {
+            string? appName = GetApplicationName();
+            bool createdNew;
+            mutex = new Mutex(true, appName, out createdNew);
+            return createdNew;
+        }
+        private string? GetApplicationName()
+        {
+            return Assembly.GetEntryAssembly()?.GetName().Name;
+        }
+        private void NotifyAndShutdown()
+        {
+            MessageBox.Show("The application is already running.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            Application.Current.Shutdown();
+        }
+        private void ReleaseMutex()
+        {
+            if (mutex != null)
+            {
+                mutex.ReleaseMutex();
+                mutex = null;
+            }
+        }
+        #endregion Prevent Start App One More Times
     }
 }

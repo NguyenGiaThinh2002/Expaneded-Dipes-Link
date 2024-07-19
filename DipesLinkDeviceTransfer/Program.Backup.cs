@@ -13,9 +13,6 @@ namespace DipesLinkDeviceTransfer
         private async void ExportCheckedResultToFileAsync()
         {
             if (SharedValues.SelectedJob == null) return;
-#if DEBUG
-            // _SelectedJob.CheckedResultPath = "";
-#endif
             _CTS_BackupCheckedResult = new();
             var token = _CTS_BackupCheckedResult.Token;
 
@@ -205,7 +202,7 @@ namespace DipesLinkDeviceTransfer
                  catch (Exception ex)
                  {
 #if DEBUG
-                     //  await Console.Out.WriteLineAsync("save image failed: " + ex);
+                     Console.WriteLine("save image failed: " + ex);
 #endif
                  }
              });

@@ -45,15 +45,12 @@ namespace DipesLink.ViewModels
 
         public MainViewModel()
         {
-
-
             EventRegister();
             ViewModelSharedFunctions.LoadSetting();
             RetrieveSettingValues();
             InitDir();
             InitJobConnectionSettings();
             InitStations(_numberOfStation);
-
             _updateTimer ??= InitializeDispatcherTimer();
         }
         private void RetrieveSettingValues()
@@ -127,7 +124,7 @@ namespace DipesLink.ViewModels
 
             Task.Run(() => GetCameraDataAsync(stationIndex));
 
-            Task.Run(() => GetCheckedStatistics(stationIndex));
+          //  Task.Run(() => GetCheckedStatistics(stationIndex));
         }
 
         private void CreateMultiObjects(int i)
@@ -224,7 +221,7 @@ namespace DipesLink.ViewModels
             if (sender is int index)
             {
                 ActionButtonProcess(index, ActionButtonType.LoadDB);
-                //  Debug.WriteLine("Load DB for Job " + index);
+               // Debug.WriteLine("Load DB for Job " + index);
             }
         }
 
@@ -289,19 +286,12 @@ namespace DipesLink.ViewModels
             {
                 if (JobList[stationIndex].IsDBExist)
                 {
-                    // Debug.WriteLine("Dont Reload Database for job: " + +stationIndex);
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
-                    //  JobList[stationIndex].IsStartButtonEnable = true;
-                    ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
-                    //      JobList[stationIndex].EnableUI = true;
+                    ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, true);
                     return;
                 }
-                // Debug.WriteLine("Reload Database for job: " + stationIndex);
-                //JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
-                // JobList[stationIndex].IsStartButtonEnable = false;
+                JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
                 ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
-                //  JobList[stationIndex].EnableUI = false;
-                //ViewModelSharedEvents.OnLoadingTableStatusChangeHandler();
                 byte[] listBytes = result.Skip(3).ToArray();
                 List<string[]>? listDatabase = DataConverter.FromByteArray<List<string[]>>(listBytes);
                 List<(List<string[]>, int)> dbInfo = new(1);
@@ -342,8 +332,9 @@ namespace DipesLink.ViewModels
                 if (listChecked != null)
                 {
                     JobList[stationIndex].RaiseLoadCompleteCheckedDatabase(listChecked);
-                    JobList[stationIndex].IsShowLoadingChecked = Visibility.Collapsed;
+                   
                 }
+                JobList[stationIndex].IsShowLoadingChecked = Visibility.Collapsed;
             }
             catch (Exception)
             {
@@ -491,9 +482,7 @@ namespace DipesLink.ViewModels
         {
             JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
             JobList[stationIndex].IsShowLoadingChecked = Visibility.Visible;
-            // JobList[stationIndex].IsStartButtonEnable = false;
             ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, false);
-            //  JobList[stationIndex].EnableUI = false;
         }
 
         private void GetControllerMessageResponseAsync(int stationIndex, byte[] result)
@@ -1017,7 +1006,7 @@ namespace DipesLink.ViewModels
 
                         // Checked Statistics (total, passed, failed)
                         case (byte)SharedMemoryType.CheckedStatistics:
-                            JobList[stationIndex].CheckedStatisticNumberBytes = result.Skip(3).ToArray();
+                         //   JobList[stationIndex].CheckedStatisticNumberBytes = result.Skip(3).ToArray();
                             break;
                     }
                     break;
@@ -1087,48 +1076,48 @@ namespace DipesLink.ViewModels
             }
         }
 
-        private void GetCheckedStatistics(int stationIndex)
-        {
-            //Application.Current?.Dispatcher.Invoke(async () =>
-            //{
-//                try
-//                {
-//                    while (true)
-//                    {
-//                        //var result = JobList[stationIndex].CheckedStatisticNumberBytes;
-//                        //if (result != null)
-//                        //{
-//                        //    // Total Checked
-//                        //    byte[] totalCheckedBytes = new byte[7];
-//                        //    Array.Copy(result, 0, totalCheckedBytes, 0, 7);
+//        private void GetCheckedStatistics(int stationIndex)
+//        {
+//            //Application.Current?.Dispatcher.Invoke(async () =>
+//            //{
+////                try
+////                {
+////                    while (true)
+////                    {
+////                        //var result = JobList[stationIndex].CheckedStatisticNumberBytes;
+////                        //if (result != null)
+////                        //{
+////                        //    // Total Checked
+////                        //    byte[] totalCheckedBytes = new byte[7];
+////                        //    Array.Copy(result, 0, totalCheckedBytes, 0, 7);
 
-//                        //    //// Total Passed
-//                        //    byte[] totalPassedBytes = new byte[7];
-//                        //    Array.Copy(result, totalCheckedBytes.Length, totalPassedBytes, 0, 7);
-//                        //    var totalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
+////                        //    //// Total Passed
+////                        //    byte[] totalPassedBytes = new byte[7];
+////                        //    Array.Copy(result, totalCheckedBytes.Length, totalPassedBytes, 0, 7);
+////                        //    var totalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
 
-//                        //    // Total Fail
-//                        //    byte[] totalFailBytes = new byte[7];
-//                        //    Array.Copy(result, totalCheckedBytes.Length + totalPassedBytes.Length, totalFailBytes, 0, 7);
+////                        //    // Total Fail
+////                        //    byte[] totalFailBytes = new byte[7];
+////                        //    Array.Copy(result, totalCheckedBytes.Length + totalPassedBytes.Length, totalFailBytes, 0, 7);
 
-//                          //  JobList[stationIndex].TotalChecked = Encoding.ASCII.GetString(totalCheckedBytes).Trim();
-//                         //   JobList[stationIndex].TotalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
-//                         //   JobList[stationIndex].TotalFailed = Encoding.ASCII.GetString(totalFailBytes).Trim();
+////                          //  JobList[stationIndex].TotalChecked = Encoding.ASCII.GetString(totalCheckedBytes).Trim();
+////                         //   JobList[stationIndex].TotalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
+////                         //   JobList[stationIndex].TotalFailed = Encoding.ASCII.GetString(totalFailBytes).Trim();
 
-//                            //Update Percent
-//                          //  UpdatePercentForCircleChart(stationIndex);
-//                        }
-//                       // await Task.Delay(1);
-//                    }
-//                }
-//                catch (Exception ex)
-//                {
-//#if DEBUG
-//                    Debug.WriteLine("GetCheckedStatistics Error" + ex.Message);
-//#endif
-//                }
-       //     });
-        }
+////                            //Update Percent
+////                          //  UpdatePercentForCircleChart(stationIndex);
+////                        }
+////                       // await Task.Delay(1);
+////                    }
+////                }
+////                catch (Exception ex)
+////                {
+////#if DEBUG
+////                    Debug.WriteLine("GetCheckedStatistics Error" + ex.Message);
+////#endif
+////                }
+//       //     });
+//        }
 
         private void UpdatePercentForCircleChart(JobOverview curJob)
         {

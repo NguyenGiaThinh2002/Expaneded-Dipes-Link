@@ -24,11 +24,18 @@ namespace DipesLink.Views
         public MainWindow()
         {
             InitializeComponent();
+            SetWindowTitle();
             DataContext = MainViewModel.GetIntance();
             EventRegister();
             new LanguageModel().UpdateApplicationLanguage("");
         }
 
+        private void SetWindowTitle()
+        {
+            var softwareName = Properties.Settings.Default.SoftwareName;
+            var version = Properties.Settings.Default.SoftwareVersion;
+            this.Title = $"{softwareName} - {version}";
+        }
         private void EventRegister()
         {
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
@@ -46,6 +53,7 @@ namespace DipesLink.Views
         {
             var vm = CurrentViewModel<MainViewModel>();
             if (vm is null) return;
+            vm.JobList[e].IsDBExist = false;
             vm.GetCurrentJobDetail(e);
         }
 
