@@ -27,9 +27,11 @@ DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\icon.ico
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\minhchau.nguyen\Desktop\DPLinkInnoSettup
+PrivilegesRequired=admin
+PrivilegesRequiredOverridesAllowed=dialog
+OutputDir=OutputExe\
 OutputBaseFilename=DP_Link_Setup64_{#MyAppVersion}
-SetupIconFile=C:\Users\minhchau.nguyen\Desktop\DPLink Update\DipesLinkWPF\Images\icon.ico
+SetupIconFile=icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -41,9 +43,12 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\minhchau.nguyen\Desktop\DPlink_PublishAll\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\minhchau.nguyen\Desktop\DPlink_PublishAll\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Pushlish\DPLink\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Pushlish\DPLink\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs ;Excludes: "*.pdb, *.config";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+//Add file icon.ico into the installation directory
+Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion       
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
@@ -53,9 +58,9 @@ Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; Value
 Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{group}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}" ;IconFilename: "{app}\icon.ico"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon;IconFilename: "{app}\icon.ico"
+Name: "{group}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"; IconFilename: "{app}\icon.ico"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

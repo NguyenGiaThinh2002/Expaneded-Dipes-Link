@@ -6,6 +6,7 @@ using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.MainUc;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using static DipesLink.Views.Enums.ViewEnums;
@@ -275,8 +276,7 @@ namespace DipesLink.Views
                     var res = CusMsgBox.Show(LanguageModel.GetLanguage("LogoutConfirmation"), "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     if (res.Result)
                     {
-                        Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                        Application.Current.Shutdown();
+                        RestartApplication();
                     }
                 }
                 else
@@ -287,6 +287,19 @@ namespace DipesLink.Views
             catch (Exception)
             {
 
+
+            }
+           
+        }
+        public static void RestartApplication()
+        {
+            try
+            {
+                Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                Application.Current.Shutdown();
+            }
+            catch (Exception)
+            {
 
             }
            

@@ -16,17 +16,27 @@ namespace DipesLink
             MainApp,
             DeviceTransfer
         }
+        private SplashScreenLoading? splashScreen;
+        private static Mutex? mutex;
+       
         #endregion
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
-            if (!InitializeMutex())
+            base.OnStartup(e);
+
+            splashScreen = new(); //Show Loading Screen
+            splashScreen.Show();
+            KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
+            var timeCheckOldProcess = DipesLink.Properties.Settings.Default.TimeCheckOldProcess;
+            await Task.Delay(timeCheckOldProcess);
+            if (!InitializeMutex()) // Check again old process exist
             {
                 NotifyAndShutdown();
                 return;
             }
+            splashScreen.Hide();
 
-            KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer });
             SQLitePCL.Batteries_V2.Init();
             ShutdownMode = ShutdownMode.OnMainWindowClose;
             var loginWindow = new LoginWindow();
@@ -39,6 +49,7 @@ namespace DipesLink
                     MainWindow = mainWindow;
                     MainWindow.Show();
                     loginWindow.Close();
+                    splashScreen.Close();
                 }
                 catch (Exception) { }
             }
@@ -50,8 +61,9 @@ namespace DipesLink
 
         protected override void OnExit(ExitEventArgs e)
         {
-            ReleaseMutex();
             KillProcessByName(new ProcessType[] { ProcessType.All });
+            Thread.Sleep(1000);
+            ReleaseMutex();
         }
 
         private static void KillProcessByName(ProcessType[] processType)
@@ -81,13 +93,17 @@ namespace DipesLink
 
 
         #region Prevent Start App One More Times
-        private static Mutex? mutex;
+       
         private bool InitializeMutex()
         {
-            string? appName = GetApplicationName();
-            bool createdNew;
-            mutex = new Mutex(true, appName, out createdNew);
-            return createdNew;
+          
+          
+                string? appName = GetApplicationName();
+                bool createdNew;
+                mutex = new Mutex(true, appName, out createdNew);
+                return createdNew;
+          
+          
         }
         private string? GetApplicationName()
         {
