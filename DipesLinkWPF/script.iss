@@ -27,6 +27,8 @@ DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\icon.ico
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
+PrivilegesRequired=admin
+PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=OutputExe\
 OutputBaseFilename=DP_Link_Setup64_{#MyAppVersion}
 SetupIconFile=icon.ico

@@ -34,7 +34,7 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 gif:AnimationBehavior.AnimateInDesignMode="True"
-                gif:AnimationBehavior.SourceUri="Images/LoadingIcon.gif"
+                gif:AnimationBehavior.SourceUri="pack://application:,,,/DipesLink;component/Images/LoadingIcon.gif"
                 Stretch="Uniform" />
         </Grid>
     </Grid>

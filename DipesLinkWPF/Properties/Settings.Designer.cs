@@ -40,5 +40,14 @@ namespace DipesLink.Properties {
                 return ((string)(this["SoftwareName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2000")]
+        public int TimeCheckOldProcess {
+            get {
+                return ((int)(this["TimeCheckOldProcess"]));
+            }
+        }
     }
 }

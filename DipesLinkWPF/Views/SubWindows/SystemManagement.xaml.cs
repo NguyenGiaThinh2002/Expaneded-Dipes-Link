@@ -77,7 +77,7 @@ namespace DipesLink.Views.SubWindows
             if (IsChangeLanguageAccepted())
             {
                 languageModel.UpdateApplicationLanguage(selectedLanguage);
-                RestartLanguageSelection();
+                MainWindow.RestartApplication();
             }
             else
             {
@@ -85,11 +85,7 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-        private void RestartLanguageSelection()
-        {
-            Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-            Application.Current.Shutdown();
-        }
+      
 
         private bool IsChangeLanguageAccepted()
         {

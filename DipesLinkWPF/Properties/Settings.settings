@@ -8,5 +8,8 @@
     <Setting Name="SoftwareName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">DP-Link</Value>
     </Setting>
+    <Setting Name="TimeCheckOldProcess" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">2000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
