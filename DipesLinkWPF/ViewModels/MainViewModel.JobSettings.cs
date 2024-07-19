@@ -19,6 +19,7 @@ using DipesLink.Views.UserControls.MainUc;
 using DipesLink.Models;
 using System.Collections.Concurrent;
 using System.Reflection;
+using DipesLink.Languages;
 
 namespace DipesLink.ViewModels
 {
@@ -111,7 +112,8 @@ namespace DipesLink.ViewModels
                     // Check job name 
                     if (_jobModel.Name == null || _jobModel.Name == "")
                     {
-                        CustomMessageBox checkJobNameMsgBox = new("Please input Job name", "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                        
+                        CustomMessageBox checkJobNameMsgBox = new(LanguageModel.GetLanguage("Please_Input_Job_Name"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                         checkJobNameMsgBox.ShowDialog();
                         return;
                     }
@@ -123,7 +125,7 @@ namespace DipesLink.ViewModels
                         {
                             if (_jobModel.DatabasePath == null || _jobModel.DatabasePath == "")
                             {
-                                CustomMessageBox checkJobMsgBox = new("Please select database path", "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Database_Path"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                                 checkJobMsgBox.ShowDialog();
                                 return;
                             }
@@ -132,7 +134,7 @@ namespace DipesLink.ViewModels
                             // Check Data compare format
                             if (_jobModel.DataCompareFormat == null || _jobModel.DataCompareFormat == "")
                             {
-                                CustomMessageBox checkJobMsgBox = new("Please select POD format", "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_POD_Format"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                                 checkJobMsgBox.ShowDialog();
                                 return;
                             }
@@ -148,7 +150,7 @@ namespace DipesLink.ViewModels
                                 _jobModel.TemplateListFirstFound == null ||
                                 !SharedFunctions.CheckExitTemplate(_jobModel.PrinterTemplate, _jobModel.TemplateListFirstFound))
                             {
-                                CustomMessageBox checkJobMsgBox = new("Please select printer template", "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Printer_Template"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                                 checkJobMsgBox.ShowDialog();
                                 return;
                             }
@@ -165,7 +167,7 @@ namespace DipesLink.ViewModels
 
                         if (_jobModel.ImageExportPath == null || _jobModel.ImageExportPath == "" || !Directory.Exists(_jobModel.ImageExportPath))
                         {
-                            CustomMessageBox checkJobMsgBox = new("Please select image export folder path", "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                            CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Image_Export_Folder_Path"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                             checkJobMsgBox.ShowDialog();
                             return;
                         }
@@ -174,7 +176,7 @@ namespace DipesLink.ViewModels
 
 
                     // Save Job to file
-                    CustomMessageBox saveConfirm = new("Save Job", "Confirm", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
+                    CustomMessageBox saveConfirm = new(LanguageModel.GetLanguage("Save_Job"), "Confirm", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
                     var isSaveConfirm = saveConfirm.ShowDialog();
                     if (isSaveConfirm == true)
                     {
@@ -205,7 +207,7 @@ namespace DipesLink.ViewModels
                                 }
                                 else
                                 {
-                                    CustomMessageBox checkJobMsgBox = new("Do you want replace existing template ?", "Job create fail", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
+                                    CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Do_You_Want_Replace_Existing_Template"), "Job create fail", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
                                     var isReplace = checkJobMsgBox.ShowDialog();
                                     if (isReplace == true) { } else return;
                                 }
@@ -223,7 +225,7 @@ namespace DipesLink.ViewModels
 
                         }
                         isSaveJob = true;
-                        CustomMessageBox saveJobSuccMsgBox = new("Save Job done !", "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Info);
+                        CustomMessageBox saveJobSuccMsgBox = new(LanguageModel.GetLanguage("Save_Job_Done"), "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Info);
                         saveJobSuccMsgBox.ShowDialog();
                     }
                 }

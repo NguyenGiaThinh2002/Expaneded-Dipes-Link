@@ -178,8 +178,8 @@
     <system:String x:Key="CREATE">TẠO</system:String>
     <system:String x:Key="Enable">Kích Hoạt</system:String>
     <system:String x:Key="Disable">Vô Hiệu Hóa</system:String>
-    <system:String x:Key="Multi_Line_Barcode_Verification_System">Hệ thống xác nhận mã vạch đa dòng</system:String>
-    <system:String x:Key="User_Login">NGƯỜI DÙNG ĐĂNG NHẬP</system:String>
+    <system:String x:Key="Multi_Line_Barcode_Verification_System">Hệ thống xác thực mã vạch đa trạm</system:String>
+    <system:String x:Key="User_Login">ĐĂNG NHẬP</system:String>
     <system:String x:Key="Remember_Me">Ghi nhớ đăng nhập</system:String>
     <system:String x:Key="LOGIN">ĐĂNG NHẬP</system:String>
     <system:String x:Key="CHECKED_LOG">BẢNG GHI ĐÃ KIỂM</system:String>
@@ -242,6 +242,21 @@
     <system:String x:Key="Language">Ngôn ngữ:</system:String>
     <system:String x:Key="DateTime_Format">Đ.dạng Ngày Giờ:</system:String>
     <system:String x:Key="Template_Name:">Tên Template</system:String>
+    <system:String x:Key="About_This_Software">Về Phần Mềm Này</system:String>
+    <system:String x:Key="Version">Phiên bản:</system:String>
+    <system:String x:Key="Software_Name">Tên Phần Mềm:</system:String>
+    <system:String x:Key="Website">Trang web:</system:String>
+    <system:String x:Key="Address">Địa chỉ</system:String>
+
+    <system:String x:Key="Please_Input_Job_Name">Vui lòng nhập tên công việc</system:String>
+    <system:String x:Key="Please_Select_Database_Path">Vui lòng chọn đường dẫn cơ sở dữ liệu</system:String>
+    <system:String x:Key="Please_Select_POD_Format">Vui lòng chọn định dạng POD</system:String>
+    <system:String x:Key="Please_Select_Printer_Template">Vui lòng chọn mẫu máy in</system:String>
+    <system:String x:Key="Please_Select_Image_Export_Folder_Path">Vui lòng chọn đường dẫn thư mục xuất ảnh</system:String>
+    <system:String x:Key="Save_Job">Lưu công việc</system:String>
+    <system:String x:Key="Do_You_Want_Replace_Existing_Template">Bạn có muốn thay thế mẫu hiện có không?</system:String>
+    <system:String x:Key="Save_Job_Done">Lưu công việc thành công!</system:String>
+
 
     <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
 </ResourceDictionary>

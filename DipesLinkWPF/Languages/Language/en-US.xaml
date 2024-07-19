@@ -241,5 +241,20 @@
     <system:String x:Key="Language">Language:</system:String>
     <system:String x:Key="DateTime_Format">DateTime Format:</system:String>
     <system:String x:Key="Template_Name:">Template Name:</system:String>
+    <system:String x:Key="About_This_Software">About This Software</system:String>
+    <system:String x:Key="Version">Version:</system:String>
+    <system:String x:Key="Software_Name">Software Name:</system:String>
+    <system:String x:Key="Website">Website:</system:String>
+    <system:String x:Key="Address">Address</system:String>
+
+    <system:String x:Key="Please_Input_Job_Name">Please input Job name</system:String>
+    <system:String x:Key="Please_Select_Database_Path">Please select database path</system:String>
+    <system:String x:Key="Please_Select_POD_Format">Please select POD format</system:String>
+    <system:String x:Key="Please_Select_Printer_Template">Please select printer template</system:String>
+    <system:String x:Key="Please_Select_Image_Export_Folder_Path">Please select image export folder path</system:String>
+    <system:String x:Key="Save_Job">Save Job</system:String>
+    <system:String x:Key="Do_You_Want_Replace_Existing_Template">Do you want to replace the existing template?</system:String>
+    <system:String x:Key="Save_Job_Done">Save Job done!</system:String>
+
 
 </ResourceDictionary>
