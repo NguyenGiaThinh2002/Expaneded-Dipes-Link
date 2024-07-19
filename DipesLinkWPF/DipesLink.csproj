@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="icon.ico" />
     <None Remove="Images\Duplicated_res.png" />
     <None Remove="Images\Error_Event.png" />
     <None Remove="Images\icon.ico" />
@@ -53,6 +54,7 @@
     <Folder Include="Libraries\Cameras\Cognex\Dataman\" />
     <Folder Include="Libraries\NugetPackages\" />
     <Folder Include="Libraries\NugetPackages\" />
+    <Folder Include="OutputExe\" />
     <Folder Include="Views\UserControls\SubUc\" />
   </ItemGroup>
 
@@ -73,6 +75,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\Duplicated_res.png" />
     <Resource Include="Images\Error_Event.png" />
     <Resource Include="Images\icon.ico" />
@@ -113,11 +118,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\SoftwareVersion.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>

@@ -149,12 +149,14 @@ namespace DipesLinkDeviceTransfer
             {
                 switch (DeviceSharedValues.ActionButtonType)
                 {
-                    case ActionButtonType.LoadDB: 
+                    case ActionButtonType.LoadDB:
                         await LoadSelectedJob();
                         NotificationProcess(NotifyType.DeviceDBLoaded);
                         break;
                     case ActionButtonType.Start:
-                       StartProcessAction(false); // Start without DB Load  
+                       
+                        StartProcessAction(false); // Start without DB Load  
+                        
                         break;
                     case ActionButtonType.Stop:  
                         NotificationProcess(NotifyType.StopSystem);

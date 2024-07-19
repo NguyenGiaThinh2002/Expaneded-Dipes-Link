@@ -8,8 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
      xmlns:local="clr-namespace:DipesLink.ViewModels"
+    xmlns:params="clr-namespace:DipesLink.Properties"
     xmlns:uc="clr-namespace:DipesLink.Views.UserControls.MainUc"
-    Title="DP-Link 1.0.0"
+    
     MinWidth="1280"
     MinHeight="768"
     d:Height="1080"
@@ -20,6 +21,10 @@
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
+            <MultiBinding x:Key="CombinedTitleBinding" StringFormat="{}{0} - {1}">
+                <Binding Source="{x:Static params:Settings.Default}" Path="SoftwareName"/>
+                <Binding Source="{x:Static params:Settings.Default}" Path="SoftwareVersion"/>
+            </MultiBinding>
             <converter:OptToVis x:Key="OptToVis" />
 
             <!--  Common Var  -->
@@ -71,7 +76,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-
+ 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100" />
