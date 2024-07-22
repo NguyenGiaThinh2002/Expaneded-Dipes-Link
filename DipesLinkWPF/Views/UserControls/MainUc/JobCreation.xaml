@@ -447,7 +447,7 @@
                                                 SelectedItem="{Binding SelectedJob}"
                                                 SelectionChanged="ListViewJobTemplate_SelectionChanged"
                                                 Style="{StaticResource ModernListViewStyle}" />
-                                            <!--MouseEnter="ListViewJobTemplate_MouseEnter"-->
+                                            <!--  MouseEnter="ListViewJobTemplate_MouseEnter"  -->
                                             <!--
                                                 PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
                                                 SelectedItem="{Binding SelectedJob}"
@@ -826,7 +826,7 @@
                                                 Checked="RadioButton_Checked"
                                                 Content="Standalone"
                                                 GroupName="PrinterSeriesGr"
-                                               IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=1}"
+                                                IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=1}"
                                                 Style="{DynamicResource RadioButtonStyle1}" />
                                         </StackPanel>
                                     </GroupBox>
@@ -920,7 +920,7 @@
                                         Width="470"
                                         Height="110">
                                         <GroupBox.Header>
-                                            <TextBlock FontWeight="Bold">Database Type</TextBlock>
+                                            <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Database_Type}" />
                                         </GroupBox.Header>
                                         <StackPanel>
                                             <StackPanel
@@ -1004,7 +1004,7 @@
                                     Height="200"
                                     HorizontalAlignment="Left">
                                     <GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="Printer Template" />
+                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Template}" />
                                     </GroupBox.Header>
                                     <StackPanel>
                                         <StackPanel Margin="0,5,0,0" Orientation="Horizontal">

@@ -122,6 +122,7 @@
     <system:String x:Key="Time_(ms)">Time (ms)</system:String>
     <system:String x:Key="Checked_Result">Checked Result</system:String>
     <system:String x:Key="Database">Database</system:String>
+    <system:String x:Key="DatabaseInDetail">Database</system:String>
     <system:String x:Key="Job_Logs">Job Logs</system:String>
     <system:String x:Key="Station">Station</system:String>
     <system:String x:Key="Printer_Settings">Printer Settings</system:String>
@@ -255,6 +256,7 @@
     <system:String x:Key="Save_Job">Save Job</system:String>
     <system:String x:Key="Do_You_Want_Replace_Existing_Template">Do you want to replace the existing template?</system:String>
     <system:String x:Key="Save_Job_Done">Save Job done!</system:String>
+    <system:String x:Key="Database_Type">Database Type</system:String>
 
 
 </ResourceDictionary>
