@@ -655,24 +655,18 @@
                                                             x:Name="RadBasic"
                                                             Width="100"
                                                             HorizontalAlignment="Center"
-                                                      
+                                                            Click="RadBasic_Click"
                                                             Content="{DynamicResource ResourceKey=Basic}"
                                                             FontSize="16"
-                                                            Click="RadBasic_Click"
-
                                                             Style="{StaticResource RadioButtonStyle1}" />
 
                                                         <RadioButton
                                                             x:Name="RadCompare"
                                                             Width="150"
                                                             Margin="10,0,0,0"
-                                                   
-                                                            
+                                                            Click="RadCompare_Click"
                                                             Content="{DynamicResource ResourceKey=Compare}"
                                                             FontSize="16"
-                                                            Click="RadCompare_Click"
-                                                  
-                                                           
                                                             Style="{StaticResource RadioButtonStyle1}" />
                                                         <!--  IsChecked="{Binding VerifyAndPrintBasicSentMethod, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"  -->
                                                     </StackPanel>
@@ -776,13 +770,15 @@
                                         </GroupBox>-->
                                         <Grid Grid.Row="1" Height="200">
                                             <Button
-                                                Width="120"
+                                                Width="140"
                                                 Height="40"
                                                 Margin="0,0,10,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Bottom"
-                                                Style="{StaticResource ModernButtonRs}"
+                                                Background="White"
+                                                BorderBrush="#00ABE6"
                                                 Click="RestartButton_Click">
+                                                <!--  Style="{StaticResource ModernButtonRs}"  -->
                                                 <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                                     <fa:IconImage
                                                         Width="16"

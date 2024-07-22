@@ -20,7 +20,7 @@
                 HorizontalAlignment="Center"
                 FontSize="24"
                 FontWeight="Bold"
-                Text="About This Software" />
+                Text="{DynamicResource ResourceKey=About_This_Software}" />
 
             <!--  Description Text  -->
             <GroupBox>
@@ -31,12 +31,18 @@
                         </Style>
                     </StackPanel.Resources>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,5,0" FontWeight="Bold">Software Name:</TextBlock>
+                        <TextBlock
+                            Margin="0,0,5,0"
+                            FontWeight="Bold"
+                            Text="{DynamicResource ResourceKey=Software_Name}" />
                         <TextBlock x:Name="TextBlockSoftware" Text="{Binding Source={x:Static local:Settings.Default}, Path=SoftwareName}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,5,0" FontWeight="Bold">Version:</TextBlock>
+                        <TextBlock
+                            Margin="0,0,5,0"
+                            FontWeight="Bold"
+                            Text="{DynamicResource ResourceKey=Version}" />
                         <TextBlock x:Name="TextBlockSoftwareVersion" Text="{Binding Source={x:Static local:Settings.Default}, Path=SoftwareVersion}" />
                     </StackPanel>
 
@@ -46,12 +52,18 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,5,0" FontWeight="Bold">Website:</TextBlock>
+                        <TextBlock
+                            Margin="0,0,5,0"
+                            FontWeight="Bold"
+                            Text="{DynamicResource ResourceKey=Website}" />
                         <TextBlock x:Name="TextBlockWebsite" Text="https://rynantech.com" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,5,0" FontWeight="Bold">Address:</TextBlock>
+                        <TextBlock
+                            Margin="0,0,5,0"
+                            FontWeight="Bold"
+                            Text="{DynamicResource ResourceKey=Address}" />
                         <TextBlock x:Name="TextBlockAddress" Text="Aperia Tower 2, 10 Kallang Avenue, Unit #05-10 Singapore, 339510" />
 
                     </StackPanel>
