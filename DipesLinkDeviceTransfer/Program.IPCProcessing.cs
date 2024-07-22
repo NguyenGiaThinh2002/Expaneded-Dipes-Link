@@ -3,6 +3,8 @@ using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
 using SharedProgram.Shared;
 using System.Diagnostics;
+using System.Numerics;
+using System.Reflection;
 using static IPCSharedMemory.Datatypes.Enums;
 using static SharedProgram.DataTypes.CommonDataType;
 
@@ -48,14 +50,22 @@ namespace DipesLinkDeviceTransfer
                     await Task.Delay(10);
                 }
             });
-            
+
         }
 
         private void GetActionButtons(byte[] result)
         {
-            var resultActionButton = new byte[result.Length - 3];
-            Array.Copy(result, 3, resultActionButton, 0, resultActionButton.Length);
-            DeviceSharedFunctions.GetActionButton(resultActionButton);
+            try
+            {
+                var resultActionButton = new byte[result.Length - 3];
+                Array.Copy(result, 3, resultActionButton, 0, resultActionButton.Length);
+                DeviceSharedFunctions.GetActionButton(resultActionButton);
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+
         }
 
         private void GetConenctionParams(byte[] result)
@@ -69,7 +79,7 @@ namespace DipesLinkDeviceTransfer
                 DeviceSharedFunctions.GetConnectionParamsSetting(systemParams);
                 SendSettingToSensorController();
             }
-            catch (Exception) { }
+            catch (Exception ex) { SharedFunctions.PrintConsoleMessage(ex.Message); }
         }
 
         private void SendSettingToSensorController()
@@ -90,13 +100,12 @@ namespace DipesLinkDeviceTransfer
                            strEncoderDia,
                            strDelaySensor,
                            strDisableSensor);
-                    //Console.WriteLine("Command: " + strCommand);
                     ControllerDeviceHandler.SendData(strCommand);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error send data to controller {ex.Message}");
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
@@ -119,7 +128,7 @@ namespace DipesLinkDeviceTransfer
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
@@ -132,11 +141,12 @@ namespace DipesLinkDeviceTransfer
                 {
                     try
                     {
-                     //   await Console.Out.WriteLineAsync("ConnecttionPrinter State : " + SharedValues.OperStatus);
                         MemoryTransfer.SendOperationStatusToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(SharedValues.OperStatus));
-                        
                     }
-                    catch (Exception) { }
+                    catch (Exception ex)
+                    {
+                        SharedFunctions.PrintConsoleMessage(ex.Message);
+                    }
 
                     await Task.Delay(2000);
                 }
@@ -147,83 +157,100 @@ namespace DipesLinkDeviceTransfer
         {
             while (true)
             {
-                switch (DeviceSharedValues.ActionButtonType)
+                try
                 {
-                    case ActionButtonType.LoadDB:
-                        await LoadSelectedJob();
-                        NotificationProcess(NotifyType.DeviceDBLoaded);
-                        break;
-                    case ActionButtonType.Start:
-                       
-                        StartProcessAction(false); // Start without DB Load  
-                        
-                        break;
-                    case ActionButtonType.Stop:  
-                        NotificationProcess(NotifyType.StopSystem);
-                        _ = StopProcessAsync();
-                        break;
-                    case ActionButtonType.Trigger: 
-                        TriggerCamera();
-                        break;
-                    case ActionButtonType.Simulate:
-                        StartAllThreadForTesting();
-                        break;
-                    case ActionButtonType.ReloadTemplate: // Reload template
-                        GetPrinterTemplateList();
-                        break;
-                    case ActionButtonType.Reprint: 
-#if DEBUG
-                        Console.WriteLine("Start Reprint !");
-#endif
-                        RePrintAsync();
-                        break;
-                    case ActionButtonType.ExportResult:
-                       // await ExportResultAsync();
-                        break;
-                    default:
-                        break;
+
+                    switch (DeviceSharedValues.ActionButtonType)
+                    {
+                        case ActionButtonType.LoadDB:
+                            await LoadSelectedJob();
+                            NotificationProcess(NotifyType.DeviceDBLoaded);
+                            break;
+                        case ActionButtonType.Start:
+
+                            StartProcessAction(false); // Start without DB Load  
+
+                            break;
+                        case ActionButtonType.Stop:
+                            NotificationProcess(NotifyType.StopSystem);
+                            _ = StopProcessAsync();
+                            break;
+                        case ActionButtonType.Trigger:
+                            TriggerCamera();
+                            break;
+                        case ActionButtonType.Simulate:
+                            StartAllThreadForTesting();
+                            break;
+                        case ActionButtonType.ReloadTemplate: // Reload template
+                            GetPrinterTemplateList();
+                            break;
+                        case ActionButtonType.Reprint:
+                            SharedFunctions.PrintConsoleMessage("Reprint.....");
+                            RePrintAsync();
+                            break;
+                        case ActionButtonType.ExportResult:
+                            break;
+                        default:
+                            break;
+                    }
+                    DeviceSharedValues.ActionButtonType = ActionButtonType.Unknown; //Prevent state retention
+                    await Task.Delay(50);
                 }
-                DeviceSharedValues.ActionButtonType = ActionButtonType.Unknown; //Prevent state retention
-                await Task.Delay(50);
+                catch (Exception ex)
+                {
+                    SharedFunctions.PrintConsoleMessage(ex.Message);
+                }
+
+
             }
         }
 
         private async void StartProcessAction(bool startWithDB)
         {
-            Task<int> connectionCode = CheckDeviceConnectionAsync();
-            if (connectionCode == null) return;
-            int code = connectionCode.Result;
-            if (code == 0) // OKE
+            try
             {
-                if (startWithDB)
+                Task<int> connectionCode = CheckDeviceConnectionAsync();
+                if (connectionCode == null) return;
+                int code = connectionCode.Result;
+                if (code == 0) // OKE
                 {
-                    await LoadSelectedJob();
+                    if (startWithDB)
+                    {
+                        await LoadSelectedJob();
+                    }
+                    StartProcess();
                 }
-                StartProcess();
+                else if (code == 1) // Camera not connect
+                {
+                    SharedFunctions.PrintConsoleMessage("Please check camera connection !");
+                    NotificationProcess(NotifyType.NotConnectCamera);
+                }
+                else if (code == 2) // Printer not connect
+                {
+                    SharedFunctions.PrintConsoleMessage("Please check printer connection !");
+                    NotificationProcess(NotifyType.NotConnectPrinter);
+                }
             }
-            else if (code == 1) // Camera not connect
+            catch (Exception ex)
             {
-#if DEBUG
-                await Console.Out.WriteLineAsync("Please check camera connection !");
-#endif
-                NotificationProcess(NotifyType.NotConnectCamera);
-            }
-            else if (code == 2) // Printer not connect
-            {
-#if DEBUG
-                await Console.Out.WriteLineAsync("Please check printer connection !");
-#endif
-
-                NotificationProcess(NotifyType.NotConnectPrinter);
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
         private void TriggerCamera()
         {
-            if (DatamanCameraDeviceHandler != null && DatamanCameraDeviceHandler.IsConnected)
+            try
             {
-                DatamanCameraDeviceHandler.ManualInputTrigger();
+                if (DatamanCameraDeviceHandler != null && DatamanCameraDeviceHandler.IsConnected)
+                {
+                    DatamanCameraDeviceHandler.ManualInputTrigger();
+                }
             }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+          
         }
 
         private static bool _isLoading = false;
@@ -242,7 +269,7 @@ namespace DipesLinkDeviceTransfer
             }
             try
             {
-              
+
                 string? selectedJobName = SharedFunctions.GetSelectedJobNameList(JobIndex).FirstOrDefault();
                 SharedValues.SelectedJob = SharedFunctions.GetJobSelected(selectedJobName, JobIndex);
                 await Console.Out.WriteLineAsync(SharedValues.SelectedJob?.Index.ToString());
@@ -265,17 +292,15 @@ namespace DipesLinkDeviceTransfer
                     SharedValues.ListPrintedCodeObtainFromFile.Clear();
                     _CodeListPODFormat.Clear();
 
-                    SharedFunctions.SaveStringOfPrintedResponePath(SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\","printedPathString", SharedValues.SelectedJob.PrintedResponePath);
+                    SharedFunctions.SaveStringOfPrintedResponePath(SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\", "printedPathString", SharedValues.SelectedJob.PrintedResponePath);
                     SharedFunctions.SaveStringOfCheckedPath(SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\", "checkedPathString", SharedValues.SelectedJob.CheckedResultPath);
 
                     await InitDataAsync(SharedValues.SelectedJob);
-                    
-                   
                 }
             }
-            catch (Exception ex) 
-            { 
-                SharedFunctions.PrintConsoleMessage(ex.Message); 
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
             finally
             {

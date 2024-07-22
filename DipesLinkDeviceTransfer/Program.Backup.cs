@@ -7,9 +7,7 @@ namespace DipesLinkDeviceTransfer
 {
     public partial class Program
     {
-
         private readonly string _DateTimeFormat = "yyMMddHHmmss";
-
         private async void ExportCheckedResultToFileAsync()
         {
             if (SharedValues.SelectedJob == null) return;

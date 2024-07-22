@@ -37,8 +37,6 @@ namespace DipesLinkDeviceTransfer
             OnReceiveVerifyDataEvent -= SendVerifiedDataToPrinter;
             OnReceiveVerifyDataEvent += SendVerifiedDataToPrinter;
             SharedEvents.OnPrinterDataChange += SharedEvents_OnPrinterDataChange; // Printer Data change event
-            //SharedEvents.OnVerifyAndPrindSendDataMethod -= SharedEvents_OnVerifyAndPrindSendDataMethod;
-            //SharedEvents.OnVerifyAndPrindSendDataMethod += SharedEvents_OnVerifyAndPrindSendDataMethod;
             ReceiveDataFromPrinterHandlerAsync();
         }
 
@@ -52,6 +50,7 @@ namespace DipesLinkDeviceTransfer
 
         private NotifyType CheckInitDataErrorAndGenerateMessage()
         {
+
             if (_InitDataErrorList.Count > 0)
             {
                 foreach (var value in _InitDataErrorList)
@@ -105,7 +104,6 @@ namespace DipesLinkDeviceTransfer
                 // Check list POD code for Print and Check
                 if (_CodeListPODFormat == null || _CodeListPODFormat.IsEmpty)
                 {
-                    Console.WriteLine("_CodeListPODFormat is null" + _CodeListPODFormat);
                     return CheckCondition.MissingParameterActivation;
                 }
             }
@@ -115,135 +113,134 @@ namespace DipesLinkDeviceTransfer
 
         public void StartProcess()
         {
-            if (SharedValues.SelectedJob == null) return;
-            if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
+            try
             {
-#if DEBUG
-                Console.WriteLine("Notify Error: The system has started !");
-#endif
-                NotificationProcess(NotifyType.StartSync);
-                return;
-            }
-
-            var checkInitDataNotifyType = CheckInitDataErrorAndGenerateMessage();
-            if (checkInitDataNotifyType != NotifyType.Unk)
-            {
-                NotificationProcess(checkInitDataNotifyType);
-#if DEBUG
-                Console.WriteLine("Check Init Data Error: " + checkInitDataNotifyType.ToString());
-#endif
-                return;
-            }
-
-            bool isDatabaseDeny = SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.TotalCode == 0;
-            if (isDatabaseDeny)
-            {
-#if DEBUG
-                Console.WriteLine("Database doesn't exist !");
-#endif
-                NotificationProcess(NotifyType.DatabaseDoNotExist);
-                Console.WriteLine("kiem tra lan 2");
-                return;
-            }
-
-            CheckCondition checkCondition = CheckAllTheConditions();
-            if (checkCondition != CheckCondition.Success)
-            {
-                switch (checkCondition)
+                if (SharedValues.SelectedJob == null) return;
+                if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
                 {
-                    case CheckCondition.NotLoadDatabase:
-                        Console.WriteLine("Notify Error: Please check database connection");
-                        NotificationProcess(NotifyType.NotLoadDatabase);
-                        break;
-                    case CheckCondition.NotConnectCamera:
-                        Console.WriteLine("Notify Error: Please check camera connection");
-                        NotificationProcess(NotifyType.NotConnectCamera);
-                        break;
-                    case CheckCondition.NotLoadTemplate:
-                        Console.WriteLine("Notify Error: Please check the printer template");
-                        NotificationProcess(NotifyType.NotLoadTemplate);
-                        break;
-                    case CheckCondition.MissingParameter:
-                        Console.WriteLine("Notify Error: Some parameter is missing ! Please check again");
-                        NotificationProcess(NotifyType.MissingParameter);
-                        break;
-                    case CheckCondition.NotConnectPrinter:
-                        Console.WriteLine("Notify Error: Please check printer connection");
-                        NotificationProcess(NotifyType.NotConnectPrinter);
-                        break;
-                    case CheckCondition.NotConnectServer:
-                        NotificationProcess(NotifyType.NotConnectServer);
-                        break;
-                    case CheckCondition.LeastOneAction:
-                        NotificationProcess(NotifyType.LeastOneAction);
-                        break;
-                    case CheckCondition.MissingParameterActivation:
-                        Console.WriteLine("Notify Error: Some activation params are missing! Please check again");
-                        NotificationProcess(NotifyType.MissingParameterActivation);
-                        break;
-                    case CheckCondition.MissingParameterPrinting:
-                        NotificationProcess(NotifyType.MissingParameterPrinting);
-                        break;
-                    case CheckCondition.MissingParameterWarehouseInput:
-                        NotificationProcess(NotifyType.MissingParameterWarehouseInput);
-                        break;
-                    case CheckCondition.MissingParameterWarehouseOutput:
-                        NotificationProcess(NotifyType.MissingParameterWarehouseOutput);
-                        break;
-                    case CheckCondition.CreatingWarehouseInputReceipt:
-                        NotificationProcess(NotifyType.CreatingWarehouseInputReceipt);
-                        break;
-                    case CheckCondition.NoJobsSelected:
-                        Console.WriteLine("Notify Error: Please select a jon for system");
-                        NotificationProcess(NotifyType.NoJobsSelected);
-                        break;
-                    default:
-                        break;
+                    SharedFunctions.PrintConsoleMessage("Notify Error: The system has started !");
+                    NotificationProcess(NotifyType.StartSync);
+                    return;
                 }
-                return;
-            }
 
-            SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
-            _QueueBufferPrinterReceivedData.Clear();
-            if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
-                SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
-            {
-                SharedValues.OperStatus = OperationStatus.Processing;
-                if (RynanRPrinterDeviceHandler != null &&
-                SharedValues.SelectedJob.JobStatus != JobStatus.Accomplished)
+                var checkInitDataNotifyType = CheckInitDataErrorAndGenerateMessage();
+                if (checkInitDataNotifyType != NotifyType.Unk)
                 {
-                    RynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
-                    Thread.Sleep(50);
-                 //   RynanRPrinterDeviceHandler.SendData("CLPB"); //send clear buffer command to printer
-                    string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
-                    string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
-                    Thread.Sleep(50);
-                    RynanRPrinterDeviceHandler.SendData(startPrintCommand); // Send Start command to printer
+                    NotificationProcess(checkInitDataNotifyType);
+                    SharedFunctions.PrintConsoleMessage("Check Init Data Error: " + checkInitDataNotifyType.ToString());
+                    return;
+                }
+
+                bool isDatabaseDeny = SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.TotalCode == 0;
+                if (isDatabaseDeny)
+                {
+                    SharedFunctions.PrintConsoleMessage("Database doesn't exist !");
+                    NotificationProcess(NotifyType.DatabaseDoNotExist);
+                    return;
+                }
+
+                CheckCondition checkCondition = CheckAllTheConditions();
+                if (checkCondition != CheckCondition.Success)
+                {
+                    switch (checkCondition)
+                    {
+                        case CheckCondition.NotLoadDatabase:
+                            Console.WriteLine("Notify Error: Please check database connection");
+                            NotificationProcess(NotifyType.NotLoadDatabase);
+                            break;
+                        case CheckCondition.NotConnectCamera:
+                            Console.WriteLine("Notify Error: Please check camera connection");
+                            NotificationProcess(NotifyType.NotConnectCamera);
+                            break;
+                        case CheckCondition.NotLoadTemplate:
+                            Console.WriteLine("Notify Error: Please check the printer template");
+                            NotificationProcess(NotifyType.NotLoadTemplate);
+                            break;
+                        case CheckCondition.MissingParameter:
+                            Console.WriteLine("Notify Error: Some parameter is missing ! Please check again");
+                            NotificationProcess(NotifyType.MissingParameter);
+                            break;
+                        case CheckCondition.NotConnectPrinter:
+                            Console.WriteLine("Notify Error: Please check printer connection");
+                            NotificationProcess(NotifyType.NotConnectPrinter);
+                            break;
+                        case CheckCondition.NotConnectServer:
+                            NotificationProcess(NotifyType.NotConnectServer);
+                            break;
+                        case CheckCondition.LeastOneAction:
+                            NotificationProcess(NotifyType.LeastOneAction);
+                            break;
+                        case CheckCondition.MissingParameterActivation:
+                            Console.WriteLine("Notify Error: Some activation params are missing! Please check again");
+                            NotificationProcess(NotifyType.MissingParameterActivation);
+                            break;
+                        case CheckCondition.MissingParameterPrinting:
+                            NotificationProcess(NotifyType.MissingParameterPrinting);
+                            break;
+                        case CheckCondition.MissingParameterWarehouseInput:
+                            NotificationProcess(NotifyType.MissingParameterWarehouseInput);
+                            break;
+                        case CheckCondition.MissingParameterWarehouseOutput:
+                            NotificationProcess(NotifyType.MissingParameterWarehouseOutput);
+                            break;
+                        case CheckCondition.CreatingWarehouseInputReceipt:
+                            NotificationProcess(NotifyType.CreatingWarehouseInputReceipt);
+                            break;
+                        case CheckCondition.NoJobsSelected:
+                            Console.WriteLine("Notify Error: Please select a jon for system");
+                            NotificationProcess(NotifyType.NoJobsSelected);
+                            break;
+                        default:
+                            break;
+                    }
+                    return;
+                }
+
+                SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
+                _QueueBufferPrinterReceivedData.Clear();
+                if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
+                    SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+                {
+                    SharedValues.OperStatus = OperationStatus.Processing;
+                    if (RynanRPrinterDeviceHandler != null &&
+                    SharedValues.SelectedJob.JobStatus != JobStatus.Accomplished)
+                    {
+                        RynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
+                        Thread.Sleep(50);
+                        string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
+                        string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
+                        Thread.Sleep(50);
+                        RynanRPrinterDeviceHandler.SendData(startPrintCommand); // Send Start command to printer
+                    }
+                }
+                else
+                {
+                    SharedValues.OperStatus = OperationStatus.Running;
+                }
+                bool isNonePrinted = SharedValues.SelectedJob.CompareType == CompareType.CanRead || SharedValues.SelectedJob.CompareType == CompareType.StaticText;
+                SharedValues.SelectedJob.JobStatus = JobStatus.Unfinished;
+
+                SaveJobChangedSettings(SharedValues.SelectedJob);
+
+                SendCompleteDataToUIAsync();
+
+                CompareAsync();
+
+                ExportImagesToFileAsync();
+
+                UpdateUICheckedResultAsync();
+
+                ExportCheckedResultToFileAsync();
+
+                if (SharedValues.SelectedJob.CompareType == CompareType.Database)
+                {
+                    UpdateUIPrintedResponseAsync();
+                    ExportPrintedResponseToFileAsync();
                 }
             }
-            else
+            catch (Exception ex)
             {
-                SharedValues.OperStatus = OperationStatus.Running;
-            }
-            bool isNonePrinted = SharedValues.SelectedJob.CompareType == CompareType.CanRead || SharedValues.SelectedJob.CompareType == CompareType.StaticText;
-            SharedValues.SelectedJob.JobStatus = JobStatus.Unfinished;
-
-            SaveJobChangedSettings(SharedValues.SelectedJob);
-
-            SendCompleteDataToUIAsync();
-
-            CompareAsync();
-
-            ExportImagesToFileAsync();
-
-            UpdateUICheckedResultAsync();
-
-            ExportCheckedResultToFileAsync();
-
-            if (SharedValues.SelectedJob.CompareType == CompareType.Database)
-            {
-                UpdateUIPrintedResponseAsync();
-                ExportPrintedResponseToFileAsync();
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
@@ -288,32 +285,31 @@ namespace DipesLinkDeviceTransfer
                         StartProcess();
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-#if DEBUG
-                    Console.WriteLine("Reprint failed !");
-#endif 
+                    SharedFunctions.PrintConsoleMessage(ex.Message);
                 }
             });
         }
 
         private static void SaveJobChangedSettings(JobModel selectedJob)
         {
-            string jobFilePath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
-            string jobFileSelectedPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
 
-            selectedJob.SaveJobFile(jobFilePath);
-            if (File.Exists(jobFileSelectedPath))
+            try
             {
-                selectedJob.SaveJobFile(jobFileSelectedPath);
-            }
-        }
+                string jobFilePath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
+                string jobFileSelectedPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
 
-        private void SimulateCameraData()
-        {
-            //DetectModel dtm = new DetectModel();
-            //dtm.Text
-            //_QueueBufferCameraReceivedData.Enqueue(detectModel);
+                selectedJob.SaveJobFile(jobFilePath);
+                if (File.Exists(jobFileSelectedPath))
+                {
+                    selectedJob.SaveJobFile(jobFileSelectedPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
         }
 
         private async Task StopProcessAsync()
@@ -366,8 +362,8 @@ namespace DipesLinkDeviceTransfer
 
         private void ClearBufferUpdateUI()
         {
-            _QueueSentCodeNumber.Clear();
-            _QueueReceivedCodeNumber.Clear();
+            _QueueSentCodeNumber?.Clear();
+            _QueueReceivedCodeNumber?.Clear();
         }
 
         private async void SendWorkingDataToPrinterHandlerAsync()
@@ -674,97 +670,105 @@ namespace DipesLinkDeviceTransfer
                 podResponse.Command = podCommand[0];
                 podResponse.Status = podCommand[1]; // OK . Ready
                 podResponse.Error = podCommand[2]; // Error code
-            }
-            catch (Exception)
-            {
-            }
-
-
-            // Correct case
-            if (podResponse.Status != null && (podResponse.Status == "OK" || podResponse.Status == "READY"))
-            {
-                // If not Verify and Print : Send POD First
-                if (podData.RoleOfPrinter == RoleOfStation.ForProduct && !_IsVerifyAndPrintMode)
+                                                   // Correct case
+                if (podResponse.Status != null && (podResponse.Status == "OK" || podResponse.Status == "READY"))
                 {
-                    SendWorkingDataToPrinterHandlerAsync(); // Send POD data to printer when printer ready receive data
+                    // If not Verify and Print : Send POD First
+                    if (podData.RoleOfPrinter == RoleOfStation.ForProduct && !_IsVerifyAndPrintMode)
+                    {
+                        SendWorkingDataToPrinterHandlerAsync(); // Send POD data to printer when printer ready receive data
+                    }
+                }
+                else // Error case
+                {
+                    string message = "Unknown";
+                    NotifyType notifyType = NotifyType.Unk;
+                    switch (podResponse.Error)
+                    {
+                        case "001":
+                            message = "Open templates failed (dose not exist, others templates being opening,...)";
+                            notifyType = NotifyType.NotLoadTemplate;
+                            break;
+                        case "002":
+                            message = "Start pages, End pages is invalid";
+                            notifyType = NotifyType.StartEndPageInvalid;
+                            break;
+                        case "003":
+                            message = "No printhead is selected";
+                            notifyType = NotifyType.NoPrintheadSelected;
+                            break;
+                        case "004":
+                            message = "Speed limit";
+                            notifyType = NotifyType.PrinterSpeedLimit;
+                            break;
+                        case "005":
+                            message = "Printhead disconnected";
+                            notifyType = NotifyType.PrintheadDisconnected;
+                            break;
+                        case "006":
+                            message = "Unknown printhead";
+                            notifyType = NotifyType.UnknownPrinthead;
+                            break;
+                        case "007":
+                            message = "No cartridges";
+                            notifyType = NotifyType.NoCartridges;
+                            break;
+                        case "008":
+                            message = "Invalid cartridges";
+                            notifyType = NotifyType.InvalidCartridges;
+                            break;
+
+                        case "009":
+                            message = "Out of ink";
+                            notifyType = NotifyType.OutOfInk;
+                            break;
+                        case "010":
+                            message = "Cartridges is locked";
+                            notifyType = NotifyType.CartridgesLocked;
+                            break;
+                        case "011":
+                            message = "Invalid version";
+                            notifyType = NotifyType.InvalidVersion;
+                            break;
+                        case "012":
+                            message = "Incorrect printhead";
+                            notifyType = NotifyType.IncorrectPrinthead;
+                            break;
+                        default:
+                            break;
+                    }
+                    //  Console.WriteLine("Loi satrt"+message);
+                    NotificationProcess(notifyType);
+                    _ = StopProcessAsync();
                 }
             }
-            else // Error case
+            catch (Exception ex)
             {
-                string message = "Unknown";
-                NotifyType notifyType = NotifyType.Unk;
-                switch (podResponse.Error)
-                {
-                    case "001":
-                        message = "Open templates failed (dose not exist, others templates being opening,...)";
-                        notifyType = NotifyType.NotLoadTemplate;
-                        break;
-                    case "002":
-                        message = "Start pages, End pages is invalid";
-                        notifyType = NotifyType.StartEndPageInvalid;
-                        break;
-                    case "003":
-                        message = "No printhead is selected";
-                        notifyType = NotifyType.NoPrintheadSelected;
-                        break;
-                    case "004":
-                        message = "Speed limit";
-                        notifyType = NotifyType.PrinterSpeedLimit;
-                        break;
-                    case "005":
-                        message = "Printhead disconnected";
-                        notifyType = NotifyType.PrintheadDisconnected;   
-                        break;
-                    case "006":
-                        message = "Unknown printhead";
-                        notifyType = NotifyType.UnknownPrinthead;
-                        break;
-                    case "007":
-                        message = "No cartridges";
-                        notifyType = NotifyType.NoCartridges;
-                        break;
-                    case "008":
-                        message = "Invalid cartridges";
-                        notifyType = NotifyType.InvalidCartridges;
-                        break;
-
-                    case "009":
-                        message = "Out of ink";
-                        notifyType = NotifyType.OutOfInk;
-                        break;
-                    case "010":
-                        message = "Cartridges is locked";
-                        notifyType = NotifyType.CartridgesLocked;
-                        break;
-                    case "011":
-                        message = "Invalid version";
-                        notifyType = NotifyType.InvalidVersion;
-                        break;
-                    case "012":
-                        message = "Incorrect printhead";
-                        notifyType = NotifyType.IncorrectPrinthead;
-                        break;
-                    default:
-                        break;
-                }
-                //  Console.WriteLine("Loi satrt"+message);
-                NotificationProcess(notifyType);
-                _ = StopProcessAsync();
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
         private void StopCommandHandler(string[] podCommand, PODResponseModel podResponse)
         {
-            podResponse.Status = podCommand[1];
-
-            // Is STOP
-            if (podResponse.Status != null && podResponse.Status == "OK")
+            try
             {
-                lock (_StopLocker)
+
+
+                podResponse.Status = podCommand[1];
+
+                // Is STOP
+                if (podResponse.Status != null && podResponse.Status == "OK")
                 {
-                    _IsStopOK = true;
-                    Monitor.PulseAll(_StopLocker); //Notification has stopped completed
+                    lock (_StopLocker)
+                    {
+                        _IsStopOK = true;
+                        Monitor.PulseAll(_StopLocker); //Notification has stopped completed
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
 
         }
@@ -1050,17 +1054,14 @@ namespace DipesLinkDeviceTransfer
 
         private async Task InitVerifyAndPrindSendDataMethod()
         {
-
             if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) return;
-            // EnableUIComponentWhenLoadData(false);
-            _Emergency.Clear();
+            _Emergency?.Clear();
             _Emergency = await InitVNPUpdatePrintedStatusConditionBuffer();
-            // EnableUIComponentWhenLoadData(true);
         }
 
         private async Task<ConcurrentDictionary<string, int>> InitVNPUpdatePrintedStatusConditionBuffer()
         {
-            // Thực hiện khi load hết database lên
+
             var result = new ConcurrentDictionary<string, int>();
             var _CheckedResultCodeSet = new HashSet<string>();
             string validCond = ComparisonResult.Valid.ToString();
@@ -1123,44 +1124,54 @@ namespace DipesLinkDeviceTransfer
 
         private void VerifyAndPrintProcessing(DetectModel detectModel, ref int currentCheckedIndex)
         {
-            if (GetPrinterStatus())
+            try
             {
-                string[] arr = Array.Empty<string>();
 
-                //Valid
-                if (detectModel.CompareResult == ComparisonResult.Valid)
+
+                if (GetPrinterStatus())
                 {
-                    if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) // Verify and Print Basic Sent : Send exactly camera data to printer
+                    string[] arr = Array.Empty<string>();
+
+                    //Valid
+                    if (detectModel.CompareResult == ComparisonResult.Valid)
                     {
-                        arr = new string[3];
-                        arr[1] = detectModel.Text;
-                    }
-                    else
-                    {
-                        lock (_SyncObjCodeList)
+                        if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) // Verify and Print Basic Sent : Send exactly camera data to printer
                         {
-                            arr = SharedValues.ListPrintedCodeObtainFromFile[currentCheckedIndex]; //Verify and Print Compare send method
+                            arr = new string[3];
+                            arr[1] = detectModel.Text;
+                        }
+                        else
+                        {
+                            lock (_SyncObjCodeList)
+                            {
+                                arr = SharedValues.ListPrintedCodeObtainFromFile[currentCheckedIndex]; //Verify and Print Compare send method
+                            }
                         }
                     }
-                }
-                // Invalid
-                else
-                {
-                    if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod)
-                    {
-                        arr = new string[3];
-                    }
+                    // Invalid
                     else
                     {
-                        lock (_SyncObjCodeList)
+                        if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod)
                         {
-                            arr = new string[SharedValues.ListPrintedCodeObtainFromFile[0].Length];
+                            arr = new string[3];
+                        }
+                        else
+                        {
+                            lock (_SyncObjCodeList)
+                            {
+                                arr = new string[SharedValues.ListPrintedCodeObtainFromFile[0].Length];
+                            }
                         }
                     }
+                    RaiseOnReceiveVerifyDataEvent(arr);
+                    currentCheckedIndex = -1;
                 }
-                RaiseOnReceiveVerifyDataEvent(arr);
-                currentCheckedIndex = -1;
             }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+
         }
 
         public void RaiseOnReceiveVerifyDataEvent(object sender)
@@ -1179,38 +1190,45 @@ namespace DipesLinkDeviceTransfer
 
         private void SendVerifiedDataToPrinter(object? sender, EventArgs e)
         {
-            string command = "DATA;";
-            string[]? arr = sender as string[];
+            try
+            {
+                string command = "DATA;";
+                string[]? arr = sender as string[];
 
-            if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) // is basic
-            {
-                command += arr[1] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[1]; // If null => send custom string, else send detectmodel.text (read = send)
-            }
-            else // is compare
-            {
-                if (DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint.Count == 0) // If no select any field => send all field or send n failure field
+                if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) // is basic
                 {
-                    command += string.Join(";", arr.Take(arr.Length - 1).Skip(1)
-                        .Select(x => x ?? DeviceSharedValues.VPObject.FailedDataSentToPrinter));
+                    command += arr[1] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[1]; // If null => send custom string, else send detectmodel.text (read = send)
                 }
-                else // if select field => send selected field or send n value failure
+                else // is compare
                 {
-                    command += string.Join(";", DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint
-                       .Where(x => x.Index < arr.Length - 1)
-                       .Select(x => arr[x.Index] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[x.Index]));
+                    if (DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint.Count == 0) // If no select any field => send all field or send n failure field
+                    {
+                        command += string.Join(";", arr.Take(arr.Length - 1).Skip(1)
+                            .Select(x => x ?? DeviceSharedValues.VPObject.FailedDataSentToPrinter));
+                    }
+                    else // if select field => send selected field or send n value failure
+                    {
+                        command += string.Join(";", DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint
+                           .Where(x => x.Index < arr.Length - 1)
+                           .Select(x => arr[x.Index] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[x.Index]));
+                    }
                 }
-            }
-            if (RynanRPrinterDeviceHandler != null)
-            {
-                RynanRPrinterDeviceHandler.SendData(command);
-                NumberOfSentPrinter++;
-                Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
-                _QueueSentCodeNumber.Enqueue(_countSentCode);
+                if (RynanRPrinterDeviceHandler != null)
+                {
+                    RynanRPrinterDeviceHandler.SendData(command);
+                    NumberOfSentPrinter++;
+                    Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
+                    _QueueSentCodeNumber.Enqueue(_countSentCode);
 
+                }
+                else
+                {
+                    // Todo: Device Transfer Failed
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Todo: Device Transfer Failed
+                SharedFunctions.PrintConsoleMessage(ex.Message);
             }
         }
 
@@ -1551,8 +1569,17 @@ namespace DipesLinkDeviceTransfer
 
         private void SendTemplateListToUI(int index, string[] printerTemplate)
         {
-            byte[] byteRes = DataConverter.ToByteArray(printerTemplate);
-            MemoryTransfer.SendPrinterTemplateListToUI(_ipcDeviceToUISharedMemory_DT, index, byteRes);
+            try
+            {
+                byte[] byteRes = DataConverter.ToByteArray(printerTemplate);
+                MemoryTransfer.SendPrinterTemplateListToUI(_ipcDeviceToUISharedMemory_DT, index, byteRes);
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+
+            }
+           
         }
 
         private void ReleaseIPCTask()
@@ -1560,7 +1587,8 @@ namespace DipesLinkDeviceTransfer
             _CTS_SendStsPrint?.Cancel();
             _CTS_SendStsCheck?.Cancel();
             _CTS_SendData?.Cancel();
-            Console.WriteLine("Thread send IPC was stoppped!");
+            SharedFunctions.PrintConsoleMessage("Thread send IPC was stoppped!");
+        
         }
 
         public void SendCompleteDataToUIAsync()
