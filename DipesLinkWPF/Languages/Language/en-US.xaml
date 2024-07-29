@@ -257,6 +257,4 @@
     <system:String x:Key="Do_You_Want_Replace_Existing_Template">Do you want to replace the existing template?</system:String>
     <system:String x:Key="Save_Job_Done">Save Job done!</system:String>
     <system:String x:Key="Database_Type">Database Type</system:String>
-
-
 </ResourceDictionary>

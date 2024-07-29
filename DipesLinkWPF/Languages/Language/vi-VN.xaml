@@ -10,17 +10,17 @@
     <system:String x:Key="SystemStarted">Hệ thống đã khởi động !</system:String>
     <system:String x:Key="CannotAccessDatabase">Trạm {0}: Không thể truy cập cơ sở dữ liệu !</system:String>
     <system:String x:Key="CannotAccessCheckedResult">Trạm {0}: Không thể truy cập kết quả đã kiểm tra !</system:String>
-    <system:String x:Key="CannotAccessPrintedResponse">Trạm {0}: Không thể truy cập phản hồi đã in !</system:String>
+    <system:String x:Key="CannotAccessPrintedResponse">Trạm {0}: Không thể truy cập dữ liệu phản hồi in !</system:String>
     <system:String x:Key="DatabaseDoesNotExist">Trạm {0}: Cơ sở dữ liệu không tồn tại !</system:String>
     <system:String x:Key="NoJobSelected">Trạm {0}: Không có công việc nào được chọn !</system:String>
     <system:String x:Key="CheckedResultDoesNotExist">Trạm {0}: Kết quả đã kiểm tra không tồn tại !</system:String>
-    <system:String x:Key="PrinterNotConnected">Trạm {0}: Máy in không kết nối!</system:String>
-    <system:String x:Key="InputDatabaseDuplicate">Trạm {0}: Cơ sở dữ liệu đầu vào bị trùng lặp!</system:String>
-    <system:String x:Key="CannotLoadTemplatePrinter">Trạm {0}: Không thể tải máy in mẫu!</system:String>
-    <system:String x:Key="CameraNotConnected">Trạm {0}: Camera không kết nối!</system:String>
+    <system:String x:Key="PrinterNotConnected">Trạm {0}: Không có kết nối Máy in!</system:String>
+    <system:String x:Key="InputDatabaseDuplicate">Trạm {0}: Cơ sở dữ liệu đầu vào bị trùng lặp !</system:String>
+    <system:String x:Key="CannotLoadTemplatePrinter">Trạm {0}: Không thể tải mẫu in !</system:String>
+    <system:String x:Key="CameraNotConnected">Trạm {0}: Không có kết nối Camera!</system:String>
     <system:String x:Key="ProcessCompleted">Trạm {0}: Quy trình đã hoàn tất!</system:String>
     <system:String x:Key="MissingParams">Trạm {0}: Thiếu tham số !</system:String>
-    <system:String x:Key="PrinterSuddenlyStopped">Trạm {0}: Máy in đột ngột dừng lại</system:String>
+    <system:String x:Key="PrinterSuddenlyStopped">Trạm {0}: Máy in dừng đột ngột</system:String>
     <system:String x:Key="PrinterStartEndPageInvalid">Trạm {0}: Trang bắt đầu/kết thúc của máy in không hợp lệ</system:String>
     <system:String x:Key="NoPrintHeadSelected">Trạm {0}: Không có đầu in được chọn</system:String>
     <system:String x:Key="PrinterSpeedLimit">Trạm {0}: Giới hạn tốc độ máy in</system:String>
@@ -29,22 +29,22 @@
     <system:String x:Key="PrinterNoCartridges">Trạm {0}: Máy in hết mực</system:String>
     <system:String x:Key="PrinterInvalidCartridges">Trạm {0}: Máy in có mực không hợp lệ</system:String>
     <system:String x:Key="PrinterOutOfInk">Trạm {0}: Máy in hết mực</system:String>
-    <system:String x:Key="CartridgesLocked">Trạm {0}: Mực bị khóa</system:String>
+    <system:String x:Key="CartridgesLocked">Trạm {0}: Hộp mực bị khóa</system:String>
     <system:String x:Key="PrinterInvalidVersion">Trạm {0}: Phiên bản máy in không hợp lệ</system:String>
     <system:String x:Key="PrinterIncorrectPrintHead">Trạm {0}: Đầu in không chính xác</system:String>
     <system:String x:Key="CantExport">Trạm {0}: Không thể xuất dữ liệu</system:String>
     <system:String x:Key="PrinterDisconnected">Trạm {0}: Máy in đã ngắt kết nối !</system:String>
     <system:String x:Key="CameraDisconnected">Trạm {0}: Camera đã ngắt kết nối !</system:String>
     <system:String x:Key="FileNotFound">Trạm {0}: Không tìm thấy tập tin !</system:String>
-    <system:String x:Key="ExitConfirmation">Bạn có muốn thoát khỏi ứng dụng không?</system:String>
-    <system:String x:Key="StopAllStations">Vui lòng dừng tất cả các trạm đang chạy!</system:String>
-    <system:String x:Key="LogoutConfirmation">Bạn có muốn đăng xuất không?</system:String>
+    <system:String x:Key="ExitConfirmation">Bạn có muốn thoát khỏi ứng dụng không ?</system:String>
+    <system:String x:Key="StopAllStations">Vui lòng dừng tất cả các trạm đang chạy !</system:String>
+    <system:String x:Key="LogoutConfirmation">Bạn có muốn đăng xuất không ?</system:String>
     <system:String x:Key="PageNotFound">Không tìm thấy trang !</system:String>
     <system:String x:Key="NotFound">Không tìm thấy !</system:String>
-    <system:String x:Key="ExportConfirmation">Xác nhận bạn muốn xuất tập tin báo cáo?</system:String>
+    <system:String x:Key="ExportConfirmation">Xác nhận bạn muốn xuất tập tin báo cáo ?</system:String>
     <system:String x:Key="IncorrectUsernameOrPassword">Tên đăng nhập hoặc mật khẩu không đúng !</system:String>
     <system:String x:Key="NoResultsFound">Không tìm thấy kết quả nào !</system:String>
-    <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Bạn có muốn thay đổi ngôn ngữ và đăng xuất không?</system:String>
+    <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Bạn có muốn thay đổi ngôn ngữ và đăng xuất không ?</system:String>
     <system:String x:Key="UsernameInvalid">Tên đăng nhập không hợp lệ</system:String>
     <system:String x:Key="InvalidUser">Người dùng không hợp lệ</system:String>
     <system:String x:Key="CreateUserDone">Tạo người dùng thành công !</system:String>
@@ -68,14 +68,14 @@
     <system:String x:Key="Page">Trang</system:String>
 
     <system:String x:Key="SystemRunning">Trạm {0}: hệ thống đang chạy !</system:String>
-    <system:String x:Key="DatabaseUnknownError">Trạm {0}: Lỗi không xác định của cơ sở dữ liệu!</system:String>
-    <system:String x:Key="PrintedStatusUnknownError">Trạm {0}: Lỗi không xác định của trạng thái in!</system:String>
-    <system:String x:Key="CheckedResultUnknownError">Trạm {0}: Lỗi không xác định của kết quả kiểm tra!</system:String>
-    <system:String x:Key="PrintedResponseDoesNotExist">Trạm {0}: Phản hồi đã in không tồn tại!</system:String>
-    <system:String x:Key="DatabaseDuplicateFields">Trạm {0}: Cơ sở dữ liệu có các trường trùng lặp!</system:String>
+    <system:String x:Key="DatabaseUnknownError">Trạm {0}: Lỗi không xác định của cơ sở dữ liệu !</system:String>
+    <system:String x:Key="PrintedStatusUnknownError">Trạm {0}: Lỗi không xác định của trạng thái in !</system:String>
+    <system:String x:Key="CheckedResultUnknownError">Trạm {0}: Lỗi không xác định của kết quả kiểm tra !</system:String>
+    <system:String x:Key="PrintedResponseDoesNotExist">Trạm {0}: Dữ Liệu phản hồi đã in không tồn tại !</system:String>
+    <system:String x:Key="DatabaseDuplicateFields">Trạm {0}: Cơ sở dữ liệu có các trường trùng lặp !</system:String>
     <system:String x:Key="JobNotFound">Trạm {0}: Không tìm thấy công việc!</system:String>
-    <system:String x:Key="NotLoadDatabase">Trạm {0}: Không tải được cơ sở dữ liệu!</system:String>
-    <system:String x:Key="NotLoadTemplate">Trạm {0}: Không tải được mẫu!</system:String>
+    <system:String x:Key="NotLoadDatabase">Trạm {0}: Không tải được cơ sở dữ liệu !</system:String>
+    <system:String x:Key="NotLoadTemplate">Trạm {0}: Không tải được mẫu in !</system:String>
 
 
 
@@ -96,9 +96,9 @@
     <system:String x:Key="Stations_Settings">Cài đặt trạm</system:String>
     <system:String x:Key="Stations_Jobs_Logs">Nhật ký công việc</system:String>
     <system:String x:Key="Station_Status">Trạng thái trạm:</system:String>
-    <system:String x:Key="Printer_IP">Máy in IP:</system:String>
-    <system:String x:Key="Camera_IP">Máy ảnh IP:</system:String>
-    <system:String x:Key="Controller_IP">Bộ điều khiển IP:</system:String>
+    <system:String x:Key="Printer_IP">IP Máy in:</system:String>
+    <system:String x:Key="Camera_IP">IP Máy ảnh:</system:String>
+    <system:String x:Key="Controller_IP">IP Bộ điều khiển:</system:String>
     <!--  Can than khi thay doi trang thai dung, co dieu kien  -->
     <system:String x:Key="Stopped">Dừng</system:String>
     <system:String x:Key="Running">Đang chạy</system:String>
@@ -129,13 +129,13 @@
     <system:String x:Key="IP_Address">Địa chỉ IP:</system:String>
     <system:String x:Key="Port">Cổng:</system:String>
     <system:String x:Key="Remote">Xem Web:</system:String>
-    <system:String x:Key="Controller_Settings">Cài đặt điều khiển</system:String>
-    <system:String x:Key="Enable_Controller">Kích hoạt điều khiển:</system:String>
+    <system:String x:Key="Controller_Settings">Cài đặt bộ điều khiển</system:String>
+    <system:String x:Key="Enable_Controller">Kích hoạt:</system:String>
     <system:String x:Key="Delay_Sensor">Độ trễ cảm biến:</system:String>
     <system:String x:Key="Disable_Sensor">Vô hiệu hóa cảm biến:</system:String>
     <system:String x:Key="Pulse_Encoder">Xung Encoder:</system:String>
     <system:String x:Key="Encoder_Diameter">Đường kính Encoder:</system:String>
-    <system:String x:Key="Camera_Settings">Cài đặt camera:</system:String>
+    <system:String x:Key="Camera_Settings">Cài đặt Camera:</system:String>
     <system:String x:Key="Model">Kiểu mẫu:</system:String>
     <system:String x:Key="Serial">Số seri:</system:String>
     <system:String x:Key="Verify_and_Print_POD_Send_Mode">Xác minh và in chế độ gửi POD</system:String>
@@ -160,9 +160,9 @@
     <system:String x:Key="Printer_Series">Dòng Máy In</system:String>
     <system:String x:Key="DB_Path">Đường Dẫn DB</system:String>
     <system:String x:Key="Compare_Format">Định Dạng So Sánh</system:String>
-    <system:String x:Key="Printer_Template">Mẫu Máy In</system:String>
+    <system:String x:Key="Printer_Template">Mẫu In</system:String>
     <system:String x:Key="Complete_Type">Loại Hoàn Thành</system:String>
-    <system:String x:Key="Output_Camera">Camera Đầu Ra</system:String>
+    <system:String x:Key="Output_Camera">Ngõ Ra Camera</system:String>
     <system:String x:Key="Image_Export">Xuất Hình Ảnh Lỗi</system:String>
     <system:String x:Key="Image_Export_Path">Đ.Dẫn Xuất H.Ảnh</system:String>
     <system:String x:Key="Total_Record_DB">Tổng Số Bản Ghi DB</system:String>

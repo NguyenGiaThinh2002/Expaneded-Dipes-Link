@@ -18,8 +18,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/vi-VN.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/en-US.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/vi-VN.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Languages/Language/en-US.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ToolTipsResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -152,7 +152,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Border
                                     x:Name="checkBoxBorder"
-                                    Margin="1"
+                                    Margin="0,5,0,0"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     Background="{TemplateBinding Background}"
@@ -306,6 +306,13 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
+
+            <Image
+                Width="200"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Images/Logo-rynan.png"/>
+
             <StackPanel
                 Grid.Row="1"
                 HorizontalAlignment="Center"
@@ -313,10 +320,10 @@
                 <TextBlock
                     FontSize="30"
                     Foreground="White"
-                    Text="DP-LINK" />
+                    Text="DIPES-LINK" />
                 <TextBlock
                     x:Name="AppDescriptionText"
-                    FontSize="15"
+                    FontSize="16"
                     Foreground="White"
                     Text="{DynamicResource ResourceKey=Multi_Line_Barcode_Verification_System}" />
             </StackPanel>
@@ -328,14 +335,26 @@
                 <RowDefinition Height="190" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <TextBlock
-                x:Name="UserLoginText"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="25"
-                FontWeight="Bold"
-                Foreground="#00ABE6"
-                Text="USER LOGIN" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Image
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Source="/Images/Logo-rynan.png" />
+                <TextBlock
+                    x:Name="UserLoginText"
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="25"
+                    FontWeight="Bold"
+                    Foreground="#00ABE6"
+                    Text="USER LOGIN" />
+            </Grid>
+
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -348,7 +367,7 @@
                     x:Name="TextBoxUsername"
                     Width="250"
                     Height="35"
-                    FontSize="15"
+                    FontSize="16"
                     KeyDown="Login_KeyDown"
                     Style="{DynamicResource TextBoxStyle1}" />
 
@@ -357,7 +376,7 @@
                     Grid.Row="1"
                     Width="250"
                     Height="35"
-                    FontSize="15"
+                    FontSize="16"
                     KeyDown="Login_KeyDown"
                     PasswordChar="*"
                     Style="{DynamicResource PasswordBoxStyle1}" />
@@ -369,6 +388,7 @@
                     <CheckBox
                         x:Name="CheckBoxRememberme"
                         Content="{DynamicResource ResourceKey=Remember_Me}"
+                        FontSize="16"
                         Style="{DynamicResource CheckBoxStyle1}" />
                 </StackPanel>
                 <Button

@@ -15,24 +15,24 @@
     MinHeight="768"
     d:Height="1080"
     d:Width="1920"
-    d:DataContext="{d:DesignInstance Type=local:MainViewModel, IsDesignTimeCreatable=False}"
+    
     Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
-            <MultiBinding x:Key="CombinedTitleBinding" StringFormat="{}{0} - {1}">
+            <!--<MultiBinding x:Key="CombinedTitleBinding" StringFormat="{}{0} - {1}">
                 <Binding Source="{x:Static params:Settings.Default}" Path="SoftwareName"/>
                 <Binding Source="{x:Static params:Settings.Default}" Path="SoftwareVersion"/>
-            </MultiBinding>
+            </MultiBinding>-->
             <converter:OptToVis x:Key="OptToVis" />
 
             <!--  Common Var  -->
             <SolidColorBrush x:Key="ColorMenuItem">White</SolidColorBrush>
-            <Thickness x:Key="CommonMenuMargin">20 0 0 0</Thickness>
+            <Thickness x:Key="CommonMenuMargin">5 0 0 0</Thickness>
             <system:Double x:Key="MenuItemHeight">100</system:Double>
             <system:Double x:Key="MenuIconSize">30</system:Double>
-            <system:Double x:Key="MenuItemSize">50</system:Double>
+            <system:Double x:Key="MenuItemSize">80</system:Double>
 
             <!--  Style for the ToggleButton  -->
             <Style x:Key="ViewToggleButtonStyle" TargetType="ToggleButton">
@@ -142,7 +142,7 @@
                                 Icon="Home" />
                             <TextBlock
                                 HorizontalAlignment="Center"
-                                Foreground="White"
+                                Foreground="White" FontSize="16"
                                 Text="{DynamicResource ResourceKey=Home}" />
                         </StackPanel>
                     </ListBoxItem>
@@ -162,7 +162,7 @@
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ColorMenuItem}"
                                 Icon="FileCircleCheck" />
-                            <TextBlock
+                            <TextBlock FontSize="16"
                                 HorizontalAlignment="Center"
                                 Foreground="White"
                                 Text="{DynamicResource ResourceKey=Jobs}" />
@@ -184,7 +184,7 @@
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ColorMenuItem}"
                                 Icon="Sliders" />
-                            <TextBlock
+                            <TextBlock FontSize="16"
                                 HorizontalAlignment="Center"
                                 Foreground="White"
                                 Text="{DynamicResource ResourceKey=Settings}" />
@@ -206,7 +206,7 @@
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ColorMenuItem}"
                                 Icon="History" />
-                            <TextBlock
+                            <TextBlock FontSize="16"
                                 HorizontalAlignment="Center"
                                 Foreground="White"
                                 Text="{DynamicResource ResourceKey=Logs}" />
@@ -233,7 +233,7 @@
                         Height="{StaticResource MenuIconSize}"
                         Foreground="{StaticResource ColorMenuItem}"
                         Icon="RightFromBracket" />
-                    <TextBlock
+                    <TextBlock FontSize ="16"
                         HorizontalAlignment="Center"
                         Foreground="{StaticResource ColorMenuItem}"
                         Text="{DynamicResource ResourceKey=Exit}" />

@@ -98,14 +98,14 @@
                         <!--  Job Name  -->
                         <Grid Background="Transparent" ShowGridLines="False">
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="20" />
+                                <RowDefinition MaxHeight="25" />
                                 <RowDefinition MaxHeight="50" />
                             </Grid.RowDefinitions>
-                            <TextBlock
-                                Margin="10,0,10,0"
+                            <TextBlock 
+                                Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="{DynamicResource ResourceKey=Job_Name}" />
+                                Text="{DynamicResource ResourceKey=Job_Name}"/>
                             <TextBox
                                 Grid.Row="1"
                                 Height="30"
@@ -127,11 +127,11 @@
                                 Background="Transparent"
                                 ShowGridLines="False">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition MaxHeight="20" />
+                                    <RowDefinition MaxHeight="25" />
                                     <RowDefinition MaxHeight="50" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Margin="10,0,10,0"
+                                    Margin="10,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="16"
                                     Text="{DynamicResource ResourceKey=Job_Type}" />
@@ -152,7 +152,7 @@
                                 Background="Transparent"
                                 ShowGridLines="False">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition MaxHeight="20" />
+                                    <RowDefinition MaxHeight="25" />
                                     <RowDefinition MaxHeight="50" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
@@ -204,7 +204,7 @@
                             ShowGridLines="False"
                             Visibility="{Binding Text, ElementName=TextBoxCompareType, Converter={StaticResource TextToVis}, ConverterParameter=Database}">
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="20" />
+                                <RowDefinition MaxHeight="25" />
                                 <RowDefinition MaxHeight="40" />
                             </Grid.RowDefinitions>
                             <TextBlock
@@ -229,7 +229,7 @@
                             ShowGridLines="False"
                             Visibility="{Binding Text, ElementName=TextBoxCompareType, Converter={StaticResource TextToVis}, ConverterParameter=Database}">
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="20" />
+                                <RowDefinition MaxHeight="25" />
                                 <RowDefinition MaxHeight="40" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -851,8 +851,8 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock
-                            Height="23"
-                            Margin="20,5,0,0"
+                            Height="30"
+                            Margin="20,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             FontSize="16"
