@@ -1,20 +1,12 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using IPCSharedMemory;
+﻿using IPCSharedMemory;
 using SharedProgram.Controller;
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
 using SharedProgram.Shared;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.Intrinsics.Arm;
-using System.Windows.Forms;
-using System.Windows.Shapes;
 using static SharedProgram.DataTypes.CommonDataType;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.LinkLabel;
 using PrinterStatus = SharedProgram.DataTypes.CommonDataType.PrinterStatus;
 namespace DipesLinkDeviceTransfer
 {
@@ -667,10 +659,13 @@ namespace DipesLinkDeviceTransfer
         {
             try
             {
-                podResponse.Command = podCommand[0];
-                podResponse.Status = podCommand[1]; // OK . Ready
-                podResponse.Error = podCommand[2]; // Error code
-                                                   // Correct case
+                for(int i=0;i< podCommand.Length; i++)
+                {
+                    if (i == 0)podResponse.Command = podCommand[i]; // Command (STAR, STOP,..)
+                    if (i == 1)podResponse.Status = podCommand[i]; // OK . Ready
+                    if(i == 2)podResponse.Error = podCommand[i]; // Error code
+                }
+               
                 if (podResponse.Status != null && (podResponse.Status == "OK" || podResponse.Status == "READY"))
                 {
                     // If not Verify and Print : Send POD First
@@ -737,14 +732,15 @@ namespace DipesLinkDeviceTransfer
                         default:
                             break;
                     }
-                    //  Console.WriteLine("Loi satrt"+message);
+                    SharedFunctions.PrintConsoleMessage(message);
+
                     NotificationProcess(notifyType);
                     _ = StopProcessAsync();
                 }
             }
             catch (Exception ex)
             {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
+                SharedFunctions.PrintConsoleMessage("StartCommandHandler" + ex.Message);
             }
         }
 

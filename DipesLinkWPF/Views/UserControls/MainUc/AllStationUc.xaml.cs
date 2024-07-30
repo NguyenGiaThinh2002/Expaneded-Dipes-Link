@@ -26,7 +26,10 @@ namespace DipesLink.Views.UserControls.MainUc
         private void AllStationUc_Loaded1(object sender, RoutedEventArgs e)
         {
             ViewModel = (MainViewModel)DataContext;
-            LoadItems();
+            if (ViewModel != null)
+            {
+                LoadItems();
+            }
         }
 
         private void LoadItems()

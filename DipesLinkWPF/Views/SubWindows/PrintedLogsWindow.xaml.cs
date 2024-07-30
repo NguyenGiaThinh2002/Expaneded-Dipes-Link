@@ -16,6 +16,8 @@ namespace DipesLink.Views.SubWindows
 {
     public partial class PrintedLogsWindow : Window
     {
+
+        #region Declarations
         private string? _pageInfo;
         private readonly int _maxDatabaseLine = 500;
         private readonly PrintingInfo? _printingInfo;
@@ -23,7 +25,10 @@ namespace DipesLink.Views.SubWindows
         private Paginator<ExpandoObject>? _paginator;
         private int countDataPerPage;
         private ObservableCollection<ExpandoObject>? filterList = new();
+        #endregion Declarations
 
+        #region Functions
+        
         public PrintedLogsWindow(PrintingInfo printingInfo)
         {
             _printingInfo = printingInfo;
@@ -69,11 +74,11 @@ namespace DipesLink.Views.SubWindows
             try
             {
                 if (_printingInfo == null || _printingInfo.list == null || _paginator == null) return;
-                TextBlockTotal.Text = _printingInfo.list.Count.ToString();
+                TextBlockTotal.Text = _printingInfo.list.Count.ToString("N0");
                 int countPrinted = _printingInfo.list.Count(item => ((IDictionary<string, object>)item)["Status"].ToString() == "Printed");
                 int countWaiting = _printingInfo.list.Count(item => ((IDictionary<string, object>)item)["Status"].ToString() == "Waiting");
-                TextBlockPrinted.Text = countPrinted.ToString();
-                TextBlockWait.Text = countWaiting.ToString();
+                TextBlockPrinted.Text = countPrinted.ToString("N0");
+                TextBlockWait.Text = countWaiting.ToString("N0");
             }
             catch (Exception)
             {
@@ -414,6 +419,8 @@ namespace DipesLink.Views.SubWindows
                 SearchAction();
             }
         }
+
+        #endregion Functions
 
     }
 }

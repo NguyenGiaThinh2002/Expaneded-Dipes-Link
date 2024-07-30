@@ -145,7 +145,7 @@
     <system:String x:Key="Print_Fields">Trường in:</system:String>
     <system:String x:Key="Select">Chọn</system:String>
     <system:String x:Key="Error_Field">Trường lỗi:</system:String>
-    <system:String x:Key="Default">Mặc định</system:String>
+    <system:String x:Key="Default">Mẫu</system:String>
     <system:String x:Key="Select_Number_of_Stations">Chọn số lượng trạm:</system:String>
     <system:String x:Key="Restart">Khởi động lại</system:String>
     <system:String x:Key="Number_of_Stations">Số lượng trạm:</system:String>
@@ -182,7 +182,7 @@
     <system:String x:Key="Multi_Line_Barcode_Verification_System">Hệ thống xác minh mã vạch tích hợp</system:String>
     <system:String x:Key="User_Login">ĐĂNG NHẬP</system:String>
     <system:String x:Key="Remember_Me">Ghi nhớ đăng nhập</system:String>
-    <system:String x:Key="LOGIN">ĐĂNG NHẬP</system:String>
+    <system:String x:Key="LOGIN">Đăng Nhập</system:String>
     <system:String x:Key="CHECKED_LOG">BẢNG GHI ĐÃ KIỂM</system:String>
     <system:String x:Key="Total">Tổng</system:String>
     <system:String x:Key="Unknow">Không rõ</system:String>
@@ -194,10 +194,10 @@
     <system:String x:Key="Search">Tìm kiếm</system:String>
     <system:String x:Key="First">Đầu</system:String>
     <system:String x:Key="Back">Quay lại</system:String>
-    <system:String x:Key="Next">Tiếp theo</system:String>
+    <system:String x:Key="Next">Tiếp</system:String>
     <system:String x:Key="End">Cuối</system:String>
     <system:String x:Key="Goto_Page">Đi tới trang</system:String>
-    <system:String x:Key="GO">ĐI</system:String>
+    <system:String x:Key="GO">Đến</system:String>
     <system:String x:Key="All">Tất cả</system:String>
     <system:String x:Key="Invalided">Không hợp lệ</system:String>
     <system:String x:Key="Duplicated">Trùng lặp</system:String>
@@ -205,7 +205,7 @@
     <system:String x:Key="Unknown_Missed">Không rõ / Thiếu</system:String>
     <system:String x:Key="Printed">Đã In</system:String>
     <system:String x:Key="Waiting">Đang Chờ</system:String>
-    <system:String x:Key="PRINTED_LOG">BẢN GHI ĐÃ IN</system:String>
+    <system:String x:Key="PRINTED_LOG">BẢN GHI TRẠNG THÁI IN</system:String>
     <system:String x:Key="STATION">TRẠM</system:String>
     <system:String x:Key="Name">Tên:</system:String>
     <system:String x:Key="Type">Loại:</system:String>

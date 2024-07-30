@@ -262,9 +262,9 @@
                 <TextBlock
                     Grid.Column="1"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
+                    VerticalAlignment="Top"
                     FontFamily="UTM Avo"
-                    FontSize="30"
+                    FontSize="25"
                     FontWeight="Bold"
                     Foreground="Gray"
                     Text="{Binding TitleApp}" />

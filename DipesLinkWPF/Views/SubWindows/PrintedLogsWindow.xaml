@@ -304,7 +304,7 @@
                 <Grid Grid.Row="1">
                     <DataGrid
                         x:Name="DataGridPrintLog"
-                        Grid.Row="3"
+                        Grid.Row="3" FontSize="16"
                         Margin="20"
                         AlternatingRowBackground="#F5F5F5"
                         BorderBrush="LightGray"
@@ -392,7 +392,7 @@
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <Button
                             x:Name="ButtonFirst"
-                            Width="70"
+                            Width="80"
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"
@@ -400,7 +400,7 @@
                             Style="{StaticResource ModernButton2}" />
                         <Button
                             x:Name="ButtonBack"
-                            Width="70"
+                            Width="80"
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"
@@ -408,7 +408,7 @@
                             Style="{StaticResource ModernButton2}" />
                         <Button
                             x:Name="ButtonNext"
-                            Width="70"
+                            Width="80"
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"
@@ -416,7 +416,7 @@
                             Style="{StaticResource ModernButton2}" />
                         <Button
                             x:Name="ButtonEnd"
-                            Width="70"
+                            Width="80"
                             Height="30"
                             Margin="0,0,10,0"
                             Click="PageAction_Click"

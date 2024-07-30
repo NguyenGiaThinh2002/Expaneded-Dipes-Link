@@ -167,9 +167,8 @@ namespace DipesLinkDeviceTransfer
                             NotificationProcess(NotifyType.DeviceDBLoaded);
                             break;
                         case ActionButtonType.Start:
-
+                            Console.WriteLine("StartProcessAction");
                             StartProcessAction(false); // Start without DB Load  
-
                             break;
                         case ActionButtonType.Stop:
                             NotificationProcess(NotifyType.StopSystem);

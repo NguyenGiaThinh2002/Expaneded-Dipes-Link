@@ -174,8 +174,14 @@ namespace DipesLinkDeviceTransfer
                     }
                 });
             }
-            catch (IOException) { _InitDataErrorList.Add(NotifyType.CannotAccessDatabase); }
-            catch (Exception) { _InitDataErrorList.Add(NotifyType.DatabaseUnknownError); }
+            catch (IOException) 
+            { 
+                _InitDataErrorList.Add(NotifyType.CannotAccessDatabase); 
+            }
+            catch (Exception)
+            { 
+                _InitDataErrorList.Add(NotifyType.DatabaseUnknownError); 
+            }
 
             List<string[]> sortedAndTransformed = result.AsParallel()
                                  .OrderBy(item => item.index)
