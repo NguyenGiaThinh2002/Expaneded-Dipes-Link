@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="800"
     Height="450"
-    Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
+    Icon="pack://application:,,,/DipesLink;component/Images/UserGroup.png"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

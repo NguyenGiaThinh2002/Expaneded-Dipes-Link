@@ -22,6 +22,7 @@
     <None Remove="Images\Invalid_res.png" />
     <None Remove="Images\loading.gif" />
     <None Remove="Images\LoadingIcon.gif" />
+    <None Remove="Images\Logo-rynan.png" />
     <None Remove="Images\Logs.png" />
     <None Remove="Images\Missed_res.png" />
     <None Remove="Images\Null_res.png" />
@@ -93,6 +94,7 @@
     <Resource Include="Images\LoadingIcon.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\Logo-rynan.png" />
     <Resource Include="Images\Logs.png" />
       <!--<CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>-->

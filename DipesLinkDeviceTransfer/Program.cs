@@ -34,10 +34,10 @@ namespace DipesLinkDeviceTransfer
             }
             catch (Exception)  // for Device transfer only 
             {
-#if debug
+#if DEBUG
                 DeviceSharedValues.Index = 0;
-                DeviceSharedValues.CameraIP = "192.168.15.93";
-                DeviceSharedValues.PrinterIP = "192.168.15.49"; //192.168.3.52
+                DeviceSharedValues.CameraIP = "192.168.15.146";
+                DeviceSharedValues.PrinterIP = "192.168.15.51"; //192.168.3.52
                 DeviceSharedValues.PrinterPort = "2030";
                 DeviceSharedValues.ControllerIP = "127.0.0.1";
                 DeviceSharedValues.ControllerPort = "2001";
@@ -47,7 +47,7 @@ namespace DipesLinkDeviceTransfer
                     VerifyAndPrintBasicSentMethod = false,
                     PrintFieldForVerifyAndPrint = new()
                     {
-                        new() { Index = 1,Type=PODModel.TypePOD.FIELD, PODName="", Value=""}
+                        new() { Index = 1,Type=SharedProgram.Models.PODModel.TypePOD.FIELD, PODName="", Value=""}
                     }
                 };
 #endif
@@ -72,47 +72,6 @@ namespace DipesLinkDeviceTransfer
             cts = new CancellationTokenSource();
             await HoldConsoleAsync(cts.Token);
 
-            #region Simulation Key
-            //consoleReadThread.Start();
-            //_ =  Task.Run(() =>
-            // {
-
-            //         while (true)
-            //         {
-            //             var key = Console.ReadLine();
-            //             if (key == "start")
-            //             {
-            //                 keyStep = "start";
-            //             }
-            //             if (key == "v")
-            //             {
-            //                 keyStep = "v";
-            //             }
-            //             if (key == "f")
-            //             {
-            //                 keyStep = "f";
-            //             }
-            //             if (key == "d")
-            //             {
-            //                 keyStep = "d";
-            //             }
-            //             if (key == "n")
-            //             {
-            //                 keyStep = "n";
-            //             }
-            //             if (key == "e")
-            //             {
-            //                 keyStep = "e";
-            //             }
-            //             if (key == "loaddb")
-            //             {
-            //                 keyStep = "loaddb";
-            //             }
-            //             Thread.Sleep(10);
-            //         }
-
-            // });
-            #endregion
         }
         static async Task HoldConsoleAsync(CancellationToken token)
         {
@@ -120,7 +79,7 @@ namespace DipesLinkDeviceTransfer
             {
                 while (!token.IsCancellationRequested)
                 {
-                   var key = Console.ReadLine();
+                    keyStep = Console.ReadLine();
                    await Task.Delay(10, token);
                 }
             }
@@ -148,7 +107,7 @@ namespace DipesLinkDeviceTransfer
             InitEvents();
 
 
-#if debug
+#if DEBUG
 
             Thread t = new(() =>
             {
@@ -156,14 +115,16 @@ namespace DipesLinkDeviceTransfer
                 {
                     if (keyStep == "loaddb")
                     {
+                        Console.WriteLine("loaddb");
                         DeviceSharedValues.ActionButtonType = SharedProgram.DataTypes.CommonDataType.ActionButtonType.LoadDB;
-                        ActionButtonFromUIProcessingAsync();
+                        //ActionButtonFromUIProcessingAsync();
                         keyStep = "";
                     }
                     if (keyStep == "start")
                     {
+                        Console.WriteLine("start");
                         DeviceSharedValues.ActionButtonType = SharedProgram.DataTypes.CommonDataType.ActionButtonType.Start;
-                        ActionButtonFromUIProcessingAsync();
+                       // ActionButtonFromUIProcessingAsync();
                         keyStep = "";
                     }
 

@@ -21,6 +21,7 @@
             <converter:AddOne x:Key="AddOneConverter" />
             <converter:TextUpperCaseConverter x:Key="TextUppercase" />
             <converter:ForegroundColorConverter x:Key="ForegroundColorConverter" />
+            <converter:FormattedNumberConverter x:Key="FormatNumberConverter"/>
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
             <Color x:Key="DataTagColorGraBot">White</Color>
@@ -124,7 +125,7 @@
                             VerticalAlignment="Center"
                             FontSize="16"
                             Foreground="#0286de"
-                            Text="{Binding TotalRecDb, FallbackValue=1000000}"
+                            Text="{Binding TotalRecDb,Converter={StaticResource FormatNumberConverter}, FallbackValue=1000000}"
                             TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </Grid>
@@ -207,7 +208,7 @@
                         FontWeight="Bold"
                         Foreground="#0286de"
                         RenderOptions.EdgeMode="Unspecified"
-                        Text="{Binding PrintedDataNumber, FallbackValue=#######}" />
+                        Text="{Binding PrintedDataNumber, Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
                 </Grid>
             </Border>
 
@@ -239,7 +240,7 @@
                         FontWeight="Bold"
                         Foreground="#0286de"
                         RenderOptions.EdgeMode="Unspecified"
-                        Text="{Binding TotalChecked, FallbackValue=#######}" />
+                        Text="{Binding TotalChecked,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
                 </Grid>
             </Border>
             <!--  Column 4  -->
@@ -269,7 +270,7 @@
                         FontSize="35"
                         FontWeight="Bold"
                         Foreground="#29c24f"
-                        Text="{Binding TotalPassed, TargetNullValue=0, FallbackValue=#######}" />
+                        Text="{Binding TotalPassed, TargetNullValue=0,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
                 </Grid>
             </Border>
 
@@ -300,7 +301,7 @@
                         FontSize="35"
                         FontWeight="Bold"
                         Foreground="#de3502"
-                        Text="{Binding TotalFailed, TargetNullValue=0, FallbackValue=#######}" />
+                        Text="{Binding TotalFailed, TargetNullValue=0,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
                 </Grid>
             </Border>
         </Grid>

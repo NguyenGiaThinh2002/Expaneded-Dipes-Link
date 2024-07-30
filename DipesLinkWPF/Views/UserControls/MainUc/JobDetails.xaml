@@ -22,6 +22,7 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converter:FromEnumtoStringConverter x:Key="FromEnumtoStringConverter" />
+            <converter:FormattedNumberConverter x:Key="FormatNumberConverter"/>
             <converter:AddOne x:Key="AddOneConverter" />
             <converter:BooleanToVisibilityConverter x:Key="BolToVis" />
             <converter:TextToVisibilityConverter x:Key="TextToVis" />
@@ -98,14 +99,14 @@
                         <!--  Job Name  -->
                         <Grid Background="Transparent" ShowGridLines="False">
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="20" />
+                                <RowDefinition MaxHeight="25" />
                                 <RowDefinition MaxHeight="50" />
                             </Grid.RowDefinitions>
-                            <TextBlock
-                                Margin="10,0,10,0"
+                            <TextBlock 
+                                Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="{DynamicResource ResourceKey=Job_Name}" />
+                                Text="{DynamicResource ResourceKey=Job_Name}"/>
                             <TextBox
                                 Grid.Row="1"
                                 Height="30"
@@ -127,11 +128,11 @@
                                 Background="Transparent"
                                 ShowGridLines="False">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition MaxHeight="20" />
+                                    <RowDefinition MaxHeight="25" />
                                     <RowDefinition MaxHeight="50" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Margin="10,0,10,0"
+                                    Margin="10,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="16"
                                     Text="{DynamicResource ResourceKey=Job_Type}" />
@@ -152,7 +153,7 @@
                                 Background="Transparent"
                                 ShowGridLines="False">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition MaxHeight="20" />
+                                    <RowDefinition MaxHeight="25" />
                                     <RowDefinition MaxHeight="50" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
@@ -204,7 +205,7 @@
                             ShowGridLines="False"
                             Visibility="{Binding Text, ElementName=TextBoxCompareType, Converter={StaticResource TextToVis}, ConverterParameter=Database}">
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="20" />
+                                <RowDefinition MaxHeight="25" />
                                 <RowDefinition MaxHeight="40" />
                             </Grid.RowDefinitions>
                             <TextBlock
@@ -219,7 +220,7 @@
                                 FontSize="16"
                                 IsReadOnly="True"
                                 Style="{StaticResource TextBoxStyle1}"
-                                Text="{Binding TotalRecDb, Converter={StaticResource FromEnumtoStringConverter}, ConverterParameter=0}" />
+                                Text="{Binding TotalRecDb, Converter={StaticResource FormatNumberConverter}}" />
                         </Grid>
 
                         <!--  Database compare format  -->
@@ -229,7 +230,7 @@
                             ShowGridLines="False"
                             Visibility="{Binding Text, ElementName=TextBoxCompareType, Converter={StaticResource TextToVis}, ConverterParameter=Database}">
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="20" />
+                                <RowDefinition MaxHeight="25" />
                                 <RowDefinition MaxHeight="40" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -294,7 +295,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                FontWeight="Bold"
+                                FontWeight="Normal"
                                 Foreground="#00ABE6"
                                 Text="{DynamicResource ResourceKey=Code_Data}" />
                             <TextBox
@@ -339,7 +340,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                FontWeight="Bold"
+                                FontWeight="Normal"
                                 Foreground="#00ABE6"
                                 Text="{DynamicResource ResourceKey=Time_(ms)}" />
                             <TextBox
@@ -379,7 +380,7 @@
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                FontWeight="Bold"
+                                FontWeight="Normal"
                                 Foreground="#00ABE6"
                                 Text="{DynamicResource ResourceKey=Checked_Result}" />
                             <TextBox
@@ -423,7 +424,7 @@
                     Command="{Binding StartCommandJob}"
                     Content="{fa:Icon CirclePlay,
                                       Foreground=WhiteSmoke}"
-                    FontSize="30"
+                    FontSize="40"
                     IsEnabled="{Binding StatusStartButton}"
                     Style="{StaticResource ModernButton1}" />
                 <Button
@@ -450,7 +451,7 @@
                     Command="{Binding DataContext.StopCommandJob, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                     Content="{fa:Icon CircleStop,
                                       Foreground=WhiteSmoke}"
-                    FontSize="30"
+                    FontSize="40"
                     IsEnabled="{Binding StatusStopButton}"
                     Style="{StaticResource ModernButton1}" />
                 <Button
@@ -464,7 +465,7 @@
                     Command="{Binding DataContext.TriggerCommandJob, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                     Content="{fa:Icon ArrowPointer,
                                       Foreground=WhiteSmoke}"
-                    FontSize="30"
+                    FontSize="40"
                     IsEnabled="{Binding StatusStopButton}"
                     Style="{StaticResource ModernButton1}" />
 
@@ -562,14 +563,14 @@
                                 Cursor="Hand"
                                 PreviewMouseDown="CheckedData_PreviewMouseDown"
                                 SnapsToDevicePixels="True">
-                                <Border.Effect>
+                                <!--<Border.Effect>
                                     <DropShadowEffect
                                         BlurRadius="5"
                                         Direction="320"
                                         Opacity="0.5"
                                         ShadowDepth="5"
                                         Color="#00ABE6" />
-                                </Border.Effect>
+                                </Border.Effect>-->
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="1*" />
@@ -577,8 +578,8 @@
                                     </Grid.RowDefinitions>
                                     <TextBlock
                                         Margin="10,0,0,0"
-                                        FontSize="16"
-                                        FontWeight="Bold"
+                                        FontSize="20"
+                                        FontWeight="Normal"
                                         Foreground="White"
                                         Text="{DynamicResource ResourceKey=Total_Checked}" />
                                     <TextBlock
@@ -606,8 +607,8 @@
                                     </Grid.RowDefinitions>
                                     <TextBlock
                                         Margin="10,0,0,0"
-                                        FontSize="16"
-                                        FontWeight="Bold"
+                                        FontSize="20"
+                                        FontWeight="Normal"
                                         Foreground="White"
                                         Text="{DynamicResource ResourceKey=Passed}" />
                                     <TextBlock
@@ -633,8 +634,8 @@
                                     </Grid.RowDefinitions>
                                     <TextBlock
                                         Margin="10,0,0,0"
-                                        FontSize="16"
-                                        FontWeight="Bold"
+                                        FontSize="20"
+                                        FontWeight="Normal"
                                         Foreground="White"
                                         Text="{DynamicResource ResourceKey=Failed}" />
                                     <TextBlock
@@ -718,7 +719,7 @@
                                     HorizontalAlignment="Center"
                                     FontSize="30"
                                     FontWeight="Normal"
-                                    Text="{Binding SentDataNumber, FallbackValue=0}" />
+                                    Text="{Binding SentDataNumber, Converter={StaticResource FormatNumberConverter}, FallbackValue=0}" />
                             </StackPanel>
                         </Border>
 
@@ -754,7 +755,7 @@
                                     HorizontalAlignment="Center"
                                     FontSize="30"
                                     FontWeight="Normal"
-                                    Text="{Binding ReceivedDataNumber, FallbackValue=0}" />
+                                    Text="{Binding ReceivedDataNumber, Converter={StaticResource FormatNumberConverter}, FallbackValue=0}" />
                             </StackPanel>
                         </Border>
 
@@ -792,7 +793,7 @@
                                     HorizontalAlignment="Center"
                                     FontSize="30"
                                     FontWeight="Normal"
-                                    Text="{Binding PrintedDataNumber, FallbackValue=0}" />
+                                    Text="{Binding PrintedDataNumber, Converter={StaticResource FormatNumberConverter}, FallbackValue=0}" />
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -851,8 +852,8 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock
-                            Height="23"
-                            Margin="20,5,0,0"
+                            Height="30"
+                            Margin="20,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             FontSize="16"

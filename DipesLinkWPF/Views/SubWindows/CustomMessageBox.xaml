@@ -12,7 +12,6 @@
     Background="Transparent"
     BorderBrush="Transparent"
     BorderThickness="1"
-    MouseLeftButtonDown="Window_MouseLeftButtonDown"
     Topmost="True"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
@@ -23,6 +22,7 @@
             <Setter Property="Foreground" Value="White" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
@@ -32,8 +32,8 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            CornerRadius="0">
+                            <ContentPresenter Margin="0 0 0 2" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -54,12 +54,12 @@
     <Border
         Padding="0"
         Background="White"
-        BorderBrush="LightBlue"
-        BorderThickness="1,0,1,1"
-        CornerRadius="10">
+        BorderBrush="{Binding HeaderColor}"
+        BorderThickness="2,0,2,2"
+        CornerRadius="0">
         <Border.Effect>
             <DropShadowEffect
-                BlurRadius="15"
+                BlurRadius="0"
                 Opacity="0.5"
                 ShadowDepth="0"
                 Color="Transparent" />
@@ -71,13 +71,13 @@
             </Grid.RowDefinitions>
 
             <!--  Header with rounded corners at the top only  -->
-            <Border Background="{Binding HeaderColor}" CornerRadius="10,10,0,0">
+            <Border Background="{Binding HeaderColor}" CornerRadius="0,0,0,0">
                 <StackPanel
                     Height="25"
                     Margin="10,0,10,0"
                     Orientation="Horizontal">
                     <TextBlock
-                        Width="350"
+                        Width="300"
                         Margin="0,0,0,0"
                         VerticalAlignment="Center"
                         FontSize="16"
@@ -105,8 +105,8 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock
-                    Margin="10"
-                    FontSize="14"
+                    Margin="10 10 0 0"
+                    FontSize="16"
                     Text="{Binding Message, FallbackValue=Custom message here !}"
                     TextWrapping="Wrap" />
                 <StackPanel
@@ -127,7 +127,7 @@
                         Width="80"
                         Height="30"
                         Margin="5"
-                        Background="OrangeRed"
+                        Background="#696969"
                         Click="CancelButton_Click"
                         Content="{Binding Button2Content}"
                         Style="{StaticResource AccentButtonStyle}"

@@ -97,11 +97,11 @@ namespace DipesLink.Views.SubWindows
                 int countFailed = _printingInfo.list.Count(item => item.Result != "Valid");
                 int countMissed = countTotal - countVerified;
 
-                TextBlockTotal.Text = countTotal.ToString();
-                TextBlockValid.Text = countValid.ToString();
-                TextBlockVerified.Text = countVerified.ToString();
-                TextBlockFailed.Text = countFailed.ToString();
-                TextBlockUnk.Text = countMissed > 0 ? countMissed.ToString() : countTotal.ToString();
+                TextBlockTotal.Text = countTotal.ToString("N0");
+                TextBlockValid.Text = countValid.ToString("N0");
+                TextBlockVerified.Text = countVerified.ToString("N0");
+                TextBlockFailed.Text = countFailed.ToString("N0");
+                TextBlockUnk.Text = countMissed > 0 ? countMissed.ToString("N0") : countTotal.ToString("N0");
             }
             catch (Exception)
             {

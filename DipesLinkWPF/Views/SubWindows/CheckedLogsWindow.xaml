@@ -6,6 +6,7 @@
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
+     xmlns:converter="clr-namespace:DipesLink.Views.Converter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="1025"
     Height="600"
@@ -23,6 +24,7 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/LabelResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <converter:FormattedNumberConverter x:Key="FormatNumberConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 

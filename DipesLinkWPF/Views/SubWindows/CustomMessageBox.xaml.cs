@@ -1,16 +1,10 @@
 ﻿using FontAwesome.Sharp;
-using System.DirectoryServices.Protocols;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 using static DipesLink.Views.Enums.ViewEnums;
 
 namespace DipesLink.Views.SubWindows
 {
-    /// <summary>
-    /// Interaction logic for CustomMessageBox.xaml
-    /// </summary>
     public partial class CustomMessageBox : Window
     {
         public string Message { get; set; }
@@ -39,7 +33,7 @@ namespace DipesLink.Views.SubWindows
                 case ButtonStyleMessageBox.OK:
                     Button1Vis = Visibility.Visible;
                     Button2Vis = Visibility.Collapsed;
-                    Button1Content = "OK";
+                    Button1Content = "Ok";
                     break;
                 case ButtonStyleMessageBox.YesNo:
                     Button1Vis = Visibility.Visible;
@@ -84,11 +78,6 @@ namespace DipesLink.Views.SubWindows
         {
             DialogResult = false;
             Close();
-        }
-
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-           // DragMove(); // move window
         }
     }
 }

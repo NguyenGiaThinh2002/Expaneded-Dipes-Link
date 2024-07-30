@@ -11,6 +11,7 @@ using System.Dynamic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Collections.Generic;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -347,20 +348,27 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void FirtLoadForChartPercent()
         {
-            if (_currentJob == null) return;
-            _currentJob.TotalChecked = _checkedObserHelper.TotalChecked.ToString();
-            _currentJob.TotalPassed = _checkedObserHelper.TotalPassed.ToString();
-            _currentJob.TotalFailed = _checkedObserHelper.TotalFailed.ToString();
-            _currentJob.RaisePercentageChange(_currentJob);
+            try
+            {
+                if (_currentJob == null) return;
+                _currentJob.TotalChecked = _checkedObserHelper.TotalChecked.ToString();
+                _currentJob.TotalPassed = _checkedObserHelper.TotalPassed.ToString();
+                _currentJob.TotalFailed = _checkedObserHelper.TotalFailed.ToString();
+                _currentJob.RaisePercentageChange(_currentJob);
+            }
+            catch (Exception)
+            {
+            }
+           
         }
 
         private void UpdateCheckedNumber()
         {
             Application.Current?.Dispatcher.InvokeAsync(() =>
             {
-                TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString();
-                TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString();
-                TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString();
+                TextBlockTotalChecked.Text = _checkedObserHelper.TotalChecked.ToString("N0");
+                TextBlockTotalPassed.Text = _checkedObserHelper.TotalPassed.ToString("N0");
+                TextBlockTotalFailed.Text = _checkedObserHelper.TotalFailed.ToString("N0");
                 FirtLoadForChartPercent();
             });
         }
@@ -369,10 +377,10 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                if (_currentJob == null) return;
+                if (_currentJob == null || _checkedObserHelper.CheckedList == null || !_checkedObserHelper.CheckedList.Any()) return;
                 CheckedInfo printInfo = new()
                 {
-                    list = new(_checkedObserHelper?.CheckedList),
+                    list = new(_checkedObserHelper.CheckedList),
                     columnNames = _checkedObserHelper?.ColumnNames,
                     RawList = new(_dataList),
                     PodFormat = _currentJob.PODFormat,
@@ -395,10 +403,11 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                if (_currentJob == null) return;
+              
+                if (_currentJob == null || _printObserHelper?.PrintList==null || !_printObserHelper.PrintList.Any()) return;
                 PrintingInfo printInfo = new()
                 {
-                    list = new(_printObserHelper?.PrintList),
+                    list = new(_printObserHelper.PrintList),
                     columnNames = _printObserHelper.ColumnNames,
                 };
 

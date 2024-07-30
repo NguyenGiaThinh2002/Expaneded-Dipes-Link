@@ -180,7 +180,7 @@
     <Style x:Key="ModernButton2" TargetType="Button">
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="Padding" Value="10,5" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
@@ -211,8 +211,8 @@
                             <Setter TargetName="buttonBorder" Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0.0" Color="#2f7f82" />
-                                        <GradientStop Offset="1.0" Color="#2ababf" />
+                                        <GradientStop Offset="0.0" Color="#0685BC" />
+                                        <GradientStop Offset="1.0" Color="#0685BC" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
@@ -221,8 +221,8 @@
                             <Setter TargetName="buttonBorder" Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0.0" Color="#FF1565C0" />
-                                        <GradientStop Offset="1.0" Color="#FF0D47A1" />
+                                        <GradientStop Offset="0.0" Color="#00ABE6" />
+                                        <GradientStop Offset="1.0" Color="#00ABE6" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
