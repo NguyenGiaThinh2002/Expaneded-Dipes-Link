@@ -110,13 +110,21 @@ namespace DipesLink.Views.SubWindows
                 bool isUsernameValid = usernameRegex.IsMatch(TextBoxUsername.Text);
                 if (!isUsernameValid)
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("UsernameInvalid"), "Input Validation", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    CusMsgBox.Show(
+                        LanguageModel.GetLanguage("UsernameInvalid"),
+                        LanguageModel.GetLanguage("WarningDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     return false;
                 }
             }
             if (TextBoxPassword.Text == null)
             {
-                CusMsgBox.Show(LanguageModel.GetLanguage("UsernameInvalid"), "Input Validation", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                CusMsgBox.Show(
+                    LanguageModel.GetLanguage("UsernameInvalid"), 
+                    LanguageModel.GetLanguage("WarningDialogCaption"), 
+                    Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                    Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 return false;
             }
             return true;
@@ -148,7 +156,10 @@ namespace DipesLink.Views.SubWindows
                 }
                 else
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("InvalidUser"), "Create User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                    _ = CusMsgBox.Show(LanguageModel.GetLanguage("InvalidUser"),
+                        LanguageModel.GetLanguage("ErrorDialogCaption"),
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Error);
                 }
 
             }
@@ -160,7 +171,11 @@ namespace DipesLink.Views.SubWindows
             {
                 if (isCreated)
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("CreateUserDone"), "Create User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                    _ = CusMsgBox.Show(
+                        LanguageModel.GetLanguage("CreateUserDone"),
+                       LanguageModel.GetLanguage("InfoDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Info);
                 }
             }
         }
@@ -188,16 +203,25 @@ namespace DipesLink.Views.SubWindows
                             tran.Update(userToUpdate);
                         });
                         LoadAllUser();
-                        CusMsgBox.Show(LanguageModel.GetLanguage("ChangeUserInfoSuccess"), "Edit User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                        _ = CusMsgBox.Show(LanguageModel.GetLanguage("ChangeUserInfoSuccess"),
+                            LanguageModel.GetLanguage("InfoDialogCaption"),
+                            Enums.ViewEnums.ButtonStyleMessageBox.OK,
+                            Enums.ViewEnums.ImageStyleMessageBox.Info);
                     }
                     else
                     {
-                        CusMsgBox.Show(LanguageModel.GetLanguage("UserNotFoundForUpdate"), "Edit User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                        _ = CusMsgBox.Show(LanguageModel.GetLanguage("UserNotFoundForUpdate"),
+                            LanguageModel.GetLanguage("ErrorDialogCaption"),
+                            Enums.ViewEnums.ButtonStyleMessageBox.OK,
+                            Enums.ViewEnums.ImageStyleMessageBox.Error);
                     }
                 }
                 else
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("UnmatchedPassword"), "Edit User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                    _ = CusMsgBox.Show(LanguageModel.GetLanguage("UnmatchedPassword"),
+                         LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Error);
                 }
 
 
@@ -205,14 +229,20 @@ namespace DipesLink.Views.SubWindows
             catch (Exception)
             {
                 isChanged = false;
-                CusMsgBox.Show(LanguageModel.GetLanguage("ChangeUserInfoFailed"), "Edit User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                _ = CusMsgBox.Show(LanguageModel.GetLanguage("ChangeUserInfoFailed"), 
+                    LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                    Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                    Enums.ViewEnums.ImageStyleMessageBox.Error);
             }
             finally
             {
                 if (isChanged)
                 {
                     string t = LanguageModel.GetLanguage("ChangeInfoSuccessFor");
-                    CusMsgBox.Show($"{t} {username}!", "Edit User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                    _ = CusMsgBox.Show($"{t} {username}!", 
+                        LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Info);
                 }
             }
 
@@ -238,11 +268,17 @@ namespace DipesLink.Views.SubWindows
                     });
                     isDeleted = true;
                     LoadAllUser();
-                    CusMsgBox.Show(LanguageModel.GetLanguage("DeleteUserSuccess"), "Delete User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                    _ = CusMsgBox.Show(LanguageModel.GetLanguage("DeleteUserSuccess"), 
+                        LanguageModel.GetLanguage("InfoDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Info);
                 }
                 else
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("UserNotFound"), "Delete User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                    _ = CusMsgBox.Show(LanguageModel.GetLanguage("UserNotFound"),
+                        LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Error);
                 }
 
             }
@@ -250,18 +286,26 @@ namespace DipesLink.Views.SubWindows
             {
                 isDeleted = false;
 
-                CusMsgBox.Show(LanguageModel.GetLanguage("DeleteUserFailed"), "Delete User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                _ = CusMsgBox.Show(
+                    LanguageModel.GetLanguage("DeleteUserFailed"),
+                    LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                    Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                    Enums.ViewEnums.ImageStyleMessageBox.Error);
             }
             finally
             {
                 if (isDeleted)
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("DeleteUserDone"), "Delete User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                    _ = CusMsgBox.Show(
+                        LanguageModel.GetLanguage("DeleteUserDone"),
+                        LanguageModel.GetLanguage("InfoDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK,
+                        Enums.ViewEnums.ImageStyleMessageBox.Info);
                 }
             }
         }
 
-        private void Red_Checked(object sender, RoutedEventArgs e)
+        private void Rad_Checked(object sender, RoutedEventArgs e)
         {
 
             if (isInit == true) { return; };
@@ -306,7 +350,7 @@ namespace DipesLink.Views.SubWindows
             {
                 if (CheckInvalidInput())
                 {
-                    var res = CusMsgBox.Show(LanguageModel.GetLanguage("CreateNewUserQuestion"), "Create new user", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                    var res = CusMsgBox.Show(LanguageModel.GetLanguage("CreateNewUserQuestion"), LanguageModel.GetLanguage("InfoDialogCaption"), Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
                     if (res.Result)
                     {
                         CreateUser();
@@ -326,8 +370,11 @@ namespace DipesLink.Views.SubWindows
                 string inputUsername = TextBoxUsername.Text;
                 if (!CheckCurrentUser(inputUsername))
                 {
-                    string t = LanguageModel.GetLanguage("DeleteUserPrompt");
-                    var res = CusMsgBox.Show($"{t}: {inputUsername} ?", "Delete User", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                    string delUserMsg = LanguageModel.GetLanguage("DeleteUserPrompt");
+                    var res = CusMsgBox.Show($"{delUserMsg}: {inputUsername} ?", 
+                        LanguageModel.GetLanguage("WarningDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     if (res.Result)
                     {
                         DeleteUser(inputUsername);
@@ -336,7 +383,10 @@ namespace DipesLink.Views.SubWindows
                 }
                 else
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("CannotDeleteCurrentUser"), "Delete User", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                   _ = CusMsgBox.Show(LanguageModel.GetLanguage("CannotDeleteCurrentUser"), 
+                        LanguageModel.GetLanguage("WarningDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 }
             }
         }

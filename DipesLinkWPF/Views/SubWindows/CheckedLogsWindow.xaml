@@ -2,11 +2,11 @@
     x:Class="DipesLink.Views.SubWindows.CheckedLogsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:DipesLink.Views.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
-     xmlns:converter="clr-namespace:DipesLink.Views.Converter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="1025"
     Height="600"
@@ -24,7 +24,7 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/LabelResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <converter:FormattedNumberConverter x:Key="FormatNumberConverter"/>
+            <converter:FormattedNumberConverter x:Key="FormatNumberConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -300,6 +300,7 @@
                                 Height="30"
                                 Click="ButtonRePrint_Click"
                                 Content="{DynamicResource ResourceKey=Reprint}"
+                                IsEnabled="{Binding StatusStartButton}"
                                 Style="{StaticResource ModernButton2}" />
                             <Button
                                 x:Name="ButtonRF"
@@ -344,6 +345,7 @@
                             ColumnWidth="150"
                             EnableColumnVirtualization="True"
                             EnableRowVirtualization="True"
+                            FontSize="16"
                             GridLinesVisibility="All"
                             HeadersVisibility="Column"
                             HorizontalGridLinesBrush="#D3D3D3"

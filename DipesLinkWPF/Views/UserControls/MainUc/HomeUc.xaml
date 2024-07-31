@@ -5,16 +5,18 @@
     xmlns:converterHomeUc="clr-namespace:DipesLink.Views.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converter="clr-namespace:DipesLink.Views.Converter"
     d:Background="White"
     xmlns:local="clr-namespace:DipesLink.ViewModels"
     d:DesignHeight="768"
     d:DesignWidth="1280"
-   d:DataContext="{d:DesignInstance Type=local:MainViewModel, IsDesignTimeCreatable=True}"
+    d:DataContext="{d:DesignInstance Type=local:MainViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
     <!--d:DataContext="{d:DesignInstance Type=local:MainViewModel, IsDesignTimeCreatable=False}"-->
     <UserControl.Resources>
         <ResourceDictionary>
             <converterHomeUc:OptIntToVisibility x:Key="OptToVis" />
+            <converter:TextUpperCaseConverter x:Key="TextUppercase" />
             <!--  Style for TabItem  -->
             <Style TargetType="TabItem">
                 <Setter Property="Cursor" Value="Hand"/>

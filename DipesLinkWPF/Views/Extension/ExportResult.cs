@@ -43,7 +43,10 @@ namespace DipesLink.Views.Extension
                 }
                 catch (IOException file)
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("FileNotFound"), "File Error", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    _ = CusMsgBox.Show(LanguageModel.GetLanguage("FileNotFound"), 
+                        LanguageModel.GetLanguage("WarningDialogCaption"),
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 }
                 catch (Exception)
                 {

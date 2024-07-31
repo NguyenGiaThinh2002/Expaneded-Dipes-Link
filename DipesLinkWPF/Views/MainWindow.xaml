@@ -5,17 +5,15 @@
     xmlns:converter="clr-namespace:SharedProgram.Converters;assembly=SharedProgram"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+    xmlns:local="clr-namespace:DipesLink.ViewModels"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:system="clr-namespace:System;assembly=mscorlib"
-     xmlns:local="clr-namespace:DipesLink.ViewModels"
     xmlns:params="clr-namespace:DipesLink.Properties"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:uc="clr-namespace:DipesLink.Views.UserControls.MainUc"
-    
     MinWidth="1280"
     MinHeight="768"
     d:Height="1080"
     d:Width="1920"
-    
     Icon="pack://application:,,,/DipesLink;component/Images/icon.ico"
     WindowState="Maximized"
     mc:Ignorable="d">
@@ -76,7 +74,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
- 
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100" />
@@ -142,7 +140,8 @@
                                 Icon="Home" />
                             <TextBlock
                                 HorizontalAlignment="Center"
-                                Foreground="White" FontSize="16"
+                                FontSize="16"
+                                Foreground="White"
                                 Text="{DynamicResource ResourceKey=Home}" />
                         </StackPanel>
                     </ListBoxItem>
@@ -162,8 +161,9 @@
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ColorMenuItem}"
                                 Icon="FileCircleCheck" />
-                            <TextBlock FontSize="16"
+                            <TextBlock
                                 HorizontalAlignment="Center"
+                                FontSize="16"
                                 Foreground="White"
                                 Text="{DynamicResource ResourceKey=Jobs}" />
                         </StackPanel>
@@ -184,8 +184,9 @@
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ColorMenuItem}"
                                 Icon="Sliders" />
-                            <TextBlock FontSize="16"
+                            <TextBlock
                                 HorizontalAlignment="Center"
+                                FontSize="16"
                                 Foreground="White"
                                 Text="{DynamicResource ResourceKey=Settings}" />
                         </StackPanel>
@@ -206,8 +207,9 @@
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ColorMenuItem}"
                                 Icon="History" />
-                            <TextBlock FontSize="16"
+                            <TextBlock
                                 HorizontalAlignment="Center"
+                                FontSize="16"
                                 Foreground="White"
                                 Text="{DynamicResource ResourceKey=Logs}" />
                         </StackPanel>
@@ -233,8 +235,9 @@
                         Height="{StaticResource MenuIconSize}"
                         Foreground="{StaticResource ColorMenuItem}"
                         Icon="RightFromBracket" />
-                    <TextBlock FontSize ="16"
+                    <TextBlock
                         HorizontalAlignment="Center"
+                        FontSize="16"
                         Foreground="{StaticResource ColorMenuItem}"
                         Text="{DynamicResource ResourceKey=Exit}" />
                 </StackPanel>
@@ -293,7 +296,6 @@
                         Width="100"
                         Height="30"
                         SelectedIndex="{Binding StationSelectedIndex}"
-                       
                         Style="{StaticResource ComboBoxStyle1}">
                         <ComboBoxItem>1</ComboBoxItem>
                         <ComboBoxItem>2</ComboBoxItem>
@@ -403,11 +405,16 @@
                 <Grid Grid.Column="1" Background="White">
 
                     <StackPanel x:Name="StackPanelIPDisplay" Orientation="Horizontal">
-
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="14" />
+                            </Style>
+                        </StackPanel.Resources>
                         <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                             <TextBlock
                                 Width="70"
                                 VerticalAlignment="Center"
+                                FontWeight="Bold"
                                 Text="{DynamicResource ResourceKey=Printer_IP}" />
                             <TextBlock
                                 x:Name="TextBlockPrinterIP"
@@ -416,8 +423,9 @@
                         </StackPanel>
                         <StackPanel Margin="10" Orientation="Horizontal">
                             <TextBlock
-                                Width="70"
+                                Width="75"
                                 VerticalAlignment="Center"
+                                FontWeight="Bold"
                                 Text="{DynamicResource ResourceKey=Camera_IP}" />
                             <TextBlock
                                 x:Name="TextBlockCamIP"
@@ -431,8 +439,9 @@
                         </StackPanel>
                         <StackPanel Margin="10" Orientation="Horizontal">
                             <TextBlock
-                                Width="95"
+                                Width="70"
                                 VerticalAlignment="Center"
+                                FontWeight="Bold"
                                 Text="{DynamicResource ResourceKey=Controller_IP}" />
                             <TextBlock
                                 x:Name="TextBlockControllerIP"
@@ -454,7 +463,7 @@
                             HorizontalContentAlignment="Stretch"
                             FontSize="14"
                             Foreground="DimGray"
-                            IsEnabled="False"
+                            IsEnabled="True"
                             ItemContainerStyle="{DynamicResource ListBoxItemContainerDeviceConnection}"
                             ItemsSource="{Binding PrinterStateList}"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"

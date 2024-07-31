@@ -306,7 +306,10 @@ namespace DipesLink.Views.SubWindows
                         return;
                     }
                 }
-                CusMsgBox.Show(LanguageModel.GetLanguage("PageNotFound"), "Goto Page", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                _ = CusMsgBox.Show(LanguageModel.GetLanguage("PageNotFound"), 
+                    LanguageModel.GetLanguage("WarningDialogCaption"), 
+                    Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                    Enums.ViewEnums.ImageStyleMessageBox.Warning);
             }
             catch (Exception)
             {
@@ -346,7 +349,10 @@ namespace DipesLink.Views.SubWindows
                         {
                             DataGridPrintLog.ItemsSource = null;
                         });
-                        _ = CusMsgBox.Show(LanguageModel.GetLanguage("NotFound"), "Printed Logs", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                        _ = CusMsgBox.Show(LanguageModel.GetLanguage("NotFound"),
+                            LanguageModel.GetLanguage("WarningDialogCaption"), 
+                            Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                            Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     }
                 }
             }
@@ -383,7 +389,10 @@ namespace DipesLink.Views.SubWindows
                 }
                 else
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("NoResultsFound"), "Search", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    CusMsgBox.Show(LanguageModel.GetLanguage("NotFoundSearchResult"), 
+                        LanguageModel.GetLanguage("WarningDialogCaption"),
+                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 }
             }
             catch (Exception)

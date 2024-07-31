@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using DipesLink.Views.SubWindows;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,6 +16,7 @@ namespace DipesLink.Views.UserControls.CustomControl
 
         public IpAddressControl()
         {
+           
             InitializeComponent();
             TextBoxPart1.PreviewTextInput += IpPart_PreviewTextInput;
             TextBoxPart1.PreviewKeyDown += IpPart_PreviewKeyDown;
@@ -24,11 +26,22 @@ namespace DipesLink.Views.UserControls.CustomControl
             TextBoxPart3.PreviewKeyDown += IpPart_PreviewKeyDown;
             TextBoxPart4.PreviewTextInput += IpPart_PreviewTextInput;
             TextBoxPart4.PreviewKeyDown += IpPart_PreviewKeyDown;
-
+           
             TextBoxPart1.TextChanged += UpdateText;
             TextBoxPart2.TextChanged += UpdateText;
             TextBoxPart3.TextChanged += UpdateText;
             TextBoxPart4.TextChanged += UpdateText;
+
+            TextBoxPart1.GotFocus += TextBoxPart_GotFocus;
+            TextBoxPart2.GotFocus += TextBoxPart_GotFocus;
+            TextBoxPart3.GotFocus += TextBoxPart_GotFocus;
+            TextBoxPart4.GotFocus += TextBoxPart_GotFocus;
+        }
+
+        private void TextBoxPart_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var tb = (TextBox)sender;
+            tb.SelectAll();
         }
 
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
@@ -99,20 +112,24 @@ namespace DipesLink.Views.UserControls.CustomControl
                     if ((e.Key == Key.OemPeriod || e.Key == Key.Decimal))
                     {
                         e.Handled = true;
-                        Dispatcher.BeginInvoke((Action)(() =>
+                        Dispatcher.InvokeAsync((() =>
                         {
                             tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-                        }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+                            
+                        }), System.Windows.Threading.DispatcherPriority.Normal);
                     }
                     else if (e.Key == Key.Space || e.Key == Key.Enter && tb.Text.Length == 3)
                     { 
                         e.Handled = true;
-                        Dispatcher.BeginInvoke((Action)(() =>
+                        Dispatcher.InvokeAsync((() =>
                         {
                             tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-                        }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+                           
+                        }), System.Windows.Threading.DispatcherPriority.Normal);
                     }
+                  
                 }
+
             }
             catch (Exception ex)
             {

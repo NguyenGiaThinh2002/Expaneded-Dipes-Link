@@ -53,9 +53,9 @@ namespace DipesLink.Views.UserControls.MainUc
                     _jobEventsLogHelper?.DisplayList?.Clear();
                     DataGridEventLogs.AutoGenerateColumns = false;
                     JobEventsLogHelper.CreateDataTemplate(DataGridEventLogs);
-                    var logPath = CurrentViewModel<MainViewModel>()?.JobList[index].EventsLogPath;
-                    var logDirectoryPath = SharedPaths.PathEventsLog + $"Job{index + 1}";
-                    logPath = $"{logDirectoryPath}\\_JobEvents_{CurrentViewModel<MainViewModel>()?.JobList[index].Name}.csv";
+                   // var logPath = CurrentViewModel<MainViewModel>()?.JobList[index].EventsLogPath;
+                    var logDirectoryPath = SharedPaths.PathEventsLog + $"Job{index+1}";
+                    var logPath = $"{logDirectoryPath}\\_JobEvents_{CurrentViewModel<MainViewModel>()?.JobList[index].Name}.csv";
 
                     if (logPath != null && File.Exists(logPath))
                     {

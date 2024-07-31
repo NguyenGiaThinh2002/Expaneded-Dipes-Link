@@ -1,9 +1,11 @@
-﻿using DipesLink.ViewModels;
+﻿using DipesLink.Languages;
+using DipesLink.ViewModels;
+using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static DipesLink.Views.Enums.ViewEnums;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -13,7 +15,19 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             InitializeComponent();
             ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange;
+            ViewModelSharedEvents.OnDataTableLoading += DataTableLoadingChange; // Event notify done load database
+            ViewModelSharedEvents.OnChangeJobStatus += JobStatusChanged;
             Loaded += JobCreation_Loaded;
+        }
+
+        private void JobStatusChanged(object? sender, EventArgs e)
+        {
+            LockUIPreventChangeJobWhenRun();
+        }
+
+        private void DataTableLoadingChange(object? sender, EventArgs e)
+        {
+            LockUIPreventChangeJobWhenRun();
         }
 
         private void JobCreation_Loaded(object sender, RoutedEventArgs e)
@@ -162,24 +176,33 @@ namespace DipesLink.Views.UserControls.MainUc
         private async Task PerformLoadDbAfterDelay(MainViewModel vm)
         {
             await Task.Delay(1000); // waiting for 3s connection completed
-       //     Debug.WriteLine("JOB CREATION LOAD DB");
-        //    vm.JobList[CurrentIndex()].RaiseLoadDb(CurrentIndex());
+                                    //     Debug.WriteLine("JOB CREATION LOAD DB");
+                                    //    vm.JobList[CurrentIndex()].RaiseLoadDb(CurrentIndex());
         }
         private void Button_AddJobClick(object sender, RoutedEventArgs e)
         {
-            try
+            if (ListViewJobTemplate.SelectedItem == null) return;
+            var jobIndex = CurrentIndex();
+            var msgBoxAddJob = CusMsgBox.Show(
+                      LanguageModel.GetLanguage("AddJobConfirmation", jobIndex),
+                      LanguageModel.GetLanguage("InfoDialogCaption"),
+                      ButtonStyleMessageBox.OKCancel,
+                      ImageStyleMessageBox.Info);
+
+            if (msgBoxAddJob.Result)
             {
-                var vm = CurrentViewModel<MainViewModel>();
-                if (vm is null) return;
-                vm.JobList[CurrentIndex()].IsDBExist = false;    // Reset flag for load db
-                vm.AddSelectedJob(CurrentIndex());
-                vm.LoadJobList(CurrentIndex());                             
-              //  vm.UpdateJobInfo(CurrentIndex());
-                ViewModelSharedEvents.OnChangeJobHandler(ButtonAddJob.Name, CurrentIndex()); 
-              //  _ = PerformLoadDbAfterDelay(vm);
-            }
-            catch (Exception)
-            {
+                try
+                {
+                    var vm = CurrentViewModel<MainViewModel>();
+                    if (vm is null) return;
+                    vm.JobList[jobIndex].IsDBExist = false;    // Reset flag for load db
+                    vm.AddSelectedJob(jobIndex);
+                    vm.LoadJobList(jobIndex);
+                    ViewModelSharedEvents.OnChangeJobHandler(ButtonAddJob.Name, jobIndex);
+                }
+                catch (Exception)
+                {
+                }
             }
 
         }
@@ -217,21 +240,33 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ButtonDelJob_Click(object sender, RoutedEventArgs e)
         {
+            if (ListViewJobTemplate.SelectedItem == null) return;
             int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
-            CurrentViewModel<MainViewModel>()?.DeleteJobAction(jobIndex);
-            CurrentViewModel<MainViewModel>()?.UpdateJobInfo(jobIndex);
-            ViewModelSharedEvents.OnChangeJobHandler(ButtonDelJob.Name, jobIndex);
-            CurrentViewModel<MainViewModel>()?.LoadJobList(jobIndex); // Update Job on UI
+            var msgBoxDelJob = CusMsgBox.Show(
+                       LanguageModel.GetLanguage("DeleteJobConfirmation", jobIndex),
+                       LanguageModel.GetLanguage("WarningDialogCaption"),
+                       ButtonStyleMessageBox.OKCancel,
+                       ImageStyleMessageBox.Warning);
+
+            if (msgBoxDelJob.Result)
+            {
+
+                CurrentViewModel<MainViewModel>()?.DeleteJobAction(jobIndex);
+                CurrentViewModel<MainViewModel>()?.UpdateJobInfo(jobIndex);
+                ViewModelSharedEvents.OnChangeJobHandler(ButtonDelJob.Name, jobIndex);
+                CurrentViewModel<MainViewModel>()?.LoadJobList(jobIndex); // Update Job on UI
+            }
+
         }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             try
             {
-             //   var rad = sender as RadioButton;
+                //   var rad = sender as RadioButton;
                 var vm = CurrentViewModel<MainViewModel>();
                 if (vm == null) return;
-                if (RadioButtonStandalone.IsChecked==true)
+                if (RadioButtonStandalone.IsChecked == true)
                 {
                     GroupBoxJobType.IsEnabled = false;
                     RadioButtonCanRead.IsEnabled = true;
@@ -241,7 +276,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     RadioButtonVerifyAndPrint.IsChecked = false;
                     vm.CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
                 }
-                if (RadioButtonRynanSeries.IsChecked==true)
+                if (RadioButtonRynanSeries.IsChecked == true)
                 {
                     RadioButtonStandalone.IsChecked = false;
                     GroupBoxJobType.IsEnabled = true;
@@ -250,7 +285,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     RadioButtonDatabase.IsChecked = true;
                     RadioButtonAfterProduction.IsChecked = true;
                 }
-                if (RadioButtonCanRead.IsChecked == true || RadioButtonStaticText.IsChecked==true)
+                if (RadioButtonCanRead.IsChecked == true || RadioButtonStaticText.IsChecked == true)
                 {
                     GroupBoxDatabaseType.IsEnabled = false;
                     GroupBoxTemplate.IsEnabled = false;
@@ -296,7 +331,7 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-      
+
 
         private void ListViewSelectedJob_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -310,8 +345,8 @@ namespace DipesLink.Views.UserControls.MainUc
             {
                 if (ListViewSelectedJob.SelectedItem != null)
                 {
-                    ListViewSelectedJob.SelectedItem = null;  
-                    Keyboard.ClearFocus();  
+                    ListViewSelectedJob.SelectedItem = null;
+                    Keyboard.ClearFocus();
                 }
                 ButtonDelJob.IsEnabled = true;
                 ButtonAddJob.IsEnabled = true;
@@ -324,7 +359,11 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ListViewJobTemplate_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            Button_AddJobClick(sender, e);
+            var lv = (ListView)sender;
+            if(lv.SelectedItem != null)
+            {
+                Button_AddJobClick(sender, e);
+            }
         }
     }
 }

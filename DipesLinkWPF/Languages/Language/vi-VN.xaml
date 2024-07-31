@@ -3,7 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <!--Dialog Caption-->
+    <system:String x:Key="WarningDialogCaption">Hộp Thoại Cảnh Báo</system:String>
+    <system:String x:Key="InfoDialogCaption">Hộp Thoại Thông Tin</system:String>
+    <system:String x:Key="ErrorDialogCaption">Hộp Thoại Báo Lỗi</system:String>
+    
     <!--  BACKEND  -->
+    <system:String x:Key="ChangeNumberOfStation">Thay đổi số trạm !</system:String>
+    <system:String x:Key="NotFoundSearchResult">Không tìm thấy kết quả tìm kiếm !</system:String>
+    <system:String x:Key="AddJobConfirmation">Trạm {0}: Bạn muốn chọn công việc này?</system:String>
+    <system:String x:Key="DeleteJobConfirmation">Trạm {0}: Bạn có muốn xóa công việc này ?</system:String>
     <system:String x:Key="CannotGetPrinterTemplate">Trạm {0}: Không thể lấy giao diện bản tin !</system:String>
     <system:String x:Key="StopStationNotification">Bạn có muốn dừng trạm {0} ?</system:String>
     <system:String x:Key="JobNotFoundNotification">Trạm {0}: Không tìm thấy công việc</system:String>
@@ -36,6 +46,7 @@
     <system:String x:Key="PrinterDisconnected">Trạm {0}: Máy in đã ngắt kết nối !</system:String>
     <system:String x:Key="CameraDisconnected">Trạm {0}: Camera đã ngắt kết nối !</system:String>
     <system:String x:Key="FileNotFound">Trạm {0}: Không tìm thấy tập tin !</system:String>
+    
     <system:String x:Key="ExitConfirmation">Bạn có muốn thoát khỏi ứng dụng không ?</system:String>
     <system:String x:Key="StopAllStations">Vui lòng dừng tất cả các trạm đang chạy !</system:String>
     <system:String x:Key="LogoutConfirmation">Bạn có muốn đăng xuất không ?</system:String>
@@ -43,7 +54,7 @@
     <system:String x:Key="NotFound">Không tìm thấy !</system:String>
     <system:String x:Key="ExportConfirmation">Xác nhận bạn muốn xuất tập tin báo cáo ?</system:String>
     <system:String x:Key="IncorrectUsernameOrPassword">Tên đăng nhập hoặc mật khẩu không đúng !</system:String>
-    <system:String x:Key="NoResultsFound">Không tìm thấy kết quả nào !</system:String>
+    
     <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Bạn có muốn thay đổi ngôn ngữ và đăng xuất không ?</system:String>
     <system:String x:Key="UsernameInvalid">Tên đăng nhập không hợp lệ</system:String>
     <system:String x:Key="InvalidUser">Người dùng không hợp lệ</system:String>
@@ -67,7 +78,8 @@
     <system:String x:Key="RestartSuccessfully">Trạm {0}: Khởi động lại thành công!</system:String>
     <system:String x:Key="Page">Trang</system:String>
 
-    <system:String x:Key="SystemRunning">Trạm {0}: hệ thống đang chạy !</system:String>
+    <system:String x:Key="StationRunning">Trạm {0} đang chạy !</system:String>
+    <system:String x:Key="StationStopped">Trạm {0} đã dừng !</system:String>
     <system:String x:Key="DatabaseUnknownError">Trạm {0}: Lỗi không xác định của cơ sở dữ liệu !</system:String>
     <system:String x:Key="PrintedStatusUnknownError">Trạm {0}: Lỗi không xác định của trạng thái in !</system:String>
     <system:String x:Key="CheckedResultUnknownError">Trạm {0}: Lỗi không xác định của kết quả kiểm tra !</system:String>
@@ -90,15 +102,15 @@
     <system:String x:Key="Setting_Apply">Ap dung</system:String>
     <system:String x:Key="Setting_Choose_Your_Language">Chon ngon ngu cua ban:</system:String>
     <system:String x:Key="Display_Hello_World">Xin Chao!</system:String>
-    <system:String x:Key="Stations_Details">Chi tiết các trạm</system:String>
-    <system:String x:Key="Stations_Overview">Tổng quan các trạm</system:String>
-    <system:String x:Key="Station_Jobs_Operations">Trang tạo công việc</system:String>
-    <system:String x:Key="Stations_Settings">Cài đặt trạm</system:String>
-    <system:String x:Key="Stations_Jobs_Logs">Nhật ký công việc</system:String>
+    <system:String x:Key="Stations_Details">CHI TIẾT CÁC TRẠM</system:String>
+    <system:String x:Key="Stations_Overview">SỐ LIỆU TỔNG QUAN</system:String>
+    <system:String x:Key="Station_Jobs_Operations">CÔNG VIỆC</system:String>
+    <system:String x:Key="Stations_Settings">CÀI ĐẶT</system:String>
+    <system:String x:Key="Stations_Jobs_Logs">LỊCH SỬ TRẠM</system:String>
     <system:String x:Key="Station_Status">Trạng thái trạm:</system:String>
     <system:String x:Key="Printer_IP">IP Máy in:</system:String>
     <system:String x:Key="Camera_IP">IP Máy ảnh:</system:String>
-    <system:String x:Key="Controller_IP">IP Bộ điều khiển:</system:String>
+    <system:String x:Key="Controller_IP">IP PLC:</system:String>
     <!--  Can than khi thay doi trang thai dung, co dieu kien  -->
     <system:String x:Key="Stopped">Dừng</system:String>
     <system:String x:Key="Running">Đang chạy</system:String>
@@ -149,8 +161,8 @@
     <system:String x:Key="Select_Number_of_Stations">Chọn số lượng trạm:</system:String>
     <system:String x:Key="Restart">Khởi động lại</system:String>
     <system:String x:Key="Number_of_Stations">Số lượng trạm:</system:String>
-    <system:String x:Key="Select_Job">Chọn Công Việc</system:String>
-    <system:String x:Key="Create_New_Job">Tạo Công Việc Mới</system:String>
+    <system:String x:Key="Select_Job">CHỌN CÔNG VIỆC</system:String>
+    <system:String x:Key="Create_New_Job">TẠO MỚI</system:String>
     <system:String x:Key="Job_Selection">Lựa Chọn Công Việc</system:String>
     <system:String x:Key="List_Job">Danh Sách Công Việc</system:String>
     <system:String x:Key="Selected">Đã Chọn</system:String>
@@ -206,7 +218,7 @@
     <system:String x:Key="Printed">Đã In</system:String>
     <system:String x:Key="Waiting">Đang Chờ</system:String>
     <system:String x:Key="PRINTED_LOG">BẢN GHI TRẠNG THÁI IN</system:String>
-    <system:String x:Key="STATION">TRẠM</system:String>
+    <system:String x:Key="STATION">TRẠM </system:String>
     <system:String x:Key="Name">Tên:</system:String>
     <system:String x:Key="Type">Loại:</system:String>
     <system:String x:Key="Total_Data">Tổng dữ liệu:</system:String>
@@ -234,10 +246,10 @@
     <system:String x:Key="Role">Vai trò</system:String>
     <system:String x:Key="Administrator">Quản trị viên</system:String>
     <system:String x:Key="Operator">Người vận hành</system:String>
-    <system:String x:Key="SUBMIT">GỬI</system:String>
+    <system:String x:Key="SUBMIT">Xác Nhận</system:String>
     <system:String x:Key="Confirm_Password">Xác nhận mk</system:String>
     <system:String x:Key="Complete_By">Hoàn thành bởi</system:String>
-    <system:String x:Key="System_Settings">Cài đặt Hệ thống</system:String>
+    <system:String x:Key="System_Settings">CÀI ĐẶT HỆ THỐNG</system:String>
     <system:String x:Key="Select_Your_Language">Chọn Ngôn ngữ</system:String>
     <system:String x:Key="Station_Number">Số Trạm:</system:String>
     <system:String x:Key="Language">Ngôn ngữ:</system:String>

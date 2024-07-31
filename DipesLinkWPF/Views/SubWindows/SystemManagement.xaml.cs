@@ -89,7 +89,10 @@ namespace DipesLink.Views.SubWindows
 
         private bool IsChangeLanguageAccepted()
         {
-            var res = CusMsgBox.Show(LanguageModel.GetLanguage("ChangeLanguageAndLogoutConfirmation"), "Change Language", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Warning);
+            var res = CusMsgBox.Show(LanguageModel.GetLanguage("ChangeLanguageAndLogoutConfirmation"),
+                LanguageModel.GetLanguage("WarningDialogCaption"),
+                ButtonStyleMessageBox.OKCancel, 
+                ImageStyleMessageBox.Warning);
             return res.Result;
         }
 
