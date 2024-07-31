@@ -1,4 +1,5 @@
-﻿using DipesLink.Views.Extension;
+﻿using DipesLink.Languages;
+using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using Microsoft.VisualBasic.FileIO;
 using SharedProgram.Models;
@@ -107,13 +108,13 @@ namespace DipesLink.ViewModels
                 {
                     var dataTable = new DataTable();
                     int rowCount = 0;
-                    if(csvFilePath == "")
+                    if (csvFilePath == "")
                     {
                         return dataTable;
                     }
                     using (var parser = new TextFieldParser(csvFilePath))
                     {
-                       
+
                         var numberOfLine = File.ReadLines(csvFilePath).Count() - 1;
                         CreateNewJob.TotalRecDb = numberOfLine;
                         parser.TextFieldType = FieldType.Delimited;
@@ -170,16 +171,18 @@ namespace DipesLink.ViewModels
 
             }
             catch (IOException ioex)
-            
             {
                 var mess = ioex.Message;
-                CusMsgBox.Show(mess, "File Error", Views.Enums.ViewEnums.ButtonStyleMessageBox.OK, Views.Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                _ = CusMsgBox.Show(mess,
+                    LanguageModel.GetLanguage("WarningDialogCaption"),
+                    Views.Enums.ViewEnums.ButtonStyleMessageBox.OK,
+                    Views.Enums.ViewEnums.ImageStyleMessageBox.Warning);
             }
             catch (Exception)
             {
-              //  MessageBox.Show("Database Not Found", "", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
-            
+
         }
 
         internal void DBView()
@@ -211,7 +214,7 @@ namespace DipesLink.ViewModels
 
                 else
                 {
-                    MessageBox.Show("Please Select POD format !", "POD Selection Warning",MessageBoxButton.OK,MessageBoxImage.Warning);
+                    MessageBox.Show("Please Select POD format !", "POD Selection Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
 
                 var formatList = new List<object>();
@@ -259,7 +262,7 @@ namespace DipesLink.ViewModels
                 switch (buttonName)
                 {
                     case "ButtonAdd":
-                        if(SelectedColumnItem1 != null)
+                        if (SelectedColumnItem1 != null)
                         {
                             bool isExistItemAdd = SelectedHeadersList.Any(x => x == SelectedColumnItem1);
                             SelectedHeadersList.Add(SelectedColumnItem1.Clone());

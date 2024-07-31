@@ -207,7 +207,7 @@ namespace DipesLink.Views.UserControls.MainUc
                                 vm.IsShowLoadingDB = Visibility.Collapsed;
                                 ViewModelSharedEvents.OnEnableUIChangeHandler(vm.Index, true);
                             }
-                            ViewModelSharedEvents.OnDataTableLoadingHandler();
+                            ViewModelSharedEvents.OnDataTableLoadingHandler(vm.Index);
                         }
                     }
                 });

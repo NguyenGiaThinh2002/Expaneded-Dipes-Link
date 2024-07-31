@@ -102,13 +102,16 @@ namespace DipesLink.Views
                 int runningPrintersCount = viewModel.PrinterStateList.Count(printerState => printerState.State != "Stopped" && printerState.State != "Dừng");
                 if (runningPrintersCount > 0)
                 {
-                    CusAlert.Show($"Please stop all running stations!", ImageStyleMessageBox.Warning);
-                    return false;  // Prevent the window from closing
+                    CusAlert.Show(LanguageModel.GetLanguage("StopAllStations"), ImageStyleMessageBox.Warning);
+                    return false; 
                 }
-
-                // Confirm with the user before closing the application
-                var isExit = CusMsgBox.Show("Do you want to exit the application?", "Exit Application", Enums.ViewEnums.ButtonStyleMessageBox.YesNo, Enums.ViewEnums.ImageStyleMessageBox.Warning);
-                return isExit.Result;  // Return true if user confirms to exit, else false
+                
+                var isExit = CusMsgBox.Show(
+                    LanguageModel.GetLanguage("ExitConfirmation"), 
+                    LanguageModel.GetLanguage("WarningDialogCaption"), 
+                    ButtonStyleMessageBox.YesNo, 
+                    ImageStyleMessageBox.Warning);
+                return isExit.Result;  
             }
             catch (Exception)
             {
@@ -273,7 +276,10 @@ namespace DipesLink.Views
             {
                 if (!isNotRunning)
                 {
-                    var res = CusMsgBox.Show(LanguageModel.GetLanguage("LogoutConfirmation"), "Logout", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                    var res = CusMsgBox.Show(LanguageModel.GetLanguage("LogoutConfirmation"), 
+                        LanguageModel.GetLanguage("WarningDialogCaption"), 
+                        Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, 
+                        Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     if (res.Result)
                     {
                         RestartApplication();
@@ -286,8 +292,6 @@ namespace DipesLink.Views
             }
             catch (Exception)
             {
-
-
             }
            
         }

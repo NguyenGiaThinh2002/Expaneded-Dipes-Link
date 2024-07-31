@@ -22,8 +22,12 @@ namespace DipesLink.ViewModels
         {
             if (StationSelectedIndex + 1 != ViewModelSharedValues.Settings.NumberOfStation)
             {
-
-                var res = CusMsgBox.Show("Change number of station !", "Change Station", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Warning);
+                //ChangeNumberOfStation
+                var res = CusMsgBox.Show(
+                    LanguageModel.GetLanguage("ChangeNumberOfStation"), 
+                    LanguageModel.GetLanguage("WarningDialogCaption"), 
+                    ButtonStyleMessageBox.OKCancel,
+                    ImageStyleMessageBox.Warning);
                 if (res.Result)
                 {
 
@@ -105,18 +109,16 @@ namespace DipesLink.ViewModels
         }
 
         private string _TitleApp = "Stations_Details";
-
         public string TitleApp
         {
             get
             {
-                return LanguageModel.Language?[_TitleApp].ToString();
+                return LanguageModel.LangResource[_TitleApp].ToString();
             }
             set
             {
                 if (_TitleApp != value)
                 {
-
                     _TitleApp = value;
                     OnPropertyChanged();
                 }

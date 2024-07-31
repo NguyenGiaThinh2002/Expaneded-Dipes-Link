@@ -30,7 +30,7 @@ namespace DipesLink.ViewModels
     public partial class MainViewModel
     {
 
-        private string _searchText;
+        private string _searchText = string.Empty;
         public string SearchText
         {
             get { return _searchText; }
@@ -310,9 +310,14 @@ namespace DipesLink.ViewModels
                     string filePath = SharedPaths.PathSubJobsApp + (jobIndex + 1) + "\\" + jobModel.Name + SharedValues.Settings.JobFileExtension;
                     // string selectedfilePath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}" + "\\" + jobModel.Name + SharedValues.Settings.JobFileExtension;
 
-                    var MsgBoxDelJob = CusMsgBox.Show("Do you want to delete this Job ? ", "Job Deletion", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Warning);
-                    if (MsgBoxDelJob.Result)
-                    {
+                    //var msgBoxDelJob = CusMsgBox.Show(
+                    //    LanguageModel.GetLanguage("DeleteJobConfirmation", jobIndex), 
+                    //    LanguageModel.GetLanguage("WarningDialogCaption"), 
+                    //    ButtonStyleMessageBox.OKCancel, 
+                    //    ImageStyleMessageBox.Warning);
+
+                    //if (msgBoxDelJob.Result)
+                    //{
                         // Check Job Delete whether is selected job and Delete at the same time Selected Job
                         string folderPath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}";
                         string[] files = Directory.GetFiles(folderPath);
@@ -323,7 +328,7 @@ namespace DipesLink.ViewModels
                         }
                         //Deleted
                         jobModel.SaveJobFile(filePath);
-                    }
+                  //  }
 
                 }
                 catch (Exception)

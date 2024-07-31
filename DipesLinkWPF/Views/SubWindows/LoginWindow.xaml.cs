@@ -100,18 +100,27 @@ namespace DipesLink.Views.SubWindows
                         }
                         else
                         {
-                            CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                            _ = CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), 
+                                LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                                Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                                Enums.ViewEnums.ImageStyleMessageBox.Error);
                         }
                     }
                 }
                 else
                 {
-                    CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+                   _ =  CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), 
+                       LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                       Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                       Enums.ViewEnums.ImageStyleMessageBox.Error);
                 }
             }
             catch (Exception)
             {
-                CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"), "Login", Enums.ViewEnums.ButtonStyleMessageBox.OK, Enums.ViewEnums.ImageStyleMessageBox.Error);
+               _ =  CusMsgBox.Show(LanguageModel.GetLanguage("IncorrectUsernameOrPassword"),
+                   LanguageModel.GetLanguage("ErrorDialogCaption"), 
+                   Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                   Enums.ViewEnums.ImageStyleMessageBox.Error);
             }
         }
 

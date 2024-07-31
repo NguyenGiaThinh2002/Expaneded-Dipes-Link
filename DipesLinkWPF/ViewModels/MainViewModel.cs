@@ -15,11 +15,13 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using static DipesLink.Views.Enums.ViewEnums;
 using static IPCSharedMemory.Datatypes.Enums;
 using static SharedProgram.DataTypes.CommonDataType;
+using static System.Windows.Forms.LinkLabel;
 using Application = System.Windows.Application;
 
 namespace DipesLink.ViewModels
@@ -124,26 +126,40 @@ namespace DipesLink.ViewModels
 
             Task.Run(() => GetCameraDataAsync(stationIndex));
 
-          //  Task.Run(() => GetCheckedStatistics(stationIndex));
+            //  Task.Run(() => GetCheckedStatistics(stationIndex));
         }
 
         private void CreateMultiObjects(int i)
         {
-            int deviceTransferIDProc = ViewModelSharedFunctions.InitDeviceTransfer(i);
-            string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {i + 1}" : $"Station {i + 1}";
-            JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = t }); // Job List Creation
-            JobDeviceStatusList.Add(new JobDeviceStatus() { Index = i, Name = $"Devices{i + 1}" }); // Device Status List Creation
-            PrinterStateList.Add(new PrinterState() { Name = $"Station {i + 1}: ", State = "" }); // Printer State List Creation
-
+            try
+            {
+                var langModel = new LanguageModel();
+                langModel?.UpdateApplicationLanguage(ViewModelSharedValues.Settings.Language);
+                var lang = LanguageModel.GetLanguage("Station");
+                int deviceTransferIDProc = ViewModelSharedFunctions.InitDeviceTransfer(i);
+                JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = $"{lang} {i + 1}" }); // Job List Creation
+                JobDeviceStatusList.Add(new JobDeviceStatus() { Index = i, Name = $"Devices{i + 1}" }); // Device Status List Creation
+                PrinterStateList.Add(new PrinterState() { Name = $"{lang} {i + 1}: ", State = "" }); // Printer State List Creation
+            }
+            catch (Exception)
+            {
+            }
+            
         }
 
         public void InitTabStationUI(int stationIndex)
         {
-            var userControl = new JobDetails() { DataContext = JobList[stationIndex] };
-
-            string t = ViewModelSharedValues.Settings.Language == "vi-VN" ? $"Trạm {stationIndex + 1}" : $"Station {stationIndex + 1}";
-
-            TabStation.Add(new TabItemModel() { Header = $"{t}", Content = userControl });
+            try
+            {
+                var langModel = new LanguageModel();
+                langModel?.UpdateApplicationLanguage(ViewModelSharedValues.Settings.Language);
+                var lang = LanguageModel.GetLanguage("STATION");
+                var userControl = new JobDetails() { DataContext = JobList[stationIndex] };
+                TabStation.Add(new TabItemModel() { Header = $"{lang} {stationIndex + 1}", Content = userControl });
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private bool CheckJobExisting(int index, out JobModel? job)
@@ -165,14 +181,14 @@ namespace DipesLink.ViewModels
             if (!CheckJobExisting(index, out JobModel? jobModel))
             {
                 jobModel = new();
-            
-                JobList[index].PrintedDataNumber = "0"; 
+
+                JobList[index].PrintedDataNumber = "0";
                 JobList[index].TotalChecked = "0";
                 JobList[index].TotalPassed = "0";
                 JobList[index].TotalFailed = "0";
                 JobList[index].CircleChart.Value = 0;
                 JobList[index].CircleChart.Series = new CircleChartModel().Series;
-                
+
             }
             if (jobModel == null) return;
 
@@ -189,7 +205,7 @@ namespace DipesLink.ViewModels
             JobList[index].CameraSeries = jobModel.CameraSeries;
             JobList[index].ImageExportPath = jobModel.ImageExportPath;
             JobList[index].PODFormat = jobModel.PODFormat;
-            
+
 
 
             // Events for Button Start/Stop/Trigger
@@ -221,7 +237,7 @@ namespace DipesLink.ViewModels
             if (sender is int index)
             {
                 ActionButtonProcess(index, ActionButtonType.LoadDB);
-               // Debug.WriteLine("Load DB for Job " + index);
+                // Debug.WriteLine("Load DB for Job " + index);
             }
         }
 
@@ -307,7 +323,7 @@ namespace DipesLink.ViewModels
                     JobList[stationIndex].RaiseLoadCompleteDatabase(dbInfo);
                     JobList[stationIndex].IsDBExist = true;
                 }
-                if (listDatabase.Count == 0)
+                if (listDatabase?.Count == 0)
                 {
                     JobList[stationIndex].IsShowLoadingDB = Visibility.Collapsed;
                     ViewModelSharedEvents.OnEnableUIChangeHandler(stationIndex, true);
@@ -332,7 +348,7 @@ namespace DipesLink.ViewModels
                 if (listChecked != null)
                 {
                     JobList[stationIndex].RaiseLoadCompleteCheckedDatabase(listChecked);
-                   
+
                 }
                 JobList[stationIndex].IsShowLoadingChecked = Visibility.Collapsed;
             }
@@ -706,7 +722,10 @@ namespace DipesLink.ViewModels
         public static string GetFormattedString(string resourceKey, params object[] args)
         {
             var resourceString = Application.Current.Resources[resourceKey] as string;
-            return string.Format(resourceString, args);
+            if (resourceString != null)
+                return string.Format(resourceString, args);
+            else
+                return string.Empty;
         }
 
         private static void ShowTemplateLoadError(int stationIndex)
@@ -755,8 +774,7 @@ namespace DipesLink.ViewModels
                     case NotifyType.ExportResultFail:
                         break;
                     case NotifyType.StartSync:
-                        // thinh - Add more language, commit again
-                        msg = LanguageModel.GetLanguage("SystemRunning", stationIndex); 
+                        msg = LanguageModel.GetLanguage("StationRunning", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Warning);
                         break;
                     case NotifyType.DatabaseUnknownError:
@@ -828,8 +846,8 @@ namespace DipesLink.ViewModels
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Info);
                         break;
                     case NotifyType.StopSystem: // Spare
-                       // msg = $"Station {stationIndex + 1}: System was Stopped!";
-                      //  ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Info);
+                                                // msg = $"Station {stationIndex + 1}: System was Stopped!";
+                                                //  ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Operation, EventsLogType.Info);
                         break;
                     case NotifyType.PrinterSuddenlyStop:
                         msg = LanguageModel.GetLanguage("PrinterSuddenlyStopped", stationIndex);
@@ -879,7 +897,7 @@ namespace DipesLink.ViewModels
                         msg = LanguageModel.GetLanguage("PrinterIncorrectPrintHead", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
-                    default:break;
+                    default: break;
                 }
             }
             catch (Exception)
@@ -887,7 +905,8 @@ namespace DipesLink.ViewModels
             }
 
         }
-        private void ProcessErrorMessage(int index,string errMsg, CommonDataType.LoggingTitle errTitle, EventsLogType eventLogType)
+
+        private void ProcessErrorMessage(int index, string errMsg, CommonDataType.LoggingTitle errTitle, EventsLogType eventLogType, bool showAlert = true)
         {
             ImageStyleMessageBox imgMsg = ImageStyleMessageBox.Info;
             switch (eventLogType)
@@ -904,8 +923,11 @@ namespace DipesLink.ViewModels
                 default:
                     break;
             }
-            LoggerHelper.SetLogProperties(index+1, JobList[index].Name, errTitle.ToString(), errMsg, eventLogType);
-            CusAlert.Show(errMsg, imgMsg);
+            LoggerHelper.SetLogProperties(index + 1, JobList[index].Name, errTitle.ToString(), errMsg, eventLogType);
+            if (showAlert)
+            {
+                CusAlert.Show(errMsg, imgMsg);
+            }
         }
 
         private async Task GetOperationStatusAsync(int stationIndex)
@@ -918,7 +940,7 @@ namespace DipesLink.ViewModels
                     bool isRunningCmp = false;
                     while (true)
                     {
-                        PrinterStateList[stationIndex].State = LanguageModel.Language?[JobList[stationIndex].OperationStatus.ToString()].ToString();
+                        PrinterStateList[stationIndex].State = LanguageModel.LangResource?[JobList[stationIndex].OperationStatus.ToString()].ToString();
                         switch (JobList[stationIndex].OperationStatus)
                         {
                             case OperationStatus.Processing:
@@ -939,8 +961,16 @@ namespace DipesLink.ViewModels
                         if (isRunning != isRunningCmp)
                         {
                             isRunning = isRunningCmp;
-                            if (isRunning) LoggerHelper.SetLogProperties(stationIndex, JobList[stationIndex].Name, CommonDataType.LoggingTitle.Operation.ToString(), "System is Running !", EventsLogType.Warning);
-                            else LoggerHelper.SetLogProperties(stationIndex, JobList[stationIndex].Name, CommonDataType.LoggingTitle.Operation.ToString(), "System is Stopped !", EventsLogType.Info);
+
+                            if (isRunning)
+                            {
+                                ProcessErrorMessage(stationIndex, LanguageModel.GetLanguage("StationRunning", stationIndex), CommonDataType.LoggingTitle.Operation, EventsLogType.Info, false);
+                            }
+                            else
+                            {
+                                ProcessErrorMessage(stationIndex, LanguageModel.GetLanguage("StationStopped", stationIndex), CommonDataType.LoggingTitle.Operation, EventsLogType.Info, false);
+                            }
+                            ViewModelSharedEvents.OnChangeJobStatusHandler(stationIndex); //Notifies that the Job changes its status to lock out the settings
                         }
 
                         await Task.Delay(100);
@@ -950,7 +980,6 @@ namespace DipesLink.ViewModels
             }
             catch (Exception ex)
             {
-
 #if DEBUG
                 Debug.WriteLine("GetOperationStatus Error" + ex.Message);
 #endif
@@ -1006,7 +1035,7 @@ namespace DipesLink.ViewModels
 
                         // Checked Statistics (total, passed, failed)
                         case (byte)SharedMemoryType.CheckedStatistics:
-                         //   JobList[stationIndex].CheckedStatisticNumberBytes = result.Skip(3).ToArray();
+                            //   JobList[stationIndex].CheckedStatisticNumberBytes = result.Skip(3).ToArray();
                             break;
                     }
                     break;
@@ -1076,48 +1105,48 @@ namespace DipesLink.ViewModels
             }
         }
 
-//        private void GetCheckedStatistics(int stationIndex)
-//        {
-//            //Application.Current?.Dispatcher.Invoke(async () =>
-//            //{
-////                try
-////                {
-////                    while (true)
-////                    {
-////                        //var result = JobList[stationIndex].CheckedStatisticNumberBytes;
-////                        //if (result != null)
-////                        //{
-////                        //    // Total Checked
-////                        //    byte[] totalCheckedBytes = new byte[7];
-////                        //    Array.Copy(result, 0, totalCheckedBytes, 0, 7);
+        //        private void GetCheckedStatistics(int stationIndex)
+        //        {
+        //            //Application.Current?.Dispatcher.Invoke(async () =>
+        //            //{
+        ////                try
+        ////                {
+        ////                    while (true)
+        ////                    {
+        ////                        //var result = JobList[stationIndex].CheckedStatisticNumberBytes;
+        ////                        //if (result != null)
+        ////                        //{
+        ////                        //    // Total Checked
+        ////                        //    byte[] totalCheckedBytes = new byte[7];
+        ////                        //    Array.Copy(result, 0, totalCheckedBytes, 0, 7);
 
-////                        //    //// Total Passed
-////                        //    byte[] totalPassedBytes = new byte[7];
-////                        //    Array.Copy(result, totalCheckedBytes.Length, totalPassedBytes, 0, 7);
-////                        //    var totalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
+        ////                        //    //// Total Passed
+        ////                        //    byte[] totalPassedBytes = new byte[7];
+        ////                        //    Array.Copy(result, totalCheckedBytes.Length, totalPassedBytes, 0, 7);
+        ////                        //    var totalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
 
-////                        //    // Total Fail
-////                        //    byte[] totalFailBytes = new byte[7];
-////                        //    Array.Copy(result, totalCheckedBytes.Length + totalPassedBytes.Length, totalFailBytes, 0, 7);
+        ////                        //    // Total Fail
+        ////                        //    byte[] totalFailBytes = new byte[7];
+        ////                        //    Array.Copy(result, totalCheckedBytes.Length + totalPassedBytes.Length, totalFailBytes, 0, 7);
 
-////                          //  JobList[stationIndex].TotalChecked = Encoding.ASCII.GetString(totalCheckedBytes).Trim();
-////                         //   JobList[stationIndex].TotalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
-////                         //   JobList[stationIndex].TotalFailed = Encoding.ASCII.GetString(totalFailBytes).Trim();
+        ////                          //  JobList[stationIndex].TotalChecked = Encoding.ASCII.GetString(totalCheckedBytes).Trim();
+        ////                         //   JobList[stationIndex].TotalPassed = Encoding.ASCII.GetString(totalPassedBytes).Trim();
+        ////                         //   JobList[stationIndex].TotalFailed = Encoding.ASCII.GetString(totalFailBytes).Trim();
 
-////                            //Update Percent
-////                          //  UpdatePercentForCircleChart(stationIndex);
-////                        }
-////                       // await Task.Delay(1);
-////                    }
-////                }
-////                catch (Exception ex)
-////                {
-////#if DEBUG
-////                    Debug.WriteLine("GetCheckedStatistics Error" + ex.Message);
-////#endif
-////                }
-//       //     });
-//        }
+        ////                            //Update Percent
+        ////                          //  UpdatePercentForCircleChart(stationIndex);
+        ////                        }
+        ////                       // await Task.Delay(1);
+        ////                    }
+        ////                }
+        ////                catch (Exception ex)
+        ////                {
+        ////#if DEBUG
+        ////                    Debug.WriteLine("GetCheckedStatistics Error" + ex.Message);
+        ////#endif
+        ////                }
+        //       //     });
+        //        }
 
         private void UpdatePercentForCircleChart(JobOverview curJob)
         {
@@ -1158,7 +1187,7 @@ namespace DipesLink.ViewModels
                     else  // NO DB MODE
                     {
                         _ = double.TryParse(JobList[stationIndex].TotalPassed, out double pass);
-                        if (totalChecked <= 0) percent = 0; 
+                        if (totalChecked <= 0) percent = 0;
                         else percent = Math.Round(pass / totalChecked * 100);
                     }
 

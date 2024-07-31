@@ -4,9 +4,7 @@ using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.CustomControl;
 using SharedProgram.Models;
-using SharedProgram.Shared;
 using System.Diagnostics;
-using System.Net.WebSockets;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -25,11 +23,8 @@ namespace DipesLink.Views.UserControls.MainUc
         public JobSettings()
         {
             InitializeComponent();
-           
             EventRegister();
         }
-
-     
 
         private void EventRegister()
         {
@@ -38,9 +33,14 @@ namespace DipesLink.Views.UserControls.MainUc
             TextBoxCamIP.TextChanged += TextBox_ParamsChanged;
             TextBoxControllerIP.TextChanged += TextBox_ParamsChanged;
             ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange;
-
-            //ViewModelSharedEvents.MainListBoxMenuChange += ListBoxMenu_SelectionChanged;
+            ViewModelSharedEvents.OnChangeJobStatus += JobStatusChanged;
         }
+
+        private void JobStatusChanged(object? sender, EventArgs e)
+        {
+            LockUIPreventChangeJobWhenRun();
+        }
+
         private void LockUIPreventChangeJobWhenRun()
         {
             CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuStationSetting.SelectedIndex);
@@ -83,17 +83,29 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ListBoxMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var vm = CurrentViewModel<MainViewModel>();
-            vm?.SelectionChangeSystemSettings(CurrentIndex());
-            vm?.LockUI(CurrentIndex());// Lock UI when running
-            UpdateSendModeVerifyAndPrint(vm);
+            try
+            {
+                var vm = CurrentViewModel<MainViewModel>();
+                vm?.SelectionChangeSystemSettings(CurrentIndex());
+                vm?.LockUI(CurrentIndex());// Lock UI when running
+                UpdateSendModeVerifyAndPrint(vm);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         void UpdateSendModeVerifyAndPrint(MainViewModel vm)
         {
-            var isBasicSendMode = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
-            RadBasic.IsChecked = isBasicSendMode == true;
-            RadCompare.IsChecked = isBasicSendMode == false;
+            try
+            {
+                var isBasicSendMode = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
+                RadBasic.IsChecked = isBasicSendMode == true;
+                RadCompare.IsChecked = isBasicSendMode == false;
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private int CurrentIndex() => ListBoxMenuStationSetting.SelectedIndex;
@@ -101,7 +113,6 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void TextBox_ParamsChanged(object sender, TextChangedEventArgs e)
         {
-
             if (IsInitializing) return;
             if (sender is IpAddressControl textBoxIp)
             {
@@ -115,100 +126,112 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void TextBoxIpParamsHandler(IpAddressControl textBox)
         {
-            textBox?.Dispatcher.BeginInvoke(new Action(() => // Use BeginInvoke to Update Input Last Value 
+            try
             {
-                var vm = CurrentViewModel<MainViewModel>();
-                if (vm == null) return;
-                if (vm.ConnectParamsList == null) return;
-                textBox.Text ??= string.Empty;
-                switch (textBox.Name)
+                textBox?.Dispatcher.BeginInvoke(new Action(() => // Use BeginInvoke to Update Input Last Value 
                 {
-                    case "TextBoxPrinterIP":
-                        vm.ConnectParamsList[CurrentIndex()].PrinterIP = textBox.Text;
-                        break;
-                    case "TextBoxPrinterPort":
-                        vm.ConnectParamsList[CurrentIndex()].PrinterPort = textBox.Text;
-                        break;
-                    case "TextBoxCamIP":
-                        vm.ConnectParamsList[CurrentIndex()].CameraIP = textBox.Text;
-                        break;
-                    case "TextBoxControllerIP":
-                        vm.ConnectParamsList[CurrentIndex()].ControllerIP = textBox.Text;
-                        break;
-                    case "TextBoxControllerPort":
-                        vm.ConnectParamsList[CurrentIndex()].ControllerPort = textBox.Text;
-                        break;
-                    case "TextBoxErrorField":
-                        vm.ConnectParamsList[CurrentIndex()].FailedDataSentToPrinter = textBox.Text;
-                        break;
-                    case "NumDelaySensor":
-                        vm.ConnectParamsList[CurrentIndex()].DelaySensor = int.Parse(textBox.Text);
-                        break;
-                    case "NumDisSensor":
-                        vm.ConnectParamsList[CurrentIndex()].DisableSensor = int.Parse(textBox.Text);
-                        break;
-                    case "NumPulseEncoder":
-                        vm.ConnectParamsList[CurrentIndex()].PulseEncoder = int.Parse(textBox.Text);
-                        break;
-                    case "NumEncoderDia":
-                        vm.ConnectParamsList[CurrentIndex()].EncoderDiameter = double.Parse(textBox.Text);
-                        break;
+                    var vm = CurrentViewModel<MainViewModel>();
+                    if (vm == null) return;
+                    if (vm.ConnectParamsList == null) return;
+                    textBox.Text ??= string.Empty;
+                    switch (textBox.Name)
+                    {
+                        case "TextBoxPrinterIP":
+                            vm.ConnectParamsList[CurrentIndex()].PrinterIP = textBox.Text;
+                            break;
+                        case "TextBoxPrinterPort":
+                            vm.ConnectParamsList[CurrentIndex()].PrinterPort = textBox.Text;
+                            break;
+                        case "TextBoxCamIP":
+                            vm.ConnectParamsList[CurrentIndex()].CameraIP = textBox.Text;
+                            break;
+                        case "TextBoxControllerIP":
+                            vm.ConnectParamsList[CurrentIndex()].ControllerIP = textBox.Text;
+                            break;
+                        case "TextBoxControllerPort":
+                            vm.ConnectParamsList[CurrentIndex()].ControllerPort = textBox.Text;
+                            break;
+                        case "TextBoxErrorField":
+                            vm.ConnectParamsList[CurrentIndex()].FailedDataSentToPrinter = textBox.Text;
+                            break;
+                        case "NumDelaySensor":
+                            vm.ConnectParamsList[CurrentIndex()].DelaySensor = int.Parse(textBox.Text);
+                            break;
+                        case "NumDisSensor":
+                            vm.ConnectParamsList[CurrentIndex()].DisableSensor = int.Parse(textBox.Text);
+                            break;
+                        case "NumPulseEncoder":
+                            vm.ConnectParamsList[CurrentIndex()].PulseEncoder = int.Parse(textBox.Text);
+                            break;
+                        case "NumEncoderDia":
+                            vm.ConnectParamsList[CurrentIndex()].EncoderDiameter = double.Parse(textBox.Text);
+                            break;
 
-                    default:
-                        break;
-                }
-                vm.AutoSaveConnectionSetting(CurrentIndex());
+                        default:
+                            break;
+                    }
+                    vm.AutoSaveConnectionSetting(CurrentIndex());
 
-            }), DispatcherPriority.Background);
+                }), DispatcherPriority.Background);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void TextBoxNormalParamsHandler(TextBox textBox)
         {
-            textBox?.Dispatcher.BeginInvoke(new Action(() => // Use BeginInvoke to Update Input Last Value 
+            try
             {
-                var vm = CurrentViewModel<MainViewModel>();
-                if (vm == null) return;
-                if (vm.ConnectParamsList == null) return;
-                textBox.Text ??= string.Empty;
-                var index = CurrentIndex();
-                switch (textBox.Name)
+                textBox?.Dispatcher.BeginInvoke(new Action(() => // Use BeginInvoke to Update Input Last Value 
                 {
-                    case "TextBoxPrinterIP":
-                        vm.ConnectParamsList[index].PrinterIP = textBox.Text;
-                        break;
-                    case "TextBoxPrinterPort":
-                        vm.ConnectParamsList[index].PrinterPort = textBox.Text;
-                        break;
-                    case "TextBoxCamIP":
-                        vm.ConnectParamsList[index].CameraIP = textBox.Text;
-                        break;
-                    case "TextBoxControllerIP":
-                        vm.ConnectParamsList[index].ControllerIP = textBox.Text;
-                        break;
-                    case "TextBoxControllerPort":
-                        vm.ConnectParamsList[index].ControllerPort = textBox.Text;
-                        break;
-                    case "NumDelaySensor":
-                        vm.ConnectParamsList[index].DelaySensor = int.Parse(textBox.Text);
-                        break;
-                    case "NumDisSensor":
-                        vm.ConnectParamsList[index].DisableSensor = int.Parse(textBox.Text);
-                        break;
-                    case "NumPulseEncoder":
-                        vm.ConnectParamsList[index].PulseEncoder = int.Parse(textBox.Text);
-                        break;
-                    case "NumEncoderDia":
-                        vm.ConnectParamsList[index].EncoderDiameter = double.Parse(textBox.Text);
-                        break;
-                    case "TextBoxErrorField":
-                        vm.ConnectParamsList[index].FailedDataSentToPrinter = textBox.Text;
-                        break;
-                    default:
-                        break;
-                }
-                vm.AutoSaveConnectionSetting(index);
+                    var vm = CurrentViewModel<MainViewModel>();
+                    if (vm == null) return;
+                    if (vm.ConnectParamsList == null) return;
+                    textBox.Text ??= string.Empty;
+                    var index = CurrentIndex();
+                    switch (textBox.Name)
+                    {
+                        case "TextBoxPrinterIP":
+                            vm.ConnectParamsList[index].PrinterIP = textBox.Text;
+                            break;
+                        case "TextBoxPrinterPort":
+                            vm.ConnectParamsList[index].PrinterPort = textBox.Text;
+                            break;
+                        case "TextBoxCamIP":
+                            vm.ConnectParamsList[index].CameraIP = textBox.Text;
+                            break;
+                        case "TextBoxControllerIP":
+                            vm.ConnectParamsList[index].ControllerIP = textBox.Text;
+                            break;
+                        case "TextBoxControllerPort":
+                            vm.ConnectParamsList[index].ControllerPort = textBox.Text;
+                            break;
+                        case "NumDelaySensor":
+                            vm.ConnectParamsList[index].DelaySensor = int.Parse(textBox.Text);
+                            break;
+                        case "NumDisSensor":
+                            vm.ConnectParamsList[index].DisableSensor = int.Parse(textBox.Text);
+                            break;
+                        case "NumPulseEncoder":
+                            vm.ConnectParamsList[index].PulseEncoder = int.Parse(textBox.Text);
+                            break;
+                        case "NumEncoderDia":
+                            vm.ConnectParamsList[index].EncoderDiameter = double.Parse(textBox.Text);
+                            break;
+                        case "TextBoxErrorField":
+                            vm.ConnectParamsList[index].FailedDataSentToPrinter = textBox.Text;
+                            break;
+                        default:
+                            break;
+                    }
+                    vm.AutoSaveConnectionSetting(index);
 
-            }), DispatcherPriority.Background);
+                }), DispatcherPriority.Background);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void ButtonWebView_Click(object sender, RoutedEventArgs e)
@@ -325,26 +348,29 @@ namespace DipesLink.Views.UserControls.MainUc
             CurrentViewModel<MainViewModel>()?.ConnectParamsList[CurrentIndex()].ResponseMessList.Clear();
         }
 
-  
-
-
         private void SelectPrintField(object sender, RoutedEventArgs e) // Select fields for verify and print send
         {
-            var vm = CurrentViewModel<MainViewModel>();
-            if (vm is null) return;
-            VerifyAndPrintPODFormat verifyAndPrintPODFormat = new()
+            try
             {
-                Index = CurrentIndex(),
-                DataContext = vm
-            };
+                var vm = CurrentViewModel<MainViewModel>();
+                if (vm is null) return;
+                VerifyAndPrintPODFormat verifyAndPrintPODFormat = new()
+                {
+                    Index = CurrentIndex(),
+                    DataContext = vm
+                };
 
-            var res = verifyAndPrintPODFormat.ShowDialog(); // Show diaglog select POD
-            if (res == true)
+                var res = verifyAndPrintPODFormat.ShowDialog(); // Show diaglog select POD
+                if (res == true)
+                {
+                    List<PODModel> _PODFormat = verifyAndPrintPODFormat._PODFormat;
+                    vm.ConnectParamsList[CurrentIndex()].PrintFieldForVerifyAndPrint = _PODFormat;
+                    vm.ConnectParamsList[CurrentIndex()].FormatedPOD = verifyAndPrintPODFormat.FormatedPOD;
+                    vm.AutoSaveConnectionSetting(CurrentIndex());
+                }
+            }
+            catch (Exception)
             {
-                List<PODModel> _PODFormat = verifyAndPrintPODFormat._PODFormat;
-                vm.ConnectParamsList[CurrentIndex()].PrintFieldForVerifyAndPrint = _PODFormat;
-                vm.ConnectParamsList[CurrentIndex()].FormatedPOD = verifyAndPrintPODFormat.FormatedPOD;
-                vm.AutoSaveConnectionSetting(CurrentIndex());
             }
         }
 
@@ -358,12 +384,18 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ComboBoxStationNum_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var cbb = sender as ComboBox;
-            var vm = CurrentViewModel<MainViewModel>();
-            if (vm is null) return;
-            vm.StationSelectedIndex = cbb.SelectedIndex;
-            vm.CheckStationChange();
-            cbb.SelectedIndex = vm.StationSelectedIndex;
+            try
+            {
+                var cbb = sender as ComboBox;
+                var vm = CurrentViewModel<MainViewModel>();
+                if (vm is null) return;
+                vm.StationSelectedIndex = cbb.SelectedIndex;
+                vm.CheckStationChange();
+                cbb.SelectedIndex = vm.StationSelectedIndex;
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void NumDelaySensor_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -379,31 +411,36 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private async void RestartButton_Click(object sender, RoutedEventArgs e)
         {
-            var res = CusMsgBox.Show(LanguageModel.GetLanguage("RestartConfirmation"), "Restart Station", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
-            if (res.Result)
+            try
             {
-                var vm = CurrentViewModel<MainViewModel>();
-                var job = vm?.JobList[CurrentIndex()];
-                await ViewModelSharedFunctions.RestartDeviceTransfer(job);
+                var res = CusMsgBox.Show(LanguageModel.GetLanguage("RestartConfirmation"),
+                    LanguageModel.GetLanguage("WarningDialogCaption"),
+                    ButtonStyleMessageBox.OKCancel,
+                    ImageStyleMessageBox.Info);
 
-                if (job?.DeviceTransferID == null || job?.DeviceTransferID == 0)
+                if (res.Result)
                 {
-                    CusAlert.Show(LanguageModel.GetLanguage("RestartFailed", job?.Index), ImageStyleMessageBox.Error, true);
+                    var vm = CurrentViewModel<MainViewModel>();
+                    var job = vm?.JobList[CurrentIndex()];
+                    await ViewModelSharedFunctions.RestartDeviceTransfer(job);
+
+                    if (job?.DeviceTransferID == null || job?.DeviceTransferID == 0)
+                    {
+                        CusAlert.Show(LanguageModel.GetLanguage("RestartFailed", job?.Index), ImageStyleMessageBox.Error, true);
+                    }
+                    else
+                    {
+                        vm?.DeleteSeletedJob(CurrentIndex());
+                        vm?.UpdateJobInfo(CurrentIndex());
+                        ViewModelSharedEvents.OnChangeJobHandler(((Button)sender).Name, CurrentIndex()); // event trigger for clear data job detail
+                        CusAlert.Show(LanguageModel.GetLanguage("RestartSuccessfully", job?.Index), ImageStyleMessageBox.Info, true);
+                    }
+                    vm?.AutoSaveConnectionSetting(CurrentIndex());
                 }
-                else
-                {
-                    vm?.DeleteSeletedJob(CurrentIndex());
-                    vm?.UpdateJobInfo(CurrentIndex());
-                    ViewModelSharedEvents.OnChangeJobHandler(((Button)sender).Name, CurrentIndex()); // event trigger for clear data job detail
-                    CusAlert.Show(LanguageModel.GetLanguage("RestartSuccessfully", job?.Index), ImageStyleMessageBox.Info, true);
-                }
-                vm?.AutoSaveConnectionSetting(CurrentIndex());
             }
-        }
-
-        private void RadBasic_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
+            catch (Exception)
+            {
+            }
         }
 
         private void RadBasic_Click(object sender, RoutedEventArgs e)
@@ -415,15 +452,13 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             ChangeVNPCompareMode();
         }
+
         private void ChangeVNPCompareMode()
         {
-           
             try
             {
-              
                 var vm = CurrentViewModel<MainViewModel>();
                 if (vm == null) return;
-
                 if (RadBasic.IsChecked == true)
                 {
                     vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod = true;
@@ -432,9 +467,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod = false;
                 }
-
                 vm.AutoSaveConnectionSetting(CurrentIndex());
-               
             }
             catch (Exception) { }
         }

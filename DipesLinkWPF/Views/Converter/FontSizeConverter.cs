@@ -8,21 +8,16 @@ using System.Windows.Data;
 
 namespace DipesLink.Views.Converter
 {
-    class FormattedNumberConverter : IValueConverter
+    public class FontSizeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int.TryParse(value.ToString(), out var number);
-            var stringFormatted = string.Format("{0:N0}", number);
-            if(stringFormatted != null)
+            if (value is double parentSize)
             {
-                return string.Format("{0:N0}", number);
+                // Adjust the scaling factor as needed
+                return parentSize * 0.18;
             }
-            else
-            {
-                return string.Format("{0:N0}", 0);
-            }
-           
+            return 50; // Default font size
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

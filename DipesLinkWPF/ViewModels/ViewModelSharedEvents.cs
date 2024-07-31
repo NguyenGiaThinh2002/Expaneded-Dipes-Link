@@ -28,9 +28,9 @@
         }
 
         public static event EventHandler? OnDataTableLoading;
-        public static void OnDataTableLoadingHandler()
+        public static void OnDataTableLoadingHandler(int index)
         {
-            OnDataTableLoading?.Invoke(null, EventArgs.Empty);
+            OnDataTableLoading?.Invoke(index, EventArgs.Empty);
         }
 
         public static event EventHandler<bool>? OnEnableUIChange;
@@ -43,6 +43,12 @@
         public static void OnMoveToJobDetailHandler(int index)
         {
             OnMoveToJobDetail?.Invoke(index,EventArgs.Empty);
+        }
+
+        public static event EventHandler? OnChangeJobStatus;
+        public static void OnChangeJobStatusHandler(int index)
+        {
+            OnChangeJobStatus?.Invoke(index, EventArgs.Empty);
         }
     }
 }

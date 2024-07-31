@@ -22,6 +22,7 @@
             <converter:TextUpperCaseConverter x:Key="TextUppercase" />
             <converter:ForegroundColorConverter x:Key="ForegroundColorConverter" />
             <converter:FormattedNumberConverter x:Key="FormatNumberConverter"/>
+            <converter:FontSizeConverter x:Key="FontSizeConverter"/>
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
             <Color x:Key="DataTagColorGraBot">White</Color>
@@ -181,7 +182,7 @@
                 Series="{Binding CircleChart.Series}" />
 
             <!--  Column 3  -->
-            <Border
+            <Border x:Name="BorderPrinted"
                 Grid.Column="2"
                 Margin="0"
                 BorderBrush="LightBlue"
@@ -204,7 +205,7 @@
                         Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        FontSize="35"
+                        FontSize="{Binding ActualWidth, ElementName=BorderPrinted, Converter={StaticResource FontSizeConverter}}"
                         FontWeight="Bold"
                         Foreground="#0286de"
                         RenderOptions.EdgeMode="Unspecified"
@@ -236,7 +237,7 @@
                         Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        FontSize="35"
+                        FontSize="{Binding ActualWidth, ElementName=BorderPrinted, Converter={StaticResource FontSizeConverter}}"
                         FontWeight="Bold"
                         Foreground="#0286de"
                         RenderOptions.EdgeMode="Unspecified"
@@ -267,7 +268,7 @@
                         Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        FontSize="35"
+                        FontSize="{Binding ActualWidth, ElementName=BorderPrinted, Converter={StaticResource FontSizeConverter}}"
                         FontWeight="Bold"
                         Foreground="#29c24f"
                         Text="{Binding TotalPassed, TargetNullValue=0,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
@@ -298,7 +299,7 @@
                         Grid.Row="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        FontSize="35"
+                        FontSize="{Binding ActualWidth, ElementName=BorderPrinted, Converter={StaticResource FontSizeConverter}}"
                         FontWeight="Bold"
                         Foreground="#de3502"
                         Text="{Binding TotalFailed, TargetNullValue=0,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />

@@ -13,6 +13,7 @@ namespace DipesLinkDeviceTransfer
 
     public partial class Program
     {
+        #region Declarations
         private CancellationTokenSource _CTS_SendStsPrint = new();
         private CancellationTokenSource _CTS_SendStsCheck = new();
         private CancellationTokenSource _CTS_SendData = new();
@@ -23,6 +24,8 @@ namespace DipesLinkDeviceTransfer
         private ComparisonResult _CheckedResult = ComparisonResult.Valid;
         private bool _IsCheckedWait = true;
         public event EventHandler? OnReceiveVerifyDataEvent;
+        private CancellationTokenSource? _VirtualCTS;
+        #endregion Declarations
 
         public void PrinterEventInit()
         {
@@ -769,7 +772,8 @@ namespace DipesLinkDeviceTransfer
 
         }
 
-        private void MonitorCommandHandler(string[] podCommand, PODResponseModel podResponse)
+        bool flagStoppedMonitor = false;
+        private async void MonitorCommandHandler(string[] podCommand, PODResponseModel podResponse)
         {
             if (SharedValues.SelectedJob == null) return;
             try
@@ -777,11 +781,19 @@ namespace DipesLinkDeviceTransfer
                 podResponse.Status = podCommand[3];
 
                 // Detect printer suddenly stop 
-                //  Console.WriteLine($"operation: {SharedValues.OperStatus} !");
-                if (podResponse.Status == "Stop" && (SharedValues.OperStatus == OperationStatus.Running) &&
-                    SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.JobType != JobType.StandAlone)
+                if (SharedValues.OperStatus == OperationStatus.Stopped)
                 {
-                    _ = StopProcessAsync();
+                    flagStoppedMonitor = false;
+                }
+
+                if (podResponse.Status == "Stop" &&
+                    !flagStoppedMonitor &&
+                    (SharedValues.OperStatus == OperationStatus.Running) &&
+                    SharedValues.SelectedJob.CompareType == CompareType.Database && 
+                    SharedValues.SelectedJob.JobType != JobType.StandAlone)
+                {
+                    flagStoppedMonitor = true;
+                    await StopProcessAsync();
                     NotificationProcess(NotifyType.PrinterSuddenlyStop);
                 }
 
@@ -789,22 +801,17 @@ namespace DipesLinkDeviceTransfer
                 {
                     case "Stop":
                         _PrinterStatus = PrinterStatus.Stop;
-                        //  SharedValues.OperStatus = OperationStatus.Stopped;
-
                         break;
                     case "Processing":
                         _PrinterStatus = PrinterStatus.Processing;
-                        //  SharedValues.OperStatus = OperationStatus.Processing;
                         break;
                     case "Ready":
                     case "Start":
                         _PrinterStatus = PrinterStatus.Ready;
                         _PrinterStatus = PrinterStatus.Start;
-                        //  SharedValues.OperStatus = OperationStatus.Running;
                         break;
                     case "WaitingData":
                         _PrinterStatus = PrinterStatus.WaitingData;
-                        // SharedValues.OperStatus = OperationStatus.WaitingData;
                         break;
                     case "Printing":
                         _PrinterStatus = PrinterStatus.Printing;
@@ -817,14 +824,14 @@ namespace DipesLinkDeviceTransfer
                         break;
                     case "Error":
                         _PrinterStatus = PrinterStatus.Error;
-                        //   Console.WriteLine("Error !!!");
                         break;
-                    case "Disable": _PrinterStatus = PrinterStatus.Disable; break;
-                    case "": _PrinterStatus = PrinterStatus.Null; break;
+                    case "Disable": _PrinterStatus = PrinterStatus.Disable;
+                        break;
+                    case "": _PrinterStatus = PrinterStatus.Null; 
+                        break;
                     default:
                         break;
                 }
-                //Console.WriteLine("Printer Status: "+ _PrinterStatus);
             }
             catch (Exception)
             {
@@ -1787,8 +1794,6 @@ namespace DipesLinkDeviceTransfer
                 }
             });
         }
-
-        private CancellationTokenSource? _VirtualCTS;
 
         private void StartAllThreadForTesting()
         {

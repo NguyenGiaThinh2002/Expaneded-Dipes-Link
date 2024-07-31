@@ -88,7 +88,7 @@
                     <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                         <RadioButton
                             x:Name="RadNew"
-                            Checked="Red_Checked"
+                            Checked="Rad_Checked"
                             Content="{DynamicResource ResourceKey=Create_New_User}"
                             FontSize="16"
                             GroupName="RadGr"
@@ -97,7 +97,7 @@
                         <RadioButton
                             x:Name="RadDel"
                             Margin="10,0,0,0"
-                            Checked="Red_Checked"
+                            Checked="Rad_Checked"
                             Content="{DynamicResource ResourceKey=Delete_User}"
                             FontSize="16"
                             GroupName="RadGr"
@@ -105,7 +105,7 @@
                         <RadioButton
                             x:Name="RadEdit"
                             Margin="10,0,0,0"
-                            Checked="Red_Checked"
+                            Checked="Rad_Checked"
                             Content="{DynamicResource ResourceKey=Edit_User}"
                             FontSize="16"
                             GroupName="RadGr"

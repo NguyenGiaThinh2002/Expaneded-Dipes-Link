@@ -419,7 +419,7 @@
                                 <GroupBox Margin="2" IsEnabled="{Binding IsButtonOperationJobEnable}">
                                     <GroupBox.Header>
                                         <TextBlock
-                                            FontSize="16"
+                                            FontSize="18"
                                             FontWeight="Bold"
                                             Text="{DynamicResource ResourceKey=Job_Selection}" />
                                     </GroupBox.Header>
@@ -501,8 +501,13 @@
                                         Margin="2"
                                         VerticalAlignment="Top"
                                         FontSize="16"
-                                        FontWeight="Bold"
-                                        Header="{DynamicResource ResourceKey=Job_Info}">
+                                        FontWeight="Bold">
+                                        <GroupBox.Header>
+                                            <TextBlock
+                                                FontSize="18"
+                                                FontWeight="Bold"
+                                                Text="{DynamicResource ResourceKey=Job_Info}" />
+                                        </GroupBox.Header>
                                         <StackPanel>
 
                                             <!--<TextBlock Text="Job Info" />-->

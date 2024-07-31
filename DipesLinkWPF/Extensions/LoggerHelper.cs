@@ -19,7 +19,7 @@ namespace DipesLink.Extensions
 
         public static void SetLogProperties(int stationIndex, string jobName, string title, string message, EventsLogType logsType)
         {
-            Task.Run(() =>
+           Task.Run(() =>
             {
                 try
                 {
@@ -30,7 +30,6 @@ namespace DipesLink.Extensions
                         {
                             Directory.CreateDirectory(logDirectoryPath);
                         }
-
 
                         LogicalThreadContext.Properties["LogDirectory"] = logDirectoryPath;
                         LogicalThreadContext.Properties["JobName"] = jobName;
@@ -44,6 +43,7 @@ namespace DipesLink.Extensions
                                 fileAppender.ActivateOptions();
                             }
                         }
+
                         switch (logsType)
                         {
                             case EventsLogType.Info:
@@ -58,13 +58,10 @@ namespace DipesLink.Extensions
                             default:
                                 break;
                         }
-
                     }
-
                 }
                 catch (Exception)
                 {
-
                 }
             });
         }

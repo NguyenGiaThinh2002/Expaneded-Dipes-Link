@@ -3,7 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    
+    <!--Dialog Caption-->
+    <system:String x:Key="WarningDialogCaption">Warning Dialog Box</system:String>
+    <system:String x:Key="InfoDialogCaption">Information Dialog Box</system:String>
+    <system:String x:Key="ErrorDialogCaption">Error Dialog Box</system:String>
     <!--  BACKEND  -->
+
+    <system:String x:Key="ChangeNumberOfStation">Change number of station !</system:String>
+    <system:String x:Key="NotFoundSearchResult">Not found search result !</system:String>
+    <system:String x:Key="AddJobConfirmation">Station {0}: Do you want to select this Job ?</system:String>
+    <system:String x:Key="DeleteJobConfirmation">Station {0}: Do you want to delete this Job ?</system:String>
     <system:String x:Key="CannotGetPrinterTemplate">Station {0}: Can't get printer template !</system:String>
     <system:String x:Key="StopStationNotification">Do you want to stop station {0} ?</system:String>
     <system:String x:Key="JobNotFoundNotification">Station {0}: Job not found</system:String>
@@ -36,6 +46,7 @@
     <system:String x:Key="PrinterDisconnected">Station {0}: Printer's Disconnected !</system:String>
     <system:String x:Key="CameraDisconnected">Station {0}: Camera's Disconnected !</system:String>
     <system:String x:Key="FileNotFound">Station {0}: File not found !</system:String>
+  
     <system:String x:Key="ExitConfirmation">Do you want to exit the application?</system:String>
     <system:String x:Key="StopAllStations">Please stop all running stations!</system:String>
     <system:String x:Key="LogoutConfirmation">Do you want to logout?</system:String>
@@ -43,7 +54,7 @@
     <system:String x:Key="NotFound">Not Found !</system:String>
     <system:String x:Key="ExportConfirmation">Confirm you want to export report file ?</system:String>
     <system:String x:Key="IncorrectUsernameOrPassword">Username or password is incorrect !</system:String>
-    <system:String x:Key="NoResultsFound">No results were found !</system:String>
+  
     <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Do you want to change language and logout?</system:String>
     <system:String x:Key="UsernameInvalid">Username Invalid</system:String>
     <system:String x:Key="InvalidUser">Invalid User</system:String>
@@ -67,7 +78,8 @@
     <system:String x:Key="RestartSuccessfully">Station {0}: Restart Successfully!</system:String>
     <system:String x:Key="StationNumber">Station {0}</system:String>
     <system:String x:Key="Page">Page</system:String>
-    <system:String x:Key="SystemRunning">Station {0}: system is running !</system:String>
+    <system:String x:Key="StationRunning">Station {0} is running !</system:String>
+    <system:String x:Key="StationStopped">Station {0} has stopped !</system:String> 
     <system:String x:Key="DatabaseUnknownError">Station {0}: Database unknown error!</system:String>
     <system:String x:Key="PrintedStatusUnknownError">Station {0}: Printed status unknown error!</system:String>
     <system:String x:Key="CheckedResultUnknownError">Station {0}: Checked result unknown error!</system:String>
@@ -84,12 +96,12 @@
     <system:String x:Key="Language_Code">en-US</system:String>
     <system:String x:Key="Setting_Apply">Apply</system:String>
     <system:String x:Key="Setting_Choose_Your_Language">Choose Your Language:</system:String>
-    <system:String x:Key="Display_Hello_World">Hello World!</system:String>
-    <system:String x:Key="Stations_Details">Stations Details</system:String>
-    <system:String x:Key="Stations_Overview">Stations Overview</system:String>
-    <system:String x:Key="Station_Jobs_Operations">Station Jobs Operations</system:String>
-    <system:String x:Key="Stations_Settings">Stations Settings</system:String>
-    <system:String x:Key="Stations_Jobs_Logs">Stations Jobs Logs</system:String>
+
+    <system:String x:Key="Stations_Details">DETAILS OF STATIONS</system:String>
+    <system:String x:Key="Stations_Overview">OVERVIEW</system:String>
+    <system:String x:Key="Station_Jobs_Operations">JOBS</system:String>
+    <system:String x:Key="Stations_Settings">SETTINGS</system:String>
+    <system:String x:Key="Stations_Jobs_Logs">JOBS HISTORICAL</system:String>
     <system:String x:Key="Stations {x} _Jobs_Logs">Stations Jobs Logs</system:String>
     <system:String x:Key="Home">Home</system:String>
     <system:String x:Key="Jobs">Jobs</system:String>
@@ -149,8 +161,8 @@
     <system:String x:Key="Select_Number_of_Stations">Select Number of Stations:</system:String>
     <system:String x:Key="Restart">Restart</system:String>
     <system:String x:Key="Number_of_Stations">Number of Stations:</system:String>
-    <system:String x:Key="Select_Job">Select Job</system:String>
-    <system:String x:Key="Create_New_Job">Create New Job</system:String>
+    <system:String x:Key="Select_Job">SELECT A JOB</system:String>
+    <system:String x:Key="Create_New_Job">CREATE NEW</system:String>
     <system:String x:Key="Job_Selection">Job Selection</system:String>
     <system:String x:Key="List_Job">List Job</system:String>
     <system:String x:Key="Selected">Selected</system:String>
@@ -206,7 +218,7 @@
     <system:String x:Key="Printed">Printed</system:String>
     <system:String x:Key="Waiting">Waiting</system:String>
     <system:String x:Key="PRINTED_LOG">PRINTED LOG</system:String>
-    <system:String x:Key="STATION">STATION</system:String>
+    <system:String x:Key="STATION">STATION </system:String>
     <system:String x:Key="Name">Name:</system:String>
     <system:String x:Key="Type">Type:</system:String>
     <system:String x:Key="Total_Data">Total Data:</system:String>
@@ -236,7 +248,7 @@
     <system:String x:Key="SUBMIT">SUBMIT</system:String>
     <system:String x:Key="Confirm_Password">Confirm Password</system:String>
     <system:String x:Key="Complete_By">Complete by</system:String>
-    <system:String x:Key="System_Settings">System Settings</system:String>
+    <system:String x:Key="System_Settings">SYSTEM SETTINGS</system:String>
     <system:String x:Key="Select_Your_Language">Select Your Language</system:String>
     <system:String x:Key="Station_Number">Station Number:</system:String>
     <system:String x:Key="Language">Language:</system:String>
