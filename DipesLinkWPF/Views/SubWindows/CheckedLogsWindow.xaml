@@ -300,7 +300,7 @@
                                 Height="30"
                                 Click="ButtonRePrint_Click"
                                 Content="{DynamicResource ResourceKey=Reprint}"
-                                IsEnabled="{Binding StatusStartButton}"
+                               
                                 Style="{StaticResource ModernButton2}" />
                             <Button
                                 x:Name="ButtonRF"

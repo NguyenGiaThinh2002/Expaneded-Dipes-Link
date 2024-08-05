@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Collections;
-using DipesLink.Languages;
+﻿using DipesLink.Languages;
 using DipesLink.Models;
 using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
@@ -16,7 +15,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLink.Views.SubWindows
 {
@@ -49,6 +47,10 @@ namespace DipesLink.Views.SubWindows
             _printingInfo = printingInfo;
             InitializeComponent();
             DataContext = _printingInfo.CurrentJob;
+            ButtonRePrint.IsEnabled = 
+                _printingInfo.CurrentJob.StatusStartButton && 
+                _printingInfo.CurrentJob.PrinterSeries == SharedProgram.DataTypes.CommonDataType.PrinterSeries.RynanSeries &&
+                _printingInfo.CurrentJob.JobType == SharedProgram.DataTypes.CommonDataType.JobType.AfterProduction; // Only use Re-Print for After Production
             InitPrintData();
             Closing += CheckedLogsWindow_Closing;
         }
@@ -101,7 +103,8 @@ namespace DipesLink.Views.SubWindows
                 TextBlockValid.Text = countValid.ToString("N0");
                 TextBlockVerified.Text = countVerified.ToString("N0");
                 TextBlockFailed.Text = countFailed.ToString("N0");
-                TextBlockUnk.Text = countMissed > 0 ? countMissed.ToString("N0") : countTotal.ToString("N0");
+
+                TextBlockUnk.Text = FindUnkList(_printingInfo.RawList.Skip(1).ToList(), _printingInfo.list).Count.ToString("N0");
             }
             catch (Exception)
             {
@@ -164,7 +167,6 @@ namespace DipesLink.Views.SubWindows
             {
                 try
                 {
-                    // Thread.Sleep(5000); 
                     if (pageNumber < 0 || pageNumber >= _paginator.TotalPages) return;
                     ObservableCollection<CheckedResultModel> pageData = _paginator.GetPage(pageNumber);
                     countDataPerPage = pageData.Count;
@@ -174,13 +176,10 @@ namespace DipesLink.Views.SubWindows
                         UpdatePageInfo();
                         ButtonPaginationVis();
                     });
-
                 }
                 catch (Exception)
                 {
-
                 }
-
             });
             ImageLoadingJobLog.Visibility = Visibility.Collapsed;
         }
@@ -204,7 +203,6 @@ namespace DipesLink.Views.SubWindows
                 catch (Exception)
                 {
                 }
-
             });
         }
 
@@ -247,7 +245,6 @@ namespace DipesLink.Views.SubWindows
             catch (Exception)
             {
             }
-
         }
 
         private void UpdatePageInfo()
@@ -263,7 +260,6 @@ namespace DipesLink.Views.SubWindows
             }
             catch (Exception)
             {
-
             }
         }
 
@@ -304,7 +300,6 @@ namespace DipesLink.Views.SubWindows
             }
             catch (Exception)
             {
-
             }
         }
 
@@ -339,7 +334,6 @@ namespace DipesLink.Views.SubWindows
             }
             catch (Exception)
             {
-
             }
         }
 
@@ -422,12 +416,9 @@ namespace DipesLink.Views.SubWindows
                             Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     }
                 }
-
-
             }
             catch (Exception)
             {
-
             }
         }
 
@@ -494,7 +485,6 @@ namespace DipesLink.Views.SubWindows
             catch (Exception)
             {
             }
-
         }
 
         private void SearchAction()
@@ -510,10 +500,8 @@ namespace DipesLink.Views.SubWindows
                 {
                     _paginator = new Paginator<CheckedResultModel>(new ObservableCollection<CheckedResultModel>(searchResults), _maxDatabaseLine);
                     _ = LoadPageAsync(0);
-
                     UpdatePageInfo();
                     ButtonPaginationVis();
-
                 }
                 else
                 {
@@ -526,16 +514,13 @@ namespace DipesLink.Views.SubWindows
             }
             catch (Exception)
             {
-
             }
         }
-
 
         private void GetCurrentImage(string imageId)
         {
             try
             {
-
                 var firstLenght = imageId.Length;
                 for (int i = 0; i < 7 - firstLenght; i++)
                 {
@@ -613,7 +598,6 @@ namespace DipesLink.Views.SubWindows
             {
                 return "";
             }
-
         }
 
         public static DataGridCell GetCell(DataGrid dataGrid, DataGridRow row, int column)
@@ -697,11 +681,8 @@ namespace DipesLink.Views.SubWindows
             }
             catch (Exception)
             {
-
             }
-
         }
-
 
         private async void ExportResultAsync()
         {
@@ -811,13 +792,11 @@ namespace DipesLink.Views.SubWindows
                         Arguments = $"/select,\"{fileName}\"",
                         UseShellExecute = true
                     });
-
                 }
                 else
                 {
                     Console.WriteLine("File does not exist.");
                     return false;
-
                 }
                 checkedResultDict.Clear();
                 return true;
@@ -827,7 +806,6 @@ namespace DipesLink.Views.SubWindows
                 SharedFunctions.PrintConsoleMessage(ex.Message);
                 return false;
             }
-
         }
 
         private void ButtonExport_Click(object sender, RoutedEventArgs e)

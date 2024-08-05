@@ -84,6 +84,7 @@ namespace DipesLinkDeviceTransfer
 
             if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
             {
+                SharedFunctions.PrintConsoleMessage(SharedValues.SelectedJob.PrinterSeries.ToString());
                 //Check Printer Connection
                 if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected())
                 {
@@ -197,8 +198,7 @@ namespace DipesLinkDeviceTransfer
                     SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
                 {
                     SharedValues.OperStatus = OperationStatus.Processing;
-                    if (RynanRPrinterDeviceHandler != null &&
-                    SharedValues.SelectedJob.JobStatus != JobStatus.Accomplished)
+                    if (RynanRPrinterDeviceHandler != null)
                     {
                         RynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
                         Thread.Sleep(50);
@@ -751,8 +751,6 @@ namespace DipesLinkDeviceTransfer
         {
             try
             {
-
-
                 podResponse.Status = podCommand[1];
 
                 // Is STOP
@@ -769,7 +767,6 @@ namespace DipesLinkDeviceTransfer
             {
                 SharedFunctions.PrintConsoleMessage(ex.Message);
             }
-
         }
 
         bool flagStoppedMonitor = false;
@@ -793,8 +790,17 @@ namespace DipesLinkDeviceTransfer
                     SharedValues.SelectedJob.JobType != JobType.StandAlone)
                 {
                     flagStoppedMonitor = true;
+                    await Task.Run(async () =>
+                    {
+                        await Task.Delay(1000); // waiting 1s for transfer states
+                        if(SharedValues.OperStatus == OperationStatus.Running)
+                        {
+                            NotificationProcess(NotifyType.PrinterSuddenlyStop);
+                        }
+                    });
+                   
                     await StopProcessAsync();
-                    NotificationProcess(NotifyType.PrinterSuddenlyStop);
+                    
                 }
 
                 switch (podResponse.Status)
@@ -1313,12 +1319,17 @@ namespace DipesLinkDeviceTransfer
                         _QueueBufferPODDataCompared.TryDequeue(out string? podCommand);
                         if (podCommand != null)
                         {
+                            // Count Printed Number
+                            NumberPrinted++;
+                            Interlocked.Exchange(ref _countPrintedCode, NumberPrinted);
+                            _QueuePrintedCodeNumber.Enqueue(_countPrintedCode);
+
                             // For On Production Mode
                             if (_IsOnProductionMode)
                             {
                                 var checkedResult = ComparisonResult.None;
 
-                                // Chờ để camera check
+                                // Wait for the camera to check
                                 lock (_CheckLocker)
                                 {
                                     while (_IsCheckedWait) Monitor.Wait(_CheckLocker); // Waiting until detect data was verify
@@ -1326,8 +1337,8 @@ namespace DipesLinkDeviceTransfer
                                     _IsCheckedWait = true;
                                 }
 
-                                //Cam Check xong Giải phóng khoá để gửi POD
-                                lock (_PrintLocker) // Notify that code is printed
+                                //Cam Check completed Release key to send POD
+                                lock (_PrintLocker) 
                                 {
                                     _IsPrintedWait = false;
                                     _PrintedResult = checkedResult;
@@ -1360,12 +1371,6 @@ namespace DipesLinkDeviceTransfer
                                     }
                                 }
 
-                                // Count Printed
-                                NumberPrinted++;
-                                //Debug.WriteLine("Printed Number: " + NumberPrinted);
-                                Interlocked.Exchange(ref _countPrintedCode, NumberPrinted);
-                                _QueuePrintedCodeNumber.Enqueue(_countPrintedCode);
-
                                 // Add data to queue of Backup printed 
                                 var printedCode = new List<string[]>(strPrintedResponseList);
                                 _QueueBufferBackupPrintedCode.Enqueue(printedCode);
@@ -1382,18 +1387,14 @@ namespace DipesLinkDeviceTransfer
                 }
                 catch (OperationCanceledException)
                 {
-#if DEBUG
-                    Console.WriteLine("Thread update printed status was stoppped!");
-#endif
+                    SharedFunctions.PrintConsoleMessage("Thread update printed status was stoppped!");
                     ReleaseIPCTask();
                     _CTS_BackupPrintedResponse?.Cancel(); // Stop thread export respone data to file
                     _QueueBufferBackupPrintedCode.Enqueue(null); // Queue for backup printed code and status
                 }
                 catch (Exception)
                 {
-#if DEBUG
-                    Console.WriteLine("Thread update printed status was error!");
-#endif
+                    SharedFunctions.PrintConsoleMessage("Thread update printed status was error!");
                     KillAllProccessThread();
                     _ = StopProcessAsync();
                 }

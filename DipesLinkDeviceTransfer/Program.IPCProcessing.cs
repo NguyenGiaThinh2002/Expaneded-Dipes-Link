@@ -178,7 +178,7 @@ namespace DipesLinkDeviceTransfer
                             TriggerCamera();
                             break;
                         case ActionButtonType.Simulate:
-                            Console.WriteLine("Day ákdjfhiasdfh");
+                           
                             StartAllThreadForTesting();
                             break;
                         case ActionButtonType.ReloadTemplate: // Reload template
