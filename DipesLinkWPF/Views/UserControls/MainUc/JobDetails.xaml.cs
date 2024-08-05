@@ -79,10 +79,11 @@ namespace DipesLink.Views.UserControls.MainUc
                 _printObserHelper?.Dispose();
                 _checkedObserHelper = new();
 
-                if (sender is not null && (string)sender == "ButtonAddJob")
-                {
-                    ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
-                }
+               
+            }
+            if (sender is not null && (string)sender == "ButtonAddJob")
+            {
+                ViewModelSharedEvents.OnMoveToJobDetailHandler(jobIndex);
             }
         }
 

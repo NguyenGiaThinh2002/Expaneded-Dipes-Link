@@ -139,6 +139,27 @@ namespace SharedProgram.Shared
 
         }
 
+        public static bool ProcessIsAlive(int processId)
+        {
+            try
+            {
+                Process process = Process.GetProcessById(processId);
+                if (!process.HasExited)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+           
+        }
+
         public static int DeviceTransferStartProcess(int index, string fullPath, string arguments)
         {
             try

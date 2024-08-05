@@ -126,7 +126,23 @@ namespace DipesLink.ViewModels
 
             Task.Run(() => GetCameraDataAsync(stationIndex));
 
+            Task.Run(() => CheckDeviceTransferAlive(stationIndex));
             //  Task.Run(() => GetCheckedStatistics(stationIndex));
+        }
+
+        private async void CheckDeviceTransferAlive(int stationIndex)
+        {
+            while (true)
+            {
+                foreach (var deviceTransferID in JobList)
+                {
+                    if (!SharedFunctions.ProcessIsAlive(deviceTransferID.DeviceTransferID))
+                    {
+                        JobList[stationIndex].OperationStatus = OperationStatus.Stopped;
+                    }
+                }
+                await Task.Delay(2000);
+            }
         }
 
         private void CreateMultiObjects(int i)
@@ -144,8 +160,9 @@ namespace DipesLink.ViewModels
             catch (Exception)
             {
             }
-            
         }
+
+
 
         public void InitTabStationUI(int stationIndex)
         {
@@ -230,8 +247,6 @@ namespace DipesLink.ViewModels
 
         }
 
-
-
         private void LoadDbEventHandler(object? sender, EventArgs e)
         {
             if (sender is int index)
@@ -266,7 +281,6 @@ namespace DipesLink.ViewModels
 
 
         #region GET DATABASE
-
 
         private async void ListenDatabase(int stationIndex)
         {
@@ -363,7 +377,6 @@ namespace DipesLink.ViewModels
         #endregion END GET DATABASE
 
         #region  GET PRINTING PARAMS AND STATUS
-
 
         private async void ListenProcess(int stationIndex)
         {
@@ -492,8 +505,6 @@ namespace DipesLink.ViewModels
             }
         }
 
-
-
         private void ShowLoadingImage(int stationIndex)
         {
             JobList[stationIndex].IsShowLoadingDB = Visibility.Visible;
@@ -572,7 +583,9 @@ namespace DipesLink.ViewModels
                             JobDeviceStatusList[stationIndex].PrinterStatusColor = new SolidColorBrush(Colors.Red); // Printer offline
                             JobDeviceStatusList[stationIndex].IsPrinterConnected = false;
 
-                            if (JobList[stationIndex].OperationStatus != OperationStatus.Stopped && !_detectPrinterDisconnected)
+                            if (JobList[stationIndex].OperationStatus != OperationStatus.Stopped && 
+                            !_detectPrinterDisconnected && 
+                            JobList[stationIndex].PrinterSeries == PrinterSeries.RynanSeries)
                             {
                                 CusAlert.Show(LanguageModel.GetLanguage("PrinterDisconnected", stationIndex), ImageStyleMessageBox.Error);
                                 _detectPrinterDisconnected = true;
@@ -1068,7 +1081,6 @@ namespace DipesLink.ViewModels
                 await Task.Delay(1);
             }
         }
-
 
         private async void GetCameraDataAsync(int stationIndex)
         {

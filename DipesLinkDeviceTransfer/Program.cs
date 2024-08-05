@@ -80,7 +80,7 @@ namespace DipesLinkDeviceTransfer
                 while (!token.IsCancellationRequested)
                 {
                     keyStep = Console.ReadLine();
-                   await Task.Delay(10, token);
+                    await Task.Delay(10, token);
                 }
             }
             catch (OperationCanceledException ex)
@@ -91,7 +91,7 @@ namespace DipesLinkDeviceTransfer
 
         private void ProcessExitHandler(object? sender, EventArgs e)
         {
-            cts?.Cancel();   
+            cts?.Cancel();
             ReleaseResource();
         }
 
@@ -124,7 +124,7 @@ namespace DipesLinkDeviceTransfer
                     {
                         Console.WriteLine("start");
                         DeviceSharedValues.ActionButtonType = SharedProgram.DataTypes.CommonDataType.ActionButtonType.Start;
-                       // ActionButtonFromUIProcessingAsync();
+                        // ActionButtonFromUIProcessingAsync();
                         keyStep = "";
                     }
 
@@ -146,19 +146,22 @@ namespace DipesLinkDeviceTransfer
             try
             {
                 if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
+                {
                     return Task.FromResult(1);
+                }
 
-                if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected()
-                    && SharedValues.SelectedJob.CompareType == SharedProgram.DataTypes.CommonDataType.CompareType.Database)
+                if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected() &&
+                    SharedValues.SelectedJob?.CompareType == SharedProgram.DataTypes.CommonDataType.CompareType.Database &&
+                    SharedValues.SelectedJob.PrinterSeries == SharedProgram.DataTypes.CommonDataType.PrinterSeries.RynanSeries) // Standalone will not check Printer Connection
+                {
                     return Task.FromResult(2);
-
+                }
                 return Task.FromResult(0);
             }
             catch (Exception)
             {
                 return Task.FromResult(2);
             }
-
         }
 
         public void InitEvents()
