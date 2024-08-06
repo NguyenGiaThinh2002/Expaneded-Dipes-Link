@@ -61,6 +61,8 @@ namespace DipesLink.ViewModels
             StationSelectedIndex = _numberOfStation > 0 ? _numberOfStation - 1 : StationSelectedIndex;
             DateTimeFormatSelectedIndex = ViewModelSharedValues.Settings.DateTimeFormatSelectedIndex;
             TemplateName = ViewModelSharedValues.Settings.TemplateName;
+            ImageExpPath = ViewModelSharedValues.Settings.FailedImagePath;
+            //FailedImagePath = ViewModelSharedValues.Settings.FailedImagePath;
         }
         private void EventRegister()
         {

@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
     xmlns:system="clr-namespace:System;assembly=System.Runtime">
-    
-    <!--Dialog Caption-->
+
+    <!--  Dialog Caption  -->
     <system:String x:Key="WarningDialogCaption">Warning Dialog Box</system:String>
     <system:String x:Key="InfoDialogCaption">Information Dialog Box</system:String>
     <system:String x:Key="ErrorDialogCaption">Error Dialog Box</system:String>
@@ -46,7 +46,7 @@
     <system:String x:Key="PrinterDisconnected">Station {0}: Printer's Disconnected !</system:String>
     <system:String x:Key="CameraDisconnected">Station {0}: Camera's Disconnected !</system:String>
     <system:String x:Key="FileNotFound">Station {0}: File not found !</system:String>
-  
+
     <system:String x:Key="ExitConfirmation">Do you want to exit the application?</system:String>
     <system:String x:Key="StopAllStations">Please stop all running stations!</system:String>
     <system:String x:Key="LogoutConfirmation">Do you want to logout?</system:String>
@@ -54,7 +54,7 @@
     <system:String x:Key="NotFound">Not Found !</system:String>
     <system:String x:Key="ExportConfirmation">Confirm you want to export report file ?</system:String>
     <system:String x:Key="IncorrectUsernameOrPassword">Username or password is incorrect !</system:String>
-  
+
     <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Do you want to change language and logout?</system:String>
     <system:String x:Key="UsernameInvalid">Username Invalid</system:String>
     <system:String x:Key="InvalidUser">Invalid User</system:String>
@@ -79,7 +79,7 @@
     <system:String x:Key="StationNumber">Station {0}</system:String>
     <system:String x:Key="Page">Page</system:String>
     <system:String x:Key="StationRunning">Station {0} is running !</system:String>
-    <system:String x:Key="StationStopped">Station {0} has stopped !</system:String> 
+    <system:String x:Key="StationStopped">Station {0} has stopped !</system:String>
     <system:String x:Key="DatabaseUnknownError">Station {0}: Database unknown error!</system:String>
     <system:String x:Key="PrintedStatusUnknownError">Station {0}: Printed status unknown error!</system:String>
     <system:String x:Key="CheckedResultUnknownError">Station {0}: Checked result unknown error!</system:String>
@@ -218,7 +218,7 @@
     <system:String x:Key="Printed">Printed</system:String>
     <system:String x:Key="Waiting">Waiting</system:String>
     <system:String x:Key="PRINTED_LOG">PRINTED LOG</system:String>
-    <system:String x:Key="STATION">STATION </system:String>
+    <system:String x:Key="STATION">STATION</system:String>
     <system:String x:Key="Name">Name:</system:String>
     <system:String x:Key="Type">Type:</system:String>
     <system:String x:Key="Total_Data">Total Data:</system:String>
@@ -254,6 +254,7 @@
     <system:String x:Key="Language">Language:</system:String>
     <system:String x:Key="DateTime_Format">DateTime Format:</system:String>
     <system:String x:Key="Template_Name:">Template Name:</system:String>
+    <system:String x:Key="FailedImagePath:">Failed Image Path:</system:String>
     <system:String x:Key="About_This_Software">About This Software</system:String>
     <system:String x:Key="Version">Version:</system:String>
     <system:String x:Key="Software_Name">Software Name:</system:String>
@@ -265,8 +266,8 @@
     <system:String x:Key="Please_Select_POD_Format">Please select POD format</system:String>
     <system:String x:Key="Please_Select_Printer_Template">Please select printer template</system:String>
     <system:String x:Key="Please_Select_Image_Export_Folder_Path">Please select image export folder path</system:String>
-    <system:String x:Key="Save_Job">Save Job</system:String>
+    <system:String x:Key="Save_Job">Do you want to save this Job ?</system:String>
     <system:String x:Key="Do_You_Want_Replace_Existing_Template">Do you want to replace the existing template?</system:String>
-    <system:String x:Key="Save_Job_Done">Save Job done!</system:String>
+    <system:String x:Key="Save_Job_Done">Saved Job successfully!</system:String>
     <system:String x:Key="Database_Type">Database Type</system:String>
 </ResourceDictionary>

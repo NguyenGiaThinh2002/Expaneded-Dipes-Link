@@ -266,7 +266,7 @@
     <system:String x:Key="Please_Select_POD_Format">Vui lòng chọn định dạng POD</system:String>
     <system:String x:Key="Please_Select_Printer_Template">Vui lòng chọn mẫu máy in</system:String>
     <system:String x:Key="Please_Select_Image_Export_Folder_Path">Vui lòng chọn đường dẫn thư mục xuất ảnh</system:String>
-    <system:String x:Key="Save_Job">Lưu công việc</system:String>
+    <system:String x:Key="Save_Job">Bạn có muốn lưu công việc này không?</system:String>
     <system:String x:Key="Do_You_Want_Replace_Existing_Template">Bạn có muốn thay thế mẫu hiện có không?</system:String>
     <system:String x:Key="Save_Job_Done">Lưu công việc thành công!</system:String>
     <system:String x:Key="Database_Type">Loại cơ sở dữ liệu</system:String>

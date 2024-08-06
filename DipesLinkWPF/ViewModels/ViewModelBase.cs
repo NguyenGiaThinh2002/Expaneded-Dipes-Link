@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,21 @@ namespace DipesLink.ViewModels
         public string TemplateName { get; set; } = string.Empty;
 
 
+        private string _imageExpPath = string.Empty;
+
+        public string ImageExpPath
+        {
+            get { return _imageExpPath; }
+            set
+            {
+                if (_imageExpPath != value)
+                {
+                    _imageExpPath = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
         // thinh
         private bool _lockStationChange;
         public bool LockStationChange
@@ -69,6 +85,22 @@ namespace DipesLink.ViewModels
             }
         }
 
+
+
+        //private string _failedImgPath = Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "FailedImage");
+
+        //public string FailedImagePath
+        //{
+        //    get { return _failedImgPath; }
+        //    set
+        //    {
+        //        if (_failedImgPath != value)
+        //        {
+        //            _failedImgPath = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
 
         protected SelectJobModel? _SelectJob = new();
         public SelectJobModel? JobSelection

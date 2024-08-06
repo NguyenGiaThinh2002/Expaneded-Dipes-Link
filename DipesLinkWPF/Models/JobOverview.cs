@@ -549,7 +549,7 @@ namespace DipesLink.Models
         public ConcurrentQueue<byte[]> QueueReceivedNumberBytes { get; set; } = new();
         public ConcurrentQueue<byte[]> QueuePrintedNumberBytes { get; set; } = new();
         public JobSystemSettings JobSystemSettings { get; set; }
-        public bool IsLockUISetting { get; internal set; }
+        public bool IsLockUISetting { get; internal set; } = false;
 
 
         #endregion

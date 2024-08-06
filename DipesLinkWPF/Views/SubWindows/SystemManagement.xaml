@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="600"
@@ -14,6 +15,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/TextBoxResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -133,14 +135,32 @@
                         Height="30"
                         Style="{StaticResource TextBoxStyle2}"
                         TextChanged="TextBoxTemplateName_TextChanged" />
-                    <!--<ComboBox
-                        Width="230"
+
+                </StackPanel>
+                <StackPanel
+                    Margin="0,10,10,0"
+                    IsEnabled="{Binding LockChoosingStation}"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        Width="130"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="{DynamicResource ResourceKey=FailedImagePath:}" />
+                    <TextBox
+                        x:Name="TextBoxErrImagePath"
+                        Width="175"
                         Height="30"
-                        SelectionChanged="ComboBoxLanguage_SelectionChanged"
-                        Style="{StaticResource ComboBoxStyle2}">
-                        <ComboBoxItem>English</ComboBoxItem>
-                        <ComboBoxItem>Vietnamese</ComboBoxItem>
-                    </ComboBox>-->
+                        Style="{StaticResource TextBoxStyle2}"
+                        IsReadOnly="True" />
+                    <Button
+                        Width="50"
+                        Height="30"
+                        Margin="5,0,0,0"
+                        Click="ButtonChooseImagePath_Click"
+                        Content="{fa:Icon Folder,
+                                          Foreground=White}"
+                        FontSize="20"
+                        Style="{StaticResource ModernButton2}" />
                 </StackPanel>
             </StackPanel>
         </GroupBox>

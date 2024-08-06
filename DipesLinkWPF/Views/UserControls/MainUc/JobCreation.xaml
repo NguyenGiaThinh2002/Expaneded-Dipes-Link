@@ -649,7 +649,7 @@
                                                         FontWeight="Normal"
                                                         IsReadOnly="True"
                                                         Style="{StaticResource TextBoxStyle3}"
-                                                        Text="{Binding ImageExportPath}" />
+                                                        Text="{Binding DataContext.ImageExpPath, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                                                 </StackPanel>
 
 
@@ -1036,7 +1036,7 @@
                                                 FontSize="20"
                                                 Style="{StaticResource ModernButton2}" />
                                         </StackPanel>
-                                        <ListView
+                                        <ListView Style="{DynamicResource ListViewStylePrinterTemplate}"
                                             x:Name="ListViewTemplate"
                                             Width="380"
                                             Height="120"
@@ -1168,8 +1168,8 @@
                                         FontWeight="Normal"
                                         IsReadOnly="True"
                                         Style="{StaticResource TextBoxStyle2}"
-                                        Text="{Binding ImageExportPath}" />
-                                    <Button
+                                        Text="{Binding DataContext.ImageExpPath, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                                    <Button Visibility="Collapsed"
                                         Width="60"
                                         Height="30"
                                         Margin="5,0,0,0"

@@ -25,6 +25,7 @@ namespace DipesLink.Views.SubWindows
         private void InitControls()
         {
             TextBoxTemplateName.Text = _viewModel.TemplateName;
+            TextBoxErrImagePath.Text = _viewModel.ImageExpPath;
             ComboBoxStationNumber.IsEnabled = !_viewModel.JobList.Any(job => job.OperationStatus != OperationStatus.Stopped);
             ComboBoxStationNumber.SelectedIndex = _viewModel.StationSelectedIndex;
             ComboBoxDateTimeFormat.SelectedIndex = _viewModel.DateTimeFormatSelectedIndex;
@@ -127,6 +128,22 @@ namespace DipesLink.Views.SubWindows
             if (_viewModel is null || TextBoxTemplateName == null) return;
             _viewModel.TemplateName = TextBoxTemplateName.Text;
             _viewModel.CheckTemplateName();
+        }
+
+        private void ButtonChooseImagePath_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _viewModel.SelectImageExportPath();
+                if (string.IsNullOrEmpty(_viewModel.ImageExpPath))
+                {
+                    TextBoxErrImagePath.Text = _viewModel.ImageExpPath;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }
