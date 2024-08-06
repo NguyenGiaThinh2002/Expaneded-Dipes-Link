@@ -1,25 +1,16 @@
 ﻿using Cloudtoid;
+using DipesLink.Languages;
+using DipesLink.Models;
 using DipesLink.Views.SubWindows;
 using IPCSharedMemory;
-using IPCSharedMemory.Datatypes;
 using Microsoft.Win32;
 using SharedProgram.Models;
 using SharedProgram.Shared;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using static SharedProgram.DataTypes.CommonDataType;
 using static DipesLink.Views.Enums.ViewEnums;
-using DipesLink.Views.Extension;
-using System;
-using System.Windows.Media;
-using System.Windows.Controls;
-using DipesLink.Views.Models;
-using DipesLink.Views.UserControls.MainUc;
-using DipesLink.Models;
-using System.Collections.Concurrent;
-using System.Reflection;
-using DipesLink.Languages;
+using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLink.ViewModels
 {
@@ -48,24 +39,27 @@ namespace DipesLink.ViewModels
         
         internal void LockUI(int stationIndex)
         {
-            switch (JobList[stationIndex].OperationStatus)
+           
+            Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                case OperationStatus.Running:
-                    JobList[stationIndex].IsLockUISetting = false;
-                    break;
-                case OperationStatus.Processing:
-                    JobList[stationIndex].IsLockUISetting = false;
-                    break;
-                case OperationStatus.Stopped:
-                    JobList[stationIndex].IsLockUISetting = true;
-                    break;
-                default:
-                    break;
-            }
-
-            JobSelection.IsButtonOperationJobEnable = JobList[stationIndex].IsLockUISetting;
-            ConnectParamsList[stationIndex].IsLockUISetting = JobList[stationIndex].IsLockUISetting;
-            _ = LoadJobListActionAsync(stationIndex);
+                switch (JobList[stationIndex].OperationStatus)
+                {
+                    case OperationStatus.Running:
+                        JobList[stationIndex].IsLockUISetting = false;
+                        break;
+                    case OperationStatus.Processing:
+                        JobList[stationIndex].IsLockUISetting = false;
+                        break;
+                    case OperationStatus.Stopped:
+                        JobList[stationIndex].IsLockUISetting = true;
+                        break;
+                    default:
+                        break;
+                }
+                JobSelection.IsButtonOperationJobEnable = JobList[stationIndex].IsLockUISetting;
+                ConnectParamsList[stationIndex].IsLockUISetting = JobList[stationIndex].IsLockUISetting;
+                _ = LoadJobListActionAsync(stationIndex);
+            });
         }
 
         #region Job Selection and create new
@@ -88,7 +82,7 @@ namespace DipesLink.ViewModels
                 CompleteCondition = CreateNewJob.CompleteCondition,
                 OutputCamera = CreateNewJob.OutputCamera,
                 IsImageExport = CreateNewJob.IsImageExport,
-                ImageExportPath = CreateNewJob.ImageExportPath,
+                ImageExportPath = ImageExpPath,
                 PrinterIP = CreateNewJob.PrinterIP,
                 PrinterPort = CreateNewJob.PrinterPort,
                 PrinterWebPort = CreateNewJob.PrinterWebPort,
@@ -113,7 +107,7 @@ namespace DipesLink.ViewModels
                     if (_jobModel.Name == null || _jobModel.Name == "")
                     {
                         
-                        CustomMessageBox checkJobNameMsgBox = new(LanguageModel.GetLanguage("Please_Input_Job_Name"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                        CustomMessageBox checkJobNameMsgBox = new(LanguageModel.GetLanguage("Please_Input_Job_Name"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                         checkJobNameMsgBox.ShowDialog();
                         return;
                     }
@@ -125,7 +119,7 @@ namespace DipesLink.ViewModels
                         {
                             if (_jobModel.DatabasePath == null || _jobModel.DatabasePath == "")
                             {
-                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Database_Path"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Database_Path"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                                 checkJobMsgBox.ShowDialog();
                                 return;
                             }
@@ -134,15 +128,15 @@ namespace DipesLink.ViewModels
                             // Check Data compare format
                             if (_jobModel.DataCompareFormat == null || _jobModel.DataCompareFormat == "")
                             {
-                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_POD_Format"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_POD_Format"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                                 checkJobMsgBox.ShowDialog();
                                 return;
                             }
 
 #if DEBUG
-                            _jobModel.PrinterTemplate = "podtest";
-                            _jobModel.TemplateListFirstFound = new List<string>();
-                            _jobModel.TemplateListFirstFound.Add("podtest");
+                            //_jobModel.PrinterTemplate = "podtest";
+                            //_jobModel.TemplateListFirstFound = new List<string>();
+                            //_jobModel.TemplateListFirstFound.Add("podtest");
 #endif
                             // Check printer template
                             if (_jobModel.PrinterTemplate == null ||
@@ -150,7 +144,7 @@ namespace DipesLink.ViewModels
                                 _jobModel.TemplateListFirstFound == null ||
                                 !SharedFunctions.CheckExitTemplate(_jobModel.PrinterTemplate, _jobModel.TemplateListFirstFound))
                             {
-                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Printer_Template"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Printer_Template"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                                 checkJobMsgBox.ShowDialog();
                                 return;
                             }
@@ -165,18 +159,16 @@ namespace DipesLink.ViewModels
                     if (_jobModel.IsImageExport == true)
                     {
 
-                        if (_jobModel.ImageExportPath == null || _jobModel.ImageExportPath == "" || !Directory.Exists(_jobModel.ImageExportPath))
+                        if (ImageExpPath == null || ImageExpPath == "" || !Directory.Exists(ImageExpPath))
                         {
-                            CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Image_Export_Folder_Path"), "Job create fail", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                            CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Image_Export_Folder_Path"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                             checkJobMsgBox.ShowDialog();
                             return;
                         }
                     }
 
-
-
                     // Save Job to file
-                    CustomMessageBox saveConfirm = new(LanguageModel.GetLanguage("Save_Job"), "Confirm", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
+                    CustomMessageBox saveConfirm = new(LanguageModel.GetLanguage("Save_Job"), LanguageModel.GetLanguage("InfoDialogCaption"), ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
                     var isSaveConfirm = saveConfirm.ShowDialog();
                     if (isSaveConfirm == true)
                     {
@@ -207,7 +199,7 @@ namespace DipesLink.ViewModels
                                 }
                                 else
                                 {
-                                    CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Do_You_Want_Replace_Existing_Template"), "Job create fail", ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
+                                    CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Do_You_Want_Replace_Existing_Template"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OKCancel, ImageStyleMessageBox.Info);
                                     var isReplace = checkJobMsgBox.ShowDialog();
                                     if (isReplace == true) { } else return;
                                 }
@@ -225,7 +217,7 @@ namespace DipesLink.ViewModels
 
                         }
                         isSaveJob = true;
-                        CustomMessageBox saveJobSuccMsgBox = new(LanguageModel.GetLanguage("Save_Job_Done"), "Notification", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Info);
+                        CustomMessageBox saveJobSuccMsgBox = new(LanguageModel.GetLanguage("Save_Job_Done"), LanguageModel.GetLanguage("InfoDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Info);
                         saveJobSuccMsgBox.ShowDialog();
                     }
                 }
@@ -233,13 +225,6 @@ namespace DipesLink.ViewModels
             catch (Exception)
             {
 
-            }
-
-            switch (jobIndex)
-            {
-                case 0:
-
-                    break;
             }
         }
 
@@ -273,10 +258,7 @@ namespace DipesLink.ViewModels
                 JobSelection?.JobFileList?.Clear();
                 JobSelection?.SelectedJobFileList?.Clear();
                 ObservableCollection<string> templateJobList = GetJobNameList(index);
-                //SelectJob.JobFileList = new();
-                // thinh
-                // SelectJob.IsButtonOperationJobEnable = new();
-                //   SelectJob.IsButtonOperationJobEnable = ConnectParamsList[index].LockUISetting;
+           
                 foreach (string templateJobName in templateJobList)
                 {
                     JobModel? jobModel = SharedFunctions.GetJob(templateJobName, index);
@@ -308,16 +290,7 @@ namespace DipesLink.ViewModels
                     if (jobModel == null) return;
                     jobModel.JobStatus = JobStatus.Deleted;
                     string filePath = SharedPaths.PathSubJobsApp + (jobIndex + 1) + "\\" + jobModel.Name + SharedValues.Settings.JobFileExtension;
-                    // string selectedfilePath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}" + "\\" + jobModel.Name + SharedValues.Settings.JobFileExtension;
-
-                    //var msgBoxDelJob = CusMsgBox.Show(
-                    //    LanguageModel.GetLanguage("DeleteJobConfirmation", jobIndex), 
-                    //    LanguageModel.GetLanguage("WarningDialogCaption"), 
-                    //    ButtonStyleMessageBox.OKCancel, 
-                    //    ImageStyleMessageBox.Warning);
-
-                    //if (msgBoxDelJob.Result)
-                    //{
+                   
                         // Check Job Delete whether is selected job and Delete at the same time Selected Job
                         string folderPath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}";
                         string[] files = Directory.GetFiles(folderPath);
@@ -328,7 +301,7 @@ namespace DipesLink.ViewModels
                         }
                         //Deleted
                         jobModel.SaveJobFile(filePath);
-                  //  }
+            
 
                 }
                 catch (Exception)
@@ -364,7 +337,7 @@ namespace DipesLink.ViewModels
             JobModel? jobModel;
             if (!isSelectedWorkJob)
             {
-              //  ObservableCollection<string> templateJobList = GetJobNameList(jobIndex);
+              
                 jobModel = SharedFunctions.GetJob(JobSelection?.SelectedJob, jobIndex);
             }
             else
@@ -395,21 +368,7 @@ namespace DipesLink.ViewModels
         {
             try
             {
-                //if (SelectJob.SelectedJob == null) return;
-                //// Empty the folder 
-                //string folderPath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}";
-                //if (!Directory.Exists(folderPath))
-                //{
-                //    Directory.CreateDirectory(folderPath);
-                //}
-                //else
-                //{
-                //    string[] files = Directory.GetFiles(folderPath);
-                //    foreach (string file in files)
-                //    {
-                //        File.Delete(file);
-                //    }
-                //}
+              
                 if (JobSelection.SelectedJob == null) return;
                 DeleteSeletedJob(jobIndex);
                 
@@ -460,7 +419,10 @@ namespace DipesLink.ViewModels
             try
             {
                 SharedFunctions.ShowFolderPickerDialog(out string? folderPath);
-                CreateNewJob.ImageExportPath = folderPath;
+                ImageExpPath = folderPath;
+                ViewModelSharedValues.Settings.FailedImagePath = folderPath;
+                ViewModelSharedFunctions.SaveSetting();
+                
             }
             catch (Exception) { }
 

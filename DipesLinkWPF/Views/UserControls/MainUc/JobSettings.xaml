@@ -24,8 +24,6 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/RadioButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
-
-
             </ResourceDictionary.MergedDictionaries>
             <converter:RadioButtonToBool x:Key="CoupRadToBol" />
             <converter:BoolToRadioButtonConverter x:Key="BoolToRadioButtonConverter" />

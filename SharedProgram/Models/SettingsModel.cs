@@ -21,6 +21,7 @@ namespace SharedProgram.Models
         public int DateTimeFormatSelectedIndex { get; set; }
 
         public string TemplateName { get; set; } = "JobFile";
+        public string FailedImagePath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "FailedImage");
 
 
         private List<ConnectParamsModel> _SystemParamsList = new();

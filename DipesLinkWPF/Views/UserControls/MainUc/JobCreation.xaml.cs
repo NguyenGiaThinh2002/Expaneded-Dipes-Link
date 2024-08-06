@@ -49,10 +49,17 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ListBoxMenuJobCreate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CurrentViewModel<MainViewModel>()?.LoadJobList(ListBoxMenuJobCreate.SelectedIndex); // Update Job on UI
-            LockUIPreventChangeJobWhenRun();
-            CurrentViewModel<MainViewModel>()?.GetDetailInfoJobList(ListBoxMenuJobCreate.SelectedIndex, true);  // default load info of selected Job
-            CurrentViewModel<MainViewModel>()?.AutoNamedForJob(CurrentIndex());
+            try
+            {
+                CurrentViewModel<MainViewModel>()?.LoadJobList(ListBoxMenuJobCreate.SelectedIndex); // Update Job on UI
+                LockUIPreventChangeJobWhenRun();
+                CurrentViewModel<MainViewModel>()?.GetDetailInfoJobList(ListBoxMenuJobCreate.SelectedIndex, true);  // default load info of selected Job
+                CurrentViewModel<MainViewModel>()?.AutoNamedForJob(CurrentIndex());
+                GetTemplateFromPrinter();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void MainListBoxMenuChange(object? sender, EventArgs e)
@@ -62,6 +69,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 if (indexMenu == 1)
                 {
                     LockUIPreventChangeJobWhenRun();
+                    GetTemplateFromPrinter();
                 }
             }
         }
@@ -85,7 +93,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     vm.CreateNewJob.DatabasePath = string.Empty;
                     vm.CreateNewJob.DataCompareFormat = string.Empty;
                     vm.CreateNewJob.ImageExportPath = string.Empty;
-                    vm.CreateNewJob.TemplateList = new List<string>();
+                   // vm.CreateNewJob.TemplateList = new List<string>();
                 }
             }
             catch (Exception)
@@ -129,9 +137,23 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void ButtonReloadPrinterTemplate_Click(object sender, RoutedEventArgs e)
         {
-            int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
-            CurrentViewModel<MainViewModel>()?.RefreshTemplatName(jobIndex);
+            GetTemplateFromPrinter();
+        }
 
+        private void GetTemplateFromPrinter()
+        {
+            try
+            {
+                int jobIndex = ListBoxMenuJobCreate.SelectedIndex;
+                if (CurrentViewModel<MainViewModel>() is MainViewModel vm)
+                {
+                    vm.CreateNewJob.TemplateList = new List<string>();
+                    vm.RefreshTemplatName(jobIndex);
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void TabControlJobSettings_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -142,7 +164,9 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void LockUIPreventChangeJobWhenRun()
         {
-            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuJobCreate.SelectedIndex);
+            
+                CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuJobCreate.SelectedIndex);
+      
         }
 
         private void ListViewJobTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -263,7 +287,6 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                //   var rad = sender as RadioButton;
                 var vm = CurrentViewModel<MainViewModel>();
                 if (vm == null) return;
                 if (RadioButtonStandalone.IsChecked == true)
@@ -295,36 +318,6 @@ namespace DipesLink.Views.UserControls.MainUc
                     GroupBoxDatabaseType.IsEnabled = true;
                     GroupBoxTemplate.IsEnabled = true;
                 }
-                //switch (rad.Name)
-                //{
-                //    case "RadioButtonStandalone":
-                //        GroupBoxJobType.IsEnabled = false;
-                //        RadioButtonCanRead.IsEnabled = true;
-                //        RadioButtonStaticText.IsEnabled = true;
-                //        RadioButtonAfterProduction.IsChecked = false;
-                //        RadioButtonOnProduction.IsChecked = false;
-                //        RadioButtonVerifyAndPrint.IsChecked = false;
-                //        vm.CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
-                //        break;
-                //    case "RadioButtonRynanSeries":
-                //        GroupBoxJobType.IsEnabled = true;
-                //        RadioButtonCanRead.IsEnabled = false;
-                //        RadioButtonStaticText.IsEnabled = false;
-                //        RadioButtonDatabase.IsChecked = true;
-                //        RadioButtonAfterProduction.IsChecked = true;
-                //        break;
-                //    case "RadioButtonCanRead":
-                //    case "RadioButtonStaticText":
-                //        GroupBoxDatabaseType.IsEnabled = false;
-                //        GroupBoxTemplate.IsEnabled = false;
-                //        break;
-                //    case "RadioButtonDatabase":
-                //        GroupBoxDatabaseType.IsEnabled = true;
-                //        GroupBoxTemplate.IsEnabled = true;
-                //        break;
-                //    default:
-                //        break;
-                //}
             }
             catch (Exception)
             {
@@ -360,7 +353,7 @@ namespace DipesLink.Views.UserControls.MainUc
         private void ListViewJobTemplate_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var lv = (ListView)sender;
-            if(lv.SelectedItem != null)
+            if (lv.SelectedItem != null)
             {
                 Button_AddJobClick(sender, e);
             }

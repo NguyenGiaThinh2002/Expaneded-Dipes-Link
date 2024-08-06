@@ -672,9 +672,16 @@ namespace DipesLinkDeviceTransfer
                 if (podResponse.Status != null && (podResponse.Status == "OK" || podResponse.Status == "READY"))
                 {
                     // If not Verify and Print : Send POD First
-                    if (podData.RoleOfPrinter == RoleOfStation.ForProduct && !_IsVerifyAndPrintMode)
+                    if (!_IsVerifyAndPrintMode)
                     {
                         SendWorkingDataToPrinterHandlerAsync(); // Send POD data to printer when printer ready receive data
+                    }
+                    else
+                    {
+                        if (SharedValues.OperStatus == OperationStatus.Processing)
+                        {
+                            SharedValues.OperStatus = OperationStatus.Running;
+                        }
                     }
                 }
                 else // Error case

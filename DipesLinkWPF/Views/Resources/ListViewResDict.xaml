@@ -41,5 +41,45 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    
+    <!--  Style for the ListView  -->
+    <Style x:Key="ListViewStylePrinterTemplate" TargetType="ListView">
+        <Setter Property="Background" Value="AliceBlue" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="10" />
+                    <Setter Property="Margin" Value="2" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border
+                                 Name="ItemBorder"
+                                 Padding="2"
+                                 Background="WhiteSmoke"
+                                 BorderBrush="#00ABE6"
+                                 BorderThickness="1"
+                                 CornerRadius="5">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ItemBorder" Property="Background" Value="#B3E5FC" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="ItemBorder" Property="Background" Value="#9EDFF6" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Collections.Generic;
+using System.Windows.Documents;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -404,7 +405,6 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-              
                 if (_currentJob == null || _printObserHelper?.PrintList==null || !_printObserHelper.PrintList.Any()) return;
                 PrintingInfo printInfo = new()
                 {

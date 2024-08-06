@@ -143,11 +143,16 @@ namespace SharedProgram.Models
         public bool IsImageExport
         {
             get { return _IsImageExport; }
-            set { _IsImageExport = value; OnPropertyChanged(); }
+            set 
+            { 
+                _IsImageExport = value; 
+                OnPropertyChanged();
+               
+            }
         }
 
         private string? _ImageExportPath; 
-        public string? ImageExportPath
+        public string? ImageExportPath 
         {
             get { return _ImageExportPath; }
             set { _ImageExportPath = value; OnPropertyChanged(); }
