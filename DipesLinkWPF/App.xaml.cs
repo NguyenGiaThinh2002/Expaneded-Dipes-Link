@@ -27,9 +27,9 @@ namespace DipesLink
 
             splashScreen = new(); //Show Loading Screen
             splashScreen.Show();
-            KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
-            var timeCheckOldProcess = DipesLink.Properties.Settings.Default.TimeCheckOldProcess;
-            await Task.Delay(timeCheckOldProcess);
+          //  KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
+          //  var timeCheckOldProcess = DipesLink.Properties.Settings.Default.TimeCheckOldProcess;
+         //   await Task.Delay(timeCheckOldProcess);
             if (!InitializeMutex()) // Check again old process exist
             {
                 NotifyAndShutdown();
@@ -61,7 +61,7 @@ namespace DipesLink
 
         protected override void OnExit(ExitEventArgs e)
         {
-            KillProcessByName(new ProcessType[] { ProcessType.All });
+        //    KillProcessByName(new ProcessType[] { ProcessType.All });
             Thread.Sleep(1000);
             ReleaseMutex();
         }

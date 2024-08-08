@@ -170,6 +170,9 @@ namespace DipesLink.Views
 
         private void MainWindow_Closed(object? sender, EventArgs e)
         {
+          
+            CurrentViewModel<MainViewModel>()?.KillProcessByID();
+            CurrentViewModel<MainViewModel>()?.ReleaseResource();
             Application.Current?.Shutdown();
         }
 
@@ -282,7 +285,7 @@ namespace DipesLink.Views
                         Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     if (res.Result)
                     {
-                        RestartApplication();
+                        ApplicationHelper.RestartApplication();
                     }
                 }
                 else
@@ -295,19 +298,19 @@ namespace DipesLink.Views
             }
            
         }
-        public static void RestartApplication()
-        {
-            try
-            {
-                Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                Application.Current.Shutdown();
-            }
-            catch (Exception)
-            {
+        //public static void RestartApplication()
+        //{
+        //    try
+        //    {
+        //        Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+        //        Application.Current.Shutdown();
+        //    }
+        //    catch (Exception)
+        //    {
 
-            }
+        //    }
            
-        }
+        //}
 
         private void BorderUser_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

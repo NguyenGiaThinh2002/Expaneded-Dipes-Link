@@ -1,7 +1,9 @@
-﻿using DipesLink.Languages;
+﻿using DipesLink.Extensions;
+using DipesLink.Languages;
 using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using static DipesLink.Views.Enums.ViewEnums;
@@ -78,7 +80,7 @@ namespace DipesLink.Views.SubWindows
             if (IsChangeLanguageAccepted())
             {
                 languageModel.UpdateApplicationLanguage(selectedLanguage);
-                MainWindow.RestartApplication();
+                ApplicationHelper.RestartApplication();
             }
             else
             {
@@ -134,15 +136,14 @@ namespace DipesLink.Views.SubWindows
         {
             try
             {
-                _viewModel.SelectImageExportPath();
-                if (string.IsNullOrEmpty(_viewModel.ImageExpPath))
+                _viewModel.SelectImageExportPath(TextBoxErrImagePath.Text);
+                if (Directory.Exists(_viewModel.ImageExpPath))
                 {
                     TextBoxErrImagePath.Text = _viewModel.ImageExpPath;
                 }
             }
             catch (Exception)
             {
-
             }
         }
     }

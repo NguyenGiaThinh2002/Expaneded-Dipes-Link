@@ -212,10 +212,14 @@ namespace SharedProgram.Shared
             return isValid;
         }
 
-        public static void ShowFolderPickerDialog(out string? folderPath)
+        public static void ShowFolderPickerDialog(string oldPath, out string? folderPath)
         {
             folderPath = null;
             using var dialog = new FolderBrowserDialog();
+            if (Directory.Exists(oldPath))
+            {
+                dialog.InitialDirectory = oldPath;
+            }
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {

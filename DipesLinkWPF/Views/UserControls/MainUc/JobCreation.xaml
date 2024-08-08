@@ -22,7 +22,8 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ListViewResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/TabControlResDict.xaml" />
-
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/RadioButtonResDict.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ListBoxResDict.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!--  Converter  -->
             <converter:PrinterSeriesToBool x:Key="PrinterToBool" />
@@ -39,132 +40,6 @@
             <system:Double x:Key="MenuItemSize">150</system:Double>
             <system:Double x:Key="LabelWidth">110</system:Double>
 
-            <!--#region Radio Button Style-->
-            <Style x:Key="FocusVisual">
-                <Setter Property="Control.Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Rectangle
-                                Margin="2"
-                                SnapsToDevicePixels="true"
-                                Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-                                StrokeDashArray="1 2"
-                                StrokeThickness="1" />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style x:Key="OptionMarkFocusVisual">
-                <Setter Property="Control.Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Rectangle
-                                Margin="14,0,0,0"
-                                SnapsToDevicePixels="true"
-                                Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-                                StrokeDashArray="1 2"
-                                StrokeThickness="1" />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <SolidColorBrush x:Key="RadioButton.Static.Background" Color="#FFFFFFFF" />
-            <SolidColorBrush x:Key="RadioButton.Static.Border" Color="#FF707070" />
-            <SolidColorBrush x:Key="RadioButton.Static.Glyph" Color="#00ABE6" />
-            <SolidColorBrush x:Key="RadioButton.MouseOver.Background" Color="#FFF3F9FF" />
-            <SolidColorBrush x:Key="RadioButton.MouseOver.Border" Color="#FF5593FF" />
-            <SolidColorBrush x:Key="RadioButton.MouseOver.Glyph" Color="#FF212121" />
-            <SolidColorBrush x:Key="RadioButton.Pressed.Background" Color="#FFD9ECFF" />
-            <SolidColorBrush x:Key="RadioButton.Pressed.Border" Color="#FF3C77DD" />
-            <SolidColorBrush x:Key="RadioButton.Pressed.Glyph" Color="#00ABE6" />
-            <SolidColorBrush x:Key="RadioButton.Disabled.Background" Color="#FFE6E6E6" />
-            <SolidColorBrush x:Key="RadioButton.Disabled.Border" Color="#FFBCBCBC" />
-            <SolidColorBrush x:Key="RadioButton.Disabled.Glyph" Color="#FF707070" />
-            <Style x:Key="RadioButtonStyle1" TargetType="{x:Type RadioButton}">
-                <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
-                <Setter Property="Background" Value="{StaticResource RadioButton.Static.Background}" />
-                <Setter Property="BorderBrush" Value="{StaticResource RadioButton.Static.Border}" />
-                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type RadioButton}">
-                            <Grid
-                                x:Name="templateRoot"
-                                Background="Transparent"
-                                SnapsToDevicePixels="True">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Border
-                                    x:Name="radioButtonBorder"
-                                    Margin="1,1,2,1"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="100">
-                                    <Grid x:Name="markGrid" Margin="2">
-                                        <Ellipse
-                                            x:Name="optionMark"
-                                            MinWidth="10"
-                                            MinHeight="10"
-                                            Fill="{StaticResource RadioButton.Static.Glyph}"
-                                            Opacity="0" />
-                                    </Grid>
-                                </Border>
-                                <ContentPresenter
-                                    x:Name="contentPresenter"
-                                    Grid.Column="1"
-                                    Margin="{TemplateBinding Padding}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Focusable="False"
-                                    RecognizesAccessKey="True"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="HasContent" Value="true">
-                                    <Setter Property="FocusVisualStyle" Value="{StaticResource OptionMarkFocusVisual}" />
-                                    <Setter Property="Padding" Value="4,-1,0,0" />
-                                </Trigger>
-                                <Trigger Property="IsMouseOver" Value="true">
-                                    <Setter TargetName="radioButtonBorder" Property="Background" Value="{StaticResource RadioButton.MouseOver.Background}" />
-                                    <Setter TargetName="radioButtonBorder" Property="BorderBrush" Value="{StaticResource RadioButton.MouseOver.Border}" />
-                                    <Setter TargetName="optionMark" Property="Fill" Value="#00ABE6" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="false">
-                                    <Setter TargetName="radioButtonBorder" Property="Background" Value="{StaticResource RadioButton.Disabled.Background}" />
-                                    <Setter TargetName="radioButtonBorder" Property="BorderBrush" Value="{StaticResource RadioButton.Disabled.Border}" />
-                                    <Setter TargetName="optionMark" Property="Fill" Value="{StaticResource RadioButton.Disabled.Glyph}" />
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="true">
-                                    <Setter TargetName="radioButtonBorder" Property="Background" Value="{StaticResource RadioButton.Pressed.Background}" />
-                                    <Setter TargetName="radioButtonBorder" Property="BorderBrush" Value="{StaticResource RadioButton.Pressed.Border}" />
-                                    <Setter TargetName="optionMark" Property="Fill" Value="{StaticResource RadioButton.Pressed.Glyph}" />
-                                </Trigger>
-                                <Trigger Property="IsChecked" Value="true">
-                                    <Setter TargetName="optionMark" Property="Opacity" Value="1" />
-                                </Trigger>
-                                <Trigger Property="IsChecked" Value="{x:Null}">
-                                    <Setter TargetName="optionMark" Property="Opacity" Value="0.56" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <!--#endregion Radio Button Style-->
-
-
-            <!--  TabControl Style  -->
-            <!--  Định nghĩa Style cho TabControl  -->
-            <!--<Style TargetType="TabControl">
-                <Setter Property="Padding" Value="5" />
-                <Setter Property="Background" Value="WhiteSmoke" />
-            </Style>-->
             <Style TargetType="TabControl">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -261,7 +136,7 @@
                 Margin="2"
                 VerticalAlignment="Top"
                 BorderBrush="Transparent"
-                ItemContainerStyle="{DynamicResource ListBoxItemContainerStyle1}"
+                ItemContainerStyle="{DynamicResource ListBoxItemContainerForJobCreation}"
                 ItemsSource="{Binding JobList}"
                 SelectedIndex="0"
                 SelectionChanged="ListBoxMenuJobCreate_SelectionChanged">
@@ -296,103 +171,26 @@
                         </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-                <ListBox.Resources>
-                    <Style x:Key="FocusVisual">
-                        <Setter Property="Control.Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <Rectangle
-                                        Margin="2"
-                                        SnapsToDevicePixels="true"
-                                        Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-                                        StrokeDashArray="1 2"
-                                        StrokeThickness="1" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#1F26A0DA" />
-                    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#a826A0Da" />
-                    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#9EDFF6" />
-                    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#9EDFF6" />
-                    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#9EDFF6" />
-                    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#9EDFF6" />
-                    <Style x:Key="ListBoxItemContainerStyle1" TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="SnapsToDevicePixels" Value="True" />
-                        <Setter Property="Padding" Value="4,1" />
-                        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-                        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderBrush" Value="Transparent" />
-                        <Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Border
-                                        x:Name="Bd"
-                                        Padding="{TemplateBinding Padding}"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        SnapsToDevicePixels="true">
-                                        <ContentPresenter
-                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <MultiTrigger>
-                                            <MultiTrigger.Conditions>
-                                                <Condition Property="IsMouseOver" Value="True" />
-                                            </MultiTrigger.Conditions>
-                                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Item.MouseOver.Background}" />
-                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Item.MouseOver.Border}" />
-                                        </MultiTrigger>
-                                        <MultiTrigger>
-                                            <MultiTrigger.Conditions>
-                                                <Condition Property="Selector.IsSelectionActive" Value="False" />
-                                                <Condition Property="IsSelected" Value="True" />
-                                            </MultiTrigger.Conditions>
-                                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Item.SelectedInactive.Background}" />
-                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Item.SelectedInactive.Border}" />
-                                        </MultiTrigger>
-                                        <MultiTrigger>
-                                            <MultiTrigger.Conditions>
-                                                <Condition Property="Selector.IsSelectionActive" Value="True" />
-                                                <Condition Property="IsSelected" Value="True" />
-                                            </MultiTrigger.Conditions>
-                                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Item.SelectedActive.Background}" />
-                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Item.SelectedActive.Border}" />
-                                        </MultiTrigger>
-                                        <Trigger Property="IsEnabled" Value="False">
-                                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.Resources>
+
+                <ListBox.Resources />
             </ListBox>
         </Border>
 
 
         <Border Grid.Column="1">
             <Grid>
-                <TabControl
-                    x:Name="TabControlJobSettings"
-                    Margin="0,3,0,0"
-                    IsEnabled="{Binding TabControlEnable}"
-                    SelectionChanged="TabControlJobSettings_SelectionChanged">
-
+                <TabControl x:Name="TabControlJobSettings" Margin="0,3,0,0">
+                    <!--  IsEnabled="{Binding TabControlEnable}"  -->
                     <!--  SELECT JOB  -->
 
                     <TabItem x:Name="TabItemSelectJob" DataContext="{Binding JobSelection}">
                         <TabItem.Header>
                             <TextBlock Text="{DynamicResource ResourceKey=Select_Job}" />
                         </TabItem.Header>
-                        <Grid Margin="10,10,0,0" Background="WhiteSmoke">
+                        <Grid
+                            Margin="10,10,0,0"
+                            Background="WhiteSmoke"
+                            IsEnabled="{Binding IsButtonOperationJobEnable}">
                             <Grid.Resources>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontSize" Value="16" />
@@ -416,7 +214,7 @@
                                     </Style>
                                 </Grid.Resources>
 
-                                <GroupBox Margin="2" IsEnabled="{Binding IsButtonOperationJobEnable}">
+                                <GroupBox Margin="2">
                                     <GroupBox.Header>
                                         <TextBlock
                                             FontSize="18"
@@ -447,13 +245,6 @@
                                                 SelectedItem="{Binding SelectedJob}"
                                                 SelectionChanged="ListViewJobTemplate_SelectionChanged"
                                                 Style="{StaticResource ModernListViewStyle}" />
-                                            <!--  MouseEnter="ListViewJobTemplate_MouseEnter"  -->
-                                            <!--
-                                                PreviewMouseDown="ListViewJobTemplate_PreviewMouseDown"
-                                                SelectedItem="{Binding SelectedJob}"
-                                                SelectionChanged="ListViewJobTemplate_SelectionChanged"
-                                            -->
-
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="1" Margin="0,50,0,0">
@@ -751,9 +542,8 @@
                     </TabItem>
 
                     <!--  CREATE NEW JOB  -->
-
                     <TabItem DataContext="{Binding CreateNewJob}" Header="{DynamicResource ResourceKey=Create_New_Job}">
-                        <Grid Margin="10,10,0,0">
+                        <Grid Margin="10,10,0,0" IsEnabled="{Binding IsButtonOperationJobEnable}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="490" />
                                 <ColumnDefinition />
@@ -823,7 +613,7 @@
                                                 Content="Rynan Series"
                                                 GroupName="PrinterSeriesGr"
                                                 IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=0}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                             <RadioButton
                                                 x:Name="RadioButtonStandalone"
                                                 Width="150"
@@ -832,7 +622,7 @@
                                                 Content="Standalone"
                                                 GroupName="PrinterSeriesGr"
                                                 IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=1}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                         </StackPanel>
                                     </GroupBox>
 
@@ -857,7 +647,7 @@
                                                 Content="{DynamicResource ResourceKey=After_Production}"
                                                 GroupName="JobTypeGr"
                                                 IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=AfterProduction}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                             <RadioButton
                                                 x:Name="RadioButtonOnProduction"
                                                 Width="150"
@@ -865,7 +655,7 @@
                                                 Content="{DynamicResource ResourceKey=On_Production}"
                                                 GroupName="JobTypeGr"
                                                 IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=OnProduction}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                             <RadioButton
                                                 x:Name="RadioButtonVerifyAndPrint"
                                                 Width="150"
@@ -873,7 +663,7 @@
                                                 Content="{DynamicResource ResourceKey=Verify_And_Print}"
                                                 GroupName="JobTypeGr"
                                                 IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=VerifyAndPrint}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                         </StackPanel>
                                     </GroupBox>
 
@@ -894,7 +684,7 @@
                                                 Content="{DynamicResource ResourceKey=Can_Read}"
                                                 GroupName="CmpTypeGr"
                                                 IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=CanRead}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                             <RadioButton
                                                 x:Name="RadioButtonStaticText"
                                                 Width="150"
@@ -903,7 +693,7 @@
                                                 Content="{DynamicResource ResourceKey=Static_Text}"
                                                 GroupName="CmpTypeGr"
                                                 IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=StaticText}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                             <RadioButton
                                                 x:Name="RadioButtonDatabase"
                                                 Width="150"
@@ -912,7 +702,7 @@
                                                 Content="{DynamicResource ResourceKey=Database}"
                                                 GroupName="CmpTypeGr"
                                                 IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=Database}"
-                                                Style="{DynamicResource RadioButtonStyle1}" />
+                                                Style="{DynamicResource RadioButtonStyle2}" />
                                         </StackPanel>
                                     </GroupBox>
                                 </StackPanel>
@@ -1007,6 +797,7 @@
                                     Grid.Row="6"
                                     Width="470"
                                     Height="200"
+                                    IsEnabled="{Binding ElementName=RadioButtonStandalone, Path=IsChecked}"
                                     HorizontalAlignment="Left">
                                     <GroupBox.Header>
                                         <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Template}" />
@@ -1036,19 +827,17 @@
                                                 FontSize="20"
                                                 Style="{StaticResource ModernButton2}" />
                                         </StackPanel>
-                                        <ListView Style="{DynamicResource ListViewStylePrinterTemplate}"
+                                        <ListView
                                             x:Name="ListViewTemplate"
                                             Width="380"
                                             Height="120"
                                             Margin="0,5,0,0"
                                             HorizontalAlignment="Left"
                                             ItemsSource="{Binding TemplateList}"
-                                            SelectedItem="{Binding PrinterTemplate}" />
+                                            SelectedItem="{Binding PrinterTemplate}"
+                                            Style="{DynamicResource ListViewStylePrinterTemplate}" />
                                     </StackPanel>
                                 </GroupBox>
-
-
-
                             </Grid>
                             <Grid
                                 Grid.Column="1"
@@ -1089,14 +878,14 @@
                                             Content="{DynamicResource ResourceKey=Total_Passed}"
                                             GroupName="compcondGr"
                                             IsChecked="{Binding CompleteCondition, Converter={StaticResource CompleteCondToBool}, ConverterParameter=TotalPassed}"
-                                            Style="{DynamicResource RadioButtonStyle1}" />
+                                            Style="{DynamicResource RadioButtonStyle2}" />
                                         <RadioButton
                                             Width="150"
                                             Margin="10,0,0,0"
                                             Content="{DynamicResource ResourceKey=Total_Checked}"
                                             GroupName="compcondGr"
                                             IsChecked="{Binding CompleteCondition, Converter={StaticResource CompleteCondToBool}, ConverterParameter=TotalChecked}"
-                                            Style="{DynamicResource RadioButtonStyle1}" />
+                                            Style="{DynamicResource RadioButtonStyle2}" />
                                     </StackPanel>
                                 </GroupBox>
 
@@ -1114,14 +903,14 @@
                                             Content="{DynamicResource ResourceKey=Enable}"
                                             GroupName="OutCamGr"
                                             IsChecked="{Binding OutputCamera, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"
-                                            Style="{DynamicResource RadioButtonStyle1}" />
+                                            Style="{DynamicResource RadioButtonStyle2}" />
                                         <RadioButton
                                             Width="150"
                                             Margin="10,0,0,0"
                                             Content="{DynamicResource ResourceKey=Disable}"
                                             GroupName="OutCamGr"
                                             IsChecked="{Binding OutputCamera, Converter={StaticResource CoupRadToBol}, ConverterParameter=1}"
-                                            Style="{DynamicResource RadioButtonStyle1}" />
+                                            Style="{DynamicResource RadioButtonStyle2}" />
                                     </StackPanel>
                                 </GroupBox>
 
@@ -1140,14 +929,14 @@
                                             Content="{DynamicResource ResourceKey=Enable}"
                                             GroupName="ImgExGr"
                                             IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"
-                                            Style="{DynamicResource RadioButtonStyle1}" />
+                                            Style="{DynamicResource RadioButtonStyle2}" />
                                         <RadioButton
                                             Width="150"
                                             Margin="10,0,0,0"
                                             Content="{DynamicResource ResourceKey=Disable}"
                                             GroupName="ImgExGr"
                                             IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=1}"
-                                            Style="{DynamicResource RadioButtonStyle1}" />
+                                            Style="{DynamicResource RadioButtonStyle2}" />
                                     </StackPanel>
                                 </GroupBox>
 
@@ -1169,135 +958,16 @@
                                         IsReadOnly="True"
                                         Style="{StaticResource TextBoxStyle2}"
                                         Text="{Binding DataContext.ImageExpPath, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
-                                    <Button Visibility="Collapsed"
+                                    <Button
                                         Width="60"
                                         Height="30"
                                         Margin="5,0,0,0"
-                                        Click="ButtonChooseImagePath_Click"
                                         Content="{fa:Icon Folder,
                                                           Foreground=White}"
                                         FontSize="20"
-                                        Style="{StaticResource ModernButton2}" />
+                                        Style="{StaticResource ModernButton2}"
+                                        Visibility="Collapsed" />
                                 </StackPanel>
-
-
-                                <!--  Printer IP  -->
-                                <!--<StackPanel
-                                    Grid.Row="4"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <TextBlock
-                                        Width="120"
-                                        VerticalAlignment="Center"
-                                        Text="Printer IP" />
-                                    <TextBox
-                                        Width="140"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        IsEnabled="False"
-                                        Text="{Binding PrinterIP, FallbackValue=192.168.100.100}" />
-                                    <TextBlock
-                                        Width="30"
-                                        Margin="5,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Text="Port" />
-                                    <TextBox
-                                        Width="70"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        IsEnabled="False"
-                                        Text="{Binding PrinterPort, FallbackValue=12500}" />
-                                </StackPanel>-->
-
-                                <!--  Printer Port  -->
-                                <!--<StackPanel
-                                    Grid.Row="5"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <TextBlock
-                                        Width="120"
-                                        VerticalAlignment="Center"
-                                        Text="Printer Web Port" />
-                                    <TextBox
-                                        Width="70"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        IsEnabled="False"
-                                        Text="{Binding PrinterWebPort}" />
-                                </StackPanel>-->
-
-                                <!--  Printer Web port  -->
-                                <!--<StackPanel
-                                    Grid.Row="6"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <TextBlock
-                                        Width="120"
-                                        VerticalAlignment="Center"
-                                        Text="Camera IP" />
-                                    <TextBox
-                                        Width="270"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        Text="{Binding PrinterWebPort}" />
-                                </StackPanel>-->
-
-                                <!--  Cam IP  -->
-                                <!--<StackPanel
-                                    Grid.Row="6"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <TextBlock
-                                        Width="120"
-                                        VerticalAlignment="Center"
-                                        Text="Camera IP" />
-                                    <TextBox
-                                        Width="140"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        IsEnabled="False"
-                                        Text="{Binding CameraIP, FallbackValue=192.168.100.100}" />
-                                    <TextBlock
-                                        Width="30"
-                                        Margin="5,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Text="Port"
-                                        Visibility="Collapsed" />
-                                    <TextBox
-                                        Width="70"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        Text="{Binding CameraPort, FallbackValue=21}"
-                                        Visibility="Collapsed" />
-                                </StackPanel>-->
-
-                                <!--  Controller IP and Port  -->
-                                <!--<StackPanel
-                                    Grid.Row="7"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <TextBlock
-                                        Width="120"
-                                        VerticalAlignment="Center"
-                                        Text="Controller" />
-                                    <TextBox
-                                        Width="140"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        IsEnabled="False"
-                                        Text="{Binding ControllerIP, FallbackValue=192.168.100.100}" />
-                                    <TextBlock
-                                        Width="30"
-                                        Margin="5,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Text="Port" />
-                                    <TextBox
-                                        Width="70"
-                                        Height="30"
-                                        Margin="10,0,0,0"
-                                        IsEnabled="False"
-                                        Text="{Binding ControllerPort, FallbackValue=21}" />
-                                </StackPanel>-->
                             </Grid>
                         </Grid>
                     </TabItem>

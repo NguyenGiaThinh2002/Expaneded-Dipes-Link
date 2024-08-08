@@ -113,6 +113,7 @@
                 </Border>
             </Button>
             <StackPanel Grid.Row="1">
+                <!--  IsEnabled="{Binding TabControlEnable}"  -->
                 <ListBox
                     x:Name="ListBoxMenu"
                     IsEnabled="{Binding TabControlEnable}"

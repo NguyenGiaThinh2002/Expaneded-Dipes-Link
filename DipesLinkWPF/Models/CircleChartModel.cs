@@ -19,8 +19,8 @@ namespace DipesLink.Models
             set
             {
                 _value = value;
-                OnPropertyChanged(nameof(Value));
                 _gaugeItem.Value.Value = value;
+                OnPropertyChanged();
             }
         }
         public CircleChartModel()

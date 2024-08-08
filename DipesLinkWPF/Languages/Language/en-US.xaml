@@ -56,7 +56,8 @@
     <system:String x:Key="IncorrectUsernameOrPassword">Username or password is incorrect !</system:String>
 
     <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Do you want to change language and logout?</system:String>
-    <system:String x:Key="UsernameInvalid">Username Invalid</system:String>
+    <system:String x:Key="UsernameInvalid">Invalid Username</system:String>
+    <system:String x:Key="PasswordInvalid">Invalid Password</system:String>
     <system:String x:Key="InvalidUser">Invalid User</system:String>
     <system:String x:Key="CreateUserDone">Create User Done !</system:String>
     <system:String x:Key="ChangeUserInfoSuccess">Change user info successfully !</system:String>
@@ -69,7 +70,8 @@
     <system:String x:Key="DeleteUserFailed">Delete User Failed !</system:String>
     <system:String x:Key="DeleteUserDone">Delete User Done !</system:String>
     <system:String x:Key="CreateNewUserQuestion">Create new user ?</system:String>
-    <system:String x:Key="DeleteUserPrompt">Delete user:</system:String>
+    <system:String x:Key="DeleteUserPrompt">Delete user</system:String>
+    <system:String x:Key="ModifyUserPrompt">Modify user</system:String>
     <system:String x:Key="CannotDeleteCurrentUser">Can not delete current user!</system:String>
     <system:String x:Key="RestartConfirmation">Do you want to restart ?</system:String>
     <system:String x:Key="NoDataFound">Station {0}: No data found</system:String>
@@ -232,22 +234,27 @@
     <system:String x:Key="OnProduction">On Production</system:String>
     <system:String x:Key="VerifyAndPrint">Verify and Print</system:String>
     <system:String x:Key="StandAlone">StandAlone</system:String>
-    <system:String x:Key="Account_Management">Account Management</system:String>
+
+    <!--#region ACCOUNTS-->
+    <system:String x:Key="Account_Management">Users Management</system:String>
     <system:String x:Key="System_Management">System Management</system:String>
-    <system:String x:Key="About_DP_Link">About DP-Link</system:String>
+    <system:String x:Key="About_DP_Link">About DIPES-Link</system:String>
     <system:String x:Key="Logout">Logout</system:String>
     <system:String x:Key="USERS_MANAGEMENT">USERS MANAGEMENT</system:String>
-    <system:String x:Key="Create_New_User">Create New User</system:String>
-    <system:String x:Key="Delete_User">Delete User</system:String>
-    <system:String x:Key="Edit_User">Edit User</system:String>
+    <system:String x:Key="Create_New_User">Create New</system:String>
+    <system:String x:Key="Delete_User">Remove</system:String>
+    <system:String x:Key="Edit_User">Modify</system:String>
     <system:String x:Key="Username">Username</system:String>
     <system:String x:Key="New_Password">New Password</system:String>
     <system:String x:Key="Role">Role</system:String>
     <system:String x:Key="Administrator">Administrator</system:String>
     <system:String x:Key="Operator">Operator</system:String>
     <system:String x:Key="SUBMIT">SUBMIT</system:String>
+
+    <system:String x:Key="GuideUsername">Username is unique and at least 5 characters long</system:String>
+    <system:String x:Key="GuidePassword">Password at least 8 characters long, 1 uppercase, 1 lowercase and 1 digit</system:String>
+
     <system:String x:Key="Confirm_Password">Confirm Password</system:String>
-    <system:String x:Key="Complete_By">Complete by</system:String>
     <system:String x:Key="System_Settings">SYSTEM SETTINGS</system:String>
     <system:String x:Key="Select_Your_Language">Select Your Language</system:String>
     <system:String x:Key="Station_Number">Station Number:</system:String>
@@ -259,8 +266,9 @@
     <system:String x:Key="Version">Version:</system:String>
     <system:String x:Key="Software_Name">Software Name:</system:String>
     <system:String x:Key="Website">Website:</system:String>
-    <system:String x:Key="Address">Address</system:String>
+    <system:String x:Key="Address">Address:</system:String>
 
+    <system:String x:Key="Complete_By">Complete by</system:String>
     <system:String x:Key="Please_Input_Job_Name">Please input Job name</system:String>
     <system:String x:Key="Please_Select_Database_Path">Please select database path</system:String>
     <system:String x:Key="Please_Select_POD_Format">Please select POD format</system:String>

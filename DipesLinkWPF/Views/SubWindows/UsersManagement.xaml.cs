@@ -91,7 +91,7 @@ namespace DipesLink.Views.SubWindows
         private bool CheckInvalidInput()
         {
             // Regex for username
-            //Must be 8-20 characters long.
+            //Must be 5-20 characters long.
             //Can include letters, numbers, and underscores.
             //Must start with a letter.
 
@@ -102,26 +102,22 @@ namespace DipesLink.Views.SubWindows
             //Must contain at least one digit.
             //Optionally, include special characters for stronger security.
 
-            Regex usernameRegex = new Regex(@"^[a-zA-Z]\w{7,19}$");
+            Regex usernameRegex = new Regex(@"^[a-zA-Z]\w{4,19}$");
             Regex passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$");
 
-            if (TextBoxUsername.Text != null)
+            if (string.IsNullOrEmpty(TextBoxUsername.Text) == true || !usernameRegex.IsMatch(TextBoxUsername.Text))
             {
-                bool isUsernameValid = usernameRegex.IsMatch(TextBoxUsername.Text);
-                if (!isUsernameValid)
-                {
                     CusMsgBox.Show(
                         LanguageModel.GetLanguage("UsernameInvalid"),
                         LanguageModel.GetLanguage("WarningDialogCaption"), 
                         Enums.ViewEnums.ButtonStyleMessageBox.OK, 
                         Enums.ViewEnums.ImageStyleMessageBox.Warning);
                     return false;
-                }
             }
-            if (TextBoxPassword.Text == null)
+            if (string.IsNullOrEmpty(TextBoxPassword.Text) == true || !passwordRegex.IsMatch(TextBoxPassword.Text))
             {
                 CusMsgBox.Show(
-                    LanguageModel.GetLanguage("UsernameInvalid"), 
+                    LanguageModel.GetLanguage("PasswordInvalid"), 
                     LanguageModel.GetLanguage("WarningDialogCaption"), 
                     Enums.ViewEnums.ButtonStyleMessageBox.OK, 
                     Enums.ViewEnums.ImageStyleMessageBox.Warning);
@@ -179,7 +175,6 @@ namespace DipesLink.Views.SubWindows
                 }
             }
         }
-
 
         private async void EditUserPassword(string username, string newPassword, string oldPassword, string newRole, string confirmedPassword)
         {
@@ -268,10 +263,10 @@ namespace DipesLink.Views.SubWindows
                     });
                     isDeleted = true;
                     LoadAllUser();
-                    _ = CusMsgBox.Show(LanguageModel.GetLanguage("DeleteUserSuccess"), 
-                        LanguageModel.GetLanguage("InfoDialogCaption"), 
-                        Enums.ViewEnums.ButtonStyleMessageBox.OK, 
-                        Enums.ViewEnums.ImageStyleMessageBox.Info);
+                    //_ = CusMsgBox.Show(LanguageModel.GetLanguage("DeleteUserSuccess"), 
+                    //    LanguageModel.GetLanguage("InfoDialogCaption"), 
+                    //    Enums.ViewEnums.ButtonStyleMessageBox.OK, 
+                    //    Enums.ViewEnums.ImageStyleMessageBox.Info);
                 }
                 else
                 {
@@ -344,26 +339,36 @@ namespace DipesLink.Views.SubWindows
         }
         private async void SubmitClick(object sender, RoutedEventArgs e)
         {
-
+           
             //ADD NEW
-            if (RadNew.IsChecked == true)
+            if (RadNew.IsChecked == true && CheckInvalidInput())
             {
-                if (CheckInvalidInput())
-                {
+              
                     var res = CusMsgBox.Show(LanguageModel.GetLanguage("CreateNewUserQuestion"), LanguageModel.GetLanguage("InfoDialogCaption"), Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
                     if (res.Result)
                     {
                         CreateUser();
                         LoadAllUser();
                     }
-                }
+                return;
             }
 
             //EDIT
-            if (RadEdit.IsChecked == true)
+            if (RadEdit.IsChecked == true && CheckInvalidInput())
             {
-                EditUserPassword(TextBoxUsername.Text, TextBoxPassword.Text, OldPassword, ((ComboBoxItem)ComboBoxRole.SelectedItem).Content.ToString(), ConfirmBoxPassword.Text);
+                string modUserMsg = LanguageModel.GetLanguage("ModifyUserPrompt");
+                string inputUsername = TextBoxUsername.Text;
+                var res = CusMsgBox.Show($"{modUserMsg}: {inputUsername} ?",
+                    LanguageModel.GetLanguage("WarningDialogCaption"),
+                    Enums.ViewEnums.ButtonStyleMessageBox.OKCancel,
+                    Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                if (res.Result)
+                {
+                    EditUserPassword(TextBoxUsername.Text, TextBoxPassword.Text, OldPassword, ((ComboBoxItem)ComboBoxRole.SelectedItem).Content.ToString(), ConfirmBoxPassword.Text);
+                }
+                return;
             }
+
             //DELETE
             if (RadDel.IsChecked == true)
             {

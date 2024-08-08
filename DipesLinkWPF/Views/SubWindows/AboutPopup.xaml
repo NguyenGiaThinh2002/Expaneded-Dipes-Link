@@ -20,6 +20,7 @@
                 HorizontalAlignment="Center"
                 FontSize="24"
                 FontWeight="Bold"
+                Foreground="#808080"
                 Text="{DynamicResource ResourceKey=About_This_Software}" />
 
             <!--  Description Text  -->

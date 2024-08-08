@@ -533,7 +533,39 @@ namespace DipesLink.Models
         }
 
         public bool IsDBExist { get; set; }
-        public CircleChartModel CircleChart { get; set; } = new();
+
+        private CircleChartModel _CircleChart = new();
+        public CircleChartModel CircleChart
+        {
+            get { return _CircleChart; }
+            set
+            {
+                if (_CircleChart != value)
+                {
+                    _CircleChart = value;
+                  //  PercentValue = _CircleChart.Value.ToString();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private string _percentValue;
+
+        public string PercentValue
+        {
+            get { return _percentValue; }
+            set
+            {
+                if (_percentValue != value)
+                {
+                    _percentValue = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+       // public CircleChartModel CircleChart { get; set; } = new();
         public byte[]? CameraStsBytes { get; set; }
         public byte PrinterStsBytes { get; set; }
         public byte ControllerStsBytes { get; set; }

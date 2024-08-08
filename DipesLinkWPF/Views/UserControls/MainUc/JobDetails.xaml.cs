@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Windows.Documents;
+using System.Runtime.CompilerServices;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -30,6 +31,7 @@ namespace DipesLink.Views.UserControls.MainUc
         private readonly CancellationTokenSource _ctsGetPrintedCode = new();
         private readonly TimeBaseExecution _timeBasedExecution = new(TimeSpan.FromMilliseconds(500));
         private List<string[]> _dataList = new();
+        private int getJobIndexChanged;
 
         public JobDetails()
         {
@@ -43,7 +45,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             Loaded += StationDetailUc_Loaded;
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
-            ViewModelSharedEvents.OnListBoxMenuSelectionChange += ViewModelSharedEvents_OnListBoxMenuSelectionChange;
+            ViewModelSharedEvents.OnListBoxMenuSelectionChange += ListBoxMenuSelectionChange;
         }
         private void DebugModeAction()
         {
@@ -54,20 +56,21 @@ namespace DipesLink.Views.UserControls.MainUc
 #endif
         }
 
-        private async void ViewModelSharedEvents_OnListBoxMenuSelectionChange(object? sender, EventArgs e)
+        private async void ListBoxMenuSelectionChange(object? sender, EventArgs e)
         {
             if (sender == null) return;
             var selectedIndex = (int)sender;
-            if (selectedIndex == 0 || selectedIndex == 1)
+            if (selectedIndex == 0 || selectedIndex == 1) // Conditions for loading the database when changing Jobs
             {
                 await Task.Delay(100);
-                await ActionChange();
+                await ActionChange(false);
             }
         }
 
+
         private void OnChangeJobHandler(object? sender, int jobIndex)
         {
-
+            getJobIndexChanged = jobIndex;
             if (_currentJob is not null && _currentJob.Index == jobIndex)
             {
                 _currentJob = null;
@@ -79,8 +82,6 @@ namespace DipesLink.Views.UserControls.MainUc
                 _checkedObserHelper.Dispose();
                 _printObserHelper?.Dispose();
                 _checkedObserHelper = new();
-
-               
             }
             if (sender is not null && (string)sender == "ButtonAddJob")
             {
@@ -112,10 +113,10 @@ namespace DipesLink.Views.UserControls.MainUc
 
         public async void StationDetailUc_Loaded(object sender, RoutedEventArgs e)
         {
-            await ActionChange();
+            await ActionChange(true);
         }
 
-        async Task ActionChange()
+        async Task ActionChange(bool isUserControlLoaded)
         {
             await Application.Current.Dispatcher.InvokeAsync(() =>
              {
@@ -123,23 +124,28 @@ namespace DipesLink.Views.UserControls.MainUc
                  EventRegisterForJobEveryLoadUI();
              });
 
-            if (_currentJob == null) return;
-
-            ViewModelSharedEvents.OnJobDetailChanged(_currentJob.Index);
-            if (!_currentJob.IsDBExist)
+            if (_currentJob == null)
             {
-                //  Debug.WriteLine("Event load database was called: " + _currentJob.Index);
-                await PerformLoadDbAfterDelay();
+                return;
             }
 
+            ViewModelSharedEvents.OnJobDetailChanged(_currentJob.Index);
+
+            if (!_currentJob.IsDBExist)
+            {
+                // Case 1: Only stations with Job changes can load the database,
+                // Case 2: UserControl of this Station, Load will load database for this Station
+                if (((getJobIndexChanged == _currentJob?.Index) && !isUserControlLoaded) || isUserControlLoaded)
+                {
+                    await PerformLoadDbAfterDelay();
+                }
+            }
         }
 
         private async Task PerformLoadDbAfterDelay()
         {
             await Task.Delay(100);
-            Debug.WriteLine("JOB DETAIL LOAD DB");
             _currentJob?.RaiseLoadDb(_currentJob.Index);
-
         }
 
         public void EventRegisterForJobEveryLoadUI()
@@ -148,7 +154,6 @@ namespace DipesLink.Views.UserControls.MainUc
             {
                 if (_currentJob == null)
                 {
-                    //  Thread.Sleep(1000); 
                     _currentJob = CurrentViewModel<JobOverview>();
                     if (_currentJob == null) return;
                     _currentJob.OnLoadCompleteDatabase -= Shared_OnLoadCompleteDatabase;
@@ -188,7 +193,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 return null;
             }
         }
-    
+
         private void Shared_OnLoadCompleteDatabase(object? sender, EventArgs e)
         {
             try
@@ -361,7 +366,7 @@ namespace DipesLink.Views.UserControls.MainUc
             catch (Exception)
             {
             }
-           
+
         }
 
         private void UpdateCheckedNumber()
@@ -405,7 +410,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                if (_currentJob == null || _printObserHelper?.PrintList==null || !_printObserHelper.PrintList.Any()) return;
+                if (_currentJob == null || _printObserHelper?.PrintList == null || !_printObserHelper.PrintList.Any()) return;
                 PrintingInfo printInfo = new()
                 {
                     list = new(_printObserHelper.PrintList),

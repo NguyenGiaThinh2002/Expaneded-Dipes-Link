@@ -36,10 +36,10 @@ namespace DipesLink.ViewModels
         {
             SearchText = text;
         }
-        
+
         internal void LockUI(int stationIndex)
         {
-           
+
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 switch (JobList[stationIndex].OperationStatus)
@@ -106,7 +106,7 @@ namespace DipesLink.ViewModels
                     // Check job name 
                     if (_jobModel.Name == null || _jobModel.Name == "")
                     {
-                        
+
                         CustomMessageBox checkJobNameMsgBox = new(LanguageModel.GetLanguage("Please_Input_Job_Name"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                         checkJobNameMsgBox.ShowDialog();
                         return;
@@ -258,7 +258,7 @@ namespace DipesLink.ViewModels
                 JobSelection?.JobFileList?.Clear();
                 JobSelection?.SelectedJobFileList?.Clear();
                 ObservableCollection<string> templateJobList = GetJobNameList(index);
-           
+
                 foreach (string templateJobName in templateJobList)
                 {
                     JobModel? jobModel = SharedFunctions.GetJob(templateJobName, index);
@@ -290,18 +290,18 @@ namespace DipesLink.ViewModels
                     if (jobModel == null) return;
                     jobModel.JobStatus = JobStatus.Deleted;
                     string filePath = SharedPaths.PathSubJobsApp + (jobIndex + 1) + "\\" + jobModel.Name + SharedValues.Settings.JobFileExtension;
-                   
-                        // Check Job Delete whether is selected job and Delete at the same time Selected Job
-                        string folderPath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}";
-                        string[] files = Directory.GetFiles(folderPath);
-                        foreach (string file in files)
-                        {
-                            if (jobModel.Name == Path.GetFileNameWithoutExtension(file))
-                                File.Delete(file);
-                        }
-                        //Deleted
-                        jobModel.SaveJobFile(filePath);
-            
+
+                    // Check Job Delete whether is selected job and Delete at the same time Selected Job
+                    string folderPath = SharedPaths.PathSelectedJobApp + $"Job{jobIndex + 1}";
+                    string[] files = Directory.GetFiles(folderPath);
+                    foreach (string file in files)
+                    {
+                        if (jobModel.Name == Path.GetFileNameWithoutExtension(file))
+                            File.Delete(file);
+                    }
+                    //Deleted
+                    jobModel.SaveJobFile(filePath);
+
 
                 }
                 catch (Exception)
@@ -337,13 +337,13 @@ namespace DipesLink.ViewModels
             JobModel? jobModel;
             if (!isSelectedWorkJob)
             {
-              
+
                 jobModel = SharedFunctions.GetJob(JobSelection?.SelectedJob, jobIndex);
             }
             else
             {
-               ObservableCollection<string> templateSelectedJobList = SharedFunctions.GetSelectedJobNameList(jobIndex); 
-               jobModel = SharedFunctions.GetJobSelected(templateSelectedJobList.FirstOrDefault(), jobIndex);
+                ObservableCollection<string> templateSelectedJobList = SharedFunctions.GetSelectedJobNameList(jobIndex);
+                jobModel = SharedFunctions.GetJobSelected(templateSelectedJobList.FirstOrDefault(), jobIndex);
             }
 
             if (jobModel == null || JobSelection == null) { JobSelection = new(); return; }
@@ -368,10 +368,10 @@ namespace DipesLink.ViewModels
         {
             try
             {
-              
+
                 if (JobSelection.SelectedJob == null) return;
                 DeleteSeletedJob(jobIndex);
-                
+
                 // Save the selected job 
                 var selectJobName = JobSelection.SelectedJob;
                 JobModel? _jobModel = SharedFunctions.GetJob(selectJobName, jobIndex);
@@ -396,11 +396,11 @@ namespace DipesLink.ViewModels
                     string[] files = Directory.GetFiles(folderPath);
                     foreach (string file in files) { File.Delete(file); }
                 }
-                JobList[stationIndex].CurrentCodeData = ""; 
+                JobList[stationIndex].CurrentCodeData = "";
                 JobList[stationIndex].CompareResult = ComparisonResult.None;
                 JobList[stationIndex].ProcessingTime = 0;
-                
-                JobList[stationIndex].SentDataNumber = "0";  
+
+                JobList[stationIndex].SentDataNumber = "0";
                 JobList[stationIndex].ReceivedDataNumber = "0";
                 JobList[stationIndex].PrintedDataNumber = "0";
 
@@ -414,25 +414,26 @@ namespace DipesLink.ViewModels
             catch (Exception) { }
         }
 
-        internal void SelectImageExportPath()
+        internal void SelectImageExportPath(string oldPath)
         {
             try
             {
-                SharedFunctions.ShowFolderPickerDialog(out string? folderPath);
-                ImageExpPath = folderPath;
-                ViewModelSharedValues.Settings.FailedImagePath = folderPath;
-                ViewModelSharedFunctions.SaveSetting();
-                
+                SharedFunctions.ShowFolderPickerDialog(oldPath, out string? folderPath);
+                if (Directory.Exists(folderPath))
+                {
+                    ImageExpPath = folderPath;
+                    ViewModelSharedValues.Settings.FailedImagePath = folderPath;
+                    ViewModelSharedFunctions.SaveSetting();
+                }
             }
             catch (Exception) { }
-
         }
 
         internal void AutoNamedForJob(int index)
         {
             try
             {
-                SharedFunctions.AutoGenerateFileName(index, out string? jobName,ViewModelSharedValues.Settings.DateTimeFormat, ViewModelSharedValues.Settings.TemplateName);
+                SharedFunctions.AutoGenerateFileName(index, out string? jobName, ViewModelSharedValues.Settings.DateTimeFormat, ViewModelSharedValues.Settings.TemplateName);
                 CreateNewJob.Name = jobName;
             }
             catch (Exception) { }
