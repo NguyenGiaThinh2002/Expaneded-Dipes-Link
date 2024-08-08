@@ -22,12 +22,12 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void JobStatusChanged(object? sender, EventArgs e)
         {
-            LockUIPreventChangeJobWhenRun();
+           LockUIPreventChangeJobWhenRun();
         }
 
         private void DataTableLoadingChange(object? sender, EventArgs e)
         {
-            LockUIPreventChangeJobWhenRun();
+           LockUIPreventChangeJobWhenRun();
         }
 
         private void JobCreation_Loaded(object sender, RoutedEventArgs e)
@@ -68,7 +68,7 @@ namespace DipesLink.Views.UserControls.MainUc
             {
                 if (indexMenu == 1)
                 {
-                    LockUIPreventChangeJobWhenRun();
+                   // LockUIPreventChangeJobWhenRun();
                     GetTemplateFromPrinter();
                 }
             }
@@ -156,17 +156,10 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void TabControlJobSettings_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //int jobIndex = ListBoxMenu.SelectedIndex;
-            //CallbackCommand(vm => vm.LoadJobList(jobIndex));
-        }
 
         private void LockUIPreventChangeJobWhenRun()
         {
-            
-                CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuJobCreate.SelectedIndex);
-      
+            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuJobCreate.SelectedIndex);
         }
 
         private void ListViewJobTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -231,10 +224,7 @@ namespace DipesLink.Views.UserControls.MainUc
 
         }
 
-        private void ButtonChooseImagePath_Click(object sender, RoutedEventArgs e)
-        {
-            CurrentViewModel<MainViewModel>()?.SelectImageExportPath();
-        }
+       
 
         private void Button_SaveAllClick(object sender, RoutedEventArgs e)
         {

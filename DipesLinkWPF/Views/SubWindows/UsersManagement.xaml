@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="800"
-    Height="450"
+    Height="500"
     Icon="pack://application:,,,/DipesLink;component/Images/UserGroup.png"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -197,24 +197,14 @@
                             Content="{DynamicResource ResourceKey=SUBMIT}"
                             Style="{StaticResource ModernButton1}" />
                     </StackPanel>
-
-
-
-                    <!--<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-
-                    -->
-                    <!--<Button
-                            Width="80"
-                            Height="30"
-                            Click="SubmitClick"
-                            Content="REMOVE" />
-                        <Button
-                            Width="80"
-                            Height="30"
-                            Click="EditUser"
-                            Content="UDPATE" />-->
-                    <!--
-                    </StackPanel>-->
+                    <TextBlock
+                        FontStyle="Italic"
+                        Text="{StaticResource ResourceKey=GuideUsername}"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontStyle="Italic"
+                        Text="{StaticResource ResourceKey=GuidePassword}"
+                        TextWrapping="Wrap" />
 
                 </StackPanel>
 

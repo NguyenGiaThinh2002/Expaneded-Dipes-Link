@@ -41,7 +41,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <!--  Style for the ListView  -->
     <Style x:Key="ListViewStylePrinterTemplate" TargetType="ListView">
         <Setter Property="Background" Value="AliceBlue" />
@@ -58,12 +58,12 @@
                         <Setter.Value>
                             <ControlTemplate TargetType="ListViewItem">
                                 <Border
-                                 Name="ItemBorder"
-                                 Padding="2"
-                                 Background="WhiteSmoke"
-                                 BorderBrush="#00ABE6"
-                                 BorderThickness="1"
-                                 CornerRadius="5">
+                                    Name="ItemBorder"
+                                    Padding="2"
+                                    Background="WhiteSmoke"
+                                    BorderBrush="#00ABE6"
+                                    BorderThickness="1"
+                                    CornerRadius="5">
                                     <ContentPresenter />
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -81,5 +81,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
 </ResourceDictionary>

@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DipesLink_SDK_PLC", "DipesL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelationalDatabaseHelper", "RDBMS\RelationalDatabaseHelper.csproj", "{66D53C03-6193-4189-B446-583B93F959D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestartHelperProcess", "RestartHelperProcess\RestartHelperProcess.csproj", "{DB5624D8-0823-424B-8756-178F080A148A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,14 @@ Global
 		{66D53C03-6193-4189-B446-583B93F959D3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{66D53C03-6193-4189-B446-583B93F959D3}.Release|x64.ActiveCfg = Release|Any CPU
 		{66D53C03-6193-4189-B446-583B93F959D3}.Release|x64.Build.0 = Release|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Debug|x64.Build.0 = Debug|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Release|x64.ActiveCfg = Release|Any CPU
+		{DB5624D8-0823-424B-8756-178F080A148A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
