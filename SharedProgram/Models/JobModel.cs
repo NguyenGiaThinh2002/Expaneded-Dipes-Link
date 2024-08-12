@@ -263,6 +263,21 @@ namespace SharedProgram.Models
         }
 
 
+        private string? _SearchTemplateText;
+
+        public string? SearchTemplateText
+        {
+            get { return _SearchTemplateText; }
+            set
+            {
+                if (_SearchTemplateText != value)
+                {
+                    _SearchTemplateText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _totalChecked = "0";
         public string TotalChecked
         {

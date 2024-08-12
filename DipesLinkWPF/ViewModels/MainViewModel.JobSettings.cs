@@ -39,27 +39,33 @@ namespace DipesLink.ViewModels
 
         internal void LockUI(int stationIndex)
         {
-
-            Application.Current.Dispatcher.InvokeAsync(() =>
+            try
             {
-                switch (JobList[stationIndex].OperationStatus)
+                Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    case OperationStatus.Running:
-                        JobList[stationIndex].IsLockUISetting = false;
-                        break;
-                    case OperationStatus.Processing:
-                        JobList[stationIndex].IsLockUISetting = false;
-                        break;
-                    case OperationStatus.Stopped:
-                        JobList[stationIndex].IsLockUISetting = true;
-                        break;
-                    default:
-                        break;
-                }
-                JobSelection.IsButtonOperationJobEnable = JobList[stationIndex].IsLockUISetting;
-                ConnectParamsList[stationIndex].IsLockUISetting = JobList[stationIndex].IsLockUISetting;
-                _ = LoadJobListActionAsync(stationIndex);
-            });
+                    switch (JobList[stationIndex].OperationStatus)
+                    {
+                        case OperationStatus.Running:
+                            JobList[stationIndex].IsLockUISetting = false;
+                            break;
+                        case OperationStatus.Processing:
+                            JobList[stationIndex].IsLockUISetting = false;
+                            break;
+                        case OperationStatus.Stopped:
+                            JobList[stationIndex].IsLockUISetting = true;
+                            break;
+                        default:
+                            break;
+                    }
+                    if (JobSelection == null) return;
+                    JobSelection.IsButtonOperationJobEnable = JobList[stationIndex].IsLockUISetting;
+                    ConnectParamsList[stationIndex].IsLockUISetting = JobList[stationIndex].IsLockUISetting;
+                    _ = LoadJobListActionAsync(stationIndex);
+                });
+            }
+            catch (Exception)
+            {
+            }
         }
 
         #region Job Selection and create new
@@ -133,11 +139,15 @@ namespace DipesLink.ViewModels
                                 return;
                             }
 
-#if DEBUG
-                            //_jobModel.PrinterTemplate = "podtest";
-                            //_jobModel.TemplateListFirstFound = new List<string>();
-                            //_jobModel.TemplateListFirstFound.Add("podtest");
-#endif
+                            // Enter input freely for template (Only System User)
+                            if (SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[0] == "System" && 
+                                SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[1] == "Administrator")
+                            {
+                                _jobModel.PrinterTemplate = CreateNewJob.SearchTemplateText;
+                                _jobModel.TemplateListFirstFound = new List<string>();
+                                _jobModel.TemplateListFirstFound.Add(_jobModel.PrinterTemplate);
+                            }
+
                             // Check printer template
                             if (_jobModel.PrinterTemplate == null ||
                                 _jobModel.PrinterTemplate == "" ||
@@ -283,7 +293,7 @@ namespace DipesLink.ViewModels
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 JobModel? jobModel;
-                if (JobSelection.SelectedJob == null) return;
+                if (JobSelection?.SelectedJob == null) return;
                 try
                 {
                     jobModel = SharedFunctions.GetJob(JobSelection.SelectedJob, jobIndex);

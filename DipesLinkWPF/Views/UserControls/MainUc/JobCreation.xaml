@@ -813,6 +813,7 @@
                                                 Width="260"
                                                 Height="30"
                                                 Margin="10,0,0,0"
+                                                Text="{Binding SearchTemplateText}"
                                                 Style="{StaticResource TextBoxStyle2}"
                                                 TextChanged="TextBoxSearch_TextChanged" />
 

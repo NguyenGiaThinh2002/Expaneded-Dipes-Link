@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Collections.Generic;
 using System.Windows.Documents;
 using System.Runtime.CompilerServices;
+using SharedProgram.Shared;
 
 namespace DipesLink.Views.UserControls.MainUc
 {
@@ -41,19 +42,25 @@ namespace DipesLink.Views.UserControls.MainUc
             Task.Run(TaskAddDataAsync);
             Task.Run(TaskChangePrintStatusAsync);
         }
+
         void EventRegisterFirstTime()
         {
             Loaded += StationDetailUc_Loaded;
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ListBoxMenuSelectionChange;
         }
-        private void DebugModeAction()
+
+        private void SimulateModeAction()
         {
-#if DEBUG
-            ButtonSimulate.Visibility = Visibility.Visible;
-#else // Release mode
-            ButtonSimulate.Visibility = Visibility.Collapsed;
-#endif
+            if (SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[0] == "System" && 
+                SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[1] == "Administrator")
+            {
+                ButtonSimulate.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ButtonSimulate.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async void ListBoxMenuSelectionChange(object? sender, EventArgs e)
@@ -66,7 +73,6 @@ namespace DipesLink.Views.UserControls.MainUc
                 await ActionChange(false);
             }
         }
-
 
         private void OnChangeJobHandler(object? sender, int jobIndex)
         {
@@ -120,7 +126,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             await Application.Current.Dispatcher.InvokeAsync(() =>
              {
-                 DebugModeAction();
+                 SimulateModeAction();
                  EventRegisterForJobEveryLoadUI();
              });
 

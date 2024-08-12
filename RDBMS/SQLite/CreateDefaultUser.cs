@@ -26,16 +26,24 @@ namespace RelationalDatabaseHelper.SQLite
                 SQLiteConnectionString options = new(databasePath, true, key: "nmc@0971340629");
                 SQLiteAsyncConnection db = new(options);
                 await db.CreateTableAsync<User>();
+
                 User defaultUser = new()
                 {
                     username = "Admin",
                     password = "Admin@1234",
                     role = "Administrator",
                 };
+                User systemUser = new()
+                {
+                    username = "System",
+                    password = "System@0971340629",
+                    role = "Administrator",
+                };
 
                 await db.RunInTransactionAsync(tran => {
                     // database calls inside the transaction
                     tran.Insert(defaultUser);
+                    tran.Insert(systemUser);
 
                 });
             }

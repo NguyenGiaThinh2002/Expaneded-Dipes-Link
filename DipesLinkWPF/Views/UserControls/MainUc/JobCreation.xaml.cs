@@ -68,7 +68,7 @@ namespace DipesLink.Views.UserControls.MainUc
             {
                 if (indexMenu == 1)
                 {
-                   // LockUIPreventChangeJobWhenRun();
+                    LockUIPreventChangeJobWhenRun();
                     GetTemplateFromPrinter();
                 }
             }
