@@ -92,6 +92,7 @@
     <system:String x:Key="NotLoadDatabase">Trạm {0}: Không tải được cơ sở dữ liệu !</system:String>
     <system:String x:Key="NotLoadTemplate">Trạm {0}: Không tải được mẫu in !</system:String>
 
+    <system:String x:Key="AppAlreadyOpen">Ứng dụng này đã được mở.</system:String>
 
     <!--#region MainMenu-->
     <system:String x:Key="Home">Trang Chủ</system:String>

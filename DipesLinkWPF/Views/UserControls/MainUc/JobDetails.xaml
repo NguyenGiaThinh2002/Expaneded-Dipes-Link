@@ -531,15 +531,12 @@
                                 BorderBrush="LightBlue"
                                 BorderThickness="0.6"
                                 CornerRadius="5">
-                                <StackPanel>
                                     <lvc:PieChart
-                                        InitialRotation="-90" Height="100"
+                                        InitialRotation="-90" 
                                         MaxValue="100"
                                         MinValue="0"
                                         Series="{Binding CircleChart.Series}" />
-                                    <TextBlock Text="{Binding PercentValue}" Height="20"></TextBlock>
-                                </StackPanel>
-
+                                    <!--<TextBlock Text="{Binding PercentValue}" Height="20"></TextBlock>-->
                             </Border>
                         </Grid>
 

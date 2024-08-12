@@ -70,7 +70,7 @@ namespace DipesLink.Views.SubWindows
             GetInputsValues();
             if (Username == null || Password == null) { return; }
             var databasePath = Path.Combine(SharedPaths.PathAccountsDb, "AccountDB.db");
-            var options = new SQLiteConnectionString(databasePath, true, key: "123456");
+            var options = new SQLiteConnectionString(databasePath, true, key: "nmc@0971340629");
             var db = new SQLiteAsyncConnection(options);
 
             // Retrieve all records from the User table asynchronously

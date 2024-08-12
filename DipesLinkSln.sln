@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DipesLink_SDK_PLC", "DipesL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelationalDatabaseHelper", "RDBMS\RelationalDatabaseHelper.csproj", "{66D53C03-6193-4189-B446-583B93F959D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestartHelperProcess", "RestartHelperProcess\RestartHelperProcess.csproj", "{DB5624D8-0823-424B-8756-178F080A148A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestartProcessHelper", "RestartHelperProcess\RestartProcessHelper.csproj", "{DB5624D8-0823-424B-8756-178F080A148A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

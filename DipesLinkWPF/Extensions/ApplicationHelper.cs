@@ -9,25 +9,32 @@ namespace DipesLink.Extensions
     {
         public static void RestartApplication()
         {
-            string applicationPath = Process.GetCurrentProcess().MainModule.FileName;
-            string helperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RestartHelperProcess.exe");
-
-            if (!File.Exists(helperPath))
+            try
             {
-                MessageBox.Show("RestartHelper.exe not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                string? applicationPath = Process.GetCurrentProcess().MainModule?.FileName;
+                string local = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+                string helperPath = Path.Combine(local, "RestartProcessHelper.exe");
+
+                if (!File.Exists(helperPath))
+                {
+                    return;
+                }
+
+                Process.Start(new ProcessStartInfo  // Start the helper process to restart the application
+                {
+                    FileName = helperPath,
+                    Arguments = $"{Process.GetCurrentProcess().Id} \"{applicationPath}\"",
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false
+                });
+
+            }
+            catch (Exception)
+            {
             }
 
-            // Start the helper process to restart the application
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = helperPath,
-                Arguments = $"{Process.GetCurrentProcess().Id} \"{applicationPath}\"",
-                UseShellExecute = false
-            });
-
-            // Close the current application
-            Application.Current.Shutdown();
+            Application.Current.Shutdown();  
         }
     }
 }

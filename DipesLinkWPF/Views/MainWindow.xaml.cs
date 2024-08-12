@@ -170,10 +170,19 @@ namespace DipesLink.Views
 
         private void MainWindow_Closed(object? sender, EventArgs e)
         {
-          
-            CurrentViewModel<MainViewModel>()?.KillProcessByID();
-            CurrentViewModel<MainViewModel>()?.ReleaseResource();
-            Application.Current?.Shutdown();
+            try
+            {
+                CurrentViewModel<MainViewModel>()?.KillProcessByID();
+                CurrentViewModel<MainViewModel>()?.ReleaseResource();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                Application.Current?.Shutdown();
+            }
+           
         }
 
         private void AllStationUc_DoneLoadUIEvent(object? sender, EventArgs e)
