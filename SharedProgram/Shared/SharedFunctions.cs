@@ -212,6 +212,25 @@ namespace SharedProgram.Shared
             return isValid;
         }
 
+        public static List<string[]> GetCurrentUsernameAndRole()
+        {
+            try
+            {
+                var users = new string[2];
+                var username = System.Windows.Application.Current.Properties["Username"];
+                var role = System.Windows.Application.Current.Properties["UserRole"];
+                if (role != null && username != null)
+                {
+                    users[0] = username.ToString() ?? string.Empty;
+                    users[1] = role.ToString() ?? string.Empty;
+                }
+                return new List<string[]> { users };
+            }
+            catch (Exception)
+            {
+                return new List<string[]>();
+            }
+        }
         public static void ShowFolderPickerDialog(string oldPath, out string? folderPath)
         {
             folderPath = null;

@@ -4,7 +4,7 @@
     {
        public enum UserRole
         {
-            Admin,
+            Administrator,
             Operator,
             User,
             Guest

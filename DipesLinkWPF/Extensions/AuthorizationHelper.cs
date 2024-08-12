@@ -19,13 +19,13 @@ namespace DipesLink.Extensions
         {
             switch (stringRole)
             {
-                case "admin":
-                    return UserRole.Admin;
-                case "operator":
+                case "Administrator":
+                    return UserRole.Administrator;
+                case "Operator":
                     return UserRole.Operator;
-                case "user":
+                case "User":
                     return UserRole.User;
-                case "guest":
+                case "Guest":
                     return UserRole.Guest;
                 default:
                     return UserRole.Guest;
@@ -34,7 +34,7 @@ namespace DipesLink.Extensions
 
         public static bool IsAdmin()
         {
-            return IsUserInRole(UserRole.Admin);
+            return IsUserInRole(UserRole.Administrator);
         }
 
         public static bool IsOperator()

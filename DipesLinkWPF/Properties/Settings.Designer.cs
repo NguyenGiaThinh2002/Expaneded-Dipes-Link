@@ -25,7 +25,7 @@ namespace DipesLink.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.0.0.0.20240719")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0.0.0 build 240812")]
         public string SoftwareVersion {
             get {
                 return ((string)(this["SoftwareVersion"]));
@@ -34,7 +34,7 @@ namespace DipesLink.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DP-Link")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DIPES-Link")]
         public string SoftwareName {
             get {
                 return ((string)(this["SoftwareName"]));
