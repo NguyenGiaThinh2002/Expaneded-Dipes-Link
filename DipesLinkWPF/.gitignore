@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 #Pushlish Folders
-#OutputExe/
-#Publish/
+OutputExe/
+Publish/
