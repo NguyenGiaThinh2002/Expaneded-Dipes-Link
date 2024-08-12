@@ -153,9 +153,9 @@ namespace DipesLink.ViewModels
                 langModel?.UpdateApplicationLanguage(ViewModelSharedValues.Settings.Language);
                 var lang = LanguageModel.GetLanguage("Station");
                 int deviceTransferIDProc = ViewModelSharedFunctions.InitDeviceTransfer(i);
-                JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = $"{lang} {i + 1}" }); // Job List Creation
+                JobList.Add(new JobOverview() { DeviceTransferID = deviceTransferIDProc, Index = i, JobTitleName = $"{lang}{i + 1}" }); // Job List Creation
                 JobDeviceStatusList.Add(new JobDeviceStatus() { Index = i, Name = $"Devices{i + 1}" }); // Device Status List Creation
-                PrinterStateList.Add(new PrinterState() { Name = $"{lang} {i + 1}: ", State = "" }); // Printer State List Creation
+                PrinterStateList.Add(new PrinterState() { Name = $"{i + 1}: ", State = "" }); // Printer State List Creation
             }
             catch (Exception)
             {
@@ -1286,34 +1286,31 @@ namespace DipesLink.ViewModels
                       //  chart.Value = percent;
 
                         JobList[stationIndex].CircleChart.Value = percent;
-                        JobList[stationIndex].PercentValue = percent.ToString();
+                        //JobList[stationIndex].PercentValue = percent.ToString();
                     });
 
                     }
                     catch (Exception ex)
                     {
-#if DEBUG
-                        Debug.WriteLine("UpdatePercentForCircleChart Error: " + ex.Message);
-#endif
+                        SharedFunctions.PrintDebugMessage("UpdatePercentForCircleChart Error: " + ex.Message);
                     }
                 }
 
             }
             catch (Exception)
             {
-                CusMsgBox.Show("Loi roi", "", ButtonStyleMessageBox.OK, ImageStyleMessageBox.Warning);
             }
         }
 
-        static CancellationTokenSource _ctsListenDatabase;
-        static CancellationTokenSource _ctsListenProcess;
-        static CancellationTokenSource _ctsDevicesStatusChangeAsync;
-        static CancellationTokenSource _ctsGetStatisticsAsync;
-        static CancellationTokenSource _ctsGetCurrentPrintedCodeAsync;
-        static CancellationTokenSource _ctsGetOperationStatusAsync;
-        static CancellationTokenSource _ctsListenDetectModel;
-        static CancellationTokenSource _ctsGetCheckedCodeAsync;
-        static CancellationTokenSource _ctsGetCameraDataAsync;
+        static CancellationTokenSource? _ctsListenDatabase;
+        static CancellationTokenSource? _ctsListenProcess;
+        static CancellationTokenSource? _ctsDevicesStatusChangeAsync;
+        static CancellationTokenSource? _ctsGetStatisticsAsync;
+        static CancellationTokenSource? _ctsGetCurrentPrintedCodeAsync;
+        static CancellationTokenSource? _ctsGetOperationStatusAsync;
+        static CancellationTokenSource? _ctsListenDetectModel;
+        static CancellationTokenSource? _ctsGetCheckedCodeAsync;
+        static CancellationTokenSource? _ctsGetCameraDataAsync;
 
         internal void ReleaseResource()
         {

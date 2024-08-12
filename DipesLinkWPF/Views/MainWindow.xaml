@@ -359,133 +359,141 @@
             </Grid>
 
             <!--  Device Status  -->
-            <Grid Grid.Row="2" Background="WhiteSmoke">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300" />
-                    <ColumnDefinition Width="530" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <ListBox
-                    x:Name="DeviceStatListBox"
-                    HorizontalContentAlignment="Stretch"
-                    ItemContainerStyle="{DynamicResource ListBoxItemContainerDeviceConnection}"
-                    ItemsSource="{Binding JobDeviceStatusList}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    SelectionChanged="DeviceStatListBox_SelectionChanged"
-                    Style="{DynamicResource ListBoxStyleDeviceConnection}">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,0,15,0" Orientation="Horizontal">
-                                <fa:IconImage
-                                    Width="15"
-                                    Height="15"
-                                    Margin="1"
-                                    Foreground="{Binding CameraStatusColor}"
-                                    Icon="Camera" />
-                                <fa:IconImage
-                                    Width="15"
-                                    Height="15"
-                                    Margin="1"
-                                    Foreground="{Binding PrinterStatusColor}"
-                                    Icon="Print" />
-                                <fa:IconImage
-                                    Width="15"
-                                    Height="15"
-                                    Margin="1"
-                                    Foreground="{Binding ControllerStatusColor}"
-                                    Icon="SignalPerfect" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Grid Grid.Column="1" Background="White">
+            <ScrollViewer
+                Grid.Row="2"
+                HorizontalScrollBarVisibility="Auto"
+                Cursor=""
+                VerticalScrollBarVisibility="Disabled">
+                <Grid Background="WhiteSmoke">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="400" />
+                        <ColumnDefinition Width="600" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ListBox
+                        x:Name="DeviceStatListBox"
+                        HorizontalContentAlignment="Stretch"
+                        ItemContainerStyle="{DynamicResource ListBoxItemContainerDeviceConnection}"
+                        ItemsSource="{Binding JobDeviceStatusList}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        SelectionChanged="DeviceStatListBox_SelectionChanged"
+                        Style="{DynamicResource ListBoxStyleDeviceConnection}">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,15,0" Orientation="Horizontal">
+                                    <fa:IconImage
+                                        Width="15"
+                                        Height="15"
+                                        Margin="1"
+                                        Foreground="{Binding CameraStatusColor}"
+                                        Icon="Camera" />
+                                    <fa:IconImage
+                                        Width="15"
+                                        Height="15"
+                                        Margin="1"
+                                        Foreground="{Binding PrinterStatusColor}"
+                                        Icon="Print" />
+                                    <fa:IconImage
+                                        Width="15"
+                                        Height="15"
+                                        Margin="1"
+                                        Foreground="{Binding ControllerStatusColor}"
+                                        Icon="SignalPerfect" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Grid Grid.Column="1" Background="White">
 
-                    <StackPanel x:Name="StackPanelIPDisplay" Orientation="Horizontal">
-                        <StackPanel.Resources>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontSize" Value="14" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
-                            <TextBlock
-                                Width="70"
-                                VerticalAlignment="Center"
-                                FontWeight="Bold"
-                                Text="{DynamicResource ResourceKey=Printer_IP}" />
-                            <TextBlock
-                                x:Name="TextBlockPrinterIP"
-                                VerticalAlignment="Center"
-                                Text="######" />
-                        </StackPanel>
-                        <StackPanel Margin="10" Orientation="Horizontal">
-                            <TextBlock
-                                Width="75"
-                                VerticalAlignment="Center"
-                                FontWeight="Bold"
-                                Text="{DynamicResource ResourceKey=Camera_IP}" />
-                            <TextBlock
-                                x:Name="TextBlockCamIP"
-                                VerticalAlignment="Center"
-                                Text="######" />
-                            <!--<cuscontrol:IpAddressControl
+                        <StackPanel x:Name="StackPanelIPDisplay" Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="14" />
+                                </Style>
+                            </StackPanel.Resources>
+                            
+                            <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="75"
+                                    VerticalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="{DynamicResource ResourceKey=Printer_IP}" />
+                                <TextBlock
+                                    x:Name="TextBlockPrinterIP"
+                                    VerticalAlignment="Center"
+                                    Text="######" />
+                            </StackPanel>
+                            
+                            <StackPanel Margin="10 0 0 0" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="75"
+                                    VerticalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="{DynamicResource ResourceKey=Camera_IP}" />
+                                <TextBlock
+                                    x:Name="TextBlockCamIP"
+                                    VerticalAlignment="Center"
+                                    Text="######" />
+                                <!--<cuscontrol:IpAddressControl
                                 x:Name="TextBoxCamIP"
                                 Width="200"
                                 Height="30"
                                 Text="{Binding CameraIP}" />-->
+                            </StackPanel>
+                            <StackPanel Margin="10 0 0 0" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="70" 
+                                    VerticalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="{DynamicResource ResourceKey=Controller_IP}" />
+                                <TextBlock
+                                    x:Name="TextBlockControllerIP"
+                                    VerticalAlignment="Center"
+                                    Text="######" />
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Margin="10" Orientation="Horizontal">
+                    </Grid>
+                    <!--  Printer Status  -->
+                    <Grid Grid.Column="2" Background="White">
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Width="70"
+                                Margin="0,0,0,0"
                                 VerticalAlignment="Center"
-                                FontWeight="Bold"
-                                Text="{DynamicResource ResourceKey=Controller_IP}" />
-                            <TextBlock
-                                x:Name="TextBlockControllerIP"
-                                VerticalAlignment="Center"
-                                Text="######" />
+                                FontSize="14"
+                                Foreground="DimGray"
+                                Text="{DynamicResource ResourceKey=Station_Status}" />
+                            <ListBox
+                                HorizontalContentAlignment="Stretch"
+                                FontSize="14"
+                                Foreground="DimGray"
+                                IsEnabled="True"
+                                ItemContainerStyle="{DynamicResource ListBoxItemContainerDeviceConnection}"
+                                ItemsSource="{Binding PrinterStateList}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                Style="{DynamicResource ListBoxStyleDeviceConnection}">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Margin="2,0,0,0" Text="{Binding Name}" />
+                                            <TextBlock Margin="2,0,0,0" Text="{Binding State}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </Grid>
-                <!--  Printer Status  -->
-                <Grid Grid.Column="2" Background="White">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            Margin="0,0,0,0"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="DimGray"
-                            Text="{DynamicResource ResourceKey=Station_Status}" />
-                        <ListBox
-                            HorizontalContentAlignment="Stretch"
-                            FontSize="14"
-                            Foreground="DimGray"
-                            IsEnabled="True"
-                            ItemContainerStyle="{DynamicResource ListBoxItemContainerDeviceConnection}"
-                            ItemsSource="{Binding PrinterStateList}"
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                            Style="{DynamicResource ListBoxStyleDeviceConnection}">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Margin="2,0,0,0" Text="{Binding Name}" />
-                                        <TextBlock Margin="2,0,0,0" Text="{Binding State}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </StackPanel>
-                </Grid>
-            </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>

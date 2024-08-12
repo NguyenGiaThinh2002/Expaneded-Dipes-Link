@@ -91,6 +91,7 @@
     <system:String x:Key="NotLoadDatabase">Station {0}: Not load Database!</system:String>
     <system:String x:Key="NotLoadTemplate">Station {0}: Not load Template!</system:String>
 
+    <system:String x:Key="AppAlreadyOpen">The application is already open.</system:String>
 
 
 

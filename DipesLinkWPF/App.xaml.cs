@@ -1,4 +1,6 @@
-﻿using DipesLink.Views;
+﻿using DipesLink.Languages;
+using DipesLink.Views;
+using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using SharedProgram.Shared;
 using System.Diagnostics;
@@ -25,16 +27,16 @@ namespace DipesLink
         {
             base.OnStartup(e);
 
-            splashScreen = new(); //Show Loading Screen
-            splashScreen.Show();
-          //  KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
-          //  var timeCheckOldProcess = DipesLink.Properties.Settings.Default.TimeCheckOldProcess;
-         //   await Task.Delay(timeCheckOldProcess);
-            if (!InitializeMutex()) // Check again old process exist
+            if (!InitializeMutex()) // Check Application is running 
             {
                 NotifyAndShutdown();
                 return;
             }
+
+            splashScreen = new(); //Show Loading Screen
+            splashScreen.Show();
+            KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
+            await Task.Delay(DipesLink.Properties.Settings.Default.TimeCheckOldProcess);
             splashScreen.Hide();
 
             SQLitePCL.Batteries_V2.Init();
@@ -61,8 +63,6 @@ namespace DipesLink
 
         protected override void OnExit(ExitEventArgs e)
         {
-        //    KillProcessByName(new ProcessType[] { ProcessType.All });
-            Thread.Sleep(1000);
             ReleaseMutex();
         }
 
@@ -94,27 +94,36 @@ namespace DipesLink
 
         #region Prevent Start App One More Times
        
-        private bool InitializeMutex()
+        private static bool InitializeMutex()
         {
-          
-          
+            try
+            {
                 string? appName = GetApplicationName();
                 bool createdNew;
                 mutex = new Mutex(true, appName, out createdNew);
                 return createdNew;
-          
-          
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
-        private string? GetApplicationName()
+
+        private static string? GetApplicationName() => Assembly.GetEntryAssembly()?.GetName().Name;
+        private static void NotifyAndShutdown()
         {
-            return Assembly.GetEntryAssembly()?.GetName().Name;
+            try
+            {
+                string msg = LanguageModel.GetLanguage("AppAlreadyOpen");
+                string caption = LanguageModel.GetLanguage("WarningDialogCaption");
+                CusMsgBox.Show(msg, caption, Views.Enums.ViewEnums.ButtonStyleMessageBox.OK, Views.Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                Current.Shutdown();
+            }
+            catch (Exception)
+            {
+            }
         }
-        private void NotifyAndShutdown()
-        {
-            MessageBox.Show("The application is already running.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-            Application.Current.Shutdown();
-        }
-        private void ReleaseMutex()
+        private static void ReleaseMutex()
         {
             if (mutex != null)
             {
@@ -122,6 +131,7 @@ namespace DipesLink
                 mutex = null;
             }
         }
+
         #endregion Prevent Start App One More Times
     }
 }
