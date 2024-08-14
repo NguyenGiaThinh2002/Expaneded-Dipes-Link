@@ -86,6 +86,21 @@ namespace DipesLink.ViewModels
         }
 
 
+            
+        private int _checkUSBDongleKeyProcessID;
+
+        public int CheckUSBDongleKeyProcessID
+        {
+            get { return _checkUSBDongleKeyProcessID; }
+            set
+            {
+                if (_checkUSBDongleKeyProcessID != value)
+                {
+                    _checkUSBDongleKeyProcessID = value;
+                 //   OnPropertyChanged();
+                }
+            }
+        }
 
         //private string _failedImgPath = Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "FailedImage");
 

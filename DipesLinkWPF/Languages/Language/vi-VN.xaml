@@ -281,6 +281,7 @@
     <system:String x:Key="DateTime_Format">Đ.dạng Ngày Giờ:</system:String>
     <system:String x:Key="Template_Name:">Tên Template</system:String>
     <system:String x:Key="About_This_Software">Thông Tin Phần Mềm</system:String>
+    <system:String x:Key="FailedImagePath:">Đ.dẫn xuất ảnh lỗi:</system:String>
     <system:String x:Key="Version">Phiên bản:</system:String>
     <system:String x:Key="Software_Name">Tên Phần Mềm:</system:String>
     <system:String x:Key="Website">Trang web:</system:String>

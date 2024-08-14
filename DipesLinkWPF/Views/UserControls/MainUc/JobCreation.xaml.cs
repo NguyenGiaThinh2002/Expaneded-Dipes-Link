@@ -287,6 +287,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     RadioButtonAfterProduction.IsChecked = false;
                     RadioButtonOnProduction.IsChecked = false;
                     RadioButtonVerifyAndPrint.IsChecked = false;
+                    GroupBoxTemplate.IsEnabled = false;
                     vm.CreateNewJob.JobType = SharedProgram.DataTypes.CommonDataType.JobType.StandAlone;
                 }
                 if (RadioButtonRynanSeries.IsChecked == true)
@@ -297,16 +298,17 @@ namespace DipesLink.Views.UserControls.MainUc
                     RadioButtonStaticText.IsEnabled = false;
                     RadioButtonDatabase.IsChecked = true;
                     RadioButtonAfterProduction.IsChecked = true;
+                    GroupBoxTemplate.IsEnabled = true;
                 }
                 if (RadioButtonCanRead.IsChecked == true || RadioButtonStaticText.IsChecked == true)
                 {
                     GroupBoxDatabaseType.IsEnabled = false;
-                    GroupBoxTemplate.IsEnabled = false;
+                   
                 }
                 if (RadioButtonDatabase.IsChecked == true)
                 {
                     GroupBoxDatabaseType.IsEnabled = true;
-                    GroupBoxTemplate.IsEnabled = true;
+                   // GroupBoxTemplate.IsEnabled = true;
                 }
             }
             catch (Exception)

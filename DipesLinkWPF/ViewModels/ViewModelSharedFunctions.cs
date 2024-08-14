@@ -4,6 +4,7 @@ using SharedProgram.Models;
 using SharedProgram.Shared;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using static DipesLink.Views.Enums.ViewEnums;
 
 namespace DipesLink.ViewModels
@@ -150,5 +151,7 @@ namespace DipesLink.ViewModels
                 job.DeviceTransferID = InitDeviceTransfer(job.Index); // start new process
              });
         }
+
+        
     }
 }

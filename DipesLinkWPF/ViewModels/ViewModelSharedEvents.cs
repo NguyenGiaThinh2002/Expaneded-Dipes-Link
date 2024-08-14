@@ -50,5 +50,11 @@
         {
             OnChangeJobStatus?.Invoke(index, EventArgs.Empty);
         }
+
+        public static event EventHandler? OnChangeDongleKey;
+        public static void OnChangeDongleKeyHandler(int numberLicense)
+        {
+            OnChangeDongleKey?.Invoke(numberLicense, EventArgs.Empty);
+        }
     }
 }

@@ -64,7 +64,10 @@ namespace DipesLink.ViewModels
         private void EventRegister()
         {
             ViewModelSharedEvents.OnEnableUIChange += EnableUIChange;
+            ViewModelSharedEvents.OnChangeDongleKey += CheckDongleKeyForStation;
         }
+
+      
 
         private void EnableUIChange(object? sender, bool isEnable)
         {
@@ -94,6 +97,7 @@ namespace DipesLink.ViewModels
 
         private void InitStations(int numberOfStation)
         {
+            StartDongleKeyProcess();
             for (int i = 0; i < numberOfStation; i++)
             {
                 InitInstanceIPC(i);
@@ -101,6 +105,7 @@ namespace DipesLink.ViewModels
                 InitTabStationUI(i);
                 GetCurrentJobDetail(i);
             }
+          
         }
 
         
