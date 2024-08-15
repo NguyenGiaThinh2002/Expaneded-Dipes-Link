@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dipes-Link"
-#define MyAppVersion "1.0.0.0 build 240812"
+#define MyAppVersion "1.0.0.0 build 240815"
 #define MyAppPublisher "Rynan Technologies"
 #define MyAppURL "https://rynantech.com/"
 #define MyAppExeName "DipesLink.exe"

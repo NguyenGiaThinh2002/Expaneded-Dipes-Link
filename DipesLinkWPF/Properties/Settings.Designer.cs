@@ -25,7 +25,7 @@ namespace DipesLink.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.0.0.0 build 240812")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0.0.0 build 240815")]
         public string SoftwareVersion {
             get {
                 return ((string)(this["SoftwareVersion"]));

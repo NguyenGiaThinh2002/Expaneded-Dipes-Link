@@ -1,8 +1,6 @@
-﻿using Cloudtoid;
-using Cognex.DataMan.SDK;
+﻿using Cognex.DataMan.SDK;
 using Cognex.DataMan.SDK.Discovery;
 using Cognex.DataMan.SDK.Utils;
-using DipesLink_SDK_Cameras.Models;
 using IPCSharedMemory;
 using IPCSharedMemory.Controllers;
 using SharedProgram.DeviceTransfer;
@@ -14,7 +12,6 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using static Cognex.DataMan.SDK.Discovery.EthSystemDiscoverer;
 using Encoder = System.Drawing.Imaging.Encoder;
 using ImageFormat = System.Drawing.Imaging.ImageFormat;
@@ -34,9 +31,9 @@ namespace DipesLink_SDK_Cameras
         private DataManSystem? _dataManSystem;
         private ResultCollector? _results;
         private ISystemConnector? _connector;
-        IPCSharedHelper? _ipc;
+        private IPCSharedHelper? _ipc;
         private readonly object _CurrentResultInfoSyncLock = new();
-        SystemInfo? _systemInfo;
+        private SystemInfo? _systemInfo;
 
         #endregion
 
@@ -259,7 +256,6 @@ namespace DipesLink_SDK_Cameras
 
         #region Event
 
-
         private void OnEthSystemDiscovered(EthSystemDiscoverer.SystemInfo systemInfo)
         {
 
@@ -376,7 +372,6 @@ namespace DipesLink_SDK_Cameras
             }
             return null;
         }
-      
 
         private void OnSystemDisconnected(object sender, EventArgs args)
         {

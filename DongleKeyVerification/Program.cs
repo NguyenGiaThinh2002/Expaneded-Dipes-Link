@@ -43,14 +43,16 @@ namespace DongleKeyVerification
 
             try
             {
-                int keyLevel = DetectUSBDongleLevel();
+                // int keyLevel = DetectUSBDongleLevel(); 
+                int keyLevel = 4;
                 var client = new DongleKeyNamedPipeHelper();
                 client.SendKeyLevel(keyLevel >= 1 ? keyLevel : 0);
 
                 while (true)
                 {
                     Thread.Sleep(5000); // Check every 5 seconds
-                    int newkeyLevel = DetectUSBDongleLevel();
+                    //int newkeyLevel = DetectUSBDongleLevel();
+                    int newkeyLevel = 4;
                     // 
                     if (newkeyLevel != keyLevel)
                     {

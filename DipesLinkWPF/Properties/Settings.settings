@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="SoftwareVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">1.0.0.0 build 240812</Value>
+      <Value Profile="(Default)">1.0.0.0 build 240815</Value>
     </Setting>
     <Setting Name="SoftwareName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">DIPES-Link</Value>
