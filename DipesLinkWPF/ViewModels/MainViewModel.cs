@@ -145,7 +145,7 @@ namespace DipesLink.ViewModels
                     {
                         JobList[stationIndex].OperationStatus = OperationStatus.Stopped;
                     }
-                    job.IsHaveLicense = _numberLicense > (job.Index+1); // Check USB License 
+                    job.IsHaveLicense = _numberLicense >= (job.Index+1); // Check USB License 
                 }
                 await Task.Delay(2000);
             }
