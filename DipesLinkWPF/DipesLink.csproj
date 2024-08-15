@@ -68,6 +68,7 @@
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\DipesLink_SDK\DipesLink_SDK.Cameras\DipesLink_SDK_Cameras.csproj" />
+    <ProjectReference Include="..\DongleKeyVerification\DongleKeyVerification.csproj" />
     <ProjectReference Include="..\IPCSharedMemory\IPCSharedMemory.csproj" />
     <ProjectReference Include="..\RDBMS\RelationalDatabaseHelper.csproj" />
     <ProjectReference Include="..\RestartHelperProcess\RestartProcessHelper.csproj" />

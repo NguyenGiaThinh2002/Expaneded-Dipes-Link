@@ -141,7 +141,8 @@ namespace DipesLink.ViewModels
 
                             // Enter input freely for template (Only System User)
                             if (SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[0] == "System" && 
-                                SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[1] == "Administrator")
+                                SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[1] == "Administrator" &&
+                                string.IsNullOrEmpty(_jobModel.PrinterTemplate))
                             {
                                 _jobModel.PrinterTemplate = CreateNewJob.SearchTemplateText;
                                 _jobModel.TemplateListFirstFound = new List<string>();

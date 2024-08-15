@@ -366,8 +366,8 @@
                 VerticalScrollBarVisibility="Disabled">
                 <Grid Background="WhiteSmoke">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="400" />
-                        <ColumnDefinition Width="600" />
+                        <ColumnDefinition Width="350" />
+                        <ColumnDefinition Width="500" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <ListBox

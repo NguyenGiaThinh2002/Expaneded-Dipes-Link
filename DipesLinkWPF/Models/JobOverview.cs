@@ -711,6 +711,22 @@ namespace DipesLink.Models
         }
         #endregion
 
+
+        private bool _isHaveLicense;
+
+        public bool IsHaveLicense
+        {
+            get { return _isHaveLicense; }
+            set
+            {
+                if (_isHaveLicense != value)
+                {
+                    _isHaveLicense = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         // public OperationStatus OperationStatus { get; set; } = OperationStatus.Stopped;
         //private DataView _PrintedCodeDataView;
 

@@ -18,6 +18,7 @@
     <system:String x:Key="CannotGetPrinterTemplate">Trạm {0}: Không thể lấy giao diện bản tin !</system:String>
     <system:String x:Key="StopStationNotification">Bạn có muốn dừng trạm {0} ?</system:String>
     <system:String x:Key="JobNotFoundNotification">Trạm {0}: Không tìm thấy công việc</system:String>
+    <system:String x:Key="LicenseJobNotFound">Trạm {0}: Không tìm thấy giấy phép hoạt động</system:String>
     <system:String x:Key="SystemStarted">Hệ thống đã khởi động !</system:String>
     <system:String x:Key="CannotAccessDatabase">Trạm {0}: Không thể truy cập cơ sở dữ liệu !</system:String>
     <system:String x:Key="CannotAccessCheckedResult">Trạm {0}: Không thể truy cập kết quả đã kiểm tra !</system:String>
@@ -281,6 +282,7 @@
     <system:String x:Key="DateTime_Format">Đ.dạng Ngày Giờ:</system:String>
     <system:String x:Key="Template_Name:">Tên Template</system:String>
     <system:String x:Key="About_This_Software">Thông Tin Phần Mềm</system:String>
+    <system:String x:Key="FailedImagePath:">Đ.dẫn xuất ảnh lỗi:</system:String>
     <system:String x:Key="Version">Phiên bản:</system:String>
     <system:String x:Key="Software_Name">Tên Phần Mềm:</system:String>
     <system:String x:Key="Website">Trang web:</system:String>
