@@ -1,5 +1,4 @@
-﻿using SharedProgram.Shared;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
@@ -8,23 +7,15 @@ namespace DipesLink.ViewModels
 {
     public partial class MainViewModel
     {
+        private int _numberLicense;
 
         private void CheckDongleKeyForStation(object? sender, EventArgs e)
         {
-            try
+          if(sender is int index)
             {
-                var numberLicense = (int)sender;
-                for (int i = 0; i < SharedValues.NumberOfStation; i++)
-                {
-                    JobList[i].IsHaveLicense = numberLicense > i;
-                }
-            }
-            catch (Exception)
-            {
-
+                _numberLicense = index;
             }
         }
-
 
         public void StartDongleKeyProcess()
         {
@@ -44,8 +35,8 @@ namespace DipesLink.ViewModels
                 {
                     FileName = helperPath,
                     Arguments = $"{Process.GetCurrentProcess().Id} \"{applicationPath}\"",
-                    CreateNoWindow = false,
-                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = false
                 });
 
@@ -63,8 +54,6 @@ namespace DipesLink.ViewModels
             {
             }
         }
-
-
 
         public void NamedPipeServerForUSBDongleCheck()
         {

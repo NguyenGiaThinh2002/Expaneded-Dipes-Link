@@ -17,6 +17,7 @@
     <system:String x:Key="CannotGetPrinterTemplate">Station {0}: Can't get printer template !</system:String>
     <system:String x:Key="StopStationNotification">Do you want to stop station {0} ?</system:String>
     <system:String x:Key="JobNotFoundNotification">Station {0}: Job not found</system:String>
+    <system:String x:Key="LicenseJobNotFound">Station {0}: License not found</system:String>
     <system:String x:Key="SystemStarted">The system has started !</system:String>
     <system:String x:Key="CannotAccessDatabase">Station {0}: Can not access database !</system:String>
     <system:String x:Key="CannotAccessCheckedResult">Station {0}: Can not access checked result !</system:String>

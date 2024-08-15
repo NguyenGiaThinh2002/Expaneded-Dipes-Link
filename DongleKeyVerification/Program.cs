@@ -10,8 +10,34 @@ namespace DongleKeyVerification
         #region Variables
         private static USBKey _USBKey = new USBKey();
         private static uint _HardwareIDUsing = 0;
-        private static int LevelNumber;
+        private static int _levelNumber;
+        private const int _maxStationLicense = 4;
+        public enum SDCmd : ushort
+        {
+            SD_FIND = 1,        //Find SecureDongle
+            SD_FIND_NEXT = 2,       //Find next
+            SD_OPEN = 3,            //Open SecureDongle
+            SD_CLOSE = 4,           //Close SecureDongle
+            SD_READ,            //Read SecureDongle
+            SD_WRITE,           //Write SecureDongle
+            SD_RANDOM,          //Generate random
+            SD_SEED,            //Generate seed
+            SD_DECREASE = 17,
+            SD_WRITE_USERID = 9,    //Read UID
+            SD_READ_USERID = 10,    //Read UID
+            SD_SET_MODULE = 11,   //Set Module
+            SD_CHECK_MODULE = 12,   //Check Module
+            SD_CALCULATE1 = 14, //Calculate1
+            SD_CALCULATE2,      //Calculate1
+            SD_CALCULATE3,      //Calculate1
+            SD_SET_COUNTER_EX = 160,         //Set Counter, Type change from WORD to DWORD
+            SD_GET_COUNTER_EX = 161,          //Read counter, Type change from WORD to DWORD
+            SD_SET_TIMER_EX = 162,         //Set Timer Unit Clock, Type change from WORD to DWORD
+            SD_GET_TIMER_EX = 163,        //Get Timer Unit Code, , Type change from WORD to DWORD
+            SD_ADJUST_TIMER_EX = 164,
+        }
         #endregion
+
         static void Main(string[] args)
         {
 
@@ -45,7 +71,7 @@ namespace DongleKeyVerification
         }
         private static int DetectUSBDongleLevel()
         {
-            for (int level = 1; level <= 4; level++)
+            for (int level = 1; level <= _maxStationLicense; level++)
             {
                 InitVariableUSBDongle(level);
                 if (CheckForValidUSBDongleKey())
@@ -60,6 +86,8 @@ namespace DongleKeyVerification
         {
             InitDongleLevel(securityLevel);
         }
+
+        // Level = allow station 
         private static void InitDongleLevel(int level)
         {
             _USBKey = new USBKey();
@@ -107,31 +135,6 @@ namespace DongleKeyVerification
             ValueC = (ushort)(ValueC - ValueA);
             ValueD = (ushort)(ValueD | ValueC);
             return new ushort[] { ValueA, ValueB, ValueC, ValueD };
-        }
-
-        public enum SDCmd : ushort
-        {
-            SD_FIND = 1,        //Find SecureDongle
-            SD_FIND_NEXT = 2,       //Find next
-            SD_OPEN = 3,            //Open SecureDongle
-            SD_CLOSE = 4,           //Close SecureDongle
-            SD_READ,            //Read SecureDongle
-            SD_WRITE,           //Write SecureDongle
-            SD_RANDOM,          //Generate random
-            SD_SEED,            //Generate seed
-            SD_DECREASE = 17,
-            SD_WRITE_USERID = 9,    //Read UID
-            SD_READ_USERID = 10,    //Read UID
-            SD_SET_MODULE = 11,   //Set Module
-            SD_CHECK_MODULE = 12,   //Check Module
-            SD_CALCULATE1 = 14, //Calculate1
-            SD_CALCULATE2,      //Calculate1
-            SD_CALCULATE3,      //Calculate1
-            SD_SET_COUNTER_EX = 160,         //Set Counter, Type change from WORD to DWORD
-            SD_GET_COUNTER_EX = 161,          //Read counter, Type change from WORD to DWORD
-            SD_SET_TIMER_EX = 162,         //Set Timer Unit Clock, Type change from WORD to DWORD
-            SD_GET_TIMER_EX = 163,        //Get Timer Unit Code, , Type change from WORD to DWORD
-            SD_ADJUST_TIMER_EX = 164,
         }
 
         private static bool CheckForValidUSBDongleKey()
@@ -220,8 +223,6 @@ namespace DongleKeyVerification
                 buffer);
             return true;
         }
-
-
 
     }
 }

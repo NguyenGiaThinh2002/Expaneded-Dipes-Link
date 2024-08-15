@@ -139,12 +139,13 @@ namespace DipesLink.ViewModels
         {
             while (true)
             {
-                foreach (var deviceTransferID in JobList)
+                foreach (var job in JobList)
                 {
-                    if (!SharedFunctions.ProcessIsAlive(deviceTransferID.DeviceTransferID))
+                    if (!SharedFunctions.ProcessIsAlive(job.DeviceTransferID))
                     {
                         JobList[stationIndex].OperationStatus = OperationStatus.Stopped;
                     }
+                    job.IsHaveLicense = _numberLicense > (job.Index+1); // Check USB License 
                 }
                 await Task.Delay(2000);
             }
@@ -1332,7 +1333,8 @@ namespace DipesLink.ViewModels
 
         internal void KillProcessByID()
         {
-            foreach(var job in JobList)
+            Process.GetProcessById(CheckUSBDongleKeyProcessID).Kill(); // Kill process check usb license
+            foreach (var job in JobList)
             {
                 try
                 {
@@ -1347,7 +1349,6 @@ namespace DipesLink.ViewModels
                 {
                     SharedFunctions.PrintDebugMessage($"An error occurred: {ex.Message}");
                 }
-               
             }
         }
 

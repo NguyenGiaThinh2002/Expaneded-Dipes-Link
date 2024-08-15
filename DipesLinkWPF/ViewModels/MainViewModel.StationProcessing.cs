@@ -34,14 +34,23 @@ namespace DipesLink.ViewModels
 
         private void StartButtonCommandEventHandler(object? sender, EventArgs e) 
         {
-         
             int index = sender != null ? (int)sender : -1;
-            if (CheckJobExisting(index,out _))
+            if (CheckJobExisting(index,out _) && JobList[index].IsHaveLicense)
+            {
                 ActionButtonProcess(index, ActionButtonType.Start);
+            }
             else
             {
-                CusAlert.Show(LanguageModel.GetLanguage("JobNotFoundNotification", index), Views.Enums.ViewEnums.ImageStyleMessageBox.Warning, true);
+                if (!JobList[index].IsHaveLicense)
+                {
+                    CusAlert.Show(LanguageModel.GetLanguage("LicenseJobNotFound", index), Views.Enums.ViewEnums.ImageStyleMessageBox.Warning, true);
+                }
+                if(!CheckJobExisting(index, out _))
+                {
+                    CusAlert.Show(LanguageModel.GetLanguage("JobNotFoundNotification", index), Views.Enums.ViewEnums.ImageStyleMessageBox.Warning, true);
+                }
             }
+           
         }
 
         private void TriggerButtonCommandEventHandler(object? sender, EventArgs e)
