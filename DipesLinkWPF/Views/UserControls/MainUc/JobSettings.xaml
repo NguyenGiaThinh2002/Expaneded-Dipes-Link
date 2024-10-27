@@ -7,10 +7,11 @@
     xmlns:cuscontrol="clr-namespace:DipesLink.Views.UserControls.CustomControl"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     d:Background="WhiteSmoke"
-    d:DesignHeight="650"
+    d:DesignHeight="1080"
     d:DesignWidth="1150"
     mc:Ignorable="d">
     <!--<UserControl.DataContext>
@@ -24,6 +25,11 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/RadioButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
+
+                <!--  HandyControl  -->
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
             <converter:RadioButtonToBool x:Key="CoupRadToBol" />
             <converter:BoolToRadioButtonConverter x:Key="BoolToRadioButtonConverter" />
@@ -225,8 +231,13 @@
 
                 <!--  Every Line  -->
                 <Grid Visibility="Visible">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <!--  Content setting  -->
                     <Grid
+                        Grid.Row="1"
                         Grid.Column="1"
                         Width="800"
                         Height="650"
@@ -234,7 +245,8 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Background="WhiteSmoke"
-                        DataContext="{Binding CurrentConnectParams}">
+                        DataContext="{Binding CurrentConnectParams}"
+                        Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                         </Grid.RowDefinitions>
@@ -257,12 +269,13 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <!--  Printer Settings  -->
-                                <GroupBox FontSize="16">
+                                <!--<GroupBox FontSize="16">
                                     <GroupBox.Header>
                                         <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Settings}" />
                                     </GroupBox.Header>
 
-                                    <StackPanel Margin="5,10,0,0">
+                                -->
+                                <!--<StackPanel Margin="5,10,0,0">
                                         <StackPanel
                                             Margin="0,10,0,0"
                                             IsEnabled="{Binding IsLockUISetting}"
@@ -312,11 +325,12 @@
                                                 FontSize="20"
                                                 Style="{StaticResource ModernButton2}" />
                                         </StackPanel>
-                                    </StackPanel>
-                                    <!--</Border>-->
-                                </GroupBox>
+                                    </StackPanel>-->
+                                <!--</Border>-->
+                                <!--
+                                </GroupBox>-->
                                 <!--  Printer Settings  -->
-                                <GroupBox
+                                <!--<GroupBox
                                     Grid.Column="1"
                                     FontSize="16"
                                     IsEnabled="{Binding IsLockUISetting}">
@@ -326,7 +340,8 @@
                                             FontWeight="Bold"
                                             Text="{DynamicResource ResourceKey=Camera_Settings}" />
                                     </GroupBox.Header>
-                                    <StackPanel Margin="5,20,0,0">
+                                -->
+                                <!--<StackPanel Margin="5,20,0,0">
 
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock
@@ -390,9 +405,10 @@
                                                 IsEnabled="False"
                                                 Text="{Binding SerialNumber}" />
                                         </StackPanel>
-                                    </StackPanel>
-                                    <!--</Border>-->
-                                </GroupBox>
+                                    </StackPanel>-->
+                                <!--</Border>-->
+                                <!--
+                                </GroupBox>-->
 
                             </Grid>
 
@@ -407,7 +423,7 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <GroupBox>
+                                    <!--<GroupBox>
                                         <GroupBox.Header>
                                             <TextBlock
                                                 FontSize="16"
@@ -415,9 +431,8 @@
                                                 Text="{DynamicResource ResourceKey=Controller_Settings}" />
                                         </GroupBox.Header>
 
-                                        <StackPanel Margin="5,10,0,0">
-
-
+                                    -->
+                                    <!--<StackPanel Margin="5,10,0,0">
                                             <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                 <TextBlock
                                                     Width="170"
@@ -604,7 +619,8 @@
                                                         Text=" (mm)" />
                                                 </StackPanel>
 
-                                                <!--<StackPanel Margin="0,3,0,0">
+                                    -->
+                                    <!--<StackPanel Margin="0,3,0,0">
                                                     <TextBlock
                                                         Width="100"
                                                         Margin="0,0,0,0"
@@ -626,95 +642,16 @@
                                                         Content="Clear"
                                                         Style="{StaticResource ModernButtonDel}" />
                                                 </StackPanel>-->
+                                    <!--
                                             </StackPanel>
-                                        </StackPanel>
-                                    </GroupBox>
+                                        </StackPanel>-->
+                                    <!--
+                                    </GroupBox>-->
                                     <StackPanel
                                         Grid.Column="1"
                                         IsEnabled="{Binding LockUISetting}"
                                         Orientation="Vertical">
-                                        <GroupBox Grid.Column="1">
-                                            <GroupBox.Header>
-                                                <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Verify_and_Print_POD_Send_Mode}" />
-                                            </GroupBox.Header>
-                                            <StackPanel
-                                                Grid.Row="1"
-                                                Margin="0,10,0,0"
-                                                VerticalAlignment="Top"
-                                                Orientation="Vertical">
 
-                                                <!--  Gr Mode  -->
-                                                <GroupBox Width="auto" Height="70">
-                                                    <GroupBox.Header>
-                                                        <TextBlock FontWeight="Normal" Text="{DynamicResource ResourceKey=Send_Mode}" />
-                                                    </GroupBox.Header>
-                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                                        <RadioButton
-                                                            x:Name="RadBasic"
-                                                            Width="100"
-                                                            HorizontalAlignment="Center"
-                                                            Click="RadBasic_Click"
-                                                            Content="{DynamicResource ResourceKey=Basic}"
-                                                            FontSize="16"
-                                                            Style="{StaticResource RadioButtonStyle1}" />
-
-                                                        <RadioButton
-                                                            x:Name="RadCompare"
-                                                            Width="150"
-                                                            Margin="10,0,0,0"
-                                                            Click="RadCompare_Click"
-                                                            Content="{DynamicResource ResourceKey=Compare}"
-                                                            FontSize="16"
-                                                            Style="{StaticResource RadioButtonStyle1}" />
-                                                        <!--  IsChecked="{Binding VerifyAndPrintBasicSentMethod, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"  -->
-                                                    </StackPanel>
-                                                </GroupBox>
-
-                                                <!--  Print Fields  -->
-                                                <StackPanel
-                                                    Margin="0,10,0,10"
-                                                    IsEnabled="{Binding ElementName=RadCompare, Path=IsChecked}"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock Width="100" Text="{DynamicResource ResourceKey=Print_Fields}" />
-                                                    <TextBox
-                                                        x:Name="TextBoxPOD"
-                                                        Width="200"
-                                                        Height="30"
-                                                        Margin="0,0,10,0"
-                                                        BorderBrush="LightBlue"
-                                                        Text="{Binding FormatedPOD}" />
-                                                    <Button
-                                                        Width="70"
-                                                        Height="30"
-                                                        HorizontalAlignment="Right"
-                                                        Click="SelectPrintField"
-                                                        Content="{DynamicResource ResourceKey=Select}"
-                                                        Style="{StaticResource ModernButton2}" />
-                                                </StackPanel>
-
-                                                <!--  Error Print Fields  -->
-                                                <StackPanel Margin="0,10,0,10" Orientation="Horizontal">
-                                                    <TextBlock Width="100" Text="{DynamicResource ResourceKey=Error_Field}" />
-
-                                                    <TextBox
-                                                        x:Name="TextBoxErrorField"
-                                                        Width="200"
-                                                        Height="30"
-                                                        Margin="0,0,10,0"
-                                                        BorderBrush="LightBlue"
-                                                        Text="{Binding FailedDataSentToPrinter}"
-                                                        TextChanged="TextBox_ParamsChanged" />
-
-                                                    <Button
-                                                        Width="70"
-                                                        Height="30"
-                                                        HorizontalAlignment="Right"
-                                                        Click="DefaultClick"
-                                                        Content="{DynamicResource ResourceKey=Default}"
-                                                        Style="{StaticResource ModernButton2}" />
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </GroupBox>
 
                                         <!--<GroupBox
                                             Grid.Column="1"
@@ -766,28 +703,7 @@
                                                 </StackPanel>
                                             </StackPanel>
                                         </GroupBox>-->
-                                        <Grid Grid.Row="1" Height="200">
-                                            <Button
-                                                Width="140"
-                                                Height="40"
-                                                Margin="0,0,10,0"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Bottom"
-                                                Background="White"
-                                                BorderBrush="#00ABE6"
-                                                Click="RestartButton_Click">
-                                                <!--  Style="{StaticResource ModernButtonRs}"  -->
-                                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                                    <fa:IconImage
-                                                        Width="16"
-                                                        Height="16"
-                                                        Margin="0,0,5,0"
-                                                        Foreground="#00ABE6"
-                                                        Icon="RotateBack" />
-                                                    <TextBlock VerticalAlignment="Center" Text="{DynamicResource ResourceKey=Restart}" />
-                                                </StackPanel>
-                                            </Button>
-                                        </Grid>
+
 
                                     </StackPanel>
                                 </Grid>
@@ -795,6 +711,606 @@
 
                         </Grid>
                     </Grid>
+
+                    <Grid DataContext="{Binding CurrentConnectParams}">
+                        <TabControl>
+                            <TabItem Cursor="Hand" Header="Printer settings">
+                                <StackPanel Margin="5,10,0,0">
+                                    <StackPanel
+                                        Margin="0,10,0,0"
+                                        IsEnabled="{Binding IsLockUISetting}"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=IP_Address}" />
+                                        <cuscontrol:IpAddressControl
+                                            x:Name="TextBoxPrinterIP"
+                                            Width="200"
+                                            Height="30"
+                                            Text="{Binding PrinterIP}" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="0,10,0,0"
+                                        IsEnabled="{Binding IsLockUISetting}"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=Port}" />
+                                        <hc:NumericUpDown
+                                            x:Name="NumPort"
+                                            Width="80"
+                                            Height="30"
+                                            Padding="0,3,0,0"
+                                            BorderBrush="LightBlue"
+                                            FontSize="16"
+                                            PreviewTextInput="TextBox_PreviewTextInput"
+                                            ValueChanged="NumericUpDown_ValueChanged"
+                                            Value="{Binding PrinterPort}" />
+                                        <!--<TextBox
+                                            x:Name="TextBoxPrinterPort"
+                                            Width="80"
+                                            Height="30"
+                                            Padding="0,3,0,0"
+                                            BorderBrush="LightBlue"
+                                            FontSize="16"
+                                            PreviewTextInput="TextBox_PreviewTextInput"
+                                            Text="{Binding PrinterPort, FallbackValue=0000}"
+                                            TextChanged="TextBox_ParamsChanged"
+                                            Visibility="Collapsed" />-->
+                                    </StackPanel>
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=Remote}" />
+                                        <Button
+                                            Width="80"
+                                            Height="35"
+                                            Click="ButtonWebView_Click"
+                                            Content="{fa:Icon InternetExplorer,
+                                                              Foreground=White}"
+                                            FontSize="20"
+                                            Style="{StaticResource ModernButton2}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </TabItem>
+
+                            <TabItem Header="Camera settings">
+                                <StackPanel Margin="5,20,0,0">
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="Camera Type"
+                                            Visibility="Collapsed" />
+                                        <ComboBox
+                                            Width="140"
+                                            Height="30"
+                                            Padding="6"
+                                            SelectedIndex="0"
+                                            Visibility="Collapsed">
+                                            <ComboBoxItem>DM Series</ComboBoxItem>
+                                        </ComboBox>
+
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=IP_Address}" />
+                                        <cuscontrol:IpAddressControl
+                                            x:Name="TextBoxCamIP"
+                                            Width="200"
+                                            Height="30"
+                                            Text="{Binding CameraIP}" />
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=Model}" />
+                                        <TextBox
+                                            x:Name="TextBoxCamModel"
+                                            Width="200"
+                                            Height="30"
+                                            Margin="0,0,10,0"
+                                            Padding="0,3,0,0"
+                                            BorderBrush="LightBlue"
+                                            FontSize="16"
+                                            IsEnabled="False"
+                                            Text="{Binding CameraModel}" />
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=Serial}" />
+                                        <TextBox
+                                            x:Name="TextBoxCamSerial"
+                                            Width="200"
+                                            Height="30"
+                                            Margin="0,0,10,0"
+                                            Padding="0,3,0,0"
+                                            BorderBrush="LightBlue"
+                                            FontSize="16"
+                                            IsEnabled="False"
+                                            Text="{Binding SerialNumber}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </TabItem>
+
+                            <TabItem Header="PLC settings">
+                                <StackPanel Margin="5,10,0,0">
+                                    <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="170"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=Enable_Controller}" />
+                                        <ToggleButton IsChecked="{Binding EnController}" Style="{StaticResource ToggleButtonSwitch}" />
+                                        <!--<ToggleButton
+                                            Width="100"
+                                            Height="45"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Checked="ToggleButtonState"
+                                            IsChecked="{Binding EnController}"
+                                            Unchecked="ToggleButtonState">
+                                            <ToggleButton.Style>
+                                                <Style TargetType="ToggleButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ToggleButton">
+                                                                <Grid>
+                                                                    <Border
+                                                                        x:Name="Border"
+                                                                        Width="80"
+                                                                        Height="35"
+                                                                        Background="Gray"
+                                                                        BorderBrush="LightBlue"
+                                                                        BorderThickness="1"
+                                                                        CornerRadius="20">
+                                                                        <Grid>
+                                                                            <Border
+                                                                                x:Name="Switch"
+                                                                                Width="30"
+                                                                                Height="30"
+                                                                                Background="White"
+                                                                                CornerRadius="20" />
+                                                                            <Label
+                                                                                x:Name="OnContent"
+                                                                                Margin="10,0,0,0"
+                                                                                HorizontalAlignment="Left"
+                                                                                VerticalAlignment="Center"
+                                                                                Content="ON"
+                                                                                Foreground="White" />
+                                                                            <Label
+                                                                                x:Name="OffContent"
+                                                                                Margin="0,0,10,0"
+                                                                                HorizontalAlignment="Right"
+                                                                                VerticalAlignment="Center"
+                                                                                Content="OFF"
+                                                                                Foreground="White" />
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="Border" Property="Background" Value="#00ABE6" />
+                                                                        <Setter TargetName="Switch" Property="HorizontalAlignment" Value="Right" />
+                                                                        <Setter TargetName="OnContent" Property="Opacity" Value="1" />
+                                                                        <Setter TargetName="OffContent" Property="Opacity" Value="0" />
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsChecked" Value="False">
+                                                                        <Setter TargetName="Border" Property="Background" Value="Gray" />
+                                                                        <Setter TargetName="Switch" Property="HorizontalAlignment" Value="Left" />
+                                                                        <Setter TargetName="OnContent" Property="Opacity" Value="0" />
+                                                                        <Setter TargetName="OffContent" Property="Opacity" Value="1" />
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ToggleButton.Style>
+                                        </ToggleButton>-->
+                                    </StackPanel>
+                                    <StackPanel x:Name="InputArea">
+                                        <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                            <TextBlock
+                                                Width="170"
+                                                VerticalAlignment="Center"
+                                                Text="{DynamicResource ResourceKey=IP_Address}" />
+                                            <cuscontrol:IpAddressControl
+                                                x:Name="TextBoxControllerIP"
+                                                Width="200"
+                                                Height="30"
+                                                Text="{Binding ControllerIP}" />
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                            <TextBlock
+                                                Width="170"
+                                                VerticalAlignment="Center"
+                                                Text="{DynamicResource ResourceKey=Port}" />
+                                            <hc:NumericUpDown
+                                                x:Name="NumPLCPort"
+                                                Width="80"
+                                                Height="30"
+                                                Padding="0,3,0,0"
+                                                BorderBrush="LightBlue"
+                                                FontSize="16"
+                                                PreviewTextInput="TextBox_PreviewTextInput"
+                                                ValueChanged="NumericUpDown_ValueChanged"
+                                                Value="{Binding ControllerPort}" />
+                                            <!--<TextBox
+                                                x:Name="TextBoxControllerPort"
+                                                Width="100"
+                                                Height="30"
+                                                Padding="0,3,0,0"
+                                                BorderBrush="LightBlue"
+                                                FontSize="16"
+                                                PreviewTextInput="TextBox_PreviewTextInput"
+                                                Text="{Binding ControllerPort, FallbackValue=0000}"
+                                                TextChanged="TextBox_ParamsChanged" />-->
+                                        </StackPanel>
+                                        <GroupBox
+                                            Width="370"
+                                            Margin="0,10,0,0"
+                                            HorizontalAlignment="Left"
+                                            Style="{StaticResource GroupBoxTab}">
+                                            <GroupBox.Header>
+                                                <TextBlock HorizontalAlignment="Left" Text="Sensor 1" />
+                                            </GroupBox.Header>
+                                            <StackPanel>
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Delay_Sensor}" />
+                                                    <!--<TextBox
+                                                        x:Name="NumDelaySensor"
+                                                        Width="100"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        Text="{Binding DelaySensor, FallbackValue=0000}"
+                                                        TextChanged="TextBox_ParamsChanged" />-->
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumDelaySensor"
+                                                        Width="80"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding DelaySensor}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Disable_Sensor}" />
+                                                    <!--<TextBox
+                                                        x:Name="NumDisSensor"
+                                                        Width="100"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        Text="{Binding DisableSensor, FallbackValue=0000}"
+                                                        TextChanged="TextBox_ParamsChanged" />-->
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumDisSensor"
+                                                        Width="80"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding DisableSensor}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Pulse_Encoder}" />
+                                                    <!--<TextBox
+                                                        x:Name="NumPulseEncoder"
+                                                        Width="100"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        Text="{Binding PulseEncoder, FallbackValue=0000}"
+                                                        TextChanged="TextBox_ParamsChanged" />-->
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumPulseEncoder"
+                                                        Width="80"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding PulseEncoder}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
+                                                    <!--<TextBox
+                                                        x:Name="NumEncoderDia"
+                                                        Width="100"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        Text="{Binding EncoderDiameter, FallbackValue=0000}"
+                                                        TextChanged="TextBox_ParamsChanged" />-->
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumEncoderDia"
+                                                        Width="80"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding EncoderDiameter}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <GroupBox
+                                            Width="370"
+                                            Margin="0,10,0,0"
+                                            HorizontalAlignment="Left"
+                                            Style="{StaticResource GroupBoxTab}">
+                                            <GroupBox.Header>
+                                                <TextBlock HorizontalAlignment="Left" Text="Sensor 2" />
+                                            </GroupBox.Header>
+                                            <StackPanel>
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Delay_Sensor}" />
+
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumDelaySensor1"
+                                                        Width="80"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding DelaySensor1}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Disable_Sensor}" />
+
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumDisSensor1"
+                                                        Width="80"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding DisableSensor1}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Pulse_Encoder}" />
+
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumPulseEncoder1"
+                                                        Width="80"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding PulseEncoder1}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+
+                                                <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
+                                                    <hc:NumericUpDown
+                                                        x:Name="NumEncoderDia1" DecimalPlaces="2"
+                                                        Maximum="9999" Minimum="0" 
+                                                        Width="80"
+                                                        Height="30" Increment="0.1"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDown_ValueChanged"
+                                                        Value="{Binding EncoderDiameter1}" />
+                                                    <TextBlock
+                                                        Width="170"
+                                                        VerticalAlignment="Center"
+                                                        Text=" (mm)" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </TabItem>
+                            <TabItem Header="Verify and print send mode settings">
+                                <GroupBox Grid.Column="1">
+                                    <GroupBox.Header>
+                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Verify_and_Print_POD_Send_Mode}" />
+                                    </GroupBox.Header>
+                                    <StackPanel
+                                        Grid.Row="1"
+                                        Margin="0,10,0,0"
+                                        VerticalAlignment="Top"
+                                        Orientation="Vertical">
+
+                                        <!--  Gr Mode  -->
+                                        <GroupBox Width="auto" Height="70">
+                                            <GroupBox.Header>
+                                                <TextBlock FontWeight="Normal" Text="{DynamicResource ResourceKey=Send_Mode}" />
+                                            </GroupBox.Header>
+                                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                <RadioButton
+                                                    x:Name="RadBasic"
+                                                    Width="100"
+                                                    HorizontalAlignment="Center"
+                                                    Click="RadBasic_Click"
+                                                    Content="{DynamicResource ResourceKey=Basic}"
+                                                    FontSize="16"
+                                                    Style="{StaticResource RadioButtonStyle1}" />
+
+                                                <RadioButton
+                                                    x:Name="RadCompare"
+                                                    Width="150"
+                                                    Margin="10,0,0,0"
+                                                    Click="RadCompare_Click"
+                                                    Content="{DynamicResource ResourceKey=Compare}"
+                                                    FontSize="16"
+                                                    Style="{StaticResource RadioButtonStyle1}" />
+                                                <!--  IsChecked="{Binding VerifyAndPrintBasicSentMethod, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"  -->
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!--  Print Fields  -->
+                                        <StackPanel
+                                            Margin="0,10,0,10"
+                                            IsEnabled="{Binding ElementName=RadCompare, Path=IsChecked}"
+                                            Orientation="Horizontal">
+                                            <TextBlock Width="100" Text="{DynamicResource ResourceKey=Print_Fields}" />
+                                            <TextBox
+                                                x:Name="TextBoxPOD"
+                                                Width="200"
+                                                Height="30"
+                                                Margin="0,0,10,0"
+                                                BorderBrush="LightBlue"
+                                                Text="{Binding FormatedPOD}" />
+                                            <Button
+                                                Width="70"
+                                                Height="30"
+                                                HorizontalAlignment="Right"
+                                                Click="SelectPrintField"
+                                                Content="{DynamicResource ResourceKey=Select}"
+                                                Style="{StaticResource ModernButton2}" />
+                                        </StackPanel>
+
+                                        <!--  Error Print Fields  -->
+                                        <StackPanel Margin="0,10,0,10" Orientation="Horizontal">
+                                            <TextBlock Width="100" Text="{DynamicResource ResourceKey=Error_Field}" />
+
+                                            <TextBox
+                                                x:Name="TextBoxErrorField"
+                                                Width="200"
+                                                Height="30"
+                                                Margin="0,0,10,0"
+                                                BorderBrush="LightBlue"
+                                                Text="{Binding FailedDataSentToPrinter}"
+                                                TextChanged="TextBox_ParamsChanged" />
+
+                                            <Button
+                                                Width="70"
+                                                Height="30"
+                                                HorizontalAlignment="Right"
+                                                Click="DefaultClick"
+                                                Content="{DynamicResource ResourceKey=Default}"
+                                                Style="{StaticResource ModernButton2}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </GroupBox>
+                            </TabItem>
+                            <TabItem Header="Scanner settings" />
+
+
+
+                        </TabControl>
+                    </Grid>
+                    <Grid Grid.Row="1" Height="200">
+                        <Button
+                            Width="140"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Background="White"
+                            BorderBrush="#00ABE6"
+                            Click="RestartButton_Click">
+                            <!--  Style="{StaticResource ModernButtonRs}"  -->
+                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                <fa:IconImage
+                                    Width="16"
+                                    Height="16"
+                                    Margin="0,0,5,0"
+                                    Foreground="#00ABE6"
+                                    Icon="RotateBack" />
+                                <TextBlock VerticalAlignment="Center" Text="{DynamicResource ResourceKey=Restart}" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
                 </Grid>
 
             </Border>

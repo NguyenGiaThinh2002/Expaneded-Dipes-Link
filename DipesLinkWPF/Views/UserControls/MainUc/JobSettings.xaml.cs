@@ -140,7 +140,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             vm.ConnectParamsList[CurrentIndex()].PrinterIP = textBox.Text;
                             break;
                         case "TextBoxPrinterPort":
-                            vm.ConnectParamsList[CurrentIndex()].PrinterPort = textBox.Text;
+                           // vm.ConnectParamsList[CurrentIndex()].PrinterPort = textBox.Text;
                             break;
                         case "TextBoxCamIP":
                             vm.ConnectParamsList[CurrentIndex()].CameraIP = textBox.Text;
@@ -149,7 +149,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             vm.ConnectParamsList[CurrentIndex()].ControllerIP = textBox.Text;
                             break;
                         case "TextBoxControllerPort":
-                            vm.ConnectParamsList[CurrentIndex()].ControllerPort = textBox.Text;
+                          //  vm.ConnectParamsList[CurrentIndex()].ControllerPort = textBox.Text;
                             break;
                         case "TextBoxErrorField":
                             vm.ConnectParamsList[CurrentIndex()].FailedDataSentToPrinter = textBox.Text;
@@ -196,7 +196,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             vm.ConnectParamsList[index].PrinterIP = textBox.Text;
                             break;
                         case "TextBoxPrinterPort":
-                            vm.ConnectParamsList[index].PrinterPort = textBox.Text;
+                           // vm.ConnectParamsList[index].PrinterPort = textBox.Text;
                             break;
                         case "TextBoxCamIP":
                             vm.ConnectParamsList[index].CameraIP = textBox.Text;
@@ -205,7 +205,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             vm.ConnectParamsList[index].ControllerIP = textBox.Text;
                             break;
                         case "TextBoxControllerPort":
-                            vm.ConnectParamsList[index].ControllerPort = textBox.Text;
+                          //  vm.ConnectParamsList[index].ControllerPort = textBox.Text;
                             break;
                         case "NumDelaySensor":
                             vm.ConnectParamsList[index].DelaySensor = int.Parse(textBox.Text);
@@ -470,6 +470,59 @@ namespace DipesLink.Views.UserControls.MainUc
                 vm.AutoSaveConnectionSetting(CurrentIndex());
             }
             catch (Exception) { }
+        }
+
+        private void NumericUpDown_ValueChanged(object sender, HandyControl.Data.FunctionEventArgs<double> e)
+        {
+            if (IsInitializing) return;
+            if (sender is HandyControl.Controls.NumericUpDown numericUpdown)
+            {
+                NumUpdownParamsHandler(numericUpdown);
+            }
+        }
+
+
+        private void NumUpdownParamsHandler(HandyControl.Controls.NumericUpDown num)
+        {
+            try
+            {
+                num?.Dispatcher.BeginInvoke(new Action(() => // Use BeginInvoke to Update Input Last Value 
+                {
+                    var vm = CurrentViewModel<MainViewModel>();
+                    if (vm == null) return;
+                    if (vm.ConnectParamsList == null) return;
+                 //   num.Text ??= string.Empty;
+                    var index = CurrentIndex();
+                    switch (num.Name)
+                    {
+                        case "NumPort":
+                            vm.ConnectParamsList[index].PrinterPort = num.Value;
+                            break;
+                        case "NumPLCPort":
+                            vm.ConnectParamsList[index].ControllerPort = num.Value;
+                            break;
+                        case "NumDelaySensor":
+                            vm.ConnectParamsList[index].DelaySensor = (int)num.Value;
+                            break;
+                        case "NumDisSensor":
+                            vm.ConnectParamsList[index].DisableSensor = (int)num.Value;
+                            break;
+                        case "NumPulseEncoder":
+                            vm.ConnectParamsList[index].PulseEncoder = (int)num.Value;
+                            break;
+                        case "NumEncoderDia":
+                            vm.ConnectParamsList[index].EncoderDiameter = num.Value;
+                            break;
+                        default:
+                            break;
+                    }
+                    vm.AutoSaveConnectionSetting(index);
+
+                }), DispatcherPriority.Background);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

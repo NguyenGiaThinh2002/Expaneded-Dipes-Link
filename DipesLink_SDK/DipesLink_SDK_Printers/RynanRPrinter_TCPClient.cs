@@ -38,7 +38,7 @@ namespace DipesLink_SDK_Printers
             Unknown
         }
         string oldIP = "";
-        string oldPort = "";
+        double oldPort = 0;
 
         public RynanRPrinterTCPClient(int index,IPCSharedHelper? ipc)
         {
@@ -154,7 +154,7 @@ namespace DipesLink_SDK_Printers
             try
             {
                 _TcpClient = new TcpClient();
-                Task connectTask = _TcpClient.ConnectAsync(DeviceSharedValues.PrinterIP, int.Parse(DeviceSharedValues.PrinterPort));
+                Task connectTask = _TcpClient.ConnectAsync(DeviceSharedValues.PrinterIP, int.Parse(DeviceSharedValues.PrinterPort.ToString()));
                 oldIP = DeviceSharedValues.PrinterIP;
                 oldPort = DeviceSharedValues.PrinterPort;
                 connectTask.Wait(3000);

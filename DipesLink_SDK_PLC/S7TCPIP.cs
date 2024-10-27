@@ -27,7 +27,7 @@ namespace DipesLink_SDK_PLC
        
         IPCSharedHelper? _ipc;
         string oldIP = "";
-        string oldPort = "";
+        double oldPort = 0;
 
 
         public S7TCPIP(int index, IPCSharedHelper? ipc)
@@ -111,7 +111,7 @@ namespace DipesLink_SDK_PLC
             try
             {
                 _TcpClient = new TcpClient();
-                Task connectTask = _TcpClient.ConnectAsync(DeviceSharedValues.ControllerIP, int.Parse(DeviceSharedValues.ControllerPort));
+                Task connectTask = _TcpClient.ConnectAsync(DeviceSharedValues.ControllerIP, int.Parse(DeviceSharedValues.ControllerPort.ToString()));
                 oldIP = DeviceSharedValues.ControllerIP;
                 oldPort = DeviceSharedValues.ControllerPort;
                 connectTask.Wait(3000);
@@ -239,7 +239,7 @@ namespace DipesLink_SDK_PLC
             {
                 if (_TcpClient?.Client != null)
                 {
-                    if (_TcpClient.Client.Connected && PingIP(DeviceSharedValues.ControllerIP, int.Parse(DeviceSharedValues.ControllerPort)) && !IsChangeParams())
+                    if (_TcpClient.Client.Connected && PingIP(DeviceSharedValues.ControllerIP, int.Parse(DeviceSharedValues.ControllerPort.ToString())) && !IsChangeParams())
                     {
                         return _TcpClient.Client.Connected;
                     }

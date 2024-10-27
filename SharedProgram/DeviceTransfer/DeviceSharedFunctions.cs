@@ -14,10 +14,10 @@ namespace SharedProgram.DeviceTransfer
             {
                 DeviceSharedValues.EnController = connectParams.EnController;
                 DeviceSharedValues.PrinterIP = connectParams.PrinterIP.Trim();
-                DeviceSharedValues.PrinterPort = connectParams.PrinterPort.Trim();
+                DeviceSharedValues.PrinterPort = connectParams.PrinterPort;
                 DeviceSharedValues.CameraIP = connectParams.CameraIP.Trim();
                 DeviceSharedValues.ControllerIP = connectParams.ControllerIP.Trim();
-                DeviceSharedValues.ControllerPort = connectParams.ControllerPort.Trim();
+                DeviceSharedValues.ControllerPort = connectParams.ControllerPort;
 
                 DeviceSharedValues.DelaySensor = connectParams.DelaySensor.ToString().Trim();
                 DeviceSharedValues.DisableSensor = connectParams.DisableSensor.ToString().Trim();
@@ -84,7 +84,8 @@ namespace SharedProgram.DeviceTransfer
                 indexBytes.Length +
                 cameraIPBytes.Length +
                 printerIPBytes.Length, printerPortBytes, 0, 5);
-            DeviceSharedValues.PrinterPort = Encoding.ASCII.GetString(printerPortBytes).Trim();
+             var port = double.Parse(Encoding.ASCII.GetString(printerPortBytes).Trim());
+            DeviceSharedValues.PrinterPort = port;
 #if DEBUG
             Console.WriteLine("Printer Port: " + Encoding.ASCII.GetString(printerPortBytes).Trim());
 #endif
@@ -109,7 +110,8 @@ namespace SharedProgram.DeviceTransfer
                 printerIPBytes.Length +
                 printerPortBytes.Length +
                 controllerIPBytes.Length, controllerPortBytes, 0, 5);
-            DeviceSharedValues.ControllerPort = Encoding.ASCII.GetString(controllerPortBytes).Trim();
+            var plcPort = Encoding.ASCII.GetString(controllerPortBytes);
+            DeviceSharedValues.ControllerPort = double.Parse(plcPort);
 #if DEBUG
             Console.WriteLine("Controller Port: " + Encoding.ASCII.GetString(controllerPortBytes).Trim());
 #endif

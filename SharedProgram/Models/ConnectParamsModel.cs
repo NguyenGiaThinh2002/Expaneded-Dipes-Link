@@ -13,13 +13,13 @@ namespace SharedProgram.Models
         private string cameraModel;
         public string CameraModel { get => cameraModel; set { cameraModel = value; OnPropertyChanged(); }  }
         public string PrinterIP { get; set; } = "127.0.0.1";
-        public string PrinterPort { get; set; } = "0";
+        public double PrinterPort { get; set; } = 0;
         public string ControllerIP { get; set; } = "127.0.0.1";
-        public string ControllerPort { get; set; } = "0";
+        public double ControllerPort { get; set; } = 0;
 
-        public int DelaySensor { get; set; } = 0;
-        public int DisableSensor { get; set; } = 0;
-        public int PulseEncoder { get; set; } = 0;
+        public double DelaySensor { get; set; } = 0;
+        public double DisableSensor { get; set; } = 0;
+        public double PulseEncoder { get; set; } = 0;
         public double EncoderDiameter { get; set; } = 0.00;
 
         public bool EnController { get; set; } = false;

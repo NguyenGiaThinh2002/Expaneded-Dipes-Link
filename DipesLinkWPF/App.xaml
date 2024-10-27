@@ -11,6 +11,11 @@
             <ResourceDictionary.MergedDictionaries>
                 <!--  Language source will be added here.  -->
                 <ResourceDictionary Source="\Languages\Language\en-US.xaml" />
+
+                <!--HandyControl -->
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+                
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

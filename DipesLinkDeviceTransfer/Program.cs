@@ -38,9 +38,9 @@ namespace DipesLinkDeviceTransfer
                 DeviceSharedValues.Index = 0;
                 DeviceSharedValues.CameraIP = "192.168.15.146";
                 DeviceSharedValues.PrinterIP = "192.168.15.51"; //192.168.3.52
-                DeviceSharedValues.PrinterPort = "2030";
+                DeviceSharedValues.PrinterPort = 2030;
                 DeviceSharedValues.ControllerIP = "127.0.0.1";
-                DeviceSharedValues.ControllerPort = "2001";
+                DeviceSharedValues.ControllerPort = 2001;
                 DeviceSharedValues.VPObject = new()
                 {
                     FailedDataSentToPrinter = "Failure",

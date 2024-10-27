@@ -17,9 +17,9 @@ namespace SharedProgram.DeviceTransfer
 
         public static string CameraIP = "";
         public static string PrinterIP = "";
-        public static string PrinterPort = "";
+        public static double PrinterPort = 0;
         public static string ControllerIP = "";
-        public static string ControllerPort = "";
+        public static double ControllerPort = 0;
 
         public static string DelaySensor = "";
         public static string DisableSensor = "";
