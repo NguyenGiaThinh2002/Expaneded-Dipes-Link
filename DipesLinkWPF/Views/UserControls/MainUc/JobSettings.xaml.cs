@@ -472,14 +472,7 @@ namespace DipesLink.Views.UserControls.MainUc
             catch (Exception) { }
         }
 
-        private void NumericUpDown_ValueChanged(object sender, HandyControl.Data.FunctionEventArgs<double> e)
-        {
-            if (IsInitializing) return;
-            if (sender is HandyControl.Controls.NumericUpDown numericUpdown)
-            {
-                NumUpdownParamsHandler(numericUpdown);
-            }
-        }
+      
 
 
         private void NumUpdownParamsHandler(HandyControl.Controls.NumericUpDown num)
@@ -522,6 +515,15 @@ namespace DipesLink.Views.UserControls.MainUc
             }
             catch (Exception)
             {
+            }
+        }
+
+        private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        {
+            if (IsInitializing) return;
+            if (sender is HandyControl.Controls.NumericUpDown numericUpdown)
+            {
+                NumUpdownParamsHandler(numericUpdown);
             }
         }
     }
