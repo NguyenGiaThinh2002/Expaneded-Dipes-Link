@@ -27,21 +27,61 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
 
                 <!--#region MahApps-->
-                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <!--  MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive!  -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <!-- Theme setting -->
+                <!--  Theme setting  -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
                 <!--#endregion-->
-                
-                
+
+
 
             </ResourceDictionary.MergedDictionaries>
             <converter:RadioButtonToBool x:Key="CoupRadToBol" />
             <converter:BoolToRadioButtonConverter x:Key="BoolToRadioButtonConverter" />
-            
-            <!-- Style mặc định của WPF cho TabControl -->
-            <Style x:Key="DefaultTabControlStyle" TargetType="TabControl" BasedOn="{x:Null}" />
+
+
+
+            <!--  Define a style for the GroupBox  -->
+            <Style x:Key="CustomGroupBoxStyle" TargetType="GroupBox">
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="Padding" Value="5" />
+                <Setter Property="Background" Value="#f9f9f9" />
+                <Setter Property="BorderBrush" Value="#00ABE6" />
+                <Setter Property="BorderThickness" Value="1" />
+
+                <!--  Set header style  -->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GroupBox">
+                            <Border
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="0">
+                                <DockPanel>
+                                    <!--  Header  -->
+                                    <TextBlock
+                                        Padding="5"
+                                        Background="#00ABE6"
+                                        DockPanel.Dock="Top"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="{TemplateBinding Header}" />
+                                    <!--  Content  -->
+                                    <ContentPresenter Margin="{TemplateBinding Padding}" />
+                                </DockPanel>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--  Style mặc định của WPF cho TabControl  -->
+            <Style
+                x:Key="DefaultTabControlStyle"
+                BasedOn="{x:Null}"
+                TargetType="TabControl" />
 
             <Style
                 x:Key="DefaultGroupBox"
@@ -277,7 +317,7 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                      
+
 
                             </Grid>
 
@@ -296,8 +336,7 @@
                                     <StackPanel
                                         Grid.Column="1"
                                         IsEnabled="{Binding LockUISetting}"
-                                        Orientation="Vertical">
-                                    </StackPanel>
+                                        Orientation="Vertical" />
                                 </Grid>
                             </Grid>
 
@@ -305,10 +344,14 @@
                     </Grid>
 
                     <Grid DataContext="{Binding CurrentConnectParams}">
-                        <TabControl Style="{StaticResource DefaultTabControlStyle}">
-                            
-                           
-                            <TabItem Cursor="Hand" Header="Printer settings">
+                        <TabControl Style="{StaticResource MahApps.Styles.TabControl.ColorPicker}">
+
+
+
+                            <TabItem
+                                Cursor="Hand"
+                                FontSize="16"
+                                Header="Printer settings">
                                 <StackPanel Margin="5,10,0,0">
                                     <StackPanel
                                         Margin="0,10,0,0"
@@ -337,7 +380,7 @@
                                         <mah:NumericUpDown
                                             x:Name="NumPort"
                                             Width="200"
-                                            Height="40"
+                                            Height="30"
                                             Padding="0,3,0,0"
                                             BorderBrush="LightBlue"
                                             FontSize="16"
@@ -373,7 +416,8 @@
                                 </StackPanel>
                             </TabItem>
 
-                            <TabItem Header="Camera settings">
+                            <!--  Cam settings  -->
+                            <TabItem FontSize="16" Header="Camera settings">
                                 <StackPanel Margin="5,20,0,0">
 
                                     <StackPanel Orientation="Horizontal">
@@ -416,7 +460,6 @@
                                             Height="30"
                                             Margin="0,0,10,0"
                                             Padding="0,3,0,0"
-                                            BorderBrush="LightBlue"
                                             FontSize="16"
                                             IsEnabled="False"
                                             Text="{Binding CameraModel}" />
@@ -433,7 +476,6 @@
                                             Height="30"
                                             Margin="0,0,10,0"
                                             Padding="0,3,0,0"
-                                            BorderBrush="LightBlue"
                                             FontSize="16"
                                             IsEnabled="False"
                                             Text="{Binding SerialNumber}" />
@@ -441,16 +483,17 @@
                                 </StackPanel>
                             </TabItem>
 
-                            <TabItem Header="PLC settings">
+                            <!--  PLC settings  -->
+                            <TabItem FontSize="16" Header="PLC settings">
                                 <StackPanel Margin="5,10,0,0">
                                     <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                         <TextBlock
                                             Width="170"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=Enable_Controller}" />
-                                     
+
                                         <mah:ToggleSwitch IsOn="{Binding EnController}" Toggled="ToggleButtonState" />
-                                      
+
                                     </StackPanel>
                                     <StackPanel x:Name="InputArea">
                                         <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
@@ -472,7 +515,7 @@
                                                 Text="{DynamicResource ResourceKey=Port}" />
                                             <mah:NumericUpDown
                                                 x:Name="NumPLCPort"
-                                                Width="80"
+                                                Width="200"
                                                 Height="30"
                                                 Padding="0,3,0,0"
                                                 BorderBrush="LightBlue"
@@ -492,16 +535,23 @@
                                                 TextChanged="TextBox_ParamsChanged" />-->
                                         </StackPanel>
                                         <GroupBox
-                                            Width="370"
+                                            Width="420"
                                             Margin="0,10,0,0"
-                                            HorizontalAlignment="Left">
-                                            <GroupBox.Header>
-                                                <TextBlock HorizontalAlignment="Left" Text="Sensor 1" />
-                                            </GroupBox.Header>
+                                            HorizontalAlignment="Left"
+                                            Header="Sensor 1"
+                                            Style="{StaticResource CustomGroupBoxStyle}">
+
+                                            <!--<GroupBox.Header>
+
+                                                <TextBlock
+                                                    HorizontalAlignment="Left"
+                                                    Foreground="White"
+                                                    Text="Sensor 1" />
+                                            </GroupBox.Header>-->
                                             <StackPanel>
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Delay_Sensor}" />
                                                     <!--<TextBox
@@ -516,11 +566,13 @@
                                                         TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumDelaySensor"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        Maximum="999999"
+                                                        Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="0" />
@@ -532,7 +584,7 @@
 
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Disable_Sensor}" />
                                                     <!--<TextBox
@@ -547,11 +599,13 @@
                                                         TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumDisSensor"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        Maximum="999999"
+                                                        Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="{Binding DisableSensor}" />
@@ -563,7 +617,7 @@
 
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Pulse_Encoder}" />
                                                     <!--<TextBox
@@ -578,11 +632,13 @@
                                                         TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumPulseEncoder"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        Maximum="999999"
+                                                        Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="{Binding PulseEncoder}" />
@@ -594,7 +650,7 @@
 
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
                                                     <!--<TextBox
@@ -609,11 +665,13 @@
                                                         TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumEncoderDia"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        Maximum="999999"
+                                                        Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="{Binding EncoderDiameter}" />
@@ -626,26 +684,28 @@
                                         </GroupBox>
 
                                         <GroupBox
-                                            Width="370"
+                                            Width="420"
                                             Margin="0,10,0,0"
-                                            HorizontalAlignment="Left">
-                                            <GroupBox.Header>
-                                                <TextBlock HorizontalAlignment="Left" Text="Sensor 2" />
-                                            </GroupBox.Header>
+                                            HorizontalAlignment="Left"
+                                            Header="Sensor 2"
+                                            Style="{StaticResource CustomGroupBoxStyle}">
+
                                             <StackPanel>
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Delay_Sensor}" />
 
                                                     <mah:NumericUpDown
                                                         x:Name="NumDelaySensor1"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        Maximum="999999"
+                                                        Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="{Binding DelaySensor1}" />
@@ -657,17 +717,19 @@
 
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Disable_Sensor}" />
 
                                                     <mah:NumericUpDown
                                                         x:Name="NumDisSensor1"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        Maximum="999999"
+                                                        Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="{Binding DisableSensor1}" />
@@ -679,17 +741,19 @@
 
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Pulse_Encoder}" />
 
                                                     <mah:NumericUpDown
                                                         x:Name="NumPulseEncoder1"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        Maximum="999999"
+                                                        Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="{Binding PulseEncoder1}" />
@@ -701,18 +765,17 @@
 
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
-                                                        Width="170"
+                                                        Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
                                                     <mah:NumericUpDown
                                                         x:Name="NumEncoderDia1"
-                                                        Width="80"
+                                                        Width="200"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
-                                                        Interval="0.1"
-                                                        Maximum="9999"
+                                                        Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
                                                         StringFormat="C2"
@@ -729,7 +792,8 @@
                                 </StackPanel>
 
                             </TabItem>
-                            <TabItem Header="Verify and print send mode settings">
+                            <TabItem FontSize="16" Header="Verify and print settings">
+
                                 <!--<GroupBox Grid.Column="1">-->
                                 <!--<GroupBox.Header>
                                         <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Verify_and_Print_POD_Send_Mode}" />
@@ -741,10 +805,15 @@
                                     Orientation="Vertical">
 
                                     <!--  Gr Mode  -->
-                                    <GroupBox Width="auto" Height="70">
-                                        <GroupBox.Header>
+                                    <GroupBox
+                                        Width="420"
+                                        Height="70"
+                                        HorizontalAlignment="Left"
+                                        Header="Send mode"
+                                        Style="{StaticResource CustomGroupBoxStyle}">
+                                        <!--<GroupBox.Header>
                                             <TextBlock FontWeight="Normal" Text="{DynamicResource ResourceKey=Send_Mode}" />
-                                        </GroupBox.Header>
+                                        </GroupBox.Header>-->
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <RadioButton
                                                 x:Name="RadBasic"
@@ -767,66 +836,144 @@
                                         </StackPanel>
                                     </GroupBox>
 
-                                    <!--  Print Fields  -->
-                                    <StackPanel
-                                        Margin="0,10,0,10"
-                                        IsEnabled="{Binding ElementName=RadCompare, Path=IsChecked}"
-                                        Orientation="Horizontal">
-                                        <TextBlock Width="100" Text="{DynamicResource ResourceKey=Print_Fields}" />
-                                        <TextBox
-                                            x:Name="TextBoxPOD"
-                                            Width="200"
-                                            Height="30"
-                                            Margin="0,0,10,0"
-                                            BorderBrush="LightBlue"
-                                            Text="{Binding FormatedPOD}" />
-                                        <Button
-                                            Width="70"
-                                            Height="30"
-                                            HorizontalAlignment="Right"
-                                            Click="SelectPrintField"
-                                            Content="{DynamicResource ResourceKey=Select}"
-                                            Style="{StaticResource ModernButton2}" />
-                                    </StackPanel>
+                                    <GroupBox Header="Field settings" Width="420" HorizontalAlignment="Left" Style="{StaticResource CustomGroupBoxStyle}">
+                                        <StackPanel>
+                                            <!--  Print Fields  -->
+                                            <StackPanel
+                                                Margin="0,10,0,10"
+                                                IsEnabled="{Binding ElementName=RadCompare, Path=IsChecked}"
+                                                Orientation="Horizontal">
+                                                <TextBlock Width="100" Text="{DynamicResource ResourceKey=Print_Fields}" />
+                                                <TextBox
+                                                    x:Name="TextBoxPOD"
+                                                    Width="200"
+                                                    Height="30"
+                                                    Margin="0,0,10,0"
+                                                    FontSize="16"
+                                                    Text="{Binding FormatedPOD}" />
+                                                <Button
+                                                    Width="70"
+                                                    Height="30"
+                                                    HorizontalAlignment="Right"
+                                                    Click="SelectPrintField"
+                                                    Content="{DynamicResource ResourceKey=Select}"
+                                                    FontSize="12" />
+                                            </StackPanel>
 
-                                    <!--  Error Print Fields  -->
-                                    <StackPanel Margin="0,10,0,10" Orientation="Horizontal">
-                                        <TextBlock Width="100" Text="{DynamicResource ResourceKey=Error_Field}" />
+                                            <!--  Error Print Fields  -->
+                                            <StackPanel Margin="0,10,0,10" Orientation="Horizontal">
+                                                <TextBlock Width="100" Text="{DynamicResource ResourceKey=Error_Field}" />
 
-                                        <TextBox
-                                            x:Name="TextBoxErrorField"
-                                            Width="200"
-                                            Height="30"
-                                            Margin="0,0,10,0"
-                                            BorderBrush="LightBlue"
-                                            Text="{Binding FailedDataSentToPrinter}"
-                                            TextChanged="TextBox_ParamsChanged" />
+                                                <TextBox
+                                                    x:Name="TextBoxErrorField"
+                                                    Width="200"
+                                                    Height="30"
+                                                    Margin="0,0,10,0"
+                                                    FontSize="16"
+                                                    Text="{Binding FailedDataSentToPrinter}"
+                                                    TextChanged="TextBox_ParamsChanged" />
 
-                                        <Button
-                                            Width="70"
-                                            Height="30"
-                                            HorizontalAlignment="Right"
-                                            Click="DefaultClick"
-                                            Content="{DynamicResource ResourceKey=Default}"
-                                            Style="{StaticResource ModernButton2}" />
-                                    </StackPanel>
+                                                <Button
+                                                    Width="70"
+                                                    Height="30"
+                                                    HorizontalAlignment="Right"
+                                                    Click="DefaultClick"
+                                                    Content="{DynamicResource ResourceKey=Default}"
+                                                    FontSize="12" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </GroupBox>
+
                                 </StackPanel>
-                                <!--</GroupBox>-->
                             </TabItem>
-                            <TabItem Header="Scanner settings">
+
+                            <!--  Scanner Settings  -->
+                            <TabItem FontSize="16" Header="Scanner settings">
                                 <StackPanel>
+
+                                    <!--  Com  -->
                                     <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
                                             Text="COM Port: " />
-                                        <ComboBox Width="100" Height="40">
-                                            <ComboBoxItem>COM1</ComboBoxItem>
+                                        <ComboBox
+                                            Width="200"
+                                            Height="30"
+                                            FontSize="16">
+                                            <ComboBoxItem IsSelected="True">COM1</ComboBoxItem>
                                             <ComboBoxItem>COM2</ComboBoxItem>
                                             <ComboBoxItem>COM3</ComboBoxItem>
                                             <ComboBoxItem>COM4</ComboBoxItem>
                                         </ComboBox>
                                     </StackPanel>
+
+                                    <!--  Bps  -->
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="Bit per second: " />
+                                        <ComboBox
+                                            Width="200"
+                                            Height="30"
+                                            FontSize="16">
+                                            <ComboBoxItem IsSelected="True">9600</ComboBoxItem>
+                                            <ComboBoxItem>19200</ComboBoxItem>
+                                            <ComboBoxItem>38400</ComboBoxItem>
+                                            <ComboBoxItem>57600</ComboBoxItem>
+                                            <ComboBoxItem>115200</ComboBoxItem>
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <!--  Data bits  -->
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="Data bits: " />
+                                        <ComboBox
+                                            Width="200"
+                                            Height="30"
+                                            FontSize="16">
+                                            <ComboBoxItem IsSelected="True">7</ComboBoxItem>
+                                            <ComboBoxItem>8</ComboBoxItem>
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <!--  Parity  -->
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="Data bits: " />
+                                        <ComboBox
+                                            Width="200"
+                                            Height="30"
+                                            FontSize="16">
+                                            <ComboBoxItem IsSelected="True">None</ComboBoxItem>
+                                            <ComboBoxItem>Odd</ComboBoxItem>
+                                            <ComboBoxItem>Even</ComboBoxItem>
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <!--  Stop bits  -->
+                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="110"
+                                            VerticalAlignment="Center"
+                                            Text="Stop bits: " />
+                                        <ComboBox
+                                            Width="200"
+                                            Height="30"
+                                            FontSize="16">
+                                            <ComboBoxItem IsSelected="True">1</ComboBoxItem>
+                                            <ComboBoxItem>2</ComboBoxItem>
+
+                                        </ComboBox>
+                                    </StackPanel>
+
+
                                 </StackPanel>
                             </TabItem>
 

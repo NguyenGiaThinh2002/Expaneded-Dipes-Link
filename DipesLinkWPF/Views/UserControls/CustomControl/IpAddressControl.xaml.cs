@@ -1,8 +1,8 @@
-﻿using DipesLink.Views.SubWindows;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace DipesLink.Views.UserControls.CustomControl
 {
@@ -36,12 +36,39 @@ namespace DipesLink.Views.UserControls.CustomControl
             TextBoxPart2.GotFocus += TextBoxPart_GotFocus;
             TextBoxPart3.GotFocus += TextBoxPart_GotFocus;
             TextBoxPart4.GotFocus += TextBoxPart_GotFocus;
+
+            TextBoxPart1.PreviewMouseDown += TextBoxPart_PreviewMouseDown;
+            TextBoxPart2.PreviewMouseDown += TextBoxPart_PreviewMouseDown;
+            TextBoxPart3.PreviewMouseDown += TextBoxPart_PreviewMouseDown;
+            TextBoxPart4.PreviewMouseDown += TextBoxPart_PreviewMouseDown;
+
+
+        }
+
+        private void TextBoxPart_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var tb = (TextBox)sender;
+            if (!tb.IsFocused)
+            {
+                tb.Focus(); //Make sure the TextBox gets focus
+                e.Handled = true; //Prevent mouse click from setting the cursor position
+            }
         }
 
         private void TextBoxPart_GotFocus(object sender, RoutedEventArgs e)
         {
-            var tb = (TextBox)sender;
-            tb.SelectAll();
+            try
+            {
+                var tb = (TextBox)sender;
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    tb.SelectAll();
+                }), DispatcherPriority.Background); //Must use Dispatcher.BeginInvoke to select all text
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
         }
 
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
@@ -116,7 +143,7 @@ namespace DipesLink.Views.UserControls.CustomControl
                         {
                             tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                             
-                        }), System.Windows.Threading.DispatcherPriority.Normal);
+                        }), DispatcherPriority.Normal);
                     }
                     else if (e.Key == Key.Space || e.Key == Key.Enter && tb.Text.Length == 3)
                     { 
@@ -125,11 +152,9 @@ namespace DipesLink.Views.UserControls.CustomControl
                         {
                             tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                            
-                        }), System.Windows.Threading.DispatcherPriority.Normal);
+                        }), DispatcherPriority.Normal);
                     }
-                  
                 }
-
             }
             catch (Exception ex)
             {

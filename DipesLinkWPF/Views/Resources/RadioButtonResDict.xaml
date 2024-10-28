@@ -139,6 +139,7 @@
         <Setter Property="Background" Value="{StaticResource RadioButton.Static.Background}" />
         <Setter Property="BorderBrush" Value="{StaticResource RadioButton.Static.Border}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
