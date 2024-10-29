@@ -317,6 +317,7 @@ namespace DipesLink_SDK_Cameras
                 Text = Regex.Replace(strResult, @"\r\n", ""),  // Replace special characters in camera data by symbol ';'
                 ImageBytes = GetImageWithFocusRectangle(imageResult, imageGraphics),
                 Image = new(SharedFunctions.GetImageFromImageByte(imageData)),
+                Device = "Camera"
             };
             SharedFunctions.PrintConsoleMessage("Image size: " + detectModel.ImageBytes.Length.ToString());
             SharedEvents.RaiseOnCameraReadDataChangeEvent(detectModel); // Send data via Event

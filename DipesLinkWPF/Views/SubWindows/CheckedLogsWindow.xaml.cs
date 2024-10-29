@@ -15,6 +15,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using static DipesLink.Views.Enums.ViewEnums;
 
 namespace DipesLink.Views.SubWindows
 {
@@ -646,8 +647,34 @@ namespace DipesLink.Views.SubWindows
 
         private void ButtonRePrint_Click(object sender, RoutedEventArgs e)
         {
-            var currentJob = CurrentViewModel<JobOverview>();
-            currentJob?.RaiseReprint(currentJob.Index);
+            var isReprint = CusMsgBox.Show(
+                    LanguageModel.GetLanguage("ReprintConfirmation"),
+                    LanguageModel.GetLanguage("InfoDialogCaption"),
+                    ButtonStyleMessageBox.YesNo,
+                    ImageStyleMessageBox.Info);
+            if (isReprint.Result)
+            {
+                var currentJob = CurrentViewModel<JobOverview>();
+                currentJob?.RaiseReprint(currentJob.Index);
+                this.Close();
+            }
+         
+        }
+
+        private void ButtonRecheck_Click(object sender, RoutedEventArgs e)
+        {
+            // thinh dang lam
+            var isRechecked = CusMsgBox.Show(
+                    LanguageModel.GetLanguage("RecheckConfirmation"),
+                    LanguageModel.GetLanguage("InfoDialogCaption"),
+                    ButtonStyleMessageBox.YesNo,
+                    ImageStyleMessageBox.Info);
+            if(isRechecked.Result)
+            {
+                var currentJob = CurrentViewModel<JobOverview>();
+                currentJob?.RaiseRecheck(currentJob.Index);
+                this.Close();
+            }      
         }
 
         private void Search_KeyDown(object sender, KeyEventArgs e)

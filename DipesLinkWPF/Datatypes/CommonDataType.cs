@@ -15,7 +15,8 @@
             Operation,
             Printer,
             Camera,
-            Database
+            Database,
+            Scanner
         }
     
     }

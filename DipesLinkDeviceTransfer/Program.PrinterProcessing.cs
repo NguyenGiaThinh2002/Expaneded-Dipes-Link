@@ -6,6 +6,8 @@ using SharedProgram.Shared;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
+using System.Windows.Shapes;
 using static SharedProgram.DataTypes.CommonDataType;
 using PrinterStatus = SharedProgram.DataTypes.CommonDataType.PrinterStatus;
 namespace DipesLinkDeviceTransfer
@@ -20,11 +22,13 @@ namespace DipesLinkDeviceTransfer
         private ConcurrentDictionary<string, int> _Emergency = new();
         private readonly object _PrintedResponseLocker = new();
         private bool _IsPrintedResponse = false;
+        private bool _IsRechecked = false;
         private readonly object _CheckLocker = new();
         private ComparisonResult _CheckedResult = ComparisonResult.Valid;
         private bool _IsCheckedWait = true;
         public event EventHandler? OnReceiveVerifyDataEvent;
         private CancellationTokenSource? _VirtualCTS;
+        private PrinterSettingsModel _PrinterSettingsModel;
         #endregion Declarations
 
         public void PrinterEventInit()
@@ -81,7 +85,6 @@ namespace DipesLinkDeviceTransfer
                 return CheckCondition.NotConnectCamera;
             }
 #endif
-
             if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
             {
                 SharedFunctions.PrintConsoleMessage(SharedValues.SelectedJob.PrinterSeries.ToString());
@@ -107,6 +110,45 @@ namespace DipesLinkDeviceTransfer
             return CheckCondition.Success;
         }
 
+        private CheckPrinterSettings CheckAllSettingsPrinter(string printerIP)
+        {
+            _PrinterSettingsModel = SharedFunctions.GetSettingsPrinter(printerIP);
+            if (!_PrinterSettingsModel.EnablePOD)
+            {
+                return CheckPrinterSettings.PODNotEnabled;
+            }
+
+            if (!_PrinterSettingsModel.ResponsePODCommand)
+            {
+                return CheckPrinterSettings.ResponsePODCommandNotEnable;
+            }
+
+            if (!_PrinterSettingsModel.ResponsePODData)
+            {
+                return CheckPrinterSettings.ResponsePODDataNotEnable;
+            }
+            // 0: json, 1: Raw data, 2: Customise
+            if (_PrinterSettingsModel.PodDataType != 1)
+            {
+                return CheckPrinterSettings.NotRawData;
+            }
+            // 0:print all, 1:print last, 2 print last and repeat
+            var podMode = SharedValues.SelectedJob.JobType == JobType.AfterProduction ? 0 : 1;
+            if (_PrinterSettingsModel.PodMode != podMode)
+            {
+                return CheckPrinterSettings.PODMode;
+            }
+
+            if (!_PrinterSettingsModel.EnableMonitor)
+            {
+                return CheckPrinterSettings.MonitorNotEnable;
+            }
+
+            return CheckPrinterSettings.Success;
+        }
+
+
+
         public void StartProcess()
         {
             try
@@ -115,6 +157,7 @@ namespace DipesLinkDeviceTransfer
                 if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
                 {
                     SharedFunctions.PrintConsoleMessage("Notify Error: The system has started !");
+                    _IsRechecked = false;
                     NotificationProcess(NotifyType.StartSync);
                     return;
                 }
@@ -136,6 +179,7 @@ namespace DipesLinkDeviceTransfer
                 }
 
                 CheckCondition checkCondition = CheckAllTheConditions();
+
                 if (checkCondition != CheckCondition.Success)
                 {
                     switch (checkCondition)
@@ -192,10 +236,45 @@ namespace DipesLinkDeviceTransfer
                     return;
                 }
 
+                bool isNeedToCheckPrinter = SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && SharedValues.SelectedJob.CompareType == CompareType.Database;
+
+                CheckPrinterSettings checkPrinterSettings = CheckAllSettingsPrinter(DeviceSharedValues.PrinterIP);
+                //&& SharedValues.SelectedJob.IsCheckPrinterSettingsEnabled
+                if (checkPrinterSettings != CheckPrinterSettings.Success && isNeedToCheckPrinter && DeviceSharedValues.IsCheckPrinterSettingsEnabled && !_IsRechecked)
+                {
+                    switch (checkPrinterSettings)
+                    {
+                        case CheckPrinterSettings.NotRawData:
+                            NotificationProcess(NotifyType.NotRawData);
+                            break;
+                        case CheckPrinterSettings.PODNotEnabled:
+                            NotificationProcess(NotifyType.PODNotEnabled);
+                            break;
+                        case CheckPrinterSettings.ResponsePODDataNotEnable:
+                            NotificationProcess(NotifyType.ResponsePODDataNotEnable);
+                            break;
+                        case CheckPrinterSettings.ResponsePODCommandNotEnable:
+                            NotificationProcess(NotifyType.ResponsePODCommandNotEnable);
+                            break;
+                        case CheckPrinterSettings.MonitorNotEnable:
+                            NotificationProcess(NotifyType.MonitorNotEnable);
+                            break;
+                        case CheckPrinterSettings.PODMode:
+                            if (SharedValues.SelectedJob.JobType == JobType.AfterProduction)
+                                NotificationProcess(NotifyType.PODModeMustBePrintAll);
+                            else
+                                NotificationProcess(NotifyType.PODModeMustBePrintLast);
+                            break;
+                        default:
+                            break;
+                    }
+                    return;
+                }
+
                 SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
                 _QueueBufferPrinterReceivedData.Clear();
                 if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
-                    SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+                    SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && !_IsRechecked)
                 {
                     SharedValues.OperStatus = OperationStatus.Processing;
                     if (RynanRPrinterDeviceHandler != null)
@@ -287,6 +366,27 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
+        private void Recheck()
+        {
+            //if (SharedValues.SelectedJob == null) return;
+            //if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
+            //{
+            //    SharedFunctions.PrintConsoleMessage("Notify Error: The system has started !");
+            //    NotificationProcess(NotifyType.StartSync);
+            //    return;
+            //}
+            // thinh dang lam
+            if (BarcodeScannerHandler == null || !BarcodeScannerHandler.IsConnected())
+            {
+                NotificationProcess(NotifyType.NotConnectScanner);
+            }
+            else
+            {
+                _IsRechecked = true;
+                StartProcess();
+            }
+
+        }
         private static void SaveJobChangedSettings(JobModel selectedJob)
         {
 
@@ -313,6 +413,8 @@ namespace DipesLinkDeviceTransfer
             {
                 KillTThreadSendWorkingDataToPrinter();
                 _QueueBufferPrinterReceivedData.Clear();
+                _QueueBufferCameraReceivedData.Clear();
+                _QueueBufferScannerReceivedData.Clear();
                 ClearBufferUpdateUI();
 
                 if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
@@ -338,6 +440,8 @@ namespace DipesLinkDeviceTransfer
                 _CTS_CompareAction.Cancel();
                 _QueueBufferCameraReceivedData.Enqueue(null);
                 _QueueBufferPODDataCompared.Enqueue(null);
+                _QueueBufferScannerReceivedData.Enqueue(null);
+                _QueueBufferScannerDataCompared.Enqueue(null);
                 _VirtualCTS?.Cancel();
 
                 SharedValues.OperStatus = OperationStatus.Stopped;
@@ -353,6 +457,7 @@ namespace DipesLinkDeviceTransfer
                     }
                 }
             });
+            _IsRechecked = false;
         }
 
         private void ClearBufferUpdateUI()
@@ -662,13 +767,13 @@ namespace DipesLinkDeviceTransfer
         {
             try
             {
-                for(int i=0;i< podCommand.Length; i++)
+                for (int i = 0; i < podCommand.Length; i++)
                 {
-                    if (i == 0)podResponse.Command = podCommand[i]; // Command (STAR, STOP,..)
-                    if (i == 1)podResponse.Status = podCommand[i]; // OK . Ready
-                    if(i == 2)podResponse.Error = podCommand[i]; // Error code
+                    if (i == 0) podResponse.Command = podCommand[i]; // Command (STAR, STOP,..)
+                    if (i == 1) podResponse.Status = podCommand[i]; // OK . Ready
+                    if (i == 2) podResponse.Error = podCommand[i]; // Error code
                 }
-               
+
                 if (podResponse.Status != null && (podResponse.Status == "OK" || podResponse.Status == "READY"))
                 {
                     // If not Verify and Print : Send POD First
@@ -793,21 +898,21 @@ namespace DipesLinkDeviceTransfer
                 if (podResponse.Status == "Stop" &&
                     !flagStoppedMonitor &&
                     (SharedValues.OperStatus == OperationStatus.Running) &&
-                    SharedValues.SelectedJob.CompareType == CompareType.Database && 
+                    SharedValues.SelectedJob.CompareType == CompareType.Database &&
                     SharedValues.SelectedJob.JobType != JobType.StandAlone)
                 {
                     flagStoppedMonitor = true;
                     await Task.Run(async () =>
                     {
                         await Task.Delay(1000); // waiting 1s for transfer states
-                        if(SharedValues.OperStatus == OperationStatus.Running)
+                        if (SharedValues.OperStatus == OperationStatus.Running)
                         {
                             NotificationProcess(NotifyType.PrinterSuddenlyStop);
                         }
                     });
-                   
+
                     await StopProcessAsync();
-                    
+
                 }
 
                 switch (podResponse.Status)
@@ -838,9 +943,11 @@ namespace DipesLinkDeviceTransfer
                     case "Error":
                         _PrinterStatus = PrinterStatus.Error;
                         break;
-                    case "Disable": _PrinterStatus = PrinterStatus.Disable;
+                    case "Disable":
+                        _PrinterStatus = PrinterStatus.Disable;
                         break;
-                    case "": _PrinterStatus = PrinterStatus.Null; 
+                    case "":
+                        _PrinterStatus = PrinterStatus.Null;
                         break;
                     default:
                         break;
@@ -883,7 +990,7 @@ namespace DipesLinkDeviceTransfer
                     {
                         if (token.IsCancellationRequested)
                         {
-                            if (_QueueBufferCameraReceivedData.IsEmpty)
+                            if (_QueueBufferCameraReceivedData.IsEmpty && _QueueBufferScannerReceivedData.IsEmpty)
                                 token.ThrowIfCancellationRequested();
                         }
                         else
@@ -939,8 +1046,27 @@ namespace DipesLinkDeviceTransfer
                             }
                         }
 
+                        // thinh dang lam
+                        DetectModel? detectModel = null;
 
-                        _ = _QueueBufferCameraReceivedData.TryDequeue(out DetectModel? detectModel);
+                        if (!_QueueBufferScannerReceivedData.IsEmpty && _IsRechecked)
+                        {
+                            _ = _QueueBufferScannerReceivedData.TryDequeue(out detectModel);
+                        }
+                        else if (!_IsRechecked)
+                        {
+                            _ = _QueueBufferCameraReceivedData.TryDequeue(out detectModel);
+                        }
+
+                        //if (!_QueueBufferScannerReceivedData.IsEmpty && _IsRechecked)
+                        //{
+                        //    _ = _QueueBufferScannerReceivedData.TryDequeue(out detectModel);
+                        //}
+                        //else if (!_QueueBufferCameraReceivedData.IsEmpty && !_IsRechecked)
+                        //{
+                        //    _ = _QueueBufferCameraReceivedData.TryDequeue(out detectModel);
+                        //}
+
                         int compareIndex = _StartIndex + TotalChecked;
                         if (detectModel != null)
                         {
@@ -1038,7 +1164,15 @@ namespace DipesLinkDeviceTransfer
                                 }
                             }
                             // Add result compare to buffer
-                            _QueueBufferCameraDataCompared.Enqueue(detectModel);
+                            if (_QueueBufferCameraReceivedData.IsEmpty)
+                            {
+                                _QueueBufferScannerDataCompared.Enqueue(detectModel);
+                            }
+                            else
+                            {
+                                _QueueBufferCameraDataCompared.Enqueue(detectModel);
+                            }
+                            // _QueueBufferCameraDataCompared.Enqueue(detectModel);
                         }
                         await Task.Delay(1, token);
                     }
@@ -1050,7 +1184,7 @@ namespace DipesLinkDeviceTransfer
 #endif
                     _CTS_UIUpdateCheckedResult?.Cancel();
                     _QueueBufferCameraDataCompared.Enqueue(null);
-
+                    _QueueBufferScannerDataCompared.Enqueue(null);
                     // Reset Number sent/received data and 
                     NumberOfSentPrinter = 0;
                     ReceivedCode = 0;
@@ -1345,7 +1479,7 @@ namespace DipesLinkDeviceTransfer
                                 }
 
                                 //Cam Check completed Release key to send POD
-                                lock (_PrintLocker) 
+                                lock (_PrintLocker)
                                 {
                                     _IsPrintedWait = false;
                                     _PrintedResult = checkedResult;
@@ -1422,10 +1556,18 @@ namespace DipesLinkDeviceTransfer
                     while (true)
                     {
                         if (token.IsCancellationRequested)
-                            if (_QueueBufferCameraDataCompared.IsEmpty)
+                            if (_QueueBufferCameraDataCompared.IsEmpty && _QueueBufferScannerDataCompared.IsEmpty)
                                 token.ThrowIfCancellationRequested();
 
-                        _ = _QueueBufferCameraDataCompared.TryDequeue(out DetectModel? detectModel);
+                        DetectModel? detectModel = null;
+                        if (_QueueBufferCameraDataCompared.IsEmpty)
+                        {
+                            _ = _QueueBufferScannerDataCompared.TryDequeue(out detectModel);
+                        }
+                        else
+                        {
+                            _ = _QueueBufferCameraDataCompared.TryDequeue(out detectModel);
+                        }
                         // SharedFunctions.PrintConsoleMessage($"_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count().ToString());
                         if (detectModel == null) { await Task.Delay(1); continue; };
                         // Console.WriteLine("_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count);
@@ -1441,7 +1583,7 @@ namespace DipesLinkDeviceTransfer
                             }
                         }
                         // Get result 
-                        strResult = new string[] { detectModel.Index + "", detectModel.Text, detectModel.CompareResult.ToString(), (detectModel.CompareTime) + " ms", detectModel.ProcessingDateTime };
+                        strResult = new string[] { detectModel.Index + "", detectModel.Text, detectModel.CompareResult.ToString(), (detectModel.CompareTime) + " ms", detectModel.ProcessingDateTime, detectModel.Device };
                         strResultCheckList.Add(strResult);
 
                         lock (_SyncObjCheckedResultList)
@@ -1590,7 +1732,7 @@ namespace DipesLinkDeviceTransfer
                 SharedFunctions.PrintConsoleMessage(ex.Message);
 
             }
-           
+
         }
 
         private void ReleaseIPCTask()
@@ -1599,7 +1741,7 @@ namespace DipesLinkDeviceTransfer
             _CTS_SendStsCheck?.Cancel();
             _CTS_SendData?.Cancel();
             SharedFunctions.PrintConsoleMessage("Thread send IPC was stoppped!");
-        
+
         }
 
         public void SendCompleteDataToUIAsync()

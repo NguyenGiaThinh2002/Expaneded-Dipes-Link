@@ -1,6 +1,7 @@
 ﻿using SharedProgram.Models;
 using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,13 @@ namespace SharedProgram.DeviceTransfer
         public static string ControllerIP = "";
         public static double ControllerPort = 0;
 
+        public static string ComName;
+        public static int BitPerSeconds;
+        public static Parity Parity;
+        public static int DataBits;
+        public static StopBits StopBits;
+
+        public static bool IsCheckPrinterSettingsEnabled;
         public static string DelaySensor = "";
         public static string DisableSensor = "";
         public static string PulseEncoder = "";

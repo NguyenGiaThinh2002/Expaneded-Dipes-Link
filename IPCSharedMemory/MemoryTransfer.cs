@@ -114,6 +114,20 @@ namespace IPCSharedMemory
             catch (Exception) { }
         }
 
+        public static void SendScannerStatusToUI(IPCSharedHelper? ipc, int index, ScannerStatus scannerSts)
+        {
+            try
+            {
+                byte[] command = {
+                    (byte)SharedMemoryCommandType.DeviceCommand ,
+                    (byte)index,
+                    (byte)SharedMemoryType.ScannerStatus,
+                    (byte)scannerSts
+                };
+                SendCommandToUI(ipc, command);
+            }
+            catch (Exception) { }
+        }
 
         public static void SendDatabaseToUIFirstTime(IPCSharedHelper? ipc,int index, byte[] data)
         {

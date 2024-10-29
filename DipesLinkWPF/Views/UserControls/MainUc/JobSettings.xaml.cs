@@ -3,8 +3,12 @@ using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.CustomControl;
+using MahApps.Metro.Controls;
 using SharedProgram.Models;
+using System;
 using System.Diagnostics;
+using System.IO.Ports;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -19,11 +23,11 @@ namespace DipesLink.Views.UserControls.MainUc
     public partial class JobSettings : UserControl
     {
         public static bool IsInitializing = true;
-
+        private bool _firstLoad = false;
         public JobSettings()
         {
             InitializeComponent();
-            EventRegister();
+            EventRegister();  
         }
 
         private void EventRegister()
@@ -34,6 +38,300 @@ namespace DipesLink.Views.UserControls.MainUc
             TextBoxControllerIP.TextChanged += TextBox_ParamsChanged;
             ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange;
             ViewModelSharedEvents.OnChangeJobStatus += JobStatusChanged;
+
+            comboBoxComName.SelectionChanged += AdjustData;
+            comboBoxBitPerSeconds.SelectionChanged += AdjustData;
+            comboBoxDataBits.SelectionChanged += AdjustData;
+            comboBoxParity.SelectionChanged += AdjustData;
+            comboBoxStopBits.SelectionChanged += AdjustData;
+        }
+        // UI NEW CODE 
+        private void AdjustData(object sender, EventArgs e)
+        {
+            if (IsInitializing) return;
+            if (sender is not ComboBox comboBox) return;
+
+                var vm = CurrentViewModel<MainViewModel>();
+                if (vm == null) return;
+                if (vm.ConnectParamsList == null) return;
+                // vm.AutoSaveConnectionSetting(CurrentIndex());
+                if (sender == comboBoxComName)
+                {
+                    switch (comboBoxComName.SelectedIndex)
+                    {
+                        case 0:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM3"))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM3";
+                            }
+                            break;
+                        case 1:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM4"))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM4";
+                            }
+                            break;
+                        case 2:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM5"))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM5";
+                            }
+                            break;
+                        case 3:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM6"))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM6";
+                            }
+                            break;
+                        case 4:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM7"))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM7";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    InitSerialDivComName(vm);
+                }
+                if (sender == comboBoxBitPerSeconds)
+                {
+                    switch (comboBoxBitPerSeconds.SelectedIndex)
+                    {
+                        case 0:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 9600))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 9600;
+                                //Shared.SerialDevController.
+                            }
+                            break;
+                        case 1:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 19200))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 19200;
+                            }
+                            break;
+                        case 2:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 38400))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 38400;
+                            }
+                            break;
+                        case 3:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 57600))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 57600;
+                            }
+                            break;
+                        case 4:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 115200))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 115200;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    InitSerialDivBitPerSecond(vm);
+                }
+
+                if (sender == comboBoxDataBits)
+                {
+                    switch (comboBoxDataBits.SelectedIndex)
+                    {
+                        case 0:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].DataBits == 7))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].DataBits = 7;
+                            }
+                            break;
+                        case 1:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].DataBits == 8))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].DataBits = 8;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    InitSerialDivDataBits(vm);
+                }
+
+                if (sender == comboBoxParity)
+                {
+                    switch (comboBoxParity.SelectedIndex)
+                    {
+                        case 0:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].Parity == Parity.None))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].Parity = Parity.None;
+                            }
+                            break;
+                        case 1:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].Parity == Parity.Odd))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].Parity = Parity.Odd;
+                            }
+                            break;
+                        case 2:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].Parity == Parity.Even))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].Parity = Parity.Even;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    InitSerialDivParity(vm);
+                }
+
+                if (sender == comboBoxStopBits)
+                {
+                    switch (comboBoxStopBits.SelectedIndex)
+                    {
+                        case 0:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].StopBits == StopBits.One))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].StopBits = StopBits.One;
+                            }
+                            break;
+                        case 1:
+                            if (!(vm.ConnectParamsList[CurrentIndex()].StopBits == StopBits.Two))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].StopBits = StopBits.Two;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    InitSerialDivStopBits(vm);
+                }
+                vm.AutoSaveConnectionSetting(CurrentIndex());
+        }
+
+        private void UpdateCheckAllPrinterSettings(MainViewModel vm)
+        {
+            CheckAllPrinterSettings.IsOn = vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled;
+        }
+
+        private void UpdateSerialDevComboBoxValues(MainViewModel vm)
+        {
+            InitSerialDivComName(vm);
+            InitSerialDivBitPerSecond(vm);
+            InitSerialDivDataBits(vm);
+            InitSerialDivParity(vm);
+            InitSerialDivStopBits(vm);
+        }
+
+        private void InitSerialDivComName(MainViewModel vm)
+        {
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            switch (vm.ConnectParamsList[CurrentIndex()].ComName)
+            {
+                case "COM3":
+                    comboBoxComName.SelectedIndex = 0;
+                    break;
+                case "COM4":
+                    comboBoxComName.SelectedIndex = 1;
+                    break;
+                case "COM5":
+                    comboBoxComName.SelectedIndex = 2;
+                    break;
+                case "COM6":
+                    comboBoxComName.SelectedIndex = 3;
+                    break;
+                case "COM7":
+                    comboBoxComName.SelectedIndex = 4;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void InitSerialDivBitPerSecond(MainViewModel vm)
+        {
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            switch (vm.ConnectParamsList[CurrentIndex()].BitPerSeconds)
+            {
+                case 9600:
+                    comboBoxBitPerSeconds.SelectedIndex = 0;
+                    break;
+                case 19200:
+                    comboBoxBitPerSeconds.SelectedIndex = 1;
+                    break;
+                case 38400:
+                    comboBoxBitPerSeconds.SelectedIndex = 2;
+                    break;
+                case 57600:
+                    comboBoxBitPerSeconds.SelectedIndex = 3;
+                    break;
+                case 115200:
+                    comboBoxBitPerSeconds.SelectedIndex = 4;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void InitSerialDivDataBits(MainViewModel vm)
+        {
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            switch (vm.ConnectParamsList[CurrentIndex()].DataBits)
+            {
+                case 7:
+                    comboBoxDataBits.SelectedIndex = 0;
+                    break;
+                case 8:
+                    comboBoxDataBits.SelectedIndex = 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void InitSerialDivParity(MainViewModel vm)
+        {
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            switch (vm.ConnectParamsList[CurrentIndex()].Parity)
+            {
+                case Parity.None:
+                    comboBoxParity.SelectedIndex = 0;
+                    break;
+                case Parity.Odd:
+                    comboBoxParity.SelectedIndex = 1;
+                    break;
+                case Parity.Even:
+                    comboBoxParity.SelectedIndex = 2;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void InitSerialDivStopBits(MainViewModel vm)
+        {
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            switch (vm.ConnectParamsList[CurrentIndex()].StopBits)
+            {
+                case StopBits.One:
+                    comboBoxStopBits.SelectedIndex = 0;
+                    break;
+                case StopBits.Two:
+                    comboBoxStopBits.SelectedIndex = 1;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void JobStatusChanged(object? sender, EventArgs e)
@@ -62,6 +360,8 @@ namespace DipesLink.Views.UserControls.MainUc
                 vm.SaveConnectionSetting();
                 InputArea.IsEnabled = vm.ConnectParamsList[CurrentIndex()].EnController;
                 UpdateSendModeVerifyAndPrint(vm);
+                UpdateSerialDevComboBoxValues(vm);
+                UpdateCheckAllPrinterSettings(vm);
             }
             catch (Exception)
             {
@@ -89,6 +389,8 @@ namespace DipesLink.Views.UserControls.MainUc
                 vm?.SelectionChangeSystemSettings(CurrentIndex());
                 vm?.LockUI(CurrentIndex());// Lock UI when running
                 UpdateSendModeVerifyAndPrint(vm);
+                UpdateSerialDevComboBoxValues(vm);
+                UpdateCheckAllPrinterSettings(vm);
             }
             catch (Exception)
             {
@@ -524,6 +826,25 @@ namespace DipesLink.Views.UserControls.MainUc
             if (sender is HandyControl.Controls.NumericUpDown numericUpdown)
             {
                 NumUpdownParamsHandler(numericUpdown);
+            }
+        }
+
+        private void CheckAllPrinterSettings_Toggled(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            var vm = CurrentViewModel<MainViewModel>();
+            if (vm == null) return;
+            if (toggleSwitch != null)
+            {
+                if (toggleSwitch.IsOn == true)
+                {
+                    vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = true;                  
+                }
+                else
+                {
+                    vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = false;
+                }
+                vm.AutoSaveConnectionSetting(CurrentIndex());
             }
         }
     }

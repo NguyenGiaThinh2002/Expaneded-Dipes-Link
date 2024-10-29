@@ -11,7 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     d:Background="WhiteSmoke"
-    d:DesignHeight="1080"
+    d:DesignHeight="700"
     d:DesignWidth="1150"
     mc:Ignorable="d">
     <!--<UserControl.DataContext>
@@ -39,7 +39,6 @@
             </ResourceDictionary.MergedDictionaries>
             <converter:RadioButtonToBool x:Key="CoupRadToBol" />
             <converter:BoolToRadioButtonConverter x:Key="BoolToRadioButtonConverter" />
-
 
 
             <!--  Define a style for the GroupBox  -->
@@ -285,7 +284,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <!--  Content setting  -->
-                    <Grid
+                    <!--<Grid
                         Grid.Row="1"
                         Grid.Column="1"
                         Width="800"
@@ -299,7 +298,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="3">
+                        <Grid Grid.Row="3" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*" />
                                 <RowDefinition Height="2.5*" />
@@ -326,7 +325,9 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
 
-                                <!--  Controller Settings  -->
+                    -->
+                    <!--  Controller Settings  -->
+                    <!--
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
@@ -341,11 +342,10 @@
                             </Grid>
 
                         </Grid>
-                    </Grid>
+                    </Grid>-->
 
                     <Grid DataContext="{Binding CurrentConnectParams}">
                         <TabControl Style="{StaticResource MahApps.Styles.TabControl.ColorPicker}">
-
 
 
                             <TabItem
@@ -399,6 +399,25 @@
                                             TextChanged="TextBox_ParamsChanged"
                                             Visibility="Collapsed" />-->
                                     </StackPanel>
+                                    <StackPanel
+                                        Margin="0,10,0,0"
+                                        VerticalAlignment="Center"
+                                        IsEnabled="{Binding IsLockUISetting}"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="206"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=Check_All_Printer_Settings}" />
+                                        <mah:ToggleSwitch
+                                            x:Name="CheckAllPrinterSettings"
+                                            Width="366"
+                                            VerticalContentAlignment="Center"
+                                            FontSize="15"
+                                            OffContent="Disabled"
+                                            OnContent="Enabled"
+                                            Toggled="CheckAllPrinterSettings_Toggled" />
+                                    </StackPanel>
+
                                     <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                         <TextBlock
                                             Width="110"
@@ -413,12 +432,13 @@
                                             FontSize="20"
                                             Style="{StaticResource ModernButton2}" />
                                     </StackPanel>
+
                                 </StackPanel>
                             </TabItem>
 
                             <!--  Cam settings  -->
                             <TabItem FontSize="16" Header="Camera settings">
-                                <StackPanel Margin="5,20,0,0">
+                                <StackPanel Margin="5,20,0,0" IsEnabled="{Binding IsLockUISetting}">
 
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock
@@ -485,7 +505,7 @@
 
                             <!--  PLC settings  -->
                             <TabItem FontSize="16" Header="PLC settings">
-                                <StackPanel Margin="5,10,0,0">
+                                <StackPanel Margin="5,10,0,0" IsEnabled="{Binding IsLockUISetting}">
                                     <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                         <TextBlock
                                             Width="170"
@@ -523,16 +543,6 @@
                                                 PreviewTextInput="TextBox_PreviewTextInput"
                                                 ValueChanged="NumericUpDown_ValueChanged"
                                                 Value="{Binding ControllerPort}" />
-                                            <!--<TextBox
-                                                x:Name="TextBoxControllerPort"
-                                                Width="100"
-                                                Height="30"
-                                                Padding="0,3,0,0"
-                                                BorderBrush="LightBlue"
-                                                FontSize="16"
-                                                PreviewTextInput="TextBox_PreviewTextInput"
-                                                Text="{Binding ControllerPort, FallbackValue=0000}"
-                                                TextChanged="TextBox_ParamsChanged" />-->
                                         </StackPanel>
                                         <GroupBox
                                             Width="420"
@@ -540,30 +550,12 @@
                                             HorizontalAlignment="Left"
                                             Header="Sensor 1"
                                             Style="{StaticResource CustomGroupBoxStyle}">
-
-                                            <!--<GroupBox.Header>
-
-                                                <TextBlock
-                                                    HorizontalAlignment="Left"
-                                                    Foreground="White"
-                                                    Text="Sensor 1" />
-                                            </GroupBox.Header>-->
                                             <StackPanel>
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                                     <TextBlock
                                                         Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Delay_Sensor}" />
-                                                    <!--<TextBox
-                                                        x:Name="NumDelaySensor"
-                                                        Width="100"
-                                                        Height="30"
-                                                        Padding="0,3,0,0"
-                                                        BorderBrush="LightBlue"
-                                                        FontSize="16"
-                                                        PreviewTextInput="TextBox_PreviewTextInput"
-                                                        Text="{Binding DelaySensor, FallbackValue=0000}"
-                                                        TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumDelaySensor"
                                                         Width="200"
@@ -587,16 +579,6 @@
                                                         Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Disable_Sensor}" />
-                                                    <!--<TextBox
-                                                        x:Name="NumDisSensor"
-                                                        Width="100"
-                                                        Height="30"
-                                                        Padding="0,3,0,0"
-                                                        BorderBrush="LightBlue"
-                                                        FontSize="16"
-                                                        PreviewTextInput="TextBox_PreviewTextInput"
-                                                        Text="{Binding DisableSensor, FallbackValue=0000}"
-                                                        TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumDisSensor"
                                                         Width="200"
@@ -620,16 +602,6 @@
                                                         Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Pulse_Encoder}" />
-                                                    <!--<TextBox
-                                                        x:Name="NumPulseEncoder"
-                                                        Width="100"
-                                                        Height="30"
-                                                        Padding="0,3,0,0"
-                                                        BorderBrush="LightBlue"
-                                                        FontSize="16"
-                                                        PreviewTextInput="TextBox_PreviewTextInput"
-                                                        Text="{Binding PulseEncoder, FallbackValue=0000}"
-                                                        TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumPulseEncoder"
                                                         Width="200"
@@ -653,16 +625,6 @@
                                                         Width="165"
                                                         VerticalAlignment="Center"
                                                         Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
-                                                    <!--<TextBox
-                                                        x:Name="NumEncoderDia"
-                                                        Width="100"
-                                                        Height="30"
-                                                        Padding="0,3,0,0"
-                                                        BorderBrush="LightBlue"
-                                                        FontSize="16"
-                                                        PreviewTextInput="TextBox_PreviewTextInput"
-                                                        Text="{Binding EncoderDiameter, FallbackValue=0000}"
-                                                        TextChanged="TextBox_ParamsChanged" />-->
                                                     <mah:NumericUpDown
                                                         x:Name="NumEncoderDia"
                                                         Width="200"
@@ -793,15 +755,11 @@
 
                             </TabItem>
                             <TabItem FontSize="16" Header="Verify and print settings">
-
-                                <!--<GroupBox Grid.Column="1">-->
-                                <!--<GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Verify_and_Print_POD_Send_Mode}" />
-                                    </GroupBox.Header>-->
                                 <StackPanel
                                     Grid.Row="1"
                                     Margin="0,10,0,0"
                                     VerticalAlignment="Top"
+                                    IsEnabled="{Binding IsLockUISetting}"
                                     Orientation="Vertical">
 
                                     <!--  Gr Mode  -->
@@ -811,9 +769,6 @@
                                         HorizontalAlignment="Left"
                                         Header="Send mode"
                                         Style="{StaticResource CustomGroupBoxStyle}">
-                                        <!--<GroupBox.Header>
-                                            <TextBlock FontWeight="Normal" Text="{DynamicResource ResourceKey=Send_Mode}" />
-                                        </GroupBox.Header>-->
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <RadioButton
                                                 x:Name="RadBasic"
@@ -836,7 +791,11 @@
                                         </StackPanel>
                                     </GroupBox>
 
-                                    <GroupBox Header="Field settings" Width="420" HorizontalAlignment="Left" Style="{StaticResource CustomGroupBoxStyle}">
+                                    <GroupBox
+                                        Width="420"
+                                        HorizontalAlignment="Left"
+                                        Header="Field settings"
+                                        Style="{StaticResource CustomGroupBoxStyle}">
                                         <StackPanel>
                                             <!--  Print Fields  -->
                                             <StackPanel
@@ -889,7 +848,7 @@
 
                             <!--  Scanner Settings  -->
                             <TabItem FontSize="16" Header="Scanner settings">
-                                <StackPanel>
+                                <StackPanel IsEnabled="{Binding IsLockUISetting}">
 
                                     <!--  Com  -->
                                     <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
@@ -898,14 +857,18 @@
                                             VerticalAlignment="Center"
                                             Text="COM Port: " />
                                         <ComboBox
+                                            x:Name="comboBoxComName"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16">
-                                            <ComboBoxItem IsSelected="True">COM1</ComboBoxItem>
-                                            <ComboBoxItem>COM2</ComboBoxItem>
-                                            <ComboBoxItem>COM3</ComboBoxItem>
-                                            <ComboBoxItem>COM4</ComboBoxItem>
+                                            FontSize="16"
+                                            SelectedValuePath="Content">
+                                            <ComboBoxItem Content="COM3" />
+                                            <ComboBoxItem Content="COM4" />
+                                            <ComboBoxItem Content="COM5" />
+                                            <ComboBoxItem Content="COM6" />
+                                            <ComboBoxItem Content="COM7" />
                                         </ComboBox>
+
                                     </StackPanel>
 
                                     <!--  Bps  -->
@@ -915,15 +878,19 @@
                                             VerticalAlignment="Center"
                                             Text="Bit per second: " />
                                         <ComboBox
+                                            x:Name="comboBoxBitPerSeconds"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16">
-                                            <ComboBoxItem IsSelected="True">9600</ComboBoxItem>
-                                            <ComboBoxItem>19200</ComboBoxItem>
-                                            <ComboBoxItem>38400</ComboBoxItem>
-                                            <ComboBoxItem>57600</ComboBoxItem>
-                                            <ComboBoxItem>115200</ComboBoxItem>
+                                            FontSize="16"
+                                            SelectedValuePath="Content">
+                                            <ComboBoxItem Content="9600" />
+                                            <ComboBoxItem Content="19200" />
+                                            <ComboBoxItem Content="38400" />
+                                            <ComboBoxItem Content="57600" />
+                                            <ComboBoxItem Content="115200" />
+                                            <!--  Add more bit rates as needed  -->
                                         </ComboBox>
+
                                     </StackPanel>
 
                                     <!--  Data bits  -->
@@ -933,11 +900,13 @@
                                             VerticalAlignment="Center"
                                             Text="Data bits: " />
                                         <ComboBox
+                                            x:Name="comboBoxDataBits"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16">
-                                            <ComboBoxItem IsSelected="True">7</ComboBoxItem>
-                                            <ComboBoxItem>8</ComboBoxItem>
+                                            FontSize="16"
+                                            SelectedValuePath="Content">
+                                            <ComboBoxItem Content="7" />
+                                            <ComboBoxItem Content="8" />
                                         </ComboBox>
                                     </StackPanel>
 
@@ -948,13 +917,16 @@
                                             VerticalAlignment="Center"
                                             Text="Data bits: " />
                                         <ComboBox
+                                            x:Name="comboBoxParity"
                                             Width="200"
                                             Height="30"
                                             FontSize="16">
-                                            <ComboBoxItem IsSelected="True">None</ComboBoxItem>
-                                            <ComboBoxItem>Odd</ComboBoxItem>
-                                            <ComboBoxItem>Even</ComboBoxItem>
+                                            <ComboBoxItem Content="None" />
+                                            <ComboBoxItem Content="Odd" />
+                                            <ComboBoxItem Content="Even" />
+
                                         </ComboBox>
+
                                     </StackPanel>
 
                                     <!--  Stop bits  -->
@@ -964,12 +936,12 @@
                                             VerticalAlignment="Center"
                                             Text="Stop bits: " />
                                         <ComboBox
+                                            x:Name="comboBoxStopBits"
                                             Width="200"
                                             Height="30"
                                             FontSize="16">
-                                            <ComboBoxItem IsSelected="True">1</ComboBoxItem>
-                                            <ComboBoxItem>2</ComboBoxItem>
-
+                                            <ComboBoxItem Content="One" />
+                                            <ComboBoxItem Content="Two" />
                                         </ComboBox>
                                     </StackPanel>
 
@@ -977,21 +949,20 @@
                                 </StackPanel>
                             </TabItem>
 
-
-
                         </TabControl>
                     </Grid>
-                    <Grid Grid.Row="1" Height="200">
+
+                    <Grid Grid.Row="1" DataContext="{Binding CurrentConnectParams}">
                         <Button
                             Width="140"
                             Height="40"
                             Margin="0,0,10,0"
                             HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
+                            VerticalAlignment="Top"
                             Background="White"
                             BorderBrush="#00ABE6"
-                            Click="RestartButton_Click">
-                            <!--  Style="{StaticResource ModernButtonRs}"  -->
+                            Click="RestartButton_Click"
+                            IsEnabled="{Binding IsLockUISetting}">
                             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                 <fa:IconImage
                                     Width="16"
@@ -1005,7 +976,6 @@
                     </Grid>
 
                 </Grid>
-
             </Border>
         </ScrollViewer>
     </Grid>

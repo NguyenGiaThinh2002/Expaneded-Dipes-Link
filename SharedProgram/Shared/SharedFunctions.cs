@@ -1,4 +1,5 @@
 ﻿using Cognex.DataMan.SDK;
+using Newtonsoft.Json;
 using SharedProgram.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -112,6 +113,47 @@ namespace SharedProgram.Shared
         public static Image GetImageFromImageByte(byte[]? inputImgData)
         {
             return ImageArrivedEventArgs.GetImageFromImageBytes(inputImgData);
+        }
+
+        public static PrinterSettingsModel GetSettingsPrinter(string printerIP)
+        {
+            PrinterSettingsModel printerSettingsModel = new PrinterSettingsModel();
+            try
+            {
+                string printerIPAddress = printerIP;
+
+                string url = string.Format("http://{0}:{1}/api/request?act=get_system_setting", printerIPAddress, 80);
+                var request = (HttpWebRequest)WebRequest.Create(url);
+
+                request.Method = "GET";
+                request.Timeout = 1000;
+                request.ContentType = "application/json";
+                var httpResponse = (HttpWebResponse)request.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    string responseFromServer = streamReader.ReadToEnd();
+                    var printerSettingsResponse = JsonConvert.DeserializeObject<PrinterSettingsResponseModel>(responseFromServer);
+                    if (printerSettingsResponse != null)
+                    {
+                        if (printerSettingsResponse.Success)
+                        {
+                            printerSettingsModel = printerSettingsResponse.data;
+                        }
+                    }
+                }
+                printerSettingsModel.IsSupportHttpRequest = true;
+                return printerSettingsModel;
+            }
+            catch (WebException)
+            {
+                printerSettingsModel.IsSupportHttpRequest = false;
+                return printerSettingsModel;
+            }
+            catch (Exception)
+            {
+                return printerSettingsModel;
+            }
+
         }
 
         public static BitmapImage ConvertToBitmapImage(Image image)

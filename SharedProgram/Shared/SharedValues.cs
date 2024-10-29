@@ -14,11 +14,11 @@ namespace SharedProgram.Shared
         public static string AppName = "DipesLink";
 
         public static string DeviceTransferName = "DipesLinkDeviceTransfer";
-  
-        
 
-        public static readonly string[] ColumnNames = new string[] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" };
-        
+
+
+        public static readonly string[] ColumnNames = new string[] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime", "Device" };
+
         public static OperationStatus OperStatus = OperationStatus.Stopped;
         public static int TotalCode = 0;
         public static string[] DatabaseColunms = Array.Empty<string>();

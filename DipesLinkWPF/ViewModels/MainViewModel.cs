@@ -15,6 +15,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static DipesLink.Views.Enums.ViewEnums;
 using static IPCSharedMemory.Datatypes.Enums;
@@ -228,6 +229,9 @@ namespace DipesLink.ViewModels
             JobList[index].CameraSeries = jobModel.CameraSeries;
             JobList[index].ImageExportPath = jobModel.ImageExportPath;
             JobList[index].PODFormat = jobModel.PODFormat;
+            JobList[index].IsCheckPrinterSettingsEnabled = jobModel.IsCheckPrinterSettingsEnabled;
+
+            
 
 
 
@@ -237,6 +241,7 @@ namespace DipesLink.ViewModels
             JobList[index].StopButtonCommand -= StopButtonCommandEventHandler;
             JobList[index].TriggerButtonCommand -= TriggerButtonCommandEventHandler;
             JobList[index].OnPercentageChange -= PercentageChangeHandler;
+            JobList[index].OnRecheck -= RecheckHandler;
             JobList[index].OnReprint -= ReprintHandler;
             JobList[index].OnLoadDb -= LoadDbEventHandler;
             JobList[index].OnExportButtonCommand -= ExportButtonCommandHandler;
@@ -246,6 +251,7 @@ namespace DipesLink.ViewModels
             JobList[index].StopButtonCommand += StopButtonCommandEventHandler;
             JobList[index].TriggerButtonCommand += TriggerButtonCommandEventHandler;
             JobList[index].OnPercentageChange += PercentageChangeHandler;
+            JobList[index].OnRecheck += RecheckHandler;
             JobList[index].OnReprint += ReprintHandler;
             JobList[index].OnLoadDb += LoadDbEventHandler;
             JobList[index].OnExportButtonCommand += ExportButtonCommandHandler;
@@ -261,7 +267,16 @@ namespace DipesLink.ViewModels
                 // Debug.WriteLine("Load DB for Job " + index);
             }
         }
-
+        private void RecheckHandler(object? sender, EventArgs e)
+        {
+            if (sender is int stationIndex)
+            {
+                byte[] indexBytes = SharedFunctions.StringToFixedLengthByteArray(stationIndex.ToString(), 1);
+                byte[] actionTypeBytes = SharedFunctions.StringToFixedLengthByteArray(((int)ActionButtonType.Recheck).ToString(), 1);
+                byte[] combineBytes = SharedFunctions.CombineArrays(indexBytes, actionTypeBytes);
+                MemoryTransfer.SendActionButtonToDevice(listIPCUIToDevice1MB[stationIndex], stationIndex, combineBytes);
+            }
+        }
         private void ReprintHandler(object? sender, EventArgs e)
         {
             if (sender is int stationIndex)
@@ -468,6 +483,11 @@ namespace DipesLink.ViewModels
                             JobList[stationIndex].ControllerStsBytes = result[3];
                             break;
 
+                        // Scanner Status
+                        case (byte)SharedMemoryType.ScannerStatus:
+                            JobList[stationIndex].ScannerStsBytes = result[3];
+                            break;
+
                         // Printer Template
                         case (byte)SharedMemoryType.PrinterTemplate:
                             GetPrinterTemplateName(result);
@@ -586,6 +606,8 @@ namespace DipesLink.ViewModels
 
                             byte printerStsBytes = JobList[stationIndex].PrinterStsBytes;
                             byte controllerStsBytes = JobList[stationIndex].ControllerStsBytes;
+                            byte scannerStsBytes = JobList[stationIndex].ScannerStsBytes;
+
 
                             // CAMERA CONNECTION
                             if (JobList[stationIndex].CameraInfo?.ConnectionStatus == true) // Camera Status Change
@@ -649,6 +671,16 @@ namespace DipesLink.ViewModels
                             {
                                 JobDeviceStatusList[stationIndex].ControllerStatusColor = new SolidColorBrush(Colors.Red); //Controller online
                             }
+
+                            if (scannerStsBytes == (byte)ScannerStatus.Connected)
+                            {
+                                JobDeviceStatusList[stationIndex].ScannerStatusImage = new BitmapImage(new Uri("pack://application:,,,/DipesLink;component/Images/icons8_scanner_connected.png"));
+                            }
+                            else
+                            {
+                                JobDeviceStatusList[stationIndex].ScannerStatusImage = new BitmapImage(new Uri("pack://application:,,,/DipesLink;component/Images/icons8_scanner_disconnected.png"));
+                            }
+
                             await Task.Delay(2000);
                         }
                         catch (Exception)
@@ -988,6 +1020,38 @@ namespace DipesLink.ViewModels
                         msg = LanguageModel.GetLanguage("PrinterIncorrectPrintHead", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
+                    case NotifyType.NotRawData:
+                        msg = LanguageModel.GetLanguage("DataTypeMustBeRAWData", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.PODNotEnabled:
+                        msg = LanguageModel.GetLanguage("PODFeatureIsNotEnabled", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.ResponsePODDataNotEnable:
+                        msg = LanguageModel.GetLanguage("ResponsePODDataFeatureIsNotEnable", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.ResponsePODCommandNotEnable:
+                        msg = LanguageModel.GetLanguage("ResponsePODCommandFeatureIsNotEnable", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.MonitorNotEnable:
+                        msg = LanguageModel.GetLanguage("MonitorFeatureIsNotEnabled", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.PODModeMustBePrintAll:
+                        msg = LanguageModel.GetLanguage("PODModeMustBePrintAll", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.PODModeMustBePrintLast:
+                        msg = LanguageModel.GetLanguage("PODModeMustBePrintLast", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
+                    case NotifyType.NotConnectScanner:
+                        msg = LanguageModel.GetLanguage("ScannerIsNotConnected", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Scanner, EventsLogType.Error);
+                        break;
                     default: break;
                 }
             }
@@ -1212,6 +1276,7 @@ namespace DipesLink.ViewModels
                                                                                                //  SharedFunctions.SaveByteArrayToFile("byteArray.bin", dm?.ImageBytes);
                             string? currentCode = dm?.Text;
                             long? processTime = dm?.CompareTime;
+                            string? device = dm?.Device;
                             ComparisonResult? compareStatus = dm?.CompareResult;
 
 

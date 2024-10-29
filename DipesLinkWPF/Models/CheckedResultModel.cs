@@ -15,6 +15,8 @@ namespace DipesLink.Models
         public string Result { get; set; } = string.Empty;
         public string ProcessingTime { get; set; } = string.Empty;
         public string DateTime { get; set; } = string.Empty;
+        public string Device { get; set; } = string.Empty;
+
         public CheckedResultModel(string[] data)
         {
             if (data.Length >= 5)
@@ -24,8 +26,10 @@ namespace DipesLink.Models
                 Result = data[2];
                 ProcessingTime = data[3];
                 DateTime = data[4];
+                Device = data[5];
+
             }
-        
+
         }
         public CheckedResultModel()
         {

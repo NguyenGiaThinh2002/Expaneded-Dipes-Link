@@ -2,6 +2,7 @@
 using IPCSharedMemory;
 using SharedProgram.Shared;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace DipesLink.ViewModels
 {
@@ -18,14 +19,20 @@ namespace DipesLink.ViewModels
             for (int i = 0; i < _numberOfStation; i++)
             {
                 SendConnectionParamsToDeviceTransfer(i);
-   
+                
                 ViewModelSharedValues.Settings.SystemParamsList[i].Index = ConnectParamsList[i].Index;
                 ViewModelSharedValues.Settings.SystemParamsList[i].EnController = ConnectParamsList[i].EnController;
+                ViewModelSharedValues.Settings.SystemParamsList[i].IsCheckPrinterSettingsEnabled = ConnectParamsList[i].IsCheckPrinterSettingsEnabled;
                 ViewModelSharedValues.Settings.SystemParamsList[i].CameraIP = ConnectParamsList[i].CameraIP;
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterIP = ConnectParamsList[i].PrinterIP;
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterPort = ConnectParamsList[i].PrinterPort;
                 ViewModelSharedValues.Settings.SystemParamsList[i].ControllerIP = ConnectParamsList[i].ControllerIP;
                 ViewModelSharedValues.Settings.SystemParamsList[i].ControllerPort = ConnectParamsList[i].ControllerPort;
+                ViewModelSharedValues.Settings.SystemParamsList[i].ComName = ConnectParamsList[i].ComName;
+                ViewModelSharedValues.Settings.SystemParamsList[i].BitPerSeconds = ConnectParamsList[i].BitPerSeconds;
+                ViewModelSharedValues.Settings.SystemParamsList[i].Parity = ConnectParamsList[i].Parity;
+                ViewModelSharedValues.Settings.SystemParamsList[i].DataBits = ConnectParamsList[i].DataBits;
+                ViewModelSharedValues.Settings.SystemParamsList[i].StopBits = ConnectParamsList[i].StopBits;
 
                 ViewModelSharedValues.Settings.SystemParamsList[i].DisableSensor = ConnectParamsList[i].DisableSensor;
                 ViewModelSharedValues.Settings.SystemParamsList[i].DelaySensor = ConnectParamsList[i].DelaySensor;
@@ -34,7 +41,7 @@ namespace DipesLink.ViewModels
 
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrintFieldForVerifyAndPrint = ConnectParamsList[i].PrintFieldForVerifyAndPrint;
                 ViewModelSharedValues.Settings.SystemParamsList[i].FailedDataSentToPrinter = ConnectParamsList[i].FailedDataSentToPrinter;
-                ViewModelSharedValues.Settings.SystemParamsList[i].VerifyAndPrintBasicSentMethod = ConnectParamsList[i].VerifyAndPrintBasicSentMethod;
+                ViewModelSharedValues.Settings.SystemParamsList[i].VerifyAndPrintBasicSentMethod = ConnectParamsList[i].VerifyAndPrintBasicSentMethod;         
             }
 
             ViewModelSharedValues.Settings.NumberOfStation = StationSelectedIndex + 1;
@@ -48,6 +55,7 @@ namespace DipesLink.ViewModels
             if (JobSettings.IsInitializing) return;           
             ConnectParamsList[index].Index = index;
             ConnectParamsList[index].EnController = CurrentConnectParams.EnController;
+            ConnectParamsList[index].IsCheckPrinterSettingsEnabled = CurrentConnectParams.IsCheckPrinterSettingsEnabled;
             ConnectParamsList[index].CameraIP = CurrentConnectParams.CameraIP;
             ConnectParamsList[index].PrinterIP = CurrentConnectParams.PrinterIP;
             ConnectParamsList[index].PrinterPort = CurrentConnectParams.PrinterPort;
@@ -57,12 +65,18 @@ namespace DipesLink.ViewModels
             ConnectParamsList[index].DisableSensor = CurrentConnectParams.DisableSensor;
             ConnectParamsList[index].PulseEncoder = CurrentConnectParams.PulseEncoder;
             ConnectParamsList[index].EncoderDiameter = CurrentConnectParams.EncoderDiameter;
+            ConnectParamsList[index].ComName = CurrentConnectParams.ComName;
+            ConnectParamsList[index].BitPerSeconds = CurrentConnectParams.BitPerSeconds;
+            ConnectParamsList[index].Parity = CurrentConnectParams.Parity;
+            ConnectParamsList[index].DataBits = CurrentConnectParams.DataBits;
+            ConnectParamsList[index].StopBits = CurrentConnectParams.StopBits;
 
             ConnectParamsList[index].PrintFieldForVerifyAndPrint = CurrentConnectParams.PrintFieldForVerifyAndPrint;
             ConnectParamsList[index].FailedDataSentToPrinter = CurrentConnectParams.FailedDataSentToPrinter;
             ConnectParamsList[index].VerifyAndPrintBasicSentMethod = CurrentConnectParams.VerifyAndPrintBasicSentMethod;
             ConnectParamsList[index].Index = index;
             ConnectParamsList[index].EnController = CurrentConnectParams.EnController;
+            ConnectParamsList[index].IsCheckPrinterSettingsEnabled = CurrentConnectParams.IsCheckPrinterSettingsEnabled;
             ConnectParamsList[index].CameraIP = CurrentConnectParams.CameraIP;
             ConnectParamsList[index].PrinterIP = CurrentConnectParams.PrinterIP;
             ConnectParamsList[index].PrinterPort = CurrentConnectParams.PrinterPort;
@@ -100,9 +114,10 @@ namespace DipesLink.ViewModels
 
         internal void SendConnectionParamsToDeviceTransfer(int stationIndex)
         {
+            
             try
             {
-                int i = stationIndex;
+                int i = stationIndex;               
                 var sysParamsBytes =  DataConverter.ToByteArray(ViewModelSharedValues.Settings.SystemParamsList[i]);
                 MemoryTransfer.SendConnectionParamsToDevice(listIPCUIToDevice1MB[stationIndex], stationIndex, sysParamsBytes);
             }

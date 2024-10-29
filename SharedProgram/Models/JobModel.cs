@@ -150,6 +150,15 @@ namespace SharedProgram.Models
                
             }
         }
+        // thinh dang sua  
+        private bool _IsCheckPrinterSettingsEnabled;
+        public bool IsCheckPrinterSettingsEnabled
+        {
+
+            get { return _IsCheckPrinterSettingsEnabled; }
+            set { _IsCheckPrinterSettingsEnabled = value; OnPropertyChanged(); }
+        }
+
 
         private string? _ImageExportPath; 
         public string? ImageExportPath 

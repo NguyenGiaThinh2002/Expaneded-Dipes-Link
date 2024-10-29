@@ -361,8 +361,8 @@
             <!--  Device Status  -->
             <ScrollViewer
                 Grid.Row="2"
-                HorizontalScrollBarVisibility="Auto"
                 Cursor=""
+                HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Disabled">
                 <Grid Background="WhiteSmoke">
                     <Grid.ColumnDefinitions>
@@ -385,11 +385,11 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="0,0,15,0" Orientation="Horizontal">
+                                <StackPanel Margin="0,0,10,0" Orientation="Horizontal">
                                     <fa:IconImage
                                         Width="15"
                                         Height="15"
-                                        Margin="1"
+                                        Margin="0"
                                         Foreground="{Binding CameraStatusColor}"
                                         Icon="Camera" />
                                     <fa:IconImage
@@ -404,6 +404,12 @@
                                         Margin="1"
                                         Foreground="{Binding ControllerStatusColor}"
                                         Icon="SignalPerfect" />
+                                    <!--  thinh dang lam  -->
+                                    <Image
+                                        Width="20"
+                                        Height="20"
+                                        Margin="0"
+                                        Source="{Binding ScannerStatusImage}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -416,7 +422,7 @@
                                     <Setter Property="FontSize" Value="14" />
                                 </Style>
                             </StackPanel.Resources>
-                            
+
                             <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                                 <TextBlock
                                     Width="75"
@@ -428,8 +434,8 @@
                                     VerticalAlignment="Center"
                                     Text="######" />
                             </StackPanel>
-                            
-                            <StackPanel Margin="10 0 0 0" Orientation="Horizontal">
+
+                            <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                                 <TextBlock
                                     Width="75"
                                     VerticalAlignment="Center"
@@ -445,9 +451,9 @@
                                 Height="30"
                                 Text="{Binding CameraIP}" />-->
                             </StackPanel>
-                            <StackPanel Margin="10 0 0 0" Orientation="Horizontal">
+                            <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                                 <TextBlock
-                                    Width="70" 
+                                    Width="70"
                                     VerticalAlignment="Center"
                                     FontWeight="Bold"
                                     Text="{DynamicResource ResourceKey=Controller_IP}" />

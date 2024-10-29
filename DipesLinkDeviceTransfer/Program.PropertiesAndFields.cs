@@ -101,6 +101,16 @@ namespace DipesLinkDeviceTransfer
         /// </summary>
         private readonly ConcurrentQueue<DetectModel?> _QueueBufferCameraDataCompared = new();
 
+        /// Buffer for scanner data
+        /// </summary>
+        private readonly ConcurrentQueue<DetectModel?> _QueueBufferScannerReceivedData = new();
+
+        /// <summary>
+        /// Queue Buffer for Scanner Data Compared (use for UI update)
+        /// </summary>
+        private readonly ConcurrentQueue<DetectModel?> _QueueBufferScannerDataCompared = new();
+
+
         /// <summary>
         /// Queue contain only string of Data by POD Data Compared (use for UI update)
         /// </summary>

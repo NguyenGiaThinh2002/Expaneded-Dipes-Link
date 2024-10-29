@@ -29,6 +29,7 @@
     <system:String x:Key="PrinterNotConnected">Trạm {0}: Không có kết nối Máy in!</system:String>
     <system:String x:Key="InputDatabaseDuplicate">Trạm {0}: Cơ sở dữ liệu đầu vào bị trùng lặp !</system:String>
     <system:String x:Key="CannotLoadTemplatePrinter">Trạm {0}: Không thể tải mẫu in !</system:String>
+    <system:String x:Key="ScannerIsNotConnected">Station {0}: Không có kết nối Máy Quét!</system:String>
     <system:String x:Key="CameraNotConnected">Trạm {0}: Không có kết nối Camera!</system:String>
     <system:String x:Key="ProcessCompleted">Trạm {0}: Quy trình đã hoàn tất!</system:String>
     <system:String x:Key="MissingParams">Trạm {0}: Thiếu tham số !</system:String>
@@ -48,8 +49,18 @@
     <system:String x:Key="PrinterDisconnected">Trạm {0}: Máy in đã ngắt kết nối !</system:String>
     <system:String x:Key="CameraDisconnected">Trạm {0}: Camera đã ngắt kết nối !</system:String>
     <system:String x:Key="FileNotFound">Trạm {0}: Không tìm thấy tập tin !</system:String>
+    <system:String x:Key="DataTypeMustBeRAWData">Trạm {0}: Loại dữ liệu phải là dữ liệu RAW !</system:String>
+    <system:String x:Key="PODFeatureIsNotEnabled">Trạm {0}: Tính năng POD chưa được bật !</system:String>
+    <system:String x:Key="ResponsePODDataFeatureIsNotEnable">Trạm {0}: Tính năng phản hồi POD Data chưa được bật !</system:String>
+    <system:String x:Key="ResponsePODCommandFeatureIsNotEnable">Trạm {0}: Tính năng phản hồi POD Command chưa được bật !</system:String>
+    <system:String x:Key="MonitorFeatureIsNotEnabled">Trạm {0}: Tính năng Monitor chưa được bật !</system:String>
+    <system:String x:Key="PODModeMustBePrintAll">Trạm {0}: Chế độ POD phải là "In tất cả" !</system:String>
+    <system:String x:Key="PODModeMustBePrintLast">Trạm {0}: Chế độ POD phải là "In cuối" !</system:String>
+
 
     <system:String x:Key="ExitConfirmation">Bạn có muốn thoát khỏi ứng dụng không ?</system:String>
+    <system:String x:Key="RecheckConfirmation">Bạn có muốn kiểm tra lại không ?</system:String>
+    <system:String x:Key="ReprintConfirmation">Bạn có muốn in lại không ?</system:String>
     <system:String x:Key="StopAllStations">Vui lòng dừng tất cả các trạm đang chạy !</system:String>
     <system:String x:Key="LogoutConfirmation">Bạn có muốn đăng xuất không ?</system:String>
     <system:String x:Key="PageNotFound">Không tìm thấy trang !</system:String>
@@ -140,7 +151,7 @@
     <system:String x:Key="Total_Data">Tổng dữ liệu:</system:String>
     <system:String x:Key="Status">Trạng thái:</system:String>
     <!--#endregion OVERVIEW-->
-    
+
     <!--#region JOBS-->
     <system:String x:Key="Select_Job">CHỌN CÔNG VIỆC</system:String>
     <system:String x:Key="Create_New_Job">TẠO MỚI</system:String>
@@ -208,7 +219,7 @@
     <system:String x:Key="Select_Number_of_Stations">Chọn số lượng trạm:</system:String>
     <system:String x:Key="Restart">Khởi động lại</system:String>
     <system:String x:Key="Number_of_Stations">Số lượng trạm:</system:String>
-   
+
     <system:String x:Key="After_Production">Sau Sản Xuất</system:String>
     <system:String x:Key="On_Production">Trong Sản Xuất</system:String>
     <system:String x:Key="Verify_And_Print">Kiểm Tra và In</system:String>
@@ -231,6 +242,7 @@
     <system:String x:Key="Verified">Xác minh</system:String>
     <system:String x:Key="Valid">Hợp lệ</system:String>
     <system:String x:Key="Filter">Bộ lọc</system:String>
+    <system:String x:Key="Recheck">Kiểm tra lại</system:String>
     <system:String x:Key="Reprint">In lại</system:String>
     <system:String x:Key="Refresh">Làm mới</system:String>
     <system:String x:Key="Search">Tìm kiếm</system:String>
@@ -248,14 +260,16 @@
     <system:String x:Key="Printed">Đã In</system:String>
     <system:String x:Key="Waiting">Đang Chờ</system:String>
     <system:String x:Key="PRINTED_LOG">BẢN GHI TRẠNG THÁI IN</system:String>
+    <system:String x:Key="Check_All_Printer_Settings">Kiểm tra tất cả các cài đặt máy in:</system:String>
 
-   
 
     <system:String x:Key="None">Trống</system:String>
     <system:String x:Key="AfterProduction">Sau sản xuất</system:String>
     <system:String x:Key="OnProduction">Trong s.xuất</system:String>
     <system:String x:Key="VerifyAndPrint">Kiểm tra và In</system:String>
     <system:String x:Key="StandAlone">StandAlone</system:String>
+
+
 
     <!--#region ACCOUNTS-->
     <system:String x:Key="Account_Management">Quản lý Người Dùng</system:String>

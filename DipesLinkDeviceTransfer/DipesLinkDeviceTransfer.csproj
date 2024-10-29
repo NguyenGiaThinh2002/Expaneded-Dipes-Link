@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DipesLink_SDK\DipesLink_SDK.Cameras\DipesLink_SDK_Cameras.csproj" />
     <ProjectReference Include="..\DipesLink_SDK\DipesLink_SDK_Printers\DipesLink_SDK_Printers.csproj" />
+    <ProjectReference Include="..\DipesLink_SDK_BarcodeScanner\DipesLink_SDK_BarcodeScanner.csproj" />
     <ProjectReference Include="..\DipesLink_SDK_PLC\DipesLink_SDK_PLC.csproj" />
     <ProjectReference Include="..\IPCSharedMemory\IPCSharedMemory.csproj" />
   </ItemGroup>

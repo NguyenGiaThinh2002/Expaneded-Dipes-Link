@@ -29,6 +29,7 @@
     <system:String x:Key="InputDatabaseDuplicate">Station {0}: Input Database duplicate!</system:String>
     <system:String x:Key="CannotLoadTemplatePrinter">Station {0}: Can't load template printer!</system:String>
     <system:String x:Key="CameraNotConnected">Station {0}: Camera's not connected!</system:String>
+    <system:String x:Key="ScannerIsNotConnected">Station {0}: Scanner's not connected!</system:String>
     <system:String x:Key="ProcessCompleted">Station {0}: Process is completed!</system:String>
     <system:String x:Key="MissingParams">Station {0}: Missing params !</system:String>
     <system:String x:Key="PrinterSuddenlyStopped">Station {0}: Printer suddenly stopped</system:String>
@@ -47,8 +48,18 @@
     <system:String x:Key="PrinterDisconnected">Station {0}: Printer's Disconnected !</system:String>
     <system:String x:Key="CameraDisconnected">Station {0}: Camera's Disconnected !</system:String>
     <system:String x:Key="FileNotFound">Station {0}: File not found !</system:String>
+    <system:String x:Key="DataTypeMustBeRAWData">Trạm {0}: Data type must be RAW data !</system:String>
+    <system:String x:Key="PODFeatureIsNotEnabled">Trạm {0}: POD feature is not enabled !</system:String>
+    <system:String x:Key="ResponsePODDataFeatureIsNotEnable">Trạm {0}: POD Data response feature is not enabled !</system:String>
+    <system:String x:Key="ResponsePODCommandFeatureIsNotEnable">Trạm {0}: POD Command response feature is not enabled !</system:String>
+    <system:String x:Key="MonitorFeatureIsNotEnabled">Trạm {0}: Monitor feature is not enabled !</system:String>
+    <system:String x:Key="PODModeMustBePrintAll">Trạm {0}: POD mode must be "Print all" !</system:String>
+    <system:String x:Key="PODModeMustBePrintLast">Trạm {0}: POD mode must be "Print last" !</system:String>
+
 
     <system:String x:Key="ExitConfirmation">Do you want to exit the application?</system:String>
+    <system:String x:Key="RecheckConfirmation">Do you want to Recheck ?</system:String>
+    <system:String x:Key="ReprintConfirmation">Do you want to Reprint ?</system:String>
     <system:String x:Key="StopAllStations">Please stop all running stations!</system:String>
     <system:String x:Key="LogoutConfirmation">Do you want to logout?</system:String>
     <system:String x:Key="PageNotFound">Page not found !</system:String>
@@ -206,6 +217,7 @@
     <system:String x:Key="Valid">Valid</system:String>
     <system:String x:Key="Filter">Filter</system:String>
     <system:String x:Key="Reprint">Reprint</system:String>
+    <system:String x:Key="Recheck">Recheck</system:String>
     <system:String x:Key="Refresh">Refresh</system:String>
     <system:String x:Key="Search">Search</system:String>
     <system:String x:Key="First">First</system:String>
@@ -236,6 +248,7 @@
     <system:String x:Key="OnProduction">On Production</system:String>
     <system:String x:Key="VerifyAndPrint">Verify and Print</system:String>
     <system:String x:Key="StandAlone">StandAlone</system:String>
+    <system:String x:Key="Check_All_Printer_Settings">Check All Printer Settings:</system:String>
 
     <!--#region ACCOUNTS-->
     <system:String x:Key="Account_Management">Users Management</system:String>

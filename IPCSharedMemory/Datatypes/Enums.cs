@@ -35,6 +35,7 @@ namespace IPCSharedMemory.Datatypes
             JobOperationStatus,
             DatabaseList,
             CurrentPosDb,
+            ScannerStatus,
             CheckedList,
             StatisticsCounterReceived,
             StatisticsCounterPrinted,

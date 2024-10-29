@@ -1,5 +1,6 @@
 ﻿using SharedProgram.Models;
 using SharedProgram.Shared;
+using System.IO.Ports;
 using System.Text;
 using static SharedProgram.DataTypes.CommonDataType;
 
@@ -13,11 +14,20 @@ namespace SharedProgram.DeviceTransfer
             try
             {
                 DeviceSharedValues.EnController = connectParams.EnController;
+                DeviceSharedValues.IsCheckPrinterSettingsEnabled = connectParams.IsCheckPrinterSettingsEnabled;
+
                 DeviceSharedValues.PrinterIP = connectParams.PrinterIP.Trim();
                 DeviceSharedValues.PrinterPort = connectParams.PrinterPort;
                 DeviceSharedValues.CameraIP = connectParams.CameraIP.Trim();
                 DeviceSharedValues.ControllerIP = connectParams.ControllerIP.Trim();
                 DeviceSharedValues.ControllerPort = connectParams.ControllerPort;
+
+                DeviceSharedValues.ComName = connectParams.ComName.Trim();
+                DeviceSharedValues.BitPerSeconds = connectParams.BitPerSeconds;
+                DeviceSharedValues.Parity = connectParams.Parity;
+                DeviceSharedValues.DataBits = connectParams.DataBits;
+                DeviceSharedValues.StopBits = connectParams.StopBits;
+
 
                 DeviceSharedValues.DelaySensor = connectParams.DelaySensor.ToString().Trim();
                 DeviceSharedValues.DisableSensor = connectParams.DisableSensor.ToString().Trim();
@@ -27,13 +37,16 @@ namespace SharedProgram.DeviceTransfer
                 DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint = connectParams.PrintFieldForVerifyAndPrint; // list pod verify and print
                 DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod = connectParams.VerifyAndPrintBasicSentMethod;
                 DeviceSharedValues.VPObject.FailedDataSentToPrinter = connectParams.FailedDataSentToPrinter;
+                
                 SharedEvents.RaiseOnVerifyAndPrindSendDataMethod();
                 SharedEvents.OnRaiseCameraIPAddressHandler(DeviceSharedValues.CameraIP);
 
+                SharedEvents.RaiseOnScannerParametersChangeEvent();
 #if DEBUG
                 Console.WriteLine("Camera IP : " + DeviceSharedValues.CameraIP);
                 Console.WriteLine("Printer IP : " + DeviceSharedValues.PrinterIP);
                 Console.WriteLine("Controller IP : " + DeviceSharedValues.ControllerIP);
+                Console.WriteLine("Controller IP : " + DeviceSharedValues.IsCheckPrinterSettingsEnabled);
                 //Console.WriteLine("Basic mode ? : " + DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod);
                 //Console.WriteLine("Fail Data: " + DeviceSharedValues.VPObject.FailedDataSentToPrinter);
                 //Console.WriteLine("Print POD List: ");
@@ -115,6 +128,51 @@ namespace SharedProgram.DeviceTransfer
 #if DEBUG
             Console.WriteLine("Controller Port: " + Encoding.ASCII.GetString(controllerPortBytes).Trim());
 #endif
+            // Scanner Parameters
+            byte[] scannerComNameBytes = new byte[5];
+            Array.Copy(result,
+                indexBytes.Length +
+                cameraIPBytes.Length +
+                printerIPBytes.Length +
+                printerPortBytes.Length +
+                controllerIPBytes.Length, scannerComNameBytes, 0, 5);
+            DeviceSharedValues.ComName = Encoding.ASCII.GetString(scannerComNameBytes).Trim();
+
+            byte[] scannerBitPerSecondBytes = new byte[5];
+            Array.Copy(result,
+                indexBytes.Length +
+                cameraIPBytes.Length +
+                printerIPBytes.Length +
+                printerPortBytes.Length +
+                controllerIPBytes.Length, scannerBitPerSecondBytes, 0, 5);
+            DeviceSharedValues.BitPerSeconds = int.Parse(Encoding.ASCII.GetString(scannerBitPerSecondBytes));
+
+            byte[] scannerParityBytes = new byte[5];
+            Array.Copy(result,
+                indexBytes.Length +
+                cameraIPBytes.Length +
+                printerIPBytes.Length +
+                printerPortBytes.Length +
+                controllerIPBytes.Length, scannerParityBytes, 0, 5);
+            DeviceSharedValues.Parity = (Parity)Enum.Parse(typeof(Parity), Encoding.ASCII.GetString(scannerParityBytes));
+
+            byte[] scannerDataBitsSecondBytes = new byte[5];
+            Array.Copy(result,
+                indexBytes.Length +
+                cameraIPBytes.Length +
+                printerIPBytes.Length +
+                printerPortBytes.Length +
+                controllerIPBytes.Length, scannerDataBitsSecondBytes, 0, 5);
+            DeviceSharedValues.DataBits = int.Parse(Encoding.ASCII.GetString(scannerDataBitsSecondBytes));
+
+            byte[] scannerStopBitsBytes = new byte[5];
+            Array.Copy(result,
+                indexBytes.Length +
+                cameraIPBytes.Length +
+                printerIPBytes.Length +
+                printerPortBytes.Length +
+                controllerIPBytes.Length, scannerStopBitsBytes, 0, 5);
+            DeviceSharedValues.StopBits = (StopBits)Enum.Parse(typeof(StopBits), Encoding.ASCII.GetString(scannerStopBitsBytes));
         }
 
         public static void GetActionButton(byte[] result)
