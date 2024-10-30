@@ -87,6 +87,7 @@ namespace DipesLink.ViewModels
                 PODFormat = CreateNewJob.PODFormat,
                 CompleteCondition = CreateNewJob.CompleteCondition,
                 OutputCamera = CreateNewJob.OutputCamera,
+                IsCheckPrinterSettingsEnabled = CreateNewJob.IsCheckPrinterSettingsEnabled,
                 IsImageExport = CreateNewJob.IsImageExport,
                 ImageExportPath = ImageExpPath,
                 PrinterIP = CreateNewJob.PrinterIP,
@@ -370,6 +371,7 @@ namespace DipesLink.ViewModels
             JobSelection.CompleteCondition = jobModel.CompleteCondition;
             JobSelection.OutputCamera = jobModel.OutputCamera;
             JobSelection.IsImageExport = jobModel.IsImageExport;
+            JobSelection.IsCheckPrinterSettingsEnabled = jobModel.IsCheckPrinterSettingsEnabled;
             JobSelection.ImageExportPath = jobModel.ImageExportPath;
             JobSelection.TotalRecDb = jobModel.TotalRecDb;
             JobSelection.JobStatus = jobModel.JobStatus;

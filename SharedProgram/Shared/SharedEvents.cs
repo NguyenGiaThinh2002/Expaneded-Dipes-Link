@@ -23,7 +23,17 @@ namespace SharedProgram.Shared
             OnControllerDataChange?.Invoke(data, EventArgs.Empty);
         }
 
+        public static event EventHandler? OnScannerReadDataChange;
+        public static void RaiseOnScannerReadDataChangeEvent(DetectModel detectModel)
+        {
+            OnScannerReadDataChange?.Invoke(detectModel, EventArgs.Empty);
+        }
 
+        public static event EventHandler? OnScannerParametersChange;
+        public static void RaiseOnScannerParametersChangeEvent()
+        {
+            OnScannerParametersChange?.Invoke(null, EventArgs.Empty);
+        }
 
         public static event EventHandler? OnCameraReadDataChange;
         public static void RaiseOnCameraReadDataChangeEvent(DetectModel detectModel)

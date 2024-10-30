@@ -293,18 +293,28 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                                 <ColumnDefinition />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
+
+                            <Button
+                                x:Name="ButtonRecheck"
+                                Grid.Column="0"
+                                Width="80"
+                                Height="30"
+                                Click="ButtonRecheck_Click"
+                                Content="{DynamicResource ResourceKey=Recheck}"
+                                Style="{StaticResource ModernButton2}" />
                             <Button
                                 x:Name="ButtonRePrint"
+                                Grid.Column="1"
                                 Width="80"
                                 Height="30"
                                 Click="ButtonRePrint_Click"
                                 Content="{DynamicResource ResourceKey=Reprint}"
-                               
                                 Style="{StaticResource ModernButton2}" />
                             <Button
                                 x:Name="ButtonRF"
-                                Grid.Column="1"
+                                Grid.Column="2"
                                 Width="80"
                                 Height="30"
                                 Click="ButtonRF_Click"
@@ -312,17 +322,18 @@
                                 Style="{StaticResource ModernButton2}" />
                             <Button
                                 x:Name="ButtonSearch"
-                                Grid.Column="2"
+                                Grid.Column="3"
                                 Width="80"
                                 Height="30"
                                 Click="ButtonSearch_Click"
                                 Content="{DynamicResource ResourceKey=Search}"
                                 Style="{StaticResource ModernButton2}" />
+
                         </Grid>
                         <TextBox
                             x:Name="TextBoxSearch"
                             Height="30"
-                            Margin="30,0,30,0"
+                            Margin="15,0,15,0"
                             Padding="0,0,0,0"
                             FontSize="16"
                             KeyDown="Search_KeyDown"

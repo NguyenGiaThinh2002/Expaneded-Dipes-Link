@@ -121,6 +121,7 @@ namespace SharedProgram.DataTypes
             Trigger,
             ReloadTemplate,
             Reprint,
+            Recheck,
             Pause,
             ExportResult,
             Simulate
@@ -139,6 +140,17 @@ namespace SharedProgram.DataTypes
             CannotCreatePodDataList,
             Unknown
         }
+
+        public enum CheckPrinterSettings
+        {
+            Success = 0,
+            NotRawData = 1,
+            PODNotEnabled = 2,
+            ResponsePODDataNotEnable = 3,
+            ResponsePODCommandNotEnable = 4,
+            MonitorNotEnable = 5,
+            PODMode = 6
+        }
         public enum CheckCondition
         {
             Success,
@@ -147,6 +159,7 @@ namespace SharedProgram.DataTypes
             NotLoadTemplate,
             MissingParameter,
             NotConnectPrinter,
+            NotConnectScanner,
             NotConnectServer,
             LeastOneAction,
             MissingParameterActivation,
@@ -160,6 +173,12 @@ namespace SharedProgram.DataTypes
         {
             Completed,
             Failed
+        }
+
+        public enum ScannerStatus
+        {
+            Connected,
+            Disconnected
         }
         public enum NotifyType
         {
@@ -180,6 +199,7 @@ namespace SharedProgram.DataTypes
             NoJobsSelected,
             NotLoadDatabase,
             NotLoadTemplate,
+            NotConnectScanner,
             NotConnectCamera,
             MissingParameter, 
             NotConnectPrinter, 
@@ -209,7 +229,14 @@ namespace SharedProgram.DataTypes
             InvalidVersion,
             IncorrectPrinthead,
             DuplicateData,
-            ExportResultFail
+            ExportResultFail,
+            MonitorNotEnable,
+            NotRawData,
+            PODNotEnabled,
+            ResponsePODCommandNotEnable,
+            ResponsePODDataNotEnable,
+            PODModeMustBePrintAll,
+            PODModeMustBePrintLast
         }
         public enum EventsLogType
         {

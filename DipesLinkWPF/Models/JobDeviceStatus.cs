@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace DipesLink.Models
 {
@@ -93,6 +94,20 @@ namespace DipesLink.Models
                     _ControllerStatusColor = value;
                     OnPropertyChanged();
                 }
+            }
+        }
+
+        private ImageSource _ScannerStatusImage = new BitmapImage(new Uri("pack://application:,,,/DipesLink;component/Images/icons8_scanner_disconnected.png"));
+        public ImageSource ScannerStatusImage
+        {
+            get { return _ScannerStatusImage; }
+            set
+            {
+                if (_ScannerStatusImage != value)
+                {
+                    _ScannerStatusImage = value; OnPropertyChanged();
+                }
+
             }
         }
     }

@@ -11,6 +11,8 @@ namespace IPCSharedMemory.Controllers
         public static event EventHandler? CameraStatusChanged;
         public static event EventHandler? PrinterStatusChanged;
         public static event EventHandler? ControllerStatusChanged;
+        public static event EventHandler? ScannerStatusChanged;
+
 
         public static void RaiseCameraStatusChanged(object sender, EventArgs e)
         {
@@ -23,6 +25,10 @@ namespace IPCSharedMemory.Controllers
         public static void RaiseControllerStatusChanged(object sender, EventArgs e)
         {
             ControllerStatusChanged?.Invoke(sender, e);
+        }
+        public static void RaiseScannerStatusChanged(object sender, EventArgs e)
+        {
+            ScannerStatusChanged?.Invoke(sender, e);
         }
     }
 }

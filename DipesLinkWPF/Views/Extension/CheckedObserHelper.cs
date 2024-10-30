@@ -90,6 +90,7 @@ namespace DipesLink.Views.Extension
                     row["Result"] = array.Result != null ? array.Result : DBNull.Value;
                     row["ProcessingTime"] = array.ProcessingTime != null ? array.ProcessingTime : DBNull.Value;
                     row["DateTime"] = array.DateTime != null ? array.DateTime : DBNull.Value;
+                    row["Device"] = array.Device != null ? array.Device : DBNull.Value;
                     dataTable.Rows.Add(row);
                 }
 
@@ -205,6 +206,6 @@ namespace DipesLink.Views.Extension
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-   
+
     }
 }

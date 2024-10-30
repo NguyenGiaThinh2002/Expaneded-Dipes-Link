@@ -65,5 +65,11 @@ namespace SharedProgram.Models
             set { _Text = value; }
         }
 
+        private string _Device = "";
+        public string Device
+        {
+            get { return _Device; }
+            set { _Device = value; }
+        }
     }
 }

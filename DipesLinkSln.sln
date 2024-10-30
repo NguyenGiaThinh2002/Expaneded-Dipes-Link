@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestartProcessHelper", "Res
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DongleKeyVerification", "DongleKeyVerification\DongleKeyVerification.csproj", "{5B95829B-28F5-4D80-B510-3972500887C3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DipesLink_SDK_BarcodeScanner", "DipesLink_SDK_BarcodeScanner\DipesLink_SDK_BarcodeScanner.csproj", "{440216AD-471F-4481-94A5-3A3F264F13C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,14 @@ Global
 		{5B95829B-28F5-4D80-B510-3972500887C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B95829B-28F5-4D80-B510-3972500887C3}.Release|x64.ActiveCfg = Release|Any CPU
 		{5B95829B-28F5-4D80-B510-3972500887C3}.Release|x64.Build.0 = Release|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Debug|x64.Build.0 = Debug|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Release|x64.ActiveCfg = Release|Any CPU
+		{440216AD-471F-4481-94A5-3A3F264F13C4}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

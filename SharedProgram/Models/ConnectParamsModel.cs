@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Xml.Serialization;
-
+using System.IO.Ports;
 namespace SharedProgram.Models
 {
     public class ConnectParamsModel : SettingsModel
@@ -17,11 +17,17 @@ namespace SharedProgram.Models
         public string ControllerIP { get; set; } = "127.0.0.1";
         public double ControllerPort { get; set; } = 0;
 
+        public string ComName { get; set; } = "COM3";
+        public int BitPerSeconds { get; set; } = 9600;
+        public Parity Parity { get; set; } = Parity.None;
+        public int DataBits { get; set; } = 8;
+        public StopBits StopBits { get; set; } = StopBits.One;
         public double DelaySensor { get; set; } = 0;
         public double DisableSensor { get; set; } = 0;
         public double PulseEncoder { get; set; } = 0;
         public double EncoderDiameter { get; set; } = 0.00;
 
+        //public bool IsCheckPrinterSettingsEnabled;
         public bool EnController { get; set; } = false;
 
         public CameraInfos? CameraInfors { get; set; }
@@ -42,7 +48,13 @@ namespace SharedProgram.Models
             set { _IsLockUISetting = value; OnPropertyChanged(); }
         }
 
-      
+        private bool _IsCheckPrinterSettingsIsEnable;
+        public bool IsCheckPrinterSettingsEnabled
+        {
+            get { return _IsCheckPrinterSettingsIsEnable; }
+            set { _IsCheckPrinterSettingsIsEnable = value; OnPropertyChanged(); }
+        }
+
 
         private ObservableCollection<string> _responseMessList = new();
 

@@ -67,7 +67,6 @@ namespace DipesLinkDeviceTransfer
             }
 
         }
-
         private void GetConenctionParams(byte[] result)
         {
             try
@@ -75,7 +74,7 @@ namespace DipesLinkDeviceTransfer
                 var resultParams = new byte[result.Length - 3]; // reject header
                 Array.Copy(result, 3, resultParams, 0, resultParams.Length);
                 var systemParams = DataConverter.FromByteArray<ConnectParamsModel>(resultParams);
-                if (systemParams is null) return;
+                if (systemParams is null) return;                        
                 DeviceSharedFunctions.GetConnectionParamsSetting(systemParams);
                 SendSettingToSensorController();
             }
@@ -187,6 +186,9 @@ namespace DipesLinkDeviceTransfer
                         case ActionButtonType.Reprint:
                             SharedFunctions.PrintConsoleMessage("Reprint.....");
                             RePrintAsync();
+                            break;
+                        case ActionButtonType.Recheck:
+                            Recheck();
                             break;
                         case ActionButtonType.ExportResult:
                             break;

@@ -570,6 +570,8 @@ namespace DipesLink.Models
         public byte PrinterStsBytes { get; set; }
         public byte ControllerStsBytes { get; set; }
 
+        public byte ScannerStsBytes { get; set; }
+
         public byte[]? CheckedStatisticNumberBytes { get; set; }
         // public byte[] CurrentPrintedCodeBytes { get; set; }
         // public byte[]? CurrentChekedCodeBytes { get; set; }
@@ -655,6 +657,12 @@ namespace DipesLink.Models
         public void RaiseReprint(object index)
         {
             OnReprint?.Invoke(index, EventArgs.Empty);
+        }
+
+        public event EventHandler? OnRecheck;
+        public void RaiseRecheck(object index)
+        {
+            OnRecheck?.Invoke(index, EventArgs.Empty);
         }
 
         public event EventHandler? OnLoadDb;

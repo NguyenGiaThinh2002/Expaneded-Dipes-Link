@@ -4,6 +4,7 @@ using DipesLink_SDK_Printers;
 using IPCSharedMemory;
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Shared;
+using DipesLink_SDK_BarcodeScanner;
 
 namespace DipesLinkDeviceTransfer
 {
@@ -12,6 +13,7 @@ namespace DipesLinkDeviceTransfer
         public static DatamanCamera? DatamanCameraDeviceHandler;
         public static RynanRPrinterTCPClient? RynanRPrinterDeviceHandler;
         public static S7TCPIP? ControllerDeviceHandler;
+        public static RS232BarcodeScanner? BarcodeScannerHandler;
         public static string? keyStep;
         private IPCSharedHelper? _ipcDeviceToUISharedMemory_DT;
         private IPCSharedHelper? _ipcUIToDeviceSharedMemory_DT;
@@ -104,6 +106,8 @@ namespace DipesLinkDeviceTransfer
             DatamanCameraDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
             RynanRPrinterDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
             ControllerDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
+            BarcodeScannerHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
+
             InitEvents();
 
 
@@ -168,6 +172,7 @@ namespace DipesLinkDeviceTransfer
         {
             PrinterEventInit();
             CameraEventInit();
+            ScannerEventInit();
         }
     }
 }
