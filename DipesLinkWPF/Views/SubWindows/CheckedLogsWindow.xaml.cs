@@ -9,7 +9,6 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Web.Services.Description;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -55,6 +54,7 @@ namespace DipesLink.Views.SubWindows
                 _printingInfo.CurrentJob.StatusStartButton && 
                 _printingInfo.CurrentJob.PrinterSeries == SharedProgram.DataTypes.CommonDataType.PrinterSeries.RynanSeries &&
                 _printingInfo.CurrentJob.JobType == SharedProgram.DataTypes.CommonDataType.JobType.AfterProduction; // Only use Re-Print for After Production
+            ExportData_StackPanel.Visibility = _printingInfo.CurrentJob.CompareType == CompareType.Database ? Visibility.Visible : Visibility.Collapsed;
             InitPrintData();
             Closing += CheckedLogsWindow_Closing;
         }

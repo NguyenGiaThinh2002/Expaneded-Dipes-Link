@@ -10,6 +10,43 @@
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
+//Delete old folder first (ProgramData/R-Link)
+[Code]
+procedure DeleteOldFolder(const FolderPath: string);
+begin
+  if DirExists(FolderPath) then
+  begin
+    if DelTree(FolderPath, True, True, True) then
+    begin
+      Log('Old folder deleted successfully.');
+    end
+    else
+    begin
+      Log('Failed to delete old folder.');
+    end;
+  end
+  else
+  begin
+    Log('Old folder does not exist.');
+  end;
+end;
+
+function InitializeSetup(): Boolean;
+var
+  OldFolderPath_Settings: string;   //C:\ProgramData\R-Link\Settings
+var
+  OldFolderPath_Accounts: string;   //C:\ProgramData\R-Link\Accounts
+begin
+  OldFolderPath_Settings := ExpandConstant('{commonappdata}\DP-Link\Settings');
+  OldFolderPath_Accounts := ExpandConstant('{commonappdata}\DP-Link\Accounts');
+  // Call the function to delete the old folder
+  DeleteOldFolder(OldFolderPath_Settings);
+  DeleteOldFolder(OldFolderPath_Accounts);
+  // Proceed with the installation
+  Result := True;
+end;
+// End delete old folder
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -43,12 +80,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "Pushlish\DPLink\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Pushlish\DPLink\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs ;Excludes: "*.pdb, *.config";
+Source: "Output\Release\DipesLink\x64\Release\net6.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Output\Release\DipesLink\x64\Release\net6.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs ;Excludes: "*.pdb";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 //Add file icon.ico into the installation directory
 Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion       
+
+[Dirs]
+Name: "{commonappdata}\DP-Link"; Permissions: users-modify
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue

@@ -30,8 +30,11 @@ namespace SharedProgram.Shared
 
         public static string AppPath = AppDomain.CurrentDomain.BaseDirectory;
 
+        private static string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
         private static string PathProgramData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
         public static string PathProgramDataApp => PathProgramData + "\\DP-Link\\"; // C:\ProgramData\R-Link
+        public static string PathAppData => AppData + "\\DP-Link\\"; // C:\Users\{username}\AppData\Roaming\R-Link
         public static string PathJobsApp => PathProgramDataApp + "Jobs\\"; // C:\ProgramData\R-Link\Jobs
         public static string PathSubJobsApp => PathJobsApp + "Job";  // C:\ProgramData\R-Link\Jobs\Job{index}
 
@@ -41,7 +44,7 @@ namespace SharedProgram.Shared
         public static string PathCheckedResult => PathProgramDataApp + "CheckedResult\\"; // C:\ProgramData\R-Link\CheckedResult
         public static string PathSettingsFile => PathProgramDataApp + "Settings"; //// C:\ProgramData\R-Link\Settings
         public static string PathAccountsDb => PathProgramDataApp + "Accounts";
-        public static string PathEventsLog => PathProgramDataApp + "EventsLog\\"; //// C:\ProgramData\R-Link\EventsLog
+        public static string PathEventsLog => PathAppData + "EventsLog\\"; // C:\Users\{username}\AppData\Roaming\R-Link\EventsLog
 
 
 

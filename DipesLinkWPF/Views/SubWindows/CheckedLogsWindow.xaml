@@ -423,24 +423,29 @@
                             </DataGrid.CellStyle>
                         </DataGrid>
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                            <TextBlock
-                                Margin="10,0,10,0"
-                                VerticalAlignment="Center"
-                                FontSize="20"
-                                Foreground="Black"
-                                Text="{DynamicResource ResourceKey=ExportData}" />
-                            <Button
-                                x:Name="ButtonReloadPrinterTemplate"
-                                Width="60"
-                                Height="30"
-                                Margin="0,0,20,0"
-                                HorizontalAlignment="Right"
-                                Click="ButtonExportData_Click"
-                                Content="{fa:Icon Download,
-                                                  Foreground=White}"
-                                FontSize="20"
-                                Style="{StaticResource ModernButton3}" />
 
+                            <StackPanel
+                                x:Name="ExportData_StackPanel"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="20"
+                                    Foreground="Black"
+                                    Text="{DynamicResource ResourceKey=ExportData}" />
+                                <Button
+                                    x:Name="ButtonReloadPrinterTemplate"
+                                    Width="60"
+                                    Height="30"
+                                    Margin="0,0,20,0"
+                                    HorizontalAlignment="Right"
+                                    Click="ButtonExportData_Click"
+                                    Content="{fa:Icon Download,
+                                                      Foreground=White}"
+                                    FontSize="20"
+                                    Style="{StaticResource ModernButton3}" />
+                            </StackPanel>
                             <TextBlock
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
@@ -457,7 +462,6 @@
                                                   Foreground=White}"
                                 FontSize="20"
                                 Style="{StaticResource ModernButton3}" />
-
 
                         </StackPanel>
                     </StackPanel>

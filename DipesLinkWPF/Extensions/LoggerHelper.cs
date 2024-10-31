@@ -14,9 +14,14 @@ namespace DipesLink.Extensions
 
         static LoggerHelper()
         {
-            var log4netConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.config");
-            XmlConfigurator.Configure(LogManager.GetRepository(), new FileInfo(log4netConfigPath));
-            // XmlConfigurator.Configure(LogManager.GetRepository(), new FileInfo("log4net.config"));
+            try
+            {
+                var log4netConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.config"); // If this file is not found , cannot write logs
+                XmlConfigurator.Configure(LogManager.GetRepository(), new FileInfo(log4netConfigPath));
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public static void SetLogProperties(int stationIndex, string jobName, string title, string message, EventsLogType logsType)
@@ -43,7 +48,6 @@ namespace DipesLink.Extensions
                             {
                                 fileAppender.File = $"{logDirectoryPath}\\_JobEvents_{jobName}.csv";
                                 fileAppender.ActivateOptions();
-                               
                             }
                         }
 

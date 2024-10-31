@@ -226,11 +226,11 @@ namespace DipesLinkDeviceTransfer
                                     Info = new CamInfo()
                                     {
                                         IPAddress = "0.0.0.0",
-                                        Name ="InSight Vision",
+                                        Name = "Comming soon !",
                                         Port = "80",
-                                        SerialNumber ="JHI521DSF",
-                                        SubnetMask ="255.255.0.0",
-                                        Type = "IS3800"
+                                        SerialNumber = "",
+                                        SubnetMask = "",
+                                        Type = ""
                                     }
                                 };
                                 DiposeDatamanCamera();
@@ -248,11 +248,11 @@ namespace DipesLinkDeviceTransfer
                                     Info = new CamInfo()
                                     {
                                         IPAddress = "0.0.0.0",
-                                        Name = "InSight Vision Dual",
+                                        Name = "Comming soon !",
                                         Port = "80",
-                                        SerialNumber = "JSHSFG + HDSGS",
-                                        SubnetMask = "255.255.0.0",
-                                        Type = "IS3800+IS2800"
+                                        SerialNumber = "",
+                                        SubnetMask = "",
+                                        Type = ""
                                     }
                                 };
                                 DiposeDatamanCamera();

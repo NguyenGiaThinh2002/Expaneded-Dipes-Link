@@ -8,10 +8,10 @@
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <BaseOutputPath>$(SolutionDir)Output\$(Configuration)\DipesLink\</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="icon.ico" />
     <None Remove="Images\Duplicated_res.png" />
     <None Remove="Images\Error_Event.png" />
     <None Remove="Images\icon.ico" />
@@ -42,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="icon.ico" />
     <Content Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -75,10 +74,14 @@
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\DipesLink_SDK\DipesLink_SDK.Cameras\DipesLink_SDK_Cameras.csproj" />
-    <ProjectReference Include="..\DongleKeyVerification\DongleKeyVerification.csproj" />
+    <ProjectReference Include="..\DongleKeyVerification\DongleKeyVerification.csproj">
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\IPCSharedMemory\IPCSharedMemory.csproj" />
     <ProjectReference Include="..\RDBMS\RelationalDatabaseHelper.csproj" />
-    <ProjectReference Include="..\RestartHelperProcess\RestartProcessHelper.csproj" />
+    <ProjectReference Include="..\RestartHelperProcess\RestartProcessHelper.csproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -89,9 +92,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="icon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Images\Duplicated_res.png" />
     <Resource Include="Images\Error_Event.png" />
     <Resource Include="Images\icon.ico" />
