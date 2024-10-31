@@ -28,6 +28,12 @@
     <Reference Include="Cognex.DataMan.SDK.Utils.PC">
       <HintPath>..\..\DipesLinkWPF\Libraries\Cameras\Cognex\Dataman\Cognex.DataMan.SDK.Utils.PC.dll</HintPath>
     </Reference>
+    <Reference Include="Cognex.InSight.Web">
+      <HintPath>..\..\DipesLinkWPF\Libraries\Cameras\InSightVision\Cognex.InSight.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Cognex.InSight.Web.Controls">
+      <HintPath>..\..\DipesLinkWPF\Libraries\Cameras\InSightVision\Cognex.InSight.Web.Controls.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

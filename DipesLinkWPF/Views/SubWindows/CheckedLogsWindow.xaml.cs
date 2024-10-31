@@ -9,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Web.Services.Description;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -16,6 +17,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using static DipesLink.Views.Enums.ViewEnums;
+using static SharedProgram.DataTypes.CommonDataType;
+using Binding = System.Windows.Data.Binding;
 
 namespace DipesLink.Views.SubWindows
 {
@@ -395,6 +398,14 @@ namespace DipesLink.Views.SubWindows
                         var listFailed = _printingInfo.list.Where(item => item.Result != "Valid");
                         filterList = new ObservableCollection<CheckedResultModel>(listFailed);
                         break;
+                    case 7: //Camera
+                        var listCamera = _printingInfo.list.Where(item => item.Device == Device.Camera.ToString());
+                        filterList = new ObservableCollection<CheckedResultModel>(listCamera);
+                        break;
+                    case 8: //Scanner
+                        var listScanner = _printingInfo.list.Where(item => item.Device == Device.BarcodeScanner.ToString());
+                        filterList = new ObservableCollection<CheckedResultModel>(listScanner);
+                        break;
                     default: break;
                 }
 
@@ -450,7 +461,8 @@ namespace DipesLink.Views.SubWindows
                             ResultData = resultData,
                             Result = "Missed",
                             ProcessingTime = rawRecord[2],
-                            DateTime = rawRecord[3]
+                            DateTime = rawRecord[3],
+                            Device = rawRecord[4],
                         });
                     }
                 }
@@ -711,7 +723,7 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-        private async void ExportResultAsync()
+        private async void ExportDataAsync()
         {
             try
             {
@@ -720,7 +732,10 @@ namespace DipesLink.Views.SubWindows
                     return;
                 }
 
-                var confirmSaved = CusMsgBox.Show(LanguageModel.GetLanguage("ExportConfirmation"), "Export Checked Result", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
+                var confirmSaved = CusMsgBox.Show(LanguageModel.GetLanguage("ExportDataConfirmation"), 
+                    "Export Checked Result", 
+                    Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, 
+                    Enums.ViewEnums.ImageStyleMessageBox.Info);
                 if (!confirmSaved.Result)
                 {
                     return;
@@ -740,7 +755,7 @@ namespace DipesLink.Views.SubWindows
                 if (fileName != null)
                 {
                     string fullFilePath = Path.Combine(docFolderPath, fileName);
-                    Task<bool> doneExportTask = Task.Run(() => { return ExportResult(fullFilePath, _printingInfo?.RawList, _printingInfo?.list, _printingInfo?.PodFormat); });
+                    Task<bool> doneExportTask = Task.Run(() => { return ExportData(fullFilePath, _printingInfo?.RawList, _printingInfo?.list, _printingInfo?.PodFormat); });
                     if (!(await doneExportTask))
                     {
 
@@ -757,7 +772,7 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-        public static bool ExportResult(string fileName, List<string[]>? rawDatabaseList, ObservableCollection<CheckedResultModel>? checkedList, List<PODModel>? podList)
+        public static bool ExportData(string fileName, List<string[]>? rawDatabaseList, ObservableCollection<CheckedResultModel>? checkedList, List<PODModel>? podList)
         {
             if (fileName == null || rawDatabaseList == null || checkedList == null || podList == null) return false;
             try
@@ -767,36 +782,39 @@ namespace DipesLink.Views.SubWindows
 
                 // Create a dictionary to count the number of occurrences of each ResultData with "Duplicated" status
                 var duplicateCountDict = checkedList
-                    .Where(x => x.Result == "Duplicated")
+                     .Where(x => x.Result == "Duplicated" && x.Device != Device.BarcodeScanner.ToString())
                     .GroupBy(x => x.ResultData)
                     .ToDictionary(g => g.Key, g => g.Count());
 
-                // Create a dictionary to store the first valid results
+                // Create a dictionary to store the first valid results with Device information
                 var checkedResultDict = checkedList
-                    .Where(x => x.Result == "Valid")
+                   .Where(x => x.Result == "Valid" && x.Device != Device.BarcodeScanner.ToString())
                     .GroupBy(x => x.ResultData)
-                    .ToDictionary(g => g.Key, g => g.First().DateTime);
+                    .ToDictionary(g => g.Key, g => (DateTime: g.First().DateTime, Device: g.First().Device));
 
                 if (File.Exists(fileName)) File.Delete(fileName);
                 using (StreamWriter writer = new(fileName, true, Encoding.UTF8))
                 {
                     string header = string.Join(",", headerColumns.Select(Csv.Escape)) + ",VerifyDate";
+                    //string header = string.Join(",", headerColumns.Select(Csv.Escape)) + ",VerifyDate,Device";
+
+                    writer.WriteLine(header);
                     for (int i = 0; i < datas.Count; i++)
                     {
                         var record = datas[i];
                         var compareString = SharedFunctions.GetCompareDataByPODFormat(record, podList);
                         var writeValue = string.Join(",", record.Take(record.Length - 1).Select(Csv.Escape)) + ",";
 
-                        if (checkedResultDict.TryGetValue(compareString, out string dateVerify))
+                        if (checkedResultDict.TryGetValue(compareString, out var checkResult))
                         {
-
+                            var (dateVerify, device) = checkResult;
                             if (duplicateCountDict.TryGetValue(compareString, out int duplicateCount) && duplicateCount >= 1)
                             {
-                                writeValue += "Duplicate";
+                                writeValue += "Printed-Duplicate";
                             }
                             else
                             {
-                                writeValue += "Verified";
+                                writeValue += "Printed-Verified";
                             }
                             writeValue += "," + Csv.Escape(dateVerify);
                             checkedResultDict.Remove(compareString);
@@ -804,8 +822,7 @@ namespace DipesLink.Views.SubWindows
                         else
                         {
                             string tmpValue = record[^1];
-                            writeValue += tmpValue == "Printed" ? "Unverified" : tmpValue;
-                            writeValue += "," + "";
+                            writeValue += tmpValue == "Printed" ? "Printed-Unverified" : "Unprinted-Unverified";
                         }
                         writer.WriteLine(writeValue);
                     }
@@ -835,9 +852,62 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
-        private void ButtonExport_Click(object sender, RoutedEventArgs e)
+        private void ButtonExportData_Click(object sender, RoutedEventArgs e)
         {
-            ExportResultAsync();
+            ExportDataAsync();
         }
+        private void ButtonExportResult_Click(object sender, RoutedEventArgs e)
+        {
+            ExportCheckedResult();
+        }
+        public void ExportCheckedResult()
+        {
+            if (_currentJob?.Name == null)
+            {
+                return;
+            }
+
+            var confirmSaved = CusMsgBox.Show(LanguageModel.GetLanguage("ExportResultConfirmation"), "Export Checked Result", Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, Enums.ViewEnums.ImageStyleMessageBox.Info);
+            if (!confirmSaved.Result)
+            {
+                return;
+            }
+
+            string? selectedJobName = SharedFunctions.GetSelectedJobNameList(_currentJob.Index).FirstOrDefault();
+            var SelectedJob = SharedFunctions.GetJobSelected(selectedJobName, _currentJob.Index);
+
+            string sourceFilePath = SharedPaths.PathCheckedResult + $"Job{_currentJob?.Index + 1}\\" + SelectedJob.CheckedResultPath;
+            var checkedNameFilePath = SharedPaths.PathCheckedResult + $"Job{_currentJob?.Index + 1}\\" + "checkedPathString";
+            string checkedResultPath = SharedPaths.PathCheckedResult + $"Job{_currentJob?.Index + 1}\\" + SharedValues.SelectedJob.CheckedResultPath;
+            //string path = SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\" + selectedJob.CheckedResultPath;
+            if (!string.IsNullOrEmpty(Path.GetFileName(sourceFilePath)))
+            {
+                var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    Title = "Select destination to save the copied file",
+                    FileName = Path.GetFileName(sourceFilePath),
+                    Filter = "All Files|*.*"
+                };
+
+                // Show the SaveFileDialog
+                bool? result = saveFileDialog.ShowDialog();
+
+                if (result == true)
+                {
+                    try
+                    {
+                        File.Copy(sourceFilePath, saveFileDialog.FileName, true);
+                        Process.Start("explorer.exe", $"/select,\"{saveFileDialog.FileName}\"");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Result file does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
+
+
     }
 }

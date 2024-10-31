@@ -8,6 +8,20 @@ namespace SharedProgram.DataTypes
 {
     public class CommonDataType
     {
+
+        public enum Device
+        {
+            Camera,
+            BarcodeScanner
+        }
+        public enum AutoSaveSettingsType
+        {
+            Printer,
+            Camera,
+            BarcodeScanner,
+            Controller,
+            VerifyAndPrint,
+        }
         public enum RestartStatus
         {
             Failed, Successful
@@ -43,8 +57,15 @@ namespace SharedProgram.DataTypes
 
         public  enum CameraSeries
         {
+            Unknown,
             Dataman,
-            InsightVision
+            InsightVision,
+            InsightVisionDual
+        }
+        public enum DatamanReadMode
+        {
+            Basic,
+            MultiRead,
         }
 
         public enum CompleteCondition
@@ -149,7 +170,8 @@ namespace SharedProgram.DataTypes
             ResponsePODDataNotEnable = 3,
             ResponsePODCommandNotEnable = 4,
             MonitorNotEnable = 5,
-            PODMode = 6
+            PODMode = 6,
+            NotSupported = 7
         }
         public enum CheckCondition
         {
@@ -202,7 +224,8 @@ namespace SharedProgram.DataTypes
             NotConnectScanner,
             NotConnectCamera,
             MissingParameter, 
-            NotConnectPrinter, 
+            NotConnectPrinter,
+            NotSupported,
             LeastOneAction, 
             MissingParameterActivation,
             MissingParameterPrinting, 
@@ -236,7 +259,8 @@ namespace SharedProgram.DataTypes
             ResponsePODCommandNotEnable,
             ResponsePODDataNotEnable,
             PODModeMustBePrintAll,
-            PODModeMustBePrintLast
+            PODModeMustBePrintLast,
+       
         }
         public enum EventsLogType
         {
@@ -244,5 +268,6 @@ namespace SharedProgram.DataTypes
             Warning,
             Error
         }
+    
     }
 }

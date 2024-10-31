@@ -1024,6 +1024,10 @@ namespace DipesLink.ViewModels
                         msg = LanguageModel.GetLanguage("DataTypeMustBeRAWData", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
                         break;
+                    case NotifyType.NotSupported:
+                        msg = LanguageModel.GetLanguage("NotSupportedCheckPrinterSetting", stationIndex);
+                        ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);
+                        break;
                     case NotifyType.PODNotEnabled:
                         msg = LanguageModel.GetLanguage("PODFeatureIsNotEnabled", stationIndex);
                         ProcessErrorMessage(stationIndex, msg, CommonDataType.LoggingTitle.Printer, EventsLogType.Error);

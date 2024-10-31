@@ -7,5 +7,7 @@
         public abstract bool ManualInputTrigger();
         public abstract bool OutputAction();
 
+        public bool IsConnected { get; }
+
     }
 }

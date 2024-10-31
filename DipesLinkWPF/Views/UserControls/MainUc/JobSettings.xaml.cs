@@ -15,6 +15,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 using static DipesLink.Views.Enums.ViewEnums;
 using TextBox = System.Windows.Controls.TextBox;
+using SharedProgram.DataTypes;
+using System.Windows.Media;
 namespace DipesLink.Views.UserControls.MainUc
 {
     /// <summary>
@@ -27,23 +29,37 @@ namespace DipesLink.Views.UserControls.MainUc
         public JobSettings()
         {
             InitializeComponent();
-            EventRegister();  
+            EventRegister();
         }
 
         private void EventRegister()
         {
             Loaded += SettingsUc_Loaded;
-            TextBoxPrinterIP.TextChanged += TextBox_ParamsChanged;
-            TextBoxCamIP.TextChanged += TextBox_ParamsChanged;
-            TextBoxControllerIP.TextChanged += TextBox_ParamsChanged;
+
             ViewModelSharedEvents.OnMainListBoxMenu += MainListBoxMenuChange;
             ViewModelSharedEvents.OnChangeJobStatus += JobStatusChanged;
 
+            #region Printer
+            TextBoxPrinterIP.TextChanged += TextBox_ParamsChanged;
+            #endregion
+
+            #region Camera
+            ComboBoxCameraType.SelectionChanged += AdjustData;
+            TextBoxCamIP.TextChanged += TextBox_ParamsChanged;
+            ComboBoxDatamanReadMode.SelectionChanged += AdjustData;
+            #endregion
+
+            #region Controller
+            TextBoxControllerIP.TextChanged += TextBox_ParamsChanged;
+            #endregion
+
+            #region Barcode Scanner
             comboBoxComName.SelectionChanged += AdjustData;
             comboBoxBitPerSeconds.SelectionChanged += AdjustData;
             comboBoxDataBits.SelectionChanged += AdjustData;
             comboBoxParity.SelectionChanged += AdjustData;
             comboBoxStopBits.SelectionChanged += AdjustData;
+            #endregion
         }
         // UI NEW CODE 
         private void AdjustData(object sender, EventArgs e)
@@ -51,12 +67,13 @@ namespace DipesLink.Views.UserControls.MainUc
             if (IsInitializing) return;
             if (sender is not ComboBox comboBox) return;
 
-                var vm = CurrentViewModel<MainViewModel>();
-                if (vm == null) return;
-                if (vm.ConnectParamsList == null) return;
-                // vm.AutoSaveConnectionSetting(CurrentIndex());
-                if (sender == comboBoxComName)
-                {
+            var vm = CurrentViewModel<MainViewModel>();
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            // vm.AutoSaveConnectionSetting(CurrentIndex());
+            switch (((ComboBox)sender).Name)
+            {
+                case "comboBoxComName":
                     switch (comboBoxComName.SelectedIndex)
                     {
                         case 0:
@@ -92,11 +109,10 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-
                     InitSerialDivComName(vm);
-                }
-                if (sender == comboBoxBitPerSeconds)
-                {
+                    vm.AutoSaveConnectionSetting(CurrentIndex(),CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    break;
+                case "comboBoxBitPerSeconds":
                     switch (comboBoxBitPerSeconds.SelectedIndex)
                     {
                         case 0:
@@ -133,12 +149,10 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-
                     InitSerialDivBitPerSecond(vm);
-                }
-
-                if (sender == comboBoxDataBits)
-                {
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    break;
+                case "comboBoxDataBits":
                     switch (comboBoxDataBits.SelectedIndex)
                     {
                         case 0:
@@ -156,12 +170,10 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-
                     InitSerialDivDataBits(vm);
-                }
-
-                if (sender == comboBoxParity)
-                {
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    break;
+                case "comboBoxParity":
                     switch (comboBoxParity.SelectedIndex)
                     {
                         case 0:
@@ -185,12 +197,10 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-
                     InitSerialDivParity(vm);
-                }
-
-                if (sender == comboBoxStopBits)
-                {
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    break;
+                case "comboBoxStopBits":
                     switch (comboBoxStopBits.SelectedIndex)
                     {
                         case 0:
@@ -208,17 +218,161 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-
                     InitSerialDivStopBits(vm);
-                }
-                vm.AutoSaveConnectionSetting(CurrentIndex());
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    break;
+                case "ComboBoxCameraType":
+                    switch (ComboBoxCameraType.SelectedIndex)
+                    {
+                        case 0: // Dataman
+                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.Dataman;
+                           
+                            break;
+                        case 1: // IS
+                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVision;
+                            break;
+                        case 2: // IS Dual
+                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVisionDual;
+                            break;
+                        default:
+                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.Unknown;
+                            break;
+                          
+                    }
+
+                    // Show or hide Dataman Read Mode
+                    if (vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.Dataman)
+                    {
+                        StackPanelDatamanReadMode.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        StackPanelDatamanReadMode.Visibility = Visibility.Collapsed;
+                    }
+
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Camera);
+                    break;
+
+                case "ComboBoxDatamanReadMode":
+                    switch (ComboBoxDatamanReadMode.SelectedIndex)
+                    {
+                        case 0: // Basic
+                            vm.ConnectParamsList[CurrentIndex()].DatamanReadMode = CommonDataType.DatamanReadMode.Basic;
+                            break;
+                        case 1: // Multi Read
+                            vm.ConnectParamsList[CurrentIndex()].DatamanReadMode = CommonDataType.DatamanReadMode.MultiRead;
+                            break;
+                        default:
+                            break;
+                    }
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Camera);
+                    break;
+                default:
+                    break;
+            }
         }
 
-        private void UpdateCheckAllPrinterSettings(MainViewModel vm)
+        private void JobStatusChanged(object? sender, EventArgs e)
         {
-            CheckAllPrinterSettings.IsOn = vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled;
+            LockUIPreventChangeJobWhenRun();
         }
 
+        private void LockUIPreventChangeJobWhenRun()
+        {
+            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuStationSetting.SelectedIndex);
+        }
+
+
+        private void MainListBoxMenuChange(object? sender, EventArgs e)
+        {
+            ListBoxMenu_SelectionChanged(sender, null);
+        }
+
+        private void SettingsUc_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IsInitializing = false;
+                var vm = CurrentViewModel<MainViewModel>();
+                if (vm is null) return;
+                vm.SaveConnectionSetting();
+                InputArea.IsEnabled = vm.ConnectParamsList[CurrentIndex()].EnController;
+                UpdateUIValues(vm);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void UpdateUIValues(MainViewModel vm)
+        {
+            #region Update UI values
+            UpdateSendModeVerifyAndPrintState(vm);
+            UpdateSerialDevComboBoxValues(vm);
+            UpdateCameraTypeValues(vm);
+            UpdateCheckAllPrinterSettingsState(vm);
+            UpdateDatamanReadModeValues(vm);
+            #endregion
+        }
+
+        private void UpdateDatamanReadModeValues(MainViewModel vm)
+        {
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            switch (vm.ConnectParamsList[CurrentIndex()].DatamanReadMode)
+            {
+                case CommonDataType.DatamanReadMode.Basic:
+                    ComboBoxDatamanReadMode.SelectedIndex = 0;
+                    break;
+                case CommonDataType.DatamanReadMode.MultiRead:
+                    ComboBoxDatamanReadMode.SelectedIndex = 1;
+                    break;
+                default:
+                    ComboBoxDatamanReadMode.SelectedIndex = -1;
+                    break;
+            }
+        }
+
+        private T? CurrentViewModel<T>() where T : class
+        {
+            if (DataContext is T viewModel)
+            {
+                return viewModel;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        private void ListBoxMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                var vm = CurrentViewModel<MainViewModel>();
+                vm?.SelectionChangeSystemSettings(CurrentIndex());
+                vm?.LockUI(CurrentIndex());// Lock UI when running
+                UpdateUIValues(vm);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        #region Update UI Values
+        void UpdateSendModeVerifyAndPrintState(MainViewModel vm)
+        {
+            try
+            {
+                var isBasicSendMode = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
+                RadBasic.IsChecked = isBasicSendMode == true;
+                RadCompare.IsChecked = isBasicSendMode == false;
+            }
+            catch (Exception)
+            {
+            }
+        }
         private void UpdateSerialDevComboBoxValues(MainViewModel vm)
         {
             InitSerialDivComName(vm);
@@ -227,7 +381,6 @@ namespace DipesLink.Views.UserControls.MainUc
             InitSerialDivParity(vm);
             InitSerialDivStopBits(vm);
         }
-
         private void InitSerialDivComName(MainViewModel vm)
         {
             if (vm == null) return;
@@ -333,82 +486,32 @@ namespace DipesLink.Views.UserControls.MainUc
                     break;
             }
         }
-
-        private void JobStatusChanged(object? sender, EventArgs e)
+        private void UpdateCameraTypeValues(MainViewModel vm)
         {
-            LockUIPreventChangeJobWhenRun();
-        }
-
-        private void LockUIPreventChangeJobWhenRun()
-        {
-            CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuStationSetting.SelectedIndex);
-        }
-
-
-        private void MainListBoxMenuChange(object? sender, EventArgs e)
-        {
-            ListBoxMenu_SelectionChanged(sender, null);
-        }
-
-        private void SettingsUc_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
+            if (vm == null) return;
+            if (vm.ConnectParamsList == null) return;
+            switch (vm.ConnectParamsList[CurrentIndex()].CameraSeries)
             {
-                IsInitializing = false;
-                var vm = CurrentViewModel<MainViewModel>();
-                if (vm is null) return;
-                vm.SaveConnectionSetting();
-                InputArea.IsEnabled = vm.ConnectParamsList[CurrentIndex()].EnController;
-                UpdateSendModeVerifyAndPrint(vm);
-                UpdateSerialDevComboBoxValues(vm);
-                UpdateCheckAllPrinterSettings(vm);
-            }
-            catch (Exception)
-            {
+                case CommonDataType.CameraSeries.Dataman:
+                    ComboBoxCameraType.SelectedIndex = 0;
+                    break;
+                case CommonDataType.CameraSeries.InsightVision:
+                    ComboBoxCameraType.SelectedIndex = 1;
+                    break;
+                case CommonDataType.CameraSeries.InsightVisionDual:
+                    ComboBoxCameraType.SelectedIndex = 2;
+                    break;
+                default:
+                    ComboBoxCameraType.SelectedIndex = -1;
+                    break;
             }
         }
-
-        private T? CurrentViewModel<T>() where T : class
+        private void UpdateCheckAllPrinterSettingsState(MainViewModel vm)
         {
-            if (DataContext is T viewModel)
-            {
-                return viewModel;
-            }
-            else
-            {
-                return null;
-            }
+            CheckAllPrinterSettings.IsOn = vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled;
         }
+        #endregion
 
-
-        private void ListBoxMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                var vm = CurrentViewModel<MainViewModel>();
-                vm?.SelectionChangeSystemSettings(CurrentIndex());
-                vm?.LockUI(CurrentIndex());// Lock UI when running
-                UpdateSendModeVerifyAndPrint(vm);
-                UpdateSerialDevComboBoxValues(vm);
-                UpdateCheckAllPrinterSettings(vm);
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        void UpdateSendModeVerifyAndPrint(MainViewModel vm)
-        {
-            try
-            {
-                var isBasicSendMode = vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod;
-                RadBasic.IsChecked = isBasicSendMode == true;
-                RadCompare.IsChecked = isBasicSendMode == false;
-            }
-            catch (Exception)
-            {
-            }
-        }
 
         private int CurrentIndex() => ListBoxMenuStationSetting.SelectedIndex;
 
@@ -440,39 +543,28 @@ namespace DipesLink.Views.UserControls.MainUc
                     {
                         case "TextBoxPrinterIP":
                             vm.ConnectParamsList[CurrentIndex()].PrinterIP = textBox.Text;
+                            vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
                             break;
-                        case "TextBoxPrinterPort":
-                           // vm.ConnectParamsList[CurrentIndex()].PrinterPort = textBox.Text;
-                            break;
+                       
                         case "TextBoxCamIP":
                             vm.ConnectParamsList[CurrentIndex()].CameraIP = textBox.Text;
+                            vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Camera);
                             break;
                         case "TextBoxControllerIP":
                             vm.ConnectParamsList[CurrentIndex()].ControllerIP = textBox.Text;
+                            vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Controller);
                             break;
-                        case "TextBoxControllerPort":
-                          //  vm.ConnectParamsList[CurrentIndex()].ControllerPort = textBox.Text;
-                            break;
+                      
                         case "TextBoxErrorField":
                             vm.ConnectParamsList[CurrentIndex()].FailedDataSentToPrinter = textBox.Text;
+                            vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.VerifyAndPrint);
                             break;
-                        case "NumDelaySensor":
-                            vm.ConnectParamsList[CurrentIndex()].DelaySensor = int.Parse(textBox.Text);
-                            break;
-                        case "NumDisSensor":
-                            vm.ConnectParamsList[CurrentIndex()].DisableSensor = int.Parse(textBox.Text);
-                            break;
-                        case "NumPulseEncoder":
-                            vm.ConnectParamsList[CurrentIndex()].PulseEncoder = int.Parse(textBox.Text);
-                            break;
-                        case "NumEncoderDia":
-                            vm.ConnectParamsList[CurrentIndex()].EncoderDiameter = double.Parse(textBox.Text);
-                            break;
+                       
 
                         default:
                             break;
                     }
-                    vm.AutoSaveConnectionSetting(CurrentIndex());
+                   
 
                 }), DispatcherPriority.Background);
             }
@@ -496,38 +588,24 @@ namespace DipesLink.Views.UserControls.MainUc
                     {
                         case "TextBoxPrinterIP":
                             vm.ConnectParamsList[index].PrinterIP = textBox.Text;
-                            break;
-                        case "TextBoxPrinterPort":
-                           // vm.ConnectParamsList[index].PrinterPort = textBox.Text;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Printer);
                             break;
                         case "TextBoxCamIP":
                             vm.ConnectParamsList[index].CameraIP = textBox.Text;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Camera);
                             break;
                         case "TextBoxControllerIP":
                             vm.ConnectParamsList[index].ControllerIP = textBox.Text;
-                            break;
-                        case "TextBoxControllerPort":
-                          //  vm.ConnectParamsList[index].ControllerPort = textBox.Text;
-                            break;
-                        case "NumDelaySensor":
-                            vm.ConnectParamsList[index].DelaySensor = int.Parse(textBox.Text);
-                            break;
-                        case "NumDisSensor":
-                            vm.ConnectParamsList[index].DisableSensor = int.Parse(textBox.Text);
-                            break;
-                        case "NumPulseEncoder":
-                            vm.ConnectParamsList[index].PulseEncoder = int.Parse(textBox.Text);
-                            break;
-                        case "NumEncoderDia":
-                            vm.ConnectParamsList[index].EncoderDiameter = double.Parse(textBox.Text);
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                             break;
                         case "TextBoxErrorField":
                             vm.ConnectParamsList[index].FailedDataSentToPrinter = textBox.Text;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.VerifyAndPrint);
                             break;
                         default:
                             break;
                     }
-                    vm.AutoSaveConnectionSetting(index);
+                  
 
                 }), DispatcherPriority.Background);
             }
@@ -580,7 +658,7 @@ namespace DipesLink.Views.UserControls.MainUc
                             break;
                     }
                     Debug.WriteLine("Vao day 1");
-                    vm?.AutoSaveConnectionSetting(CurrentIndex());
+                    vm?.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Controller);
 
                 }), DispatcherPriority.Background);
             }
@@ -611,13 +689,13 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-                    vm.AutoSaveConnectionSetting(CurrentIndex());
+                    vm.AutoSaveConnectionSetting(CurrentIndex(),CommonDataType.AutoSaveSettingsType.Controller);
                 }), DispatcherPriority.Background);
             }
             catch (Exception) { }
         }
 
-        private void ToggleButtonState(object sender, RoutedEventArgs e)
+        private void ToggleButtonEnableControllerState(object sender, RoutedEventArgs e)
         {
             if (IsInitializing) return;
             try
@@ -628,8 +706,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     if (vm == null) return;
                     vm.ConnectParamsList[CurrentIndex()].EnController = (bool)toggleButton.IsChecked;
-                    Debug.WriteLine("Vao day 3");
-                    vm.AutoSaveConnectionSetting(CurrentIndex());
+                    vm.AutoSaveConnectionSetting(CurrentIndex(),SharedProgram.DataTypes.CommonDataType.AutoSaveSettingsType.Controller);
                 }), DispatcherPriority.Background);
 
                 if (vm.ConnectParamsList[CurrentIndex()].EnController)
@@ -668,7 +745,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     List<PODModel> _PODFormat = verifyAndPrintPODFormat._PODFormat;
                     vm.ConnectParamsList[CurrentIndex()].PrintFieldForVerifyAndPrint = _PODFormat;
                     vm.ConnectParamsList[CurrentIndex()].FormatedPOD = verifyAndPrintPODFormat.FormatedPOD;
-                    vm.AutoSaveConnectionSetting(CurrentIndex());
+                    vm.AutoSaveConnectionSetting(CurrentIndex(),CommonDataType.AutoSaveSettingsType.VerifyAndPrint);
                 }
             }
             catch (Exception)
@@ -737,7 +814,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         ViewModelSharedEvents.OnChangeJobHandler(((Button)sender).Name, CurrentIndex()); // event trigger for clear data job detail
                         CusAlert.Show(LanguageModel.GetLanguage("RestartSuccessfully", job?.Index), ImageStyleMessageBox.Info, true);
                     }
-                    vm?.AutoSaveConnectionSetting(CurrentIndex());
+                  //  vm?.AutoSaveConnectionSetting(CurrentIndex());
                 }
             }
             catch (Exception)
@@ -769,12 +846,12 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     vm.ConnectParamsList[CurrentIndex()].VerifyAndPrintBasicSentMethod = false;
                 }
-                vm.AutoSaveConnectionSetting(CurrentIndex());
+                vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.VerifyAndPrint);
             }
             catch (Exception) { }
         }
 
-      
+
 
 
         private void NumUpdownParamsHandler(HandyControl.Controls.NumericUpDown num)
@@ -786,32 +863,38 @@ namespace DipesLink.Views.UserControls.MainUc
                     var vm = CurrentViewModel<MainViewModel>();
                     if (vm == null) return;
                     if (vm.ConnectParamsList == null) return;
-                 //   num.Text ??= string.Empty;
+                    //   num.Text ??= string.Empty;
                     var index = CurrentIndex();
                     switch (num.Name)
                     {
                         case "NumPort":
                             vm.ConnectParamsList[index].PrinterPort = num.Value;
+                            vm.AutoSaveConnectionSetting(index,CommonDataType.AutoSaveSettingsType.Printer);
                             break;
                         case "NumPLCPort":
                             vm.ConnectParamsList[index].ControllerPort = num.Value;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                             break;
                         case "NumDelaySensor":
                             vm.ConnectParamsList[index].DelaySensor = (int)num.Value;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                             break;
                         case "NumDisSensor":
                             vm.ConnectParamsList[index].DisableSensor = (int)num.Value;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                             break;
                         case "NumPulseEncoder":
                             vm.ConnectParamsList[index].PulseEncoder = (int)num.Value;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                             break;
                         case "NumEncoderDia":
                             vm.ConnectParamsList[index].EncoderDiameter = num.Value;
+                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                             break;
                         default:
                             break;
                     }
-                    vm.AutoSaveConnectionSetting(index);
+                  
 
                 }), DispatcherPriority.Background);
             }
@@ -838,13 +921,13 @@ namespace DipesLink.Views.UserControls.MainUc
             {
                 if (toggleSwitch.IsOn == true)
                 {
-                    vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = true;                  
+                    vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = true;
                 }
                 else
                 {
                     vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = false;
                 }
-                vm.AutoSaveConnectionSetting(CurrentIndex());
+                vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
             }
         }
     }

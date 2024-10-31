@@ -16,6 +16,7 @@ namespace IPCSharedMemory
         public byte[]? ReceiveData;
         public ConcurrentQueue<byte[]> MessageQueue = new();
         CancellationTokenSource? _ctsThreadListenData;
+        private bool _disposed = false;
 
         // 1024 * 1024 * 100 = 100MB 
         public IPCSharedHelper(int index, string queueName, long capacity = 1024 * 1024 * 100, bool isReceiver = false)
@@ -74,13 +75,34 @@ namespace IPCSharedMemory
         }
 
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                // Dispose managed resources
+                _Publisher?.Dispose();
+                _Subscriber?.Dispose();
+                _ctsThreadListenData?.Cancel();
+                _ctsThreadListenData?.Dispose();
+            }
+
+            // Dispose unmanaged resources (if any)
+
+            _disposed = true;
+        }
+
         public void Dispose()
         {
-            _Publisher?.Dispose();
-            _Subscriber?.Dispose();
-            _ctsThreadListenData?.Cancel();
-            _ctsThreadListenData?.Dispose();
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        ~IPCSharedHelper()
+        {
+            Dispose(false);
         }
     }
 }

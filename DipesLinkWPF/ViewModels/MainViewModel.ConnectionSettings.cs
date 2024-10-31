@@ -3,6 +3,7 @@ using IPCSharedMemory;
 using SharedProgram.Shared;
 using System.Diagnostics;
 using System.Windows.Forms;
+using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLink.ViewModels
 {
@@ -19,75 +20,112 @@ namespace DipesLink.ViewModels
             for (int i = 0; i < _numberOfStation; i++)
             {
                 SendConnectionParamsToDeviceTransfer(i);
-                
                 ViewModelSharedValues.Settings.SystemParamsList[i].Index = ConnectParamsList[i].Index;
-                ViewModelSharedValues.Settings.SystemParamsList[i].EnController = ConnectParamsList[i].EnController;
-                ViewModelSharedValues.Settings.SystemParamsList[i].IsCheckPrinterSettingsEnabled = ConnectParamsList[i].IsCheckPrinterSettingsEnabled;
-                ViewModelSharedValues.Settings.SystemParamsList[i].CameraIP = ConnectParamsList[i].CameraIP;
+
+                #region Printer
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterIP = ConnectParamsList[i].PrinterIP;
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterPort = ConnectParamsList[i].PrinterPort;
+                ViewModelSharedValues.Settings.SystemParamsList[i].IsCheckPrinterSettingsEnabled = ConnectParamsList[i].IsCheckPrinterSettingsEnabled;
+                #endregion
+
+                #region Camera
+                ViewModelSharedValues.Settings.SystemParamsList[i].CameraIP = ConnectParamsList[i].CameraIP;
+                ViewModelSharedValues.Settings.SystemParamsList[i].CameraSeries = ConnectParamsList[i].CameraSeries;
+                ViewModelSharedValues.Settings.SystemParamsList[i].DatamanReadMode = ConnectParamsList[i].DatamanReadMode;
+                #endregion
+
+                #region Controller
+                ViewModelSharedValues.Settings.SystemParamsList[i].EnController = ConnectParamsList[i].EnController;
                 ViewModelSharedValues.Settings.SystemParamsList[i].ControllerIP = ConnectParamsList[i].ControllerIP;
                 ViewModelSharedValues.Settings.SystemParamsList[i].ControllerPort = ConnectParamsList[i].ControllerPort;
-                ViewModelSharedValues.Settings.SystemParamsList[i].ComName = ConnectParamsList[i].ComName;
-                ViewModelSharedValues.Settings.SystemParamsList[i].BitPerSeconds = ConnectParamsList[i].BitPerSeconds;
-                ViewModelSharedValues.Settings.SystemParamsList[i].Parity = ConnectParamsList[i].Parity;
-                ViewModelSharedValues.Settings.SystemParamsList[i].DataBits = ConnectParamsList[i].DataBits;
-                ViewModelSharedValues.Settings.SystemParamsList[i].StopBits = ConnectParamsList[i].StopBits;
-
                 ViewModelSharedValues.Settings.SystemParamsList[i].DisableSensor = ConnectParamsList[i].DisableSensor;
                 ViewModelSharedValues.Settings.SystemParamsList[i].DelaySensor = ConnectParamsList[i].DelaySensor;
                 ViewModelSharedValues.Settings.SystemParamsList[i].PulseEncoder = ConnectParamsList[i].PulseEncoder;
                 ViewModelSharedValues.Settings.SystemParamsList[i].EncoderDiameter = ConnectParamsList[i].EncoderDiameter;
 
+                ViewModelSharedValues.Settings.SystemParamsList[i].DisableSensor2 = ConnectParamsList[i].DisableSensor2;
+                ViewModelSharedValues.Settings.SystemParamsList[i].DelaySensor2 = ConnectParamsList[i].DelaySensor2;
+                ViewModelSharedValues.Settings.SystemParamsList[i].PulseEncoder2 = ConnectParamsList[i].PulseEncoder2;
+                ViewModelSharedValues.Settings.SystemParamsList[i].EncoderDiameter2 = ConnectParamsList[i].EncoderDiameter2;
+                #endregion
+
+                #region Barcode Scanner
+                ViewModelSharedValues.Settings.SystemParamsList[i].ComName = ConnectParamsList[i].ComName;
+                ViewModelSharedValues.Settings.SystemParamsList[i].BitPerSeconds = ConnectParamsList[i].BitPerSeconds;
+                ViewModelSharedValues.Settings.SystemParamsList[i].Parity = ConnectParamsList[i].Parity;
+                ViewModelSharedValues.Settings.SystemParamsList[i].DataBits = ConnectParamsList[i].DataBits;
+                ViewModelSharedValues.Settings.SystemParamsList[i].StopBits = ConnectParamsList[i].StopBits;
+                #endregion
+
+                #region Verify and Print
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrintFieldForVerifyAndPrint = ConnectParamsList[i].PrintFieldForVerifyAndPrint;
                 ViewModelSharedValues.Settings.SystemParamsList[i].FailedDataSentToPrinter = ConnectParamsList[i].FailedDataSentToPrinter;
-                ViewModelSharedValues.Settings.SystemParamsList[i].VerifyAndPrintBasicSentMethod = ConnectParamsList[i].VerifyAndPrintBasicSentMethod;         
+                ViewModelSharedValues.Settings.SystemParamsList[i].VerifyAndPrintBasicSentMethod = ConnectParamsList[i].VerifyAndPrintBasicSentMethod;
+                #endregion
+
             }
 
             ViewModelSharedValues.Settings.NumberOfStation = StationSelectedIndex + 1;
-            
-
             ViewModelSharedFunctions.SaveSetting();
         }
 
-        internal void AutoSaveConnectionSetting(int index) // Auto save Connection Setting according to Textbox change
+        internal void AutoSaveConnectionSetting(int index, AutoSaveSettingsType autoSaveSettingsType) // Auto save Connection Setting according to Textbox change
         {
             if (JobSettings.IsInitializing) return;           
             ConnectParamsList[index].Index = index;
-            ConnectParamsList[index].EnController = CurrentConnectParams.EnController;
-            ConnectParamsList[index].IsCheckPrinterSettingsEnabled = CurrentConnectParams.IsCheckPrinterSettingsEnabled;
-            ConnectParamsList[index].CameraIP = CurrentConnectParams.CameraIP;
-            ConnectParamsList[index].PrinterIP = CurrentConnectParams.PrinterIP;
-            ConnectParamsList[index].PrinterPort = CurrentConnectParams.PrinterPort;
-            ConnectParamsList[index].ControllerIP = CurrentConnectParams.ControllerIP;
-            ConnectParamsList[index].ControllerPort = CurrentConnectParams.ControllerPort;
-            ConnectParamsList[index].DelaySensor = CurrentConnectParams.DelaySensor;
-            ConnectParamsList[index].DisableSensor = CurrentConnectParams.DisableSensor;
-            ConnectParamsList[index].PulseEncoder = CurrentConnectParams.PulseEncoder;
-            ConnectParamsList[index].EncoderDiameter = CurrentConnectParams.EncoderDiameter;
-            ConnectParamsList[index].ComName = CurrentConnectParams.ComName;
-            ConnectParamsList[index].BitPerSeconds = CurrentConnectParams.BitPerSeconds;
-            ConnectParamsList[index].Parity = CurrentConnectParams.Parity;
-            ConnectParamsList[index].DataBits = CurrentConnectParams.DataBits;
-            ConnectParamsList[index].StopBits = CurrentConnectParams.StopBits;
-
-            ConnectParamsList[index].PrintFieldForVerifyAndPrint = CurrentConnectParams.PrintFieldForVerifyAndPrint;
-            ConnectParamsList[index].FailedDataSentToPrinter = CurrentConnectParams.FailedDataSentToPrinter;
-            ConnectParamsList[index].VerifyAndPrintBasicSentMethod = CurrentConnectParams.VerifyAndPrintBasicSentMethod;
-            ConnectParamsList[index].Index = index;
-            ConnectParamsList[index].EnController = CurrentConnectParams.EnController;
-            ConnectParamsList[index].IsCheckPrinterSettingsEnabled = CurrentConnectParams.IsCheckPrinterSettingsEnabled;
-            ConnectParamsList[index].CameraIP = CurrentConnectParams.CameraIP;
-            ConnectParamsList[index].PrinterIP = CurrentConnectParams.PrinterIP;
-            ConnectParamsList[index].PrinterPort = CurrentConnectParams.PrinterPort;
-            ConnectParamsList[index].ControllerIP = CurrentConnectParams.ControllerIP;
-            ConnectParamsList[index].ControllerPort = CurrentConnectParams.ControllerPort;
-            ConnectParamsList[index].DelaySensor = CurrentConnectParams.DelaySensor;
-            ConnectParamsList[index].DisableSensor = CurrentConnectParams.DisableSensor;
-            ConnectParamsList[index].PulseEncoder = CurrentConnectParams.PulseEncoder;
-            ConnectParamsList[index].EncoderDiameter = CurrentConnectParams.EncoderDiameter;
+            switch (autoSaveSettingsType)
+            {
+                case AutoSaveSettingsType.Printer:
+                    #region Printer
+                    ConnectParamsList[index].PrinterIP = CurrentConnectParams.PrinterIP;
+                    ConnectParamsList[index].PrinterPort = CurrentConnectParams.PrinterPort;
+                    ConnectParamsList[index].IsCheckPrinterSettingsEnabled = CurrentConnectParams.IsCheckPrinterSettingsEnabled;
+                    #endregion
+                    break;
+                case AutoSaveSettingsType.Camera:
+                    #region Camera
+                    ConnectParamsList[index].CameraIP = CurrentConnectParams.CameraIP;
+                    ConnectParamsList[index].CameraSeries = CurrentConnectParams.CameraSeries;
+                    ConnectParamsList[index].DatamanReadMode = CurrentConnectParams.DatamanReadMode;
+                    #endregion
+                    break;
+                case AutoSaveSettingsType.BarcodeScanner:
+                    #region Barcode Scanner
+                    ConnectParamsList[index].ComName = CurrentConnectParams.ComName;
+                    ConnectParamsList[index].BitPerSeconds = CurrentConnectParams.BitPerSeconds;
+                    ConnectParamsList[index].Parity = CurrentConnectParams.Parity;
+                    ConnectParamsList[index].DataBits = CurrentConnectParams.DataBits;
+                    ConnectParamsList[index].StopBits = CurrentConnectParams.StopBits;
+                    #endregion
+                    break;
+                case AutoSaveSettingsType.Controller:
+                    #region Controller
+                    ConnectParamsList[index].EnController = CurrentConnectParams.EnController;
+                    ConnectParamsList[index].ControllerIP = CurrentConnectParams.ControllerIP;
+                    ConnectParamsList[index].ControllerPort = CurrentConnectParams.ControllerPort;
+                    ConnectParamsList[index].DelaySensor = CurrentConnectParams.DelaySensor;
+                    ConnectParamsList[index].DisableSensor = CurrentConnectParams.DisableSensor;
+                    ConnectParamsList[index].PulseEncoder = CurrentConnectParams.PulseEncoder;
+                    ConnectParamsList[index].EncoderDiameter = CurrentConnectParams.EncoderDiameter;
+                    ConnectParamsList[index].DelaySensor2 = CurrentConnectParams.DelaySensor2;
+                    ConnectParamsList[index].DisableSensor2 = CurrentConnectParams.DisableSensor2;
+                    ConnectParamsList[index].PulseEncoder2 = CurrentConnectParams.PulseEncoder2;
+                    ConnectParamsList[index].EncoderDiameter2 = CurrentConnectParams.EncoderDiameter2;
+                    #endregion
+                    break;
+                case AutoSaveSettingsType.VerifyAndPrint:
+                    #region Verify and Print Settings
+                    ConnectParamsList[index].PrintFieldForVerifyAndPrint = CurrentConnectParams.PrintFieldForVerifyAndPrint;
+                    ConnectParamsList[index].FailedDataSentToPrinter = CurrentConnectParams.FailedDataSentToPrinter;
+                    ConnectParamsList[index].VerifyAndPrintBasicSentMethod = CurrentConnectParams.VerifyAndPrintBasicSentMethod;
+                    #endregion
+                    break;
+                default:
+                    break;
+            }
 
             CurrentConnectParams = ConnectParamsList[index];
+
             SaveConnectionSetting();
         }
 
@@ -114,7 +152,6 @@ namespace DipesLink.ViewModels
 
         internal void SendConnectionParamsToDeviceTransfer(int stationIndex)
         {
-            
             try
             {
                 int i = stationIndex;               

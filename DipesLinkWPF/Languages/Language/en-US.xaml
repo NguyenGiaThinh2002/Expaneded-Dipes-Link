@@ -48,13 +48,15 @@
     <system:String x:Key="PrinterDisconnected">Station {0}: Printer's Disconnected !</system:String>
     <system:String x:Key="CameraDisconnected">Station {0}: Camera's Disconnected !</system:String>
     <system:String x:Key="FileNotFound">Station {0}: File not found !</system:String>
-    <system:String x:Key="DataTypeMustBeRAWData">Trạm {0}: Data type must be RAW data !</system:String>
-    <system:String x:Key="PODFeatureIsNotEnabled">Trạm {0}: POD feature is not enabled !</system:String>
-    <system:String x:Key="ResponsePODDataFeatureIsNotEnable">Trạm {0}: POD Data response feature is not enabled !</system:String>
-    <system:String x:Key="ResponsePODCommandFeatureIsNotEnable">Trạm {0}: POD Command response feature is not enabled !</system:String>
-    <system:String x:Key="MonitorFeatureIsNotEnabled">Trạm {0}: Monitor feature is not enabled !</system:String>
-    <system:String x:Key="PODModeMustBePrintAll">Trạm {0}: POD mode must be "Print all" !</system:String>
-    <system:String x:Key="PODModeMustBePrintLast">Trạm {0}: POD mode must be "Print last" !</system:String>
+ 
+    <system:String x:Key="NotSupportedCheckPrinterSetting">Station {0}: Printer does not support check printer settings !</system:String>
+    <system:String x:Key="DataTypeMustBeRAWData">Station {0}: Data type must be RAW data !</system:String>
+    <system:String x:Key="PODFeatureIsNotEnabled">Station {0}: POD feature is not enabled !</system:String>
+    <system:String x:Key="ResponsePODDataFeatureIsNotEnable">Station {0}: POD Data response feature is not enabled !</system:String>
+    <system:String x:Key="ResponsePODCommandFeatureIsNotEnable">Station {0}: POD Command response feature is not enabled !</system:String>
+    <system:String x:Key="MonitorFeatureIsNotEnabled">Station {0}: Monitor feature is not enabled !</system:String>
+    <system:String x:Key="PODModeMustBePrintAll">Station {0}: POD mode must be "Print all" !</system:String>
+    <system:String x:Key="PODModeMustBePrintLast">Station {0}: POD mode must be "Print last" !</system:String>
 
 
     <system:String x:Key="ExitConfirmation">Do you want to exit the application?</system:String>
@@ -64,9 +66,9 @@
     <system:String x:Key="LogoutConfirmation">Do you want to logout?</system:String>
     <system:String x:Key="PageNotFound">Page not found !</system:String>
     <system:String x:Key="NotFound">Not Found !</system:String>
-    <system:String x:Key="ExportConfirmation">Confirm you want to export report file ?</system:String>
+    <system:String x:Key="ExportDataConfirmation">Confirm you want to export Data file ?</system:String>
+    <system:String x:Key="ExportResultConfirmation">Confirm you want to export Result file ?</system:String>
     <system:String x:Key="IncorrectUsernameOrPassword">Username or password is incorrect !</system:String>
-
     <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Do you want to change language and logout?</system:String>
     <system:String x:Key="UsernameInvalid">Invalid Username</system:String>
     <system:String x:Key="PasswordInvalid">Invalid Password</system:String>
@@ -88,6 +90,8 @@
     <system:String x:Key="RestartConfirmation">Do you want to restart ?</system:String>
     <system:String x:Key="NoDataFound">Station {0}: No data found</system:String>
     <system:String x:Key="ExportFileSuccess">Export File Successfully</system:String>
+    <system:String x:Key="ExportData">Export Data</system:String>
+    <system:String x:Key="ExportResult">Export Result</system:String>
     <system:String x:Key="RestartFailed">Station {0}: Restart Failed!</system:String>
     <system:String x:Key="RestartSuccessfully">Station {0}: Restart Successfully!</system:String>
     <system:String x:Key="StationNumber">Station {0}</system:String>
@@ -154,22 +158,34 @@
     <system:String x:Key="Station">Station</system:String>
     <system:String x:Key="Printer_Settings">Printer Settings</system:String>
     <system:String x:Key="IP_Address">IP Address:</system:String>
+    <system:String x:Key="CameraType">Camera Type:</system:String>
+    <system:String x:Key="DatamanReadMode">Read mode:</system:String>
     <system:String x:Key="Port">Port:</system:String>
     <system:String x:Key="Remote">Remote:</system:String>
     <system:String x:Key="Controller_Settings">Controller Settings</system:String>
     <system:String x:Key="Enable_Controller">Enable Controller:</system:String>
+    <system:String x:Key="Sensor1">Sensor 1</system:String>
+    <system:String x:Key="Sensor2">Sensor 2</system:String>
     <system:String x:Key="Delay_Sensor">Delay Sensor:</system:String>
     <system:String x:Key="Disable_Sensor">Disable Sensor:</system:String>
     <system:String x:Key="Pulse_Encoder">Pulse Encoder:</system:String>
     <system:String x:Key="Encoder_Diameter">Encoder Diameter:</system:String>
-    <system:String x:Key="Camera_Settings">Camera Settings:</system:String>
+    <system:String x:Key="Camera_Settings">Camera Settings</system:String>
+    <system:String x:Key="PLC_Settings">PLC Settings</system:String>
+    <system:String x:Key="Scanner_Settings">Scanner Settings</system:String>
     <system:String x:Key="Model">Model:</system:String>
     <system:String x:Key="Serial">Serial:</system:String>
     <system:String x:Key="Verify_and_Print_POD_Send_Mode">Verify and Print POD send mode</system:String>
-    <system:String x:Key="Send_Mode">Send Mode:</system:String>
+    <system:String x:Key="Send_Mode">Send Mode</system:String>
     <system:String x:Key="Basic">Basic</system:String>
     <system:String x:Key="Compare">Compare</system:String>
     <system:String x:Key="Print_Fields">Print Fields:</system:String>
+    <system:String x:Key="Field_Settings">Field Settings</system:String>
+    <system:String x:Key="COM_Port">COM port</system:String>
+    <system:String x:Key="Bit_Per_Second">Bit per second</system:String>
+    <system:String x:Key="Data_Bits">Data bits</system:String>
+    <system:String x:Key="Parity">Parity</system:String>
+    <system:String x:Key="Stop_Bits">Stop bits</system:String>
     <system:String x:Key="Select">Select</system:String>
     <system:String x:Key="Error_Field">Error Field:</system:String>
     <system:String x:Key="Default">Default</system:String>
@@ -197,6 +213,7 @@
     <system:String x:Key="After_Production">After Production</system:String>
     <system:String x:Key="On_Production">On Production</system:String>
     <system:String x:Key="Verify_And_Print">Verify And Print</system:String>
+    <system:String x:Key="Verify_And_Print_Settings">Verify And Print Settings</system:String>
     <system:String x:Key="Can_Read">Can Read</system:String>
     <system:String x:Key="Static_Text">Static Text</system:String>
     <system:String x:Key="Database_Path">Database Path</system:String>
@@ -233,6 +250,8 @@
     <system:String x:Key="Unknown_Missed">Unknown/Missed</system:String>
     <system:String x:Key="Printed">Printed</system:String>
     <system:String x:Key="Waiting">Waiting</system:String>
+    <system:String x:Key="Camera">Camera</system:String>
+    <system:String x:Key="BarcodeScanner">Barcode Scanner</system:String>
     <system:String x:Key="PRINTED_LOG">PRINTED LOG</system:String>
     <system:String x:Key="STATION">STATION</system:String>
     <system:String x:Key="Name">Name:</system:String>

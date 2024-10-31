@@ -61,12 +61,12 @@ namespace DipesLink.Views.Extension
         /// <returns></returns>
         public void ConvertListToDataTable(List<string[]> list)
         {
-            string[] columnNames = new string[5] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime" }; // Default header col
+            string[] columnNames = new string[6] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime", "Device" }; // Default header col
             DataTable = new DataTable();
             try
             {
                 // Add Header column
-                int numberOfColumns = 5; // or get dynamic with list[0].Length;
+                int numberOfColumns = 6; // or get dynamic with list[0].Length;
                 for (int i = 0; i < numberOfColumns; i++)
                 {
                     string columnName = columnNames.Length > i ? columnNames[i] : $"Column{i + 1}";

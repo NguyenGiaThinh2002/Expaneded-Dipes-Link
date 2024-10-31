@@ -113,6 +113,12 @@ namespace DipesLinkDeviceTransfer
         private CheckPrinterSettings CheckAllSettingsPrinter(string printerIP)
         {
             _PrinterSettingsModel = SharedFunctions.GetSettingsPrinter(printerIP);
+
+            if (!_PrinterSettingsModel.IsSupportHttpRequest)
+            {
+                return CheckPrinterSettings.NotSupported;
+            }
+
             if (!_PrinterSettingsModel.EnablePOD)
             {
                 return CheckPrinterSettings.PODNotEnabled;
@@ -244,6 +250,9 @@ namespace DipesLinkDeviceTransfer
                 {
                     switch (checkPrinterSettings)
                     {
+                        case CheckPrinterSettings.NotSupported:
+                            NotificationProcess(NotifyType.NotSupported);
+                            break;
                         case CheckPrinterSettings.NotRawData:
                             NotificationProcess(NotifyType.NotRawData);
                             break;

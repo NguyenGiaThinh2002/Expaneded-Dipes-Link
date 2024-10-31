@@ -38,10 +38,14 @@
     <None Remove="Images\waiting.png" />
     <None Remove="Images\Warning_Event.png" />
     <None Remove="Images\WebBrowser.png" />
+    <None Remove="log4net.config" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="icon.ico" />
+    <Content Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -144,9 +148,6 @@
 
   <ItemGroup>
     <None Update="Assets\SoftwareVersion.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">

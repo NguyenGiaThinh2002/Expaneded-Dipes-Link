@@ -284,6 +284,8 @@
                                 <ComboBoxItem Content="{DynamicResource ResourceKey=Null}" />
                                 <ComboBoxItem Content="{DynamicResource ResourceKey=Unknown_Missed}" />
                                 <ComboBoxItem Content="{DynamicResource ResourceKey=Failed}" />
+                                <ComboBoxItem Content="{DynamicResource ResourceKey=Camera}" />
+                                <ComboBoxItem Content="{DynamicResource ResourceKey=BarcodeScanner}" />
                             </ComboBox>
                         </StackPanel>
                     </Border>
@@ -299,7 +301,7 @@
                             <Button
                                 x:Name="ButtonRecheck"
                                 Grid.Column="0"
-                                Width="80"
+                                Width="90"
                                 Height="30"
                                 Click="ButtonRecheck_Click"
                                 Content="{DynamicResource ResourceKey=Recheck}"
@@ -420,17 +422,44 @@
                                 </Style>
                             </DataGrid.CellStyle>
                         </DataGrid>
-                        <Button
-                            x:Name="ButtonReloadPrinterTemplate"
-                            Width="60"
-                            Height="30"
-                            Margin="0,0,20,0"
-                            HorizontalAlignment="Right"
-                            Click="ButtonExport_Click"
-                            Content="{fa:Icon Download,
-                                              Foreground=White}"
-                            FontSize="20"
-                            Style="{StaticResource ModernButton3}" />
+                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                            <TextBlock
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                Foreground="Black"
+                                Text="{DynamicResource ResourceKey=ExportData}" />
+                            <Button
+                                x:Name="ButtonReloadPrinterTemplate"
+                                Width="60"
+                                Height="30"
+                                Margin="0,0,20,0"
+                                HorizontalAlignment="Right"
+                                Click="ButtonExportData_Click"
+                                Content="{fa:Icon Download,
+                                                  Foreground=White}"
+                                FontSize="20"
+                                Style="{StaticResource ModernButton3}" />
+
+                            <TextBlock
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                Foreground="Black"
+                                Text="{DynamicResource ResourceKey=ExportResult}" />
+                            <Button
+                                Width="60"
+                                Height="30"
+                                Margin="0,0,20,0"
+                                HorizontalAlignment="Right"
+                                Click="ButtonExportResult_Click"
+                                Content="{fa:Icon Download,
+                                                  Foreground=White}"
+                                FontSize="20"
+                                Style="{StaticResource ModernButton3}" />
+
+
+                        </StackPanel>
                     </StackPanel>
 
                 </Grid>

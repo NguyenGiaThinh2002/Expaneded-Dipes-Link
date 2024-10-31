@@ -19,7 +19,7 @@ namespace DipesLink.Models
 
         public CheckedResultModel(string[] data)
         {
-            if (data.Length >= 5)
+            if (data.Length >= 6)
             {
                 Index = data[0];
                 ResultData = data[1];

@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO.Ports;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using SharedProgram.Shared;
-using SharedProgram.Models;
-using IPCSharedMemory;
+﻿using IPCSharedMemory;
 using IPCSharedMemory.Controllers;
-using System.Reflection;
 using SharedProgram.DeviceTransfer;
+using SharedProgram.Models;
+using SharedProgram.Shared;
+using System.Diagnostics;
+using System.IO.Ports;
 using static SharedProgram.DataTypes.CommonDataType;
-using System.Windows;
-using System.Data;
 
 namespace DipesLink_SDK_BarcodeScanner
 {
@@ -141,7 +132,7 @@ namespace DipesLink_SDK_BarcodeScanner
             {
                 //Text = Regex.Replace(text, @"\r\n", ""),  // Replace special characters in camera data by symbol ';'
                 Text = text,
-                Device = "Barcode Scanner"
+                Device = Device.BarcodeScanner.ToString()
                 //ImageBytes = GetImageWithFocusRectangle(imageResult, imageGraphics),
                 //Image = new(SharedFunctions.GetImageFromImageByte(imageData)),
             };

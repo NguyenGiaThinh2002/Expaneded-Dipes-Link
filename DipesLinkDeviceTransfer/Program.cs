@@ -1,15 +1,17 @@
-﻿using DipesLink_SDK_Cameras;
+﻿using DipesLink_SDK_BarcodeScanner;
+using DipesLink_SDK_Cameras;
 using DipesLink_SDK_PLC;
 using DipesLink_SDK_Printers;
 using IPCSharedMemory;
 using SharedProgram.DeviceTransfer;
+using SharedProgram.Models;
 using SharedProgram.Shared;
-using DipesLink_SDK_BarcodeScanner;
 
 namespace DipesLinkDeviceTransfer
 {
     public partial class Program
     {
+        public static DatamanCameraTCPRead? DatamanCameraTCPRead;
         public static DatamanCamera? DatamanCameraDeviceHandler;
         public static RynanRPrinterTCPClient? RynanRPrinterDeviceHandler;
         public static S7TCPIP? ControllerDeviceHandler;
@@ -103,11 +105,11 @@ namespace DipesLinkDeviceTransfer
             InitInstanceIPC();
             ListenConnectionParam();
             AlwaySendPrinterOperationToUI();
-            DatamanCameraDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
+          //  DatamanCameraDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
             RynanRPrinterDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
             ControllerDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
             BarcodeScannerHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
-
+            CameraConnectionMonitor();
             InitEvents();
 
 
@@ -143,6 +145,133 @@ namespace DipesLinkDeviceTransfer
 
             t.Start();
 #endif
+        }
+
+        private void DiposeDatamanCamera()
+        {
+
+            try
+            {
+                if (DatamanCameraDeviceHandler == null) return;
+                DatamanCameraDeviceHandler.Disconnect();
+                DatamanCameraDeviceHandler.Dispose();
+                DatamanCameraDeviceHandler = null;
+                //if (DatamanCameraDeviceHandler == null)
+                //{
+                //  //  SharedEventsIpc.RaiseCameraStatusChanged(false, EventArgs.Empty);
+                // //   Console.WriteLine("Dataman is diposed!");
+                //}
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Loi e: {ex}");
+            }
+        }
+
+        private int _countTimeOutConnection = 0;
+        private void CameraConnectionMonitor()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                   // SharedEventsIpc.CameraStatusChanged += SharedEvents_DeviceStatusChanged;
+                    while (true)
+                    {
+                        switch (DeviceSharedValues.CameraSeries)
+                        {
+                            case SharedProgram.DataTypes.CommonDataType.CameraSeries.Unknown:
+                                Console.WriteLine("No camera connection!");
+
+                                break;
+                            case SharedProgram.DataTypes.CommonDataType.CameraSeries.Dataman:
+                                 Console.WriteLine("Dataman Camera Connected !");
+                             //   Console.WriteLine("Vo day làm con mẹ ji !");
+                                if (DatamanCameraDeviceHandler == null)
+                                {
+                                    DatamanCameraDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
+                                }
+                                else
+                                {
+                                    if (DatamanCameraDeviceHandler?.IsConnected == true)
+                                    {
+                                      //  DeviceSharedValues.IsCameraConnected = true;
+                                       await Console.Out.WriteLineAsync($"Dataman connected");
+                                        DeviceSharedValues.CameraInfos = DatamanCameraDeviceHandler.CameraInfo; // get status
+                                    }
+                                    else
+                                    {
+                                        _countTimeOutConnection++;
+                                        if (_countTimeOutConnection >= 5)
+                                        {
+                                            DiposeDatamanCamera();
+                                            _countTimeOutConnection = 0;
+                                        }
+                                        //    DeviceSharedValues.IsCameraConnected = false;
+                                        //  SharedEventsIpc.RaiseCameraStatusChanged(false, EventArgs.Empty);
+                                        await Console.Out.WriteLineAsync($"Dataman disconnected");
+                                    }
+                                }
+
+                                break;
+                            case SharedProgram.DataTypes.CommonDataType.CameraSeries.InsightVision:
+                                // Console.WriteLine("Ket noi insight vision");
+                               // DeviceSharedValues.IsCameraConnected = false;
+
+                                // simulate camera info
+                                DeviceSharedValues.CameraInfos = new CameraInfos
+                                {
+                                    ConnectionStatus = false,
+                                    Index = 0,
+                                    Info = new CamInfo()
+                                    {
+                                        IPAddress = "0.0.0.0",
+                                        Name ="InSight Vision",
+                                        Port = "80",
+                                        SerialNumber ="JHI521DSF",
+                                        SubnetMask ="255.255.0.0",
+                                        Type = "IS3800"
+                                    }
+                                };
+                                DiposeDatamanCamera();
+                                break;
+                            case SharedProgram.DataTypes.CommonDataType.CameraSeries.InsightVisionDual:
+                                //Console.WriteLine("Ket noi insightvision dual");
+                               // DeviceSharedValues.IsCameraConnected = false;
+
+
+                                // simulate camera info
+                                DeviceSharedValues.CameraInfos = new CameraInfos
+                                {
+                                    ConnectionStatus = false,
+                                    Index = 0,
+                                    Info = new CamInfo()
+                                    {
+                                        IPAddress = "0.0.0.0",
+                                        Name = "InSight Vision Dual",
+                                        Port = "80",
+                                        SerialNumber = "JSHSFG + HDSGS",
+                                        SubnetMask = "255.255.0.0",
+                                        Type = "IS3800+IS2800"
+                                    }
+                                };
+                                DiposeDatamanCamera();
+                                break;
+                            default:
+                                break;
+                        }
+                      
+                        // SharedEventsIpc.RaiseCameraStatusChanged(DeviceSharedValues.IsCameraConnected, EventArgs.Empty);
+                       // Console.WriteLine("dit con me may: " + DeviceSharedValues.CameraInfos.Info.IPAddress);
+                        SendCameraInfoAndStatusToUi(JobIndex, _ipcDeviceToUISharedMemory_DT, DeviceSharedValues.CameraInfos);
+                        // await Console.Out.WriteLineAsync($"Camera stst: {DeviceSharedValues.IsCameraConnected}");
+                        await Task.Delay(1000);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            });
         }
 
         public Task<int> CheckDeviceConnectionAsync() // 0 OK, 1 Cam connect fail, 2 Printer connect fail

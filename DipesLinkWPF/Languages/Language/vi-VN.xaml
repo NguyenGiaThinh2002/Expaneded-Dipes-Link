@@ -10,7 +10,7 @@
     <system:String x:Key="ErrorDialogCaption">Hộp Thoại Báo Lỗi</system:String>
     <!--#endregion Dialog Caption-->
 
-
+    <system:String x:Key="DatamanReadMode">Chế độ đọc:</system:String>
     <system:String x:Key="ChangeNumberOfStation">Thay đổi số trạm !</system:String>
     <system:String x:Key="NotFoundSearchResult">Không tìm thấy kết quả tìm kiếm !</system:String>
     <system:String x:Key="AddJobConfirmation">Trạm {0}: Bạn muốn chọn công việc này?</system:String>
@@ -49,6 +49,7 @@
     <system:String x:Key="PrinterDisconnected">Trạm {0}: Máy in đã ngắt kết nối !</system:String>
     <system:String x:Key="CameraDisconnected">Trạm {0}: Camera đã ngắt kết nối !</system:String>
     <system:String x:Key="FileNotFound">Trạm {0}: Không tìm thấy tập tin !</system:String>
+    <system:String x:Key="NotSupportedCheckPrinterSetting">Trạm {0}: Máy in không hỗ trợ kiểm tra thông số !</system:String>
     <system:String x:Key="DataTypeMustBeRAWData">Trạm {0}: Loại dữ liệu phải là dữ liệu RAW !</system:String>
     <system:String x:Key="PODFeatureIsNotEnabled">Trạm {0}: Tính năng POD chưa được bật !</system:String>
     <system:String x:Key="ResponsePODDataFeatureIsNotEnable">Trạm {0}: Tính năng phản hồi POD Data chưa được bật !</system:String>
@@ -58,6 +59,10 @@
     <system:String x:Key="PODModeMustBePrintLast">Trạm {0}: Chế độ POD phải là "In cuối" !</system:String>
 
 
+    <system:String x:Key="Sensor1">Cảm biến 1</system:String>
+    <system:String x:Key="Sensor2">Cảm biến 2</system:String>
+    <system:String x:Key="ExportData">Xuất dữ liệu</system:String>
+    <system:String x:Key="ExportResult">Xuất kết quả</system:String>
     <system:String x:Key="ExitConfirmation">Bạn có muốn thoát khỏi ứng dụng không ?</system:String>
     <system:String x:Key="RecheckConfirmation">Bạn có muốn kiểm tra lại không ?</system:String>
     <system:String x:Key="ReprintConfirmation">Bạn có muốn in lại không ?</system:String>
@@ -65,9 +70,9 @@
     <system:String x:Key="LogoutConfirmation">Bạn có muốn đăng xuất không ?</system:String>
     <system:String x:Key="PageNotFound">Không tìm thấy trang !</system:String>
     <system:String x:Key="NotFound">Không tìm thấy !</system:String>
-    <system:String x:Key="ExportConfirmation">Xác nhận bạn muốn xuất tập tin báo cáo ?</system:String>
+    <system:String x:Key="ExportDataConfirmation">Xác nhận bạn muốn xuất tập tin dữ liệu ?</system:String>
+    <system:String x:Key="ExportResultConfirmation">Xác nhận bạn muốn xuất tập tin kết quả ?</system:String>
     <system:String x:Key="IncorrectUsernameOrPassword">Tên đăng nhập hoặc mật khẩu không đúng !</system:String>
-
     <system:String x:Key="ChangeLanguageAndLogoutConfirmation">Bạn có muốn thay đổi ngôn ngữ và đăng xuất không ?</system:String>
     <system:String x:Key="UsernameInvalid">Tên đăng nhập không hợp lệ!</system:String>
     <system:String x:Key="PasswordInvalid">Mật khẩu không hợp lệ!</system:String>
@@ -205,11 +210,13 @@
     <system:String x:Key="Disable_Sensor">Vô hiệu hóa cảm biến:</system:String>
     <system:String x:Key="Pulse_Encoder">Xung Encoder:</system:String>
     <system:String x:Key="Encoder_Diameter">Đường kính Encoder:</system:String>
-    <system:String x:Key="Camera_Settings">Cài đặt Camera:</system:String>
+    <system:String x:Key="Camera_Settings">Cài đặt Camera</system:String>
+    <system:String x:Key="PLC_Settings">Cài đặt PLC</system:String>
+    <system:String x:Key="Scanner_Settings">Cài đặt máy quét</system:String>
     <system:String x:Key="Model">Kiểu mẫu:</system:String>
     <system:String x:Key="Serial">Số seri:</system:String>
     <system:String x:Key="Verify_and_Print_POD_Send_Mode">Xác minh và in chế độ gửi POD</system:String>
-    <system:String x:Key="Send_Mode">Chế độ gửi:</system:String>
+    <system:String x:Key="Send_Mode">Chế độ gửi</system:String>
     <system:String x:Key="Basic">Cơ bản</system:String>
     <system:String x:Key="Compare">So sánh</system:String>
     <system:String x:Key="Print_Fields">Trường in:</system:String>
@@ -219,7 +226,12 @@
     <system:String x:Key="Select_Number_of_Stations">Chọn số lượng trạm:</system:String>
     <system:String x:Key="Restart">Khởi động lại</system:String>
     <system:String x:Key="Number_of_Stations">Số lượng trạm:</system:String>
-
+    <system:String x:Key="Field_Settings">Cài đặt trường in</system:String>
+    <system:String x:Key="COM_Port">Cổng COM</system:String>
+    <system:String x:Key="Bit_Per_Second">Bit trên giây</system:String>
+    <system:String x:Key="Data_Bits">Bit dữ liệu</system:String>
+    <system:String x:Key="Parity">Kiểm tra chẵn lẻ</system:String>
+    <system:String x:Key="Stop_Bits">Bit dừng</system:String>
     <system:String x:Key="After_Production">Sau Sản Xuất</system:String>
     <system:String x:Key="On_Production">Trong Sản Xuất</system:String>
     <system:String x:Key="Verify_And_Print">Kiểm Tra và In</system:String>
@@ -261,7 +273,7 @@
     <system:String x:Key="Waiting">Đang Chờ</system:String>
     <system:String x:Key="PRINTED_LOG">BẢN GHI TRẠNG THÁI IN</system:String>
     <system:String x:Key="Check_All_Printer_Settings">Kiểm tra tất cả các cài đặt máy in:</system:String>
-
+    <system:String x:Key="Verify_And_Print_Settings">Cài đặt Kiểm Tra và In</system:String>
 
     <system:String x:Key="None">Trống</system:String>
     <system:String x:Key="AfterProduction">Sau sản xuất</system:String>
@@ -269,7 +281,8 @@
     <system:String x:Key="VerifyAndPrint">Kiểm tra và In</system:String>
     <system:String x:Key="StandAlone">StandAlone</system:String>
 
-
+    <system:String x:Key="Camera">Máy ảnh</system:String>
+    <system:String x:Key="BarcodeScanner">Máy quét</system:String>
 
     <!--#region ACCOUNTS-->
     <system:String x:Key="Account_Management">Quản lý Người Dùng</system:String>
@@ -303,6 +316,7 @@
     <system:String x:Key="Address">Địa chỉ</system:String>
     <!--#endregion ACCOUNTS-->
 
+    <system:String x:Key="CameraType">Kiểu máy ảnh:</system:String>
 
     <system:String x:Key="Please_Input_Job_Name">Vui lòng nhập tên công việc</system:String>
     <system:String x:Key="Please_Select_Database_Path">Vui lòng chọn đường dẫn cơ sở dữ liệu</system:String>

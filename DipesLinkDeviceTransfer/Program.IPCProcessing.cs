@@ -2,9 +2,6 @@
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
 using SharedProgram.Shared;
-using System.Diagnostics;
-using System.Numerics;
-using System.Reflection;
 using static IPCSharedMemory.Datatypes.Enums;
 using static SharedProgram.DataTypes.CommonDataType;
 
@@ -67,6 +64,11 @@ namespace DipesLinkDeviceTransfer
             }
 
         }
+
+        /// <summary>
+        ///  Recevied data from software to process via IPC
+        /// </summary>
+        /// <param name="result"></param>
         private void GetConenctionParams(byte[] result)
         {
             try
@@ -94,12 +96,25 @@ namespace DipesLinkDeviceTransfer
                     string strPulseEncoder = int.Parse(DeviceSharedValues.PulseEncoder).ToString("D5");
                     float encoderDia = float.Parse(DeviceSharedValues.EncoderDiameter) * 100.0f;
                     string strEncoderDia = ((int)encoderDia).ToString("D5");
-                    string strCommand = string.Format("(P{0}D{1}L{2}H{3})",
+
+                    string strDelaySensor2 = int.Parse(DeviceSharedValues.DelaySensor2).ToString("D5");
+                    string strDisableSensor2 = int.Parse(DeviceSharedValues.DisableSensor2).ToString("D5");
+                    string strPulseEncoder2 = int.Parse(DeviceSharedValues.PulseEncoder2).ToString("D5");
+                    float encoderDia2 = float.Parse(DeviceSharedValues.EncoderDiameter2) * 100.0f;
+                    string strEncoderDia2 = ((int)encoderDia2).ToString("D5");
+
+                    string strCommand = string.Format("(P{0}D{1}L{2}H{3}P{4}D{5}L{6}H{7})",
                            strPulseEncoder,
                            strEncoderDia,
                            strDelaySensor,
-                           strDisableSensor);
+                           strDisableSensor,
+                           strPulseEncoder2,
+                           strEncoderDia2,
+                           strDelaySensor2,
+                           strDisableSensor2);
                     ControllerDeviceHandler.SendData(strCommand);
+                    //MessageBox.Show("strCommand: " + strCommand);
+                    //Console.WriteLine("strCommand: " + strCommand);
                 }
             }
             catch (Exception ex)

@@ -1,43 +1,49 @@
 ﻿using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 using System.IO.Ports;
+using static SharedProgram.DataTypes.CommonDataType;
 namespace SharedProgram.Models
 {
     public class ConnectParamsModel : SettingsModel
     {
         public int Index { get; set; }
-       
 
-        public string CameraIP { get; set; } = "127.0.0.1";
-
-        private string cameraModel;
-        public string CameraModel { get => cameraModel; set { cameraModel = value; OnPropertyChanged(); }  }
+        #region Printer
         public string PrinterIP { get; set; } = "127.0.0.1";
         public double PrinterPort { get; set; } = 0;
+        #endregion
+
+        #region Camera
+        public CameraSeries CameraSeries { get; set; } = CameraSeries.Unknown;
+        public string CameraIP { get; set; } = "127.0.0.1";
+        private string cameraModel;
+        public string CameraModel { get => cameraModel; set { cameraModel = value; OnPropertyChanged(); } }
+        public CameraInfos? CameraInfors { get; set; }
+        public DatamanReadMode DatamanReadMode { get; set; } = DatamanReadMode.Basic;
+       
+        #endregion
+
+        #region Controller
         public string ControllerIP { get; set; } = "127.0.0.1";
         public double ControllerPort { get; set; } = 0;
+        public double DelaySensor { get; set; } = 0;
+        public double DisableSensor { get; set; } = 0;
+        public double PulseEncoder { get; set; } = 0;
+        public double EncoderDiameter { get; set; } = 0.00;
+        public double DelaySensor2 { get; set; } = 0;
+        public double DisableSensor2 { get; set; } = 0;
+        public double PulseEncoder2 { get; set; } = 0;
+        public double EncoderDiameter2 { get; set; } = 0.00;
+        public bool EnController { get; set; } = false;
+        #endregion
 
+        #region Barcode Scanner
         public string ComName { get; set; } = "COM3";
         public int BitPerSeconds { get; set; } = 9600;
         public Parity Parity { get; set; } = Parity.None;
         public int DataBits { get; set; } = 8;
         public StopBits StopBits { get; set; } = StopBits.One;
-        public double DelaySensor { get; set; } = 0;
-        public double DisableSensor { get; set; } = 0;
-        public double PulseEncoder { get; set; } = 0;
-        public double EncoderDiameter { get; set; } = 0.00;
-
-        //public bool IsCheckPrinterSettingsEnabled;
-        public bool EnController { get; set; } = false;
-
-        public CameraInfos? CameraInfors { get; set; }
-        //private int _delaySensor;
-
-        //public int DelaySensor
-        //{
-        //    get { return _delaySensor; }
-        //    set { _delaySensor = value; OnPropertyChanged(); }
-        //}
+        #endregion
 
 
 
@@ -115,7 +121,6 @@ namespace SharedProgram.Models
                 }
             }
         }
-        //public List<PODModel> PrintFieldForVerifyAndPrint { get; set; } = new();
 
         private List<PODModel> _PrintFieldForVerifyAndPrint;
 

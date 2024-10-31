@@ -8,36 +8,56 @@ namespace SharedProgram.DeviceTransfer
 {
     public class DeviceSharedFunctions
     {
+        /// <summary>
+        /// Nhận dữ liệu cài đặt từ software cho process
+        /// </summary>
+        /// <param name="connectParams"></param>
         public static void GetConnectionParamsSetting(ConnectParamsModel connectParams)
         {
             if (connectParams == null) return;
             try
             {
-                DeviceSharedValues.EnController = connectParams.EnController;
-                DeviceSharedValues.IsCheckPrinterSettingsEnabled = connectParams.IsCheckPrinterSettingsEnabled;
 
+                #region Printer
                 DeviceSharedValues.PrinterIP = connectParams.PrinterIP.Trim();
                 DeviceSharedValues.PrinterPort = connectParams.PrinterPort;
-                DeviceSharedValues.CameraIP = connectParams.CameraIP.Trim();
-                DeviceSharedValues.ControllerIP = connectParams.ControllerIP.Trim();
-                DeviceSharedValues.ControllerPort = connectParams.ControllerPort;
+                DeviceSharedValues.IsCheckPrinterSettingsEnabled = connectParams.IsCheckPrinterSettingsEnabled;
+                #endregion
 
+                #region Camera
+                DeviceSharedValues.CameraIP = connectParams.CameraIP.Trim();
+                DeviceSharedValues.CameraSeries = connectParams.CameraSeries;
+                DeviceSharedValues.DatamanReadMode = connectParams.DatamanReadMode;
+                #endregion
+
+                #region Barcode Scanner
                 DeviceSharedValues.ComName = connectParams.ComName.Trim();
                 DeviceSharedValues.BitPerSeconds = connectParams.BitPerSeconds;
                 DeviceSharedValues.Parity = connectParams.Parity;
                 DeviceSharedValues.DataBits = connectParams.DataBits;
                 DeviceSharedValues.StopBits = connectParams.StopBits;
+                #endregion
 
-
+                #region Controller
+                DeviceSharedValues.EnController = connectParams.EnController;
+                DeviceSharedValues.ControllerIP = connectParams.ControllerIP.Trim();
+                DeviceSharedValues.ControllerPort = connectParams.ControllerPort;
                 DeviceSharedValues.DelaySensor = connectParams.DelaySensor.ToString().Trim();
                 DeviceSharedValues.DisableSensor = connectParams.DisableSensor.ToString().Trim();
                 DeviceSharedValues.PulseEncoder = connectParams.PulseEncoder.ToString().Trim();
                 DeviceSharedValues.EncoderDiameter = connectParams.EncoderDiameter.ToString().Trim();
+                DeviceSharedValues.DelaySensor2 = connectParams.DelaySensor2.ToString().Trim();
+                DeviceSharedValues.DisableSensor2 = connectParams.DisableSensor2.ToString().Trim();
+                DeviceSharedValues.PulseEncoder2 = connectParams.PulseEncoder2.ToString().Trim();
+                DeviceSharedValues.EncoderDiameter2 = connectParams.EncoderDiameter2.ToString().Trim();
+                #endregion
 
+                #region Verify and Print    
                 DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint = connectParams.PrintFieldForVerifyAndPrint; // list pod verify and print
                 DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod = connectParams.VerifyAndPrintBasicSentMethod;
                 DeviceSharedValues.VPObject.FailedDataSentToPrinter = connectParams.FailedDataSentToPrinter;
-                
+                #endregion
+  
                 SharedEvents.RaiseOnVerifyAndPrindSendDataMethod();
                 SharedEvents.OnRaiseCameraIPAddressHandler(DeviceSharedValues.CameraIP);
 
@@ -47,6 +67,9 @@ namespace SharedProgram.DeviceTransfer
                 Console.WriteLine("Printer IP : " + DeviceSharedValues.PrinterIP);
                 Console.WriteLine("Controller IP : " + DeviceSharedValues.ControllerIP);
                 Console.WriteLine("Controller IP : " + DeviceSharedValues.IsCheckPrinterSettingsEnabled);
+                Console.WriteLine($"Camera Series: {DeviceSharedValues.CameraSeries}");
+                Console.WriteLine($"Camera Dataman Readmode: {DeviceSharedValues.DatamanReadMode}");
+
                 //Console.WriteLine("Basic mode ? : " + DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod);
                 //Console.WriteLine("Fail Data: " + DeviceSharedValues.VPObject.FailedDataSentToPrinter);
                 //Console.WriteLine("Print POD List: ");

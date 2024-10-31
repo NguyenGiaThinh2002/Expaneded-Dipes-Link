@@ -1,4 +1,5 @@
-﻿using SharedProgram.Controller;
+﻿using IPCSharedMemory;
+using SharedProgram.Controller;
 using SharedProgram.Models;
 using SharedProgram.Shared;
 using static SharedProgram.DataTypes.CommonDataType;
@@ -92,6 +93,18 @@ namespace DipesLinkDeviceTransfer
             }
 
             SharedEvents.RaiseOnCameraReadDataChangeEvent(dtm); //Trigger event for send data camera
+        }
+        public static void SendCameraInfoAndStatusToUi(int index, IPCSharedHelper? ipc, CameraInfos? camInfo)
+        {
+            try
+            {
+                byte[] arrInfo = DataConverter.ToByteArray(camInfo);
+                MemoryTransfer.SendCameraStatusToUI(ipc, index, arrInfo);
+            }
+            catch (Exception)
+            {
+            }
+           
         }
     }
 }
