@@ -327,7 +327,5 @@
     <system:String x:Key="Do_You_Want_Replace_Existing_Template">Bạn có muốn thay thế mẫu hiện có không?</system:String>
     <system:String x:Key="Save_Job_Done">Lưu công việc thành công!</system:String>
     <system:String x:Key="Database_Type">Loại cơ sở dữ liệu</system:String>
-
-
     <ImageSource x:Key="Main_Image">pack://application:,,,/MultiLanguage;component/Resource/Assets/Images/Main_Image.en-US.png</ImageSource>
 </ResourceDictionary>
