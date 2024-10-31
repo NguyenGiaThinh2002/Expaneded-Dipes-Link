@@ -775,7 +775,6 @@
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
-                                                        StringFormat="C2"
                                                         ValueChanged="NumericUpDown_ValueChanged"
                                                         Value="{Binding EncoderDiameter2}" />
                                                     <TextBlock

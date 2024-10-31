@@ -290,7 +290,7 @@
 
     <system:String x:Key="Confirm_Password">Confirm Password</system:String>
     <system:String x:Key="System_Settings">SYSTEM SETTINGS</system:String>
-    <system:String x:Key="Select_Your_Language">Select Your Language</system:String>
+    <system:String x:Key="Select_Your_Language">System settings</system:String>
     <system:String x:Key="Station_Number">Station Number:</system:String>
     <system:String x:Key="Language">Language:</system:String>
     <system:String x:Key="DateTime_Format">DateTime Format:</system:String>

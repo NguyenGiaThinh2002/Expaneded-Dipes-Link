@@ -303,7 +303,7 @@
     <system:String x:Key="GuidePassword">Mật khẩu dài ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 chữ số</system:String>
     <system:String x:Key="Confirm_Password">Xác nhận mk</system:String>
     <system:String x:Key="System_Settings">CÀI ĐẶT HỆ THỐNG</system:String>
-    <system:String x:Key="Select_Your_Language">Chọn Ngôn ngữ</system:String>
+    <system:String x:Key="Select_Your_Language">Cài đặt hệ thống</system:String>
     <system:String x:Key="Station_Number">Số Trạm:</system:String>
     <system:String x:Key="Language">Ngôn ngữ:</system:String>
     <system:String x:Key="DateTime_Format">Đ.dạng Ngày Giờ:</system:String>
