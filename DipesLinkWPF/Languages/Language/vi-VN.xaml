@@ -287,7 +287,7 @@
     <!--#region ACCOUNTS-->
     <system:String x:Key="Account_Management">Quản lý Người Dùng</system:String>
     <system:String x:Key="System_Management">Cài Đặt Hệ Thống</system:String>
-    <system:String x:Key="About_DP_Link">Giới Thiệu DIPES-Link</system:String>
+    <system:String x:Key="About_DP_Link">Giới Thiệu Dipes-Link</system:String>
     <system:String x:Key="Logout">Đăng Xuất</system:String>
     <system:String x:Key="USERS_MANAGEMENT">QUẢN LÝ NGƯỜI DÙNG</system:String>
     <system:String x:Key="Create_New_User">Thêm mới</system:String>

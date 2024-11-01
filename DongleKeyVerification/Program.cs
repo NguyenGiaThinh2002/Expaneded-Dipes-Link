@@ -1,7 +1,10 @@
 ﻿using System.Threading;
 using System;
 using Securedongle;
-
+using DongleKeyVerification.Extensions;
+using System.Text;
+using System.IO;
+using DongleKeyVerification.Models;
 
 namespace DongleKeyVerification
 {
@@ -36,24 +39,41 @@ namespace DongleKeyVerification
             SD_GET_TIMER_EX = 163,        //Get Timer Unit Code, , Type change from WORD to DWORD
             SD_ADJUST_TIMER_EX = 164,
         }
+        private static string PathProgramData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        public static string PathProgramDataApp => PathProgramData + "\\DP-Link\\"; // C:\ProgramData\R-Link
+        public static string PathAllowPC => PathProgramDataApp + "DPConfig";
         #endregion
 
         static void Main(string[] args)
         {
-
+         
+            int keyLevel = 0;
             try
             {
-                // int keyLevel = DetectUSBDongleLevel(); 
-                int keyLevel = 4;
+                if (AutoCheckByPassLicenseFile())
+                {
+                    keyLevel = 4;
+                }
+                else
+                {
+                    keyLevel = DetectUSBDongleLevel();
+                }
                 var client = new DongleKeyNamedPipeHelper();
                 client.SendKeyLevel(keyLevel >= 1 ? keyLevel : 0);
 
                 while (true)
                 {
+                    int newkeyLevel = 0;
                     Thread.Sleep(5000); // Check every 5 seconds
-                    //int newkeyLevel = DetectUSBDongleLevel();
-                    int newkeyLevel = 4;
-                    // 
+                    if (AutoCheckByPassLicenseFile())
+                    {
+                        newkeyLevel = 4;
+                    }
+                    else
+                    {
+                        newkeyLevel = DetectUSBDongleLevel();
+                    }
+                
                     if (newkeyLevel != keyLevel)
                     {
                         var newClient = new DongleKeyNamedPipeHelper();
@@ -70,6 +90,50 @@ namespace DongleKeyVerification
                
             }
 
+        }
+
+        private static bool AutoCheckByPassLicenseFile()
+        {
+            // Check HwId PC
+            try
+            {
+                var isByPass = false;
+                var uuid = DecryptionHardwareID.GetUniqueID(); // Get PC UUID
+                var keyByte = Encoding.UTF8.GetBytes(uuid); // Convert UUID to bytes
+                var pathKey = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Dipes-Link"; // Create Folder in app data
+                if (!Directory.Exists(pathKey))
+                {
+                    Directory.CreateDirectory(pathKey);
+                }
+                File.WriteAllBytes(pathKey + "\\UUID.txt", keyByte); // Save key to file use for bypass
+
+                string pathDPconfig = PathAllowPC + "\\RConfig.dat";
+              //  Console.WriteLine($"Checking path: {pathDPconfig}"); // Debugging statement
+                if (!Directory.Exists(PathAllowPC))
+                {
+                    Directory.CreateDirectory(PathAllowPC);
+                }
+                DecryptionHardwareID.DecryptFile_UUID(pathDPconfig); // Descript file .dat
+                foreach (HardwareIDModel id in DecryptionHardwareID.listPCAllow) // Compare byte in descript data
+                {
+                    var foundKeyByte = Encoding.UTF8.GetBytes(id.HardwareID);
+                    for (int i = 0; i < foundKeyByte.Length; i++)
+                    {
+                        isByPass = true; // Allow if complete compare key
+                        if (foundKeyByte[i] != keyByte[i] || foundKeyByte.Length != keyByte.Length)
+                        {
+                            isByPass = false;
+                            break;
+                        }
+                    }
+                }
+                DecryptionHardwareID.listPCAllow.Clear();
+                return isByPass;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         private static int DetectUSBDongleLevel()
         {

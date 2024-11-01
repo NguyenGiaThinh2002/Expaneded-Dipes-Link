@@ -5,8 +5,6 @@ using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
 using DipesLink.Views.UserControls.MainUc;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using static DipesLink.Views.Enums.ViewEnums;
@@ -311,19 +309,7 @@ namespace DipesLink.Views
             }
            
         }
-        //public static void RestartApplication()
-        //{
-        //    try
-        //    {
-        //        Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-        //        Application.Current.Shutdown();
-        //    }
-        //    catch (Exception)
-        //    {
 
-        //    }
-           
-        //}
 
         private void BorderUser_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

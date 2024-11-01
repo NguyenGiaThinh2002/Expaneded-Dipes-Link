@@ -48,7 +48,7 @@
             <system:Double x:Key="MenuItemSize">150</system:Double>
             <system:Double x:Key="LabelWidth">110</system:Double>
 
-       
+
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -60,9 +60,9 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <!--  Menu  -->
-        <Border Background="White"
+        <Border
             Margin="5,5,5,1"
- 
+            Background="White"
             BorderBrush="LightGray"
             BorderThickness="1,1,1,1"
             CornerRadius="0">
@@ -116,13 +116,19 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
-                 
+
 
                 </Grid.RowDefinitions>
                 <!--<Button Height="50" Width="50" Grid.Row="1"></Button>-->
-                <TabControl x:Name="TabControlJobSettings" Margin="0,3,0,0" Style="{StaticResource TabControlStyleForSettings}">
+                <TabControl
+                    x:Name="TabControlJobSettings"
+                    Margin="0,3,0,0"
+                    Style="{StaticResource TabControlStyleForSettings}">
 
-                    <TabItem x:Name="TabItemSelectJob" DataContext="{Binding JobSelection}" Style="{StaticResource TabItemStyleForSettings}">
+                    <TabItem
+                        x:Name="TabItemSelectJob"
+                        DataContext="{Binding JobSelection}"
+                        Style="{StaticResource TabItemStyleForSettings}">
                         <TabItem.Header>
                             <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Select_Job}" />
                         </TabItem.Header>
@@ -158,7 +164,7 @@
                                     HorizontalAlignment="Stretch"
                                     Header="{DynamicResource ResourceKey=Job_Selection}"
                                     Style="{StaticResource CustomGroupBoxStyle}">
-                                  
+
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="4*" />
@@ -233,7 +239,7 @@
                                         FontWeight="Bold"
                                         Header="{DynamicResource ResourceKey=Job_Info}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
-                                       
+
                                         <StackPanel>
 
                                             <!--<TextBlock Text="Job Info" />-->

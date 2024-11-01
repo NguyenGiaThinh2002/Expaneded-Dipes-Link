@@ -169,7 +169,7 @@ namespace DipesLinkDeviceTransfer
                 }
 
                 var checkInitDataNotifyType = CheckInitDataErrorAndGenerateMessage();
-                if (checkInitDataNotifyType != NotifyType.Unk)
+                if (checkInitDataNotifyType != NotifyType.Unk && SharedValues.SelectedJob.CompareType == CompareType.Database)
                 {
                     NotificationProcess(checkInitDataNotifyType);
                     SharedFunctions.PrintConsoleMessage("Check Init Data Error: " + checkInitDataNotifyType.ToString());

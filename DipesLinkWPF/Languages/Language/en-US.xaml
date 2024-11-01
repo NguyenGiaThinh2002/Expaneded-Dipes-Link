@@ -272,7 +272,7 @@
     <!--#region ACCOUNTS-->
     <system:String x:Key="Account_Management">Users Management</system:String>
     <system:String x:Key="System_Management">System Management</system:String>
-    <system:String x:Key="About_DP_Link">About DIPES-Link</system:String>
+    <system:String x:Key="About_DP_Link">About Dipes-Link</system:String>
     <system:String x:Key="Logout">Logout</system:String>
     <system:String x:Key="USERS_MANAGEMENT">USERS MANAGEMENT</system:String>
     <system:String x:Key="Create_New_User">Create New</system:String>

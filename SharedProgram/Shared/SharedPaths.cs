@@ -26,6 +26,10 @@ namespace SharedProgram.Shared
             var pathEventLog = PathEventsLog + $"Job{i + 1}";
             if (!Directory.Exists(pathEventLog))
                 Directory.CreateDirectory(pathEventLog);
+
+            var pathAllowPc = PathAllowPC; 
+            if (!Directory.Exists(pathAllowPc))
+                Directory.CreateDirectory(pathAllowPc);
         }
 
         public static string AppPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -44,6 +48,7 @@ namespace SharedProgram.Shared
         public static string PathCheckedResult => PathProgramDataApp + "CheckedResult\\"; // C:\ProgramData\R-Link\CheckedResult
         public static string PathSettingsFile => PathProgramDataApp + "Settings"; //// C:\ProgramData\R-Link\Settings
         public static string PathAccountsDb => PathProgramDataApp + "Accounts";
+        public static string PathAllowPC => PathProgramDataApp + "DPConfig";
         public static string PathEventsLog => PathAppData + "EventsLog\\"; // C:\Users\{username}\AppData\Roaming\R-Link\EventsLog
 
 

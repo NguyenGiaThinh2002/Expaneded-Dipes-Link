@@ -320,10 +320,10 @@
                 <TextBlock
                     FontSize="30"
                     Foreground="White"
-                    Text="DIPES-LINK" />
+                    Text="Dipes-Link" />
                 <TextBlock
                     x:Name="AppDescriptionText"
-                    FontSize="16"
+                    FontSize="20"
                     Foreground="White"
                     Text="{DynamicResource ResourceKey=Multi_Line_Barcode_Verification_System}" />
             </StackPanel>
