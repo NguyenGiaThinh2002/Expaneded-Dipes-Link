@@ -26,6 +26,7 @@
             <converter:AddOne x:Key="AddOneConverter" />
             <converter:BooleanToVisibilityConverter x:Key="BolToVis" />
             <converter:TextToVisibilityConverter x:Key="TextToVis" />
+          
 
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
@@ -849,6 +850,7 @@
                             <RowDefinition Height="{Binding RowHeightDatabase, FallbackValue=*}" />
                             <RowDefinition Height="18" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
                         <TextBlock
                             Height="30"
@@ -904,7 +906,63 @@
                             gif:AnimationBehavior.SourceUri="pack://application:,,,/DipesLink;component/Images/LoadingIcon.gif"
                             Stretch="Uniform"
                             Visibility="{Binding IsShowLoadingChecked}" />
+
+                        <!--  IP Address  -->
+                        <Grid Grid.Row="4" Background="Transparent" Margin="10 0 10 0">
+                            <StackPanel x:Name="StackPanelIPDisplay" Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontSize" Value="14" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                                    <Image
+                                        Width="18"
+                                        Height="18"
+                                        Source="/Images/ip-address.png" />
+                                    <TextBlock
+                                        x:Name="TextBlockPrinterIP"
+                                        VerticalAlignment="Center"
+                                        Text="######" />
+                                    <TextBlock
+                                        Width="75"
+                                        VerticalAlignment="Center"
+                                        Text="{DynamicResource ResourceKey=Printer_IP}" />
+                                </StackPanel>
+                                <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                                    <Image
+                                        Width="18"
+                                        Height="18"
+                                        Source="/Images/ip-address.png" />
+                                    <TextBlock
+                                        x:Name="TextBlockCamIP"
+                                        VerticalAlignment="Center"
+                                        Text="######" />
+                                    <TextBlock
+                                        Width="75"
+                                        VerticalAlignment="Center"
+                                        Text="{DynamicResource ResourceKey=Camera_IP}" />
+                                </StackPanel>
+                                <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                                    <Image
+                                        Width="18"
+                                        Height="18"
+                                        Source="/Images/ip-address.png" />
+                                    <TextBlock
+                                        x:Name="TextBlockControllerIP"
+                                        VerticalAlignment="Center"
+                                        Text="######" />
+                                    <TextBlock
+                                        Width="70"
+                                        VerticalAlignment="Center"
+                                        Text="{DynamicResource ResourceKey=Controller_IP}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
+
+
+
 
                 </Grid>
             </Border>

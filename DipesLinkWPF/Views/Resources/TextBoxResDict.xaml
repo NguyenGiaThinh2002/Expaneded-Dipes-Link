@@ -89,6 +89,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter TargetName="border" Property="Opacity" Value="0.56" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="gray" />
                         </Trigger>
                         <!--<Trigger Property="IsMouseOver" Value="true">
                         <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource TextBox.MouseOver.Border}" />

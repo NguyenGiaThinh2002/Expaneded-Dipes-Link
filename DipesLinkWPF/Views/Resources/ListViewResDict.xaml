@@ -4,7 +4,7 @@
 
     <!--  Style for the ListView  -->
     <Style x:Key="ModernListViewStyle" TargetType="ListView">
-        <Setter Property="Background" Value="AliceBlue" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="SelectionMode" Value="Single" />
@@ -28,10 +28,10 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="ItemBorder" Property="Background" Value="#B3E5FC" />
+                                        <Setter TargetName="ItemBorder" Property="Background" Value="aliceblue" />
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="ItemBorder" Property="Background" Value="#9EDFF6" />
+                                        <Setter TargetName="ItemBorder" Property="Background" Value="aliceblue" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -44,9 +44,9 @@
 
     <!--  Style for the ListView  -->
     <Style x:Key="ListViewStylePrinterTemplate" TargetType="ListView">
-        <Setter Property="Background" Value="AliceBlue" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="SelectionMode" Value="Single" />
         <Setter Property="ItemContainerStyle">
             <Setter.Value>

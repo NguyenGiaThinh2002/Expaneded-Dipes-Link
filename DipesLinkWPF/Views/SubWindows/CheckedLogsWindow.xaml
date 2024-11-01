@@ -68,7 +68,7 @@
                         <Setter Property="FontSize" Value="20" />
                         <Setter Property="Margin" Value="20,0,0,0" />
                         <Setter Property="FontWeight" Value="Bold" />
-                        <Setter Property="Foreground" Value="DimGray" />
+                        <Setter Property="Foreground" Value="Black" />
                     </Style>
                 </Grid.Resources>
                 <!--  Total code  -->
@@ -82,9 +82,9 @@
                             <!--<GradientStop Offset="1.0" Color="#00b4d8" />
                             <GradientStop Offset="0.5" Color="#90e0ef" />
                             <GradientStop Offset="0.0" Color="#caf0f8" />-->
-                            <GradientStop Offset="1.0" Color="#457b9d" />
-                            <GradientStop Offset="0.5" Color="#a8dadc" />
-                            <GradientStop Offset="0.0" Color="#f1faee" />
+                            <GradientStop Offset="1.0" Color="#CDCDCD" />
+                            <GradientStop Offset="0.5" Color="#CDCDCD" />
+                            <GradientStop Offset="0.0" Color="#CDCDCD" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -117,9 +117,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#457b9d" />
-                            <GradientStop Offset="0.5" Color="#a8dadc" />
-                            <GradientStop Offset="0.0" Color="#f1faee" />
+                            <GradientStop Offset="1.0" Color="#CDCDCD" />
+                            <GradientStop Offset="0.5" Color="#CDCDCD" />
+                            <GradientStop Offset="0.0" Color="#CDCDCD" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -147,9 +147,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#457b9d" />
-                            <GradientStop Offset="0.5" Color="#a8dadc" />
-                            <GradientStop Offset="0.0" Color="#f1faee" />
+                            <GradientStop Offset="1.0" Color="#CDCDCD" />
+                            <GradientStop Offset="0.5" Color="#CDCDCD" />
+                            <GradientStop Offset="0.0" Color="#CDCDCD" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -178,9 +178,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#457b9d" />
-                            <GradientStop Offset="0.5" Color="#a8dadc" />
-                            <GradientStop Offset="0.0" Color="#f1faee" />
+                            <GradientStop Offset="1.0" Color="#CDCDCD" />
+                            <GradientStop Offset="0.5" Color="#CDCDCD" />
+                            <GradientStop Offset="0.0" Color="#CDCDCD" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
@@ -208,9 +208,9 @@
                     CornerRadius="3">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Offset="1.0" Color="#457b9d" />
-                            <GradientStop Offset="0.5" Color="#a8dadc" />
-                            <GradientStop Offset="0.0" Color="#f1faee" />
+                            <GradientStop Offset="1.0" Color="#CDCDCD" />
+                            <GradientStop Offset="0.5" Color="#CDCDCD" />
+                            <GradientStop Offset="0.0" Color="#CDCDCD" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>

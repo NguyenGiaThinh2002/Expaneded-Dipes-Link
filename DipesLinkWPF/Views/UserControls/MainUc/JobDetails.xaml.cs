@@ -48,6 +48,12 @@ namespace DipesLink.Views.UserControls.MainUc
             Loaded += StationDetailUc_Loaded;
             ViewModelSharedEvents.OnChangeJob += OnChangeJobHandler;
             ViewModelSharedEvents.OnListBoxMenuSelectionChange += ListBoxMenuSelectionChange;
+            ViewModelSharedEvents.OnJobDetailChange += JobDetails_OnJobDetailChange;
+        }
+
+        private void JobDetails_OnJobDetailChange(object? sender, int e)
+        {
+            UpdateIPAddressInfo(e);
         }
 
         private void SimulateModeAction()
@@ -60,6 +66,25 @@ namespace DipesLink.Views.UserControls.MainUc
             else
             {
                 ButtonSimulate.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void UpdateIPAddressInfo(int e)
+        {
+            try
+            {
+                int index = e;
+                var camIP = ViewModelSharedValues.Settings.SystemParamsList[index].CameraIP;
+                var printerIP = ViewModelSharedValues.Settings.SystemParamsList[index].PrinterIP;
+                var controllerIP = ViewModelSharedValues.Settings.SystemParamsList[index].ControllerIP;
+
+                TextBlockControllerIP.Text = controllerIP.ToString();
+                TextBlockPrinterIP.Text = printerIP.ToString();
+                TextBlockCamIP.Text = camIP.ToString();
+               // currentStation = index;
+            }
+            catch (Exception)
+            {
             }
         }
 

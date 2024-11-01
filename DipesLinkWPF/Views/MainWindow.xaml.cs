@@ -75,23 +75,27 @@ namespace DipesLink.Views
 
         private void JobDetails_OnJobDetailChange(object? sender, int e)
         {
-            try
-            {
-                int index = e;
-                var camIP = ViewModelSharedValues.Settings.SystemParamsList[index].CameraIP;
-                var printerIP = ViewModelSharedValues.Settings.SystemParamsList[index].PrinterIP;
-                var controllerIP = ViewModelSharedValues.Settings.SystemParamsList[index].ControllerIP;
-
-                TextBlockControllerIP.Text = controllerIP.ToString();
-                TextBlockPrinterIP.Text = printerIP.ToString();
-                TextBlockCamIP.Text = camIP.ToString();
-                currentStation = index;
-            }
-            catch (Exception)
-            {
-            }
-
+           // UpdateIPAddressInfo(e);
         }
+
+        //private void UpdateIPAddressInfo(int e)
+        //{
+        //    try
+        //    {
+        //        int index = e;
+        //        var camIP = ViewModelSharedValues.Settings.SystemParamsList[index].CameraIP;
+        //        var printerIP = ViewModelSharedValues.Settings.SystemParamsList[index].PrinterIP;
+        //        var controllerIP = ViewModelSharedValues.Settings.SystemParamsList[index].ControllerIP;
+
+        //        TextBlockControllerIP.Text = controllerIP.ToString();
+        //        TextBlockPrinterIP.Text = printerIP.ToString();
+        //        TextBlockCamIP.Text = camIP.ToString();
+        //        currentStation = index;
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //}
 
         private bool CanApplicationClose()
         {
@@ -372,14 +376,14 @@ namespace DipesLink.Views
                 ListBoxMenu.SelectedIndex = ListBoxMenu.SelectedIndex != -1 ? -1 : 0;
                 if (ListBoxMenu.SelectedIndex != -1)
                 {
-                    StackPanelIPDisplay.Visibility = Visibility.Visible;
+                  //  StackPanelIPDisplay.Visibility = Visibility.Visible;
                     ToggleButtonChangeView.IsChecked = false; // This will trigger the setter for True
 
                 }
                 else
                 {
                     // or
-                    StackPanelIPDisplay.Visibility = Visibility.Hidden;
+               //     StackPanelIPDisplay.Visibility = Visibility.Hidden;
                     ToggleButtonChangeView.IsChecked = true; // This will trigger the setter for False
 
                 }
@@ -398,7 +402,7 @@ namespace DipesLink.Views
         private void ListBoxItem_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ToggleButtonChangeView.IsChecked = false;
-            StackPanelIPDisplay.Visibility = Visibility.Visible;
+           // StackPanelIPDisplay.Visibility = Visibility.Visible;
             JobDetails_OnJobDetailChange(sender, currentStation);
         }
 

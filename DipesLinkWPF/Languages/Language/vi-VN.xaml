@@ -189,10 +189,10 @@
     <system:String x:Key="Station_Jobs_Operations">CÔNG VIỆC</system:String>
     <system:String x:Key="Stations_Settings">CÀI ĐẶT</system:String>
     <system:String x:Key="Stations_Jobs_Logs">LỊCH SỬ TRẠM</system:String>
-    <system:String x:Key="Station_Status">Trạng thái trạm:</system:String>
-    <system:String x:Key="Printer_IP">IP Máy in:</system:String>
-    <system:String x:Key="Camera_IP">IP Máy ảnh:</system:String>
-    <system:String x:Key="Controller_IP">IP PLC:</system:String>
+    <system:String x:Key="Station_Status">Trạng thái trạm</system:String>
+    <system:String x:Key="Printer_IP">(Máy in)</system:String>
+    <system:String x:Key="Camera_IP">(Máy ảnh)</system:String>
+    <system:String x:Key="Controller_IP">(PLC)</system:String>
     <!--  Can than khi thay doi trang thai dung, co dieu kien  -->
     <system:String x:Key="Stopped">Dừng</system:String>
     <system:String x:Key="Running">Đang chạy</system:String>
@@ -203,7 +203,7 @@
     <system:String x:Key="Printer_Settings">Cài đặt máy in</system:String>
     <system:String x:Key="IP_Address">Địa chỉ IP:</system:String>
     <system:String x:Key="Port">Cổng:</system:String>
-    <system:String x:Key="Remote">Xem Web:</system:String>
+    <system:String x:Key="Remote">Cài đặt từ xa:</system:String>
     <system:String x:Key="Controller_Settings">Cài đặt bộ điều khiển</system:String>
     <system:String x:Key="Enable_Controller">Kích hoạt:</system:String>
     <system:String x:Key="Delay_Sensor">Độ trễ cảm biến:</system:String>
