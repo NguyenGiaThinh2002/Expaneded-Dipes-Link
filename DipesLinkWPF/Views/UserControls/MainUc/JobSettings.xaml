@@ -351,7 +351,7 @@
                             <TabItem
                                 Cursor="Hand"
                                 FontSize="16"
-                              Header="{DynamicResource ResourceKey=Printer_Settings}">
+                                Header="{DynamicResource ResourceKey=Printer_Settings}">
                                 <StackPanel Margin="5,10,0,0">
                                     <StackPanel
                                         Margin="0,10,0,0"
@@ -464,31 +464,26 @@
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=CameraType}" />
 
-                                        <ComboBox
-                                            x:Name="ComboBoxCameraType"
-                                            Width="200"
-                                            SelectedIndex="{Binding CameraTypeIndex}">
+                                        <ComboBox x:Name="ComboBoxCameraType" Width="200">
                                             <ComboBoxItem>Cognex Dataman</ComboBoxItem>
                                             <ComboBoxItem>Cognex In-Sight Vision</ComboBoxItem>
                                             <ComboBoxItem>Cognex Dual In-Sight Vision</ComboBoxItem>
                                         </ComboBox>
                                     </StackPanel>
                                     <!--  Dataman ReadMode  -->
-                                    <StackPanel x:Name="StackPanelDatamanReadMode" Margin="0,10,0,0" 
-                                                Orientation="Horizontal" 
-                                                >
+                                    <StackPanel
+                                        x:Name="StackPanelDatamanReadMode"
+                                        Margin="0,10,0,0"
+                                        Orientation="Horizontal">
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=DatamanReadMode}" />
 
-                                        <ComboBox
-                                            x:Name="ComboBoxDatamanReadMode"
-                                            Width="200"
-                                            SelectedIndex="{Binding DatamanReadModeIndex}">
+                                        <ComboBox x:Name="ComboBoxDatamanReadMode" Width="200">
                                             <ComboBoxItem>Basic Read (Image+Code)</ComboBoxItem>
                                             <ComboBoxItem>Multi-Sync Read with TCP/IP (Code)</ComboBoxItem>
-                                            
+
                                         </ComboBox>
                                     </StackPanel>
                                     <!--  Cam IP Address  -->
@@ -583,7 +578,7 @@
                                             Width="420"
                                             Margin="0,10,0,0"
                                             HorizontalAlignment="Left"
-                                           Header="{DynamicResource ResourceKey=Sensor1}"
+                                            Header="{DynamicResource ResourceKey=Sensor1}"
                                             Style="{StaticResource CustomGroupBoxStyle}">
                                             <StackPanel>
                                                 <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
@@ -801,7 +796,7 @@
                                         Width="420"
                                         Height="70"
                                         HorizontalAlignment="Left"
-                                      Header="{DynamicResource ResourceKey=Send_Mode}"
+                                        Header="{DynamicResource ResourceKey=Send_Mode}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <RadioButton
@@ -828,7 +823,7 @@
                                     <GroupBox
                                         Width="420"
                                         HorizontalAlignment="Left"
-                                       Header="{DynamicResource ResourceKey=Field_Settings}"
+                                        Header="{DynamicResource ResourceKey=Field_Settings}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
                                         <StackPanel>
                                             <!--  Print Fields  -->
@@ -893,7 +888,7 @@
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
-                                             Text="{DynamicResource ResourceKey=COM_Port}" />
+                                            Text="{DynamicResource ResourceKey=COM_Port}" />
                                         <ComboBox
                                             x:Name="comboBoxComName"
                                             Width="200"
@@ -914,7 +909,7 @@
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
-                                             Text="{DynamicResource ResourceKey=Bit_Per_Second}" />
+                                            Text="{DynamicResource ResourceKey=Bit_Per_Second}" />
                                         <ComboBox
                                             x:Name="comboBoxBitPerSeconds"
                                             Width="200"
@@ -936,7 +931,7 @@
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
-                                           Text="{DynamicResource ResourceKey=Data_Bits}" />
+                                            Text="{DynamicResource ResourceKey=Data_Bits}" />
                                         <ComboBox
                                             x:Name="comboBoxDataBits"
                                             Width="200"
@@ -953,7 +948,7 @@
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
-                                          Text="{DynamicResource ResourceKey=Parity}" />
+                                            Text="{DynamicResource ResourceKey=Parity}" />
                                         <ComboBox
                                             x:Name="comboBoxParity"
                                             Width="200"
@@ -972,7 +967,7 @@
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
-                                           Text="{DynamicResource ResourceKey=Stop_Bits}" />
+                                            Text="{DynamicResource ResourceKey=Stop_Bits}" />
                                         <ComboBox
                                             x:Name="comboBoxStopBits"
                                             Width="200"

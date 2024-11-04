@@ -169,7 +169,7 @@ namespace DipesLinkDeviceTransfer
                 }
 
                 var checkInitDataNotifyType = CheckInitDataErrorAndGenerateMessage();
-                if (checkInitDataNotifyType != NotifyType.Unk)
+                if (checkInitDataNotifyType != NotifyType.Unk && SharedValues.SelectedJob.CompareType == CompareType.Database)
                 {
                     NotificationProcess(checkInitDataNotifyType);
                     SharedFunctions.PrintConsoleMessage("Check Init Data Error: " + checkInitDataNotifyType.ToString());
@@ -908,12 +908,12 @@ namespace DipesLinkDeviceTransfer
                     !flagStoppedMonitor &&
                     (SharedValues.OperStatus == OperationStatus.Running) &&
                     SharedValues.SelectedJob.CompareType == CompareType.Database &&
-                    SharedValues.SelectedJob.JobType != JobType.StandAlone)
+                    SharedValues.SelectedJob.JobType != JobType.StandAlone && !_IsRechecked)
                 {
                     flagStoppedMonitor = true;
                     await Task.Run(async () =>
                     {
-                        await Task.Delay(1000); // waiting 1s for transfer states
+                        await Task.Delay(2000); // waiting 2s for transfer states
                         if (SharedValues.OperStatus == OperationStatus.Running)
                         {
                             NotificationProcess(NotifyType.PrinterSuddenlyStop);
@@ -1042,7 +1042,7 @@ namespace DipesLinkDeviceTransfer
                                     completeCondition = SharedValues.OperStatus != OperationStatus.Stopped && stopNumber >= reprintStopCond;
                                 }
 
-                                if (completeCondition)
+                                if (completeCondition && !_IsRechecked)
                                 {
 #if DEBUG
                                     Console.WriteLine("Complete the barcode verification process !");
