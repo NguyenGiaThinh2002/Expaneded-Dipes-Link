@@ -29,8 +29,6 @@ namespace DipesLink
 
             splashScreen = new(); //Show Loading Screen
             splashScreen.Show();
-            KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
-            await Task.Delay(DipesLink.Properties.Settings.Default.TimeCheckOldProcess);
 
             if (!InitializeMutex()) // Check Application is running 
             {
@@ -38,7 +36,9 @@ namespace DipesLink
                 return;
             }
 
-       
+            KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
+            await Task.Delay(DipesLink.Properties.Settings.Default.TimeCheckOldProcess);
+
             splashScreen.Hide();
 
             SQLitePCL.Batteries_V2.Init();
