@@ -22,6 +22,7 @@
     <None Remove="Images\Information.png" />
     <None Remove="Images\Info_Event.png" />
     <None Remove="Images\Invalid_res.png" />
+    <None Remove="Images\Ip-address.png" />
     <None Remove="Images\loading.gif" />
     <None Remove="Images\LoadingIcon.gif" />
     <None Remove="Images\Logo-rynan.png" />
@@ -102,6 +103,7 @@
     <Resource Include="Images\Information.png" />
     <Resource Include="Images\Info_Event.png" />
     <Resource Include="Images\Invalid_res.png" />
+    <Resource Include="Images\Ip-address.png" />
     <Resource Include="Images\LoadingIcon.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

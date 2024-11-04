@@ -11,7 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     d:Background="WhiteSmoke"
-    d:DesignHeight="700"
+    d:DesignHeight="500"
     d:DesignWidth="1150"
     mc:Ignorable="d">
     <!--<UserControl.DataContext>
@@ -25,7 +25,8 @@
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/RadioButtonResDict.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/ComboBoxResDict.xaml" />
-
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/GroupBoxResDict.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/DipesLink;component/Views/Resources/TabControlResDict.xaml" />
                 <!--#region MahApps-->
                 <!--  MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive!  -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
@@ -42,14 +43,16 @@
 
 
             <!--  Define a style for the GroupBox  -->
-            <Style x:Key="CustomGroupBoxStyle" TargetType="GroupBox">
+            <!--<Style x:Key="CustomGroupBoxStyle" TargetType="GroupBox">
                 <Setter Property="Margin" Value="10" />
                 <Setter Property="Padding" Value="5" />
-                <Setter Property="Background" Value="#f9f9f9" />
-                <Setter Property="BorderBrush" Value="#00ABE6" />
+                <Setter Property="Background" Value="LightGray" />
+                <Setter Property="BorderBrush" Value="LightGray" />
                 <Setter Property="BorderThickness" Value="1" />
 
-                <!--  Set header style  -->
+            -->
+            <!--  Set header style  -->
+            <!--
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="GroupBox">
@@ -58,7 +61,9 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="0">
                                 <DockPanel>
-                                    <!--  Header  -->
+            -->
+            <!--  Header  -->
+            <!--
                                     <TextBlock
                                         Padding="5"
                                         Background="#00ABE6"
@@ -67,14 +72,16 @@
                                         FontWeight="Bold"
                                         Foreground="White"
                                         Text="{TemplateBinding Header}" />
-                                    <!--  Content  -->
+            -->
+            <!--  Content  -->
+            <!--
                                     <ContentPresenter Margin="{TemplateBinding Padding}" />
                                 </DockPanel>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-            </Style>
+            </Style>-->
 
             <!--  Style mặc định của WPF cho TabControl  -->
             <Style
@@ -131,7 +138,7 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="180" />
             <ColumnDefinition />
@@ -139,11 +146,11 @@
 
         <!--  Menu  -->
         <Border
-            Margin="5,5,0,0"
-            Background="WhiteSmoke"
+            Margin="5,5,5,5"
+            Background="White"
             BorderBrush="LightGray"
-            BorderThickness="1,1,1,0"
-            CornerRadius="5 5 0 0">
+            BorderThickness="1,1,1,1"
+            CornerRadius="0">
             <ListBox
                 x:Name="ListBoxMenuStationSetting"
                 Margin="2"
@@ -281,92 +288,50 @@
                 <Grid Visibility="Visible">
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition />
+                        <RowDefinition Height="50" />
                     </Grid.RowDefinitions>
                     <!--  Content setting  -->
-                    <!--<Grid
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Width="800"
-                        Height="650"
-                        Margin="0,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Background="WhiteSmoke"
-                        DataContext="{Binding CurrentConnectParams}"
-                        Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="3" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="2.5*" />
-                            </Grid.RowDefinitions>
-                            <Grid.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="FontSize" Value="16" />
-                                </Style>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="FontSize" Value="16" />
-                                </Style>
-                            </Grid.Resources>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
 
 
-                            </Grid>
-
-                            <Grid Grid.Row="1" IsEnabled="{Binding IsLockUISetting}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                    -->
-                    <!--  Controller Settings  -->
-                    <!--
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel
-                                        Grid.Column="1"
-                                        IsEnabled="{Binding LockUISetting}"
-                                        Orientation="Vertical" />
-                                </Grid>
-                            </Grid>
-
-                        </Grid>
-                    </Grid>-->
-
-                    <Grid DataContext="{Binding CurrentConnectParams}">
-                        <TabControl Style="{StaticResource MahApps.Styles.TabControl.ColorPicker}">
-
-
+                    <Grid Background="Transparent" DataContext="{Binding CurrentConnectParams}">
+                        <TabControl Margin="0,0,5,0" Style="{StaticResource TabControlStyleForSettings}">
                             <TabItem
                                 Cursor="Hand"
                                 FontSize="16"
-                                Header="{DynamicResource ResourceKey=Printer_Settings}">
+                                Style="{StaticResource TabItemStyleForSettings}">
+                                <TabItem.Header>
+                                    <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Printer_Settings}" />
+                                </TabItem.Header>
                                 <StackPanel Margin="5,10,0,0">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Normal" />
+                                        </Style>
+                                    </StackPanel.Resources>
                                     <StackPanel
                                         Margin="0,10,0,0"
                                         IsEnabled="{Binding IsLockUISetting}"
                                         Orientation="Horizontal">
+
                                         <TextBlock
-                                            Width="110"
+                                            Width="130"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=IP_Address}" />
                                         <cuscontrol:IpAddressControl
                                             x:Name="TextBoxPrinterIP"
                                             Width="200"
                                             Height="30"
+                                            FontWeight="Normal"
                                             Text="{Binding PrinterIP}" />
-
+                                        <Button
+                                            Width="80"
+                                            Height="30"
+                                            Margin="10,0,0,0"
+                                            Click="ButtonWebView_Click"
+                                            Content="{fa:Icon InternetExplorer,
+                                                              Foreground=White}"
+                                            FontSize="18"
+                                            Style="{StaticResource ModernButton2}" />
                                     </StackPanel>
 
                                     <StackPanel
@@ -374,7 +339,7 @@
                                         IsEnabled="{Binding IsLockUISetting}"
                                         Orientation="Horizontal">
                                         <TextBlock
-                                            Width="110"
+                                            Width="130"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=Port}" />
                                         <mah:NumericUpDown
@@ -384,6 +349,7 @@
                                             Padding="0,3,0,0"
                                             BorderBrush="LightBlue"
                                             FontSize="16"
+                                            FontWeight="Normal"
                                             PreviewTextInput="TextBox_PreviewTextInput"
                                             ValueChanged="NumericUpDown_ValueChanged"
                                             Value="{Binding PrinterPort}" />
@@ -405,7 +371,7 @@
                                         IsEnabled="{Binding IsLockUISetting}"
                                         Orientation="Horizontal">
                                         <TextBlock
-                                            Width="251"
+                                            Width="285"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=Check_All_Printer_Settings}" />
                                         <mah:ToggleSwitch
@@ -413,14 +379,15 @@
                                             Width="366"
                                             VerticalContentAlignment="Center"
                                             FontSize="15"
+                                            FontWeight="Normal"
                                             OffContent="Disabled"
                                             OnContent="Enabled"
                                             Toggled="CheckAllPrinterSettings_Toggled" />
                                     </StackPanel>
 
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <!--<StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                         <TextBlock
-                                            Width="110"
+                                            Width="130"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=Remote}" />
                                         <Button
@@ -431,13 +398,16 @@
                                                               Foreground=White}"
                                             FontSize="20"
                                             Style="{StaticResource ModernButton2}" />
-                                    </StackPanel>
+                                    </StackPanel>-->
 
                                 </StackPanel>
                             </TabItem>
 
                             <!--  Cam settings  -->
-                            <TabItem FontSize="16" Header="{DynamicResource ResourceKey=Camera_Settings}">
+                            <TabItem FontSize="16" Style="{StaticResource TabItemStyleForSettings}">
+                                <TabItem.Header>
+                                    <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Camera_Settings}" />
+                                </TabItem.Header>
                                 <StackPanel Margin="5,20,0,0" IsEnabled="{Binding IsLockUISetting}">
 
                                     <StackPanel Orientation="Horizontal">
@@ -459,12 +429,22 @@
 
                                     <!--  Cam Type  -->
                                     <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                        <StackPanel.Resources>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Normal" />
+                                            </Style>
+                                        </StackPanel.Resources>
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=CameraType}" />
 
-                                        <ComboBox x:Name="ComboBoxCameraType" Width="200">
+                                        <ComboBox
+                                            x:Name="ComboBoxCameraType"
+                                            Width="240"
+                                            Height="30"
+                                            FontSize="15"
+                                            FontWeight="Normal">
                                             <ComboBoxItem>Cognex Dataman</ComboBoxItem>
                                             <ComboBoxItem>Cognex In-Sight Vision</ComboBoxItem>
                                             <ComboBoxItem>Cognex Dual In-Sight Vision</ComboBoxItem>
@@ -478,11 +458,17 @@
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
+                                            FontWeight="Normal"
                                             Text="{DynamicResource ResourceKey=DatamanReadMode}" />
-
-                                        <ComboBox x:Name="ComboBoxDatamanReadMode" Width="200">
-                                            <ComboBoxItem>Basic Read (Image+Code)</ComboBoxItem>
-                                            <ComboBoxItem>Multi-Sync Read with TCP/IP (Code)</ComboBoxItem>
+                                        <ComboBox
+                                            x:Name="ComboBoxDatamanReadMode"
+                                            Width="240"
+                                            Height="30"
+                                            FontSize="15"
+                                            FontWeight="Normal"
+                                            >
+                                            <ComboBoxItem>Basic Read (Image + Code)</ComboBoxItem>
+                                            <ComboBoxItem>Multi-Sync Read (No Image)</ComboBoxItem>
 
                                         </ComboBox>
                                     </StackPanel>
@@ -491,11 +477,13 @@
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
+                                            FontWeight="Normal"
                                             Text="{DynamicResource ResourceKey=IP_Address}" />
                                         <cuscontrol:IpAddressControl
                                             x:Name="TextBoxCamIP"
                                             Width="200"
                                             Height="30"
+                                            FontWeight="Normal"
                                             Text="{Binding CameraIP}" />
                                     </StackPanel>
 
@@ -503,6 +491,7 @@
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
+                                            FontWeight="Normal"
                                             Text="{DynamicResource ResourceKey=Model}" />
                                         <TextBox
                                             x:Name="TextBoxCamModel"
@@ -511,6 +500,7 @@
                                             Margin="0,0,10,0"
                                             Padding="0,3,0,0"
                                             FontSize="16"
+                                            FontWeight="Normal"
                                             IsEnabled="False"
                                             Text="{Binding CameraModel}" />
                                     </StackPanel>
@@ -519,6 +509,7 @@
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
+                                            FontWeight="Normal"
                                             Text="{DynamicResource ResourceKey=Serial}" />
                                         <TextBox
                                             x:Name="TextBoxCamSerial"
@@ -527,6 +518,7 @@
                                             Margin="0,0,10,0"
                                             Padding="0,3,0,0"
                                             FontSize="16"
+                                            FontWeight="Normal"
                                             IsEnabled="False"
                                             Text="{Binding SerialNumber}" />
                                     </StackPanel>
@@ -534,15 +526,26 @@
                             </TabItem>
 
                             <!--  PLC settings  -->
-                            <TabItem FontSize="16" Header="{DynamicResource ResourceKey=PLC_Settings}">
+                            <TabItem FontSize="16" Style="{StaticResource TabItemStyleForSettings}">
+                                <TabItem.Header>
+                                    <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=PLC_Settings}" />
+                                </TabItem.Header>
                                 <StackPanel Margin="5,10,0,0" IsEnabled="{Binding IsLockUISetting}">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Normal" />
+                                        </Style>
+                                    </StackPanel.Resources>
                                     <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
                                         <TextBlock
                                             Width="170"
                                             VerticalAlignment="Center"
                                             Text="{DynamicResource ResourceKey=Enable_Controller}" />
 
-                                        <mah:ToggleSwitch IsOn="{Binding EnController}" Toggled="ToggleButtonEnableControllerState" />
+                                        <mah:ToggleSwitch
+                                            FontWeight="Normal"
+                                            IsOn="{Binding EnController}"
+                                            Toggled="ToggleButtonEnableControllerState" />
 
                                     </StackPanel>
                                     <StackPanel x:Name="InputArea">
@@ -555,6 +558,7 @@
                                                 x:Name="TextBoxControllerIP"
                                                 Width="200"
                                                 Height="30"
+                                                FontWeight="Normal"
                                                 Text="{Binding ControllerIP}" />
                                         </StackPanel>
 
@@ -570,6 +574,7 @@
                                                 Padding="0,3,0,0"
                                                 BorderBrush="LightBlue"
                                                 FontSize="16"
+                                                FontWeight="Normal"
                                                 PreviewTextInput="TextBox_PreviewTextInput"
                                                 ValueChanged="NumericUpDown_ValueChanged"
                                                 Value="{Binding ControllerPort}" />
@@ -593,6 +598,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -616,6 +622,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -639,6 +646,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -662,6 +670,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -696,6 +705,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -720,6 +730,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -744,6 +755,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -767,6 +779,7 @@
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
                                                         FontSize="16"
+                                                        FontWeight="Normal"
                                                         Maximum="999999"
                                                         Minimum="0"
                                                         PreviewTextInput="TextBox_PreviewTextInput"
@@ -783,13 +796,22 @@
                                 </StackPanel>
 
                             </TabItem>
-                            <TabItem FontSize="16" Header="{DynamicResource ResourceKey=Verify_And_Print_Settings}">
+                            <TabItem FontSize="16" Style="{StaticResource TabItemStyleForSettings}">
+                                <TabItem.Header>
+                                    <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Verify_And_Print_Settings}" />
+                                </TabItem.Header>
                                 <StackPanel
                                     Grid.Row="1"
                                     Margin="0,10,0,0"
                                     VerticalAlignment="Top"
                                     IsEnabled="{Binding IsLockUISetting}"
                                     Orientation="Vertical">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Normal" />
+                                        </Style>
+
+                                    </StackPanel.Resources>
 
                                     <!--  Gr Mode  -->
                                     <GroupBox
@@ -799,6 +821,7 @@
                                         Header="{DynamicResource ResourceKey=Send_Mode}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+
                                             <RadioButton
                                                 x:Name="RadBasic"
                                                 Width="100"
@@ -806,6 +829,7 @@
                                                 Click="RadBasic_Click"
                                                 Content="{DynamicResource ResourceKey=Basic}"
                                                 FontSize="16"
+                                                FontWeight="Normal"
                                                 Style="{StaticResource RadioButtonStyle1}" />
 
                                             <RadioButton
@@ -815,6 +839,7 @@
                                                 Click="RadCompare_Click"
                                                 Content="{DynamicResource ResourceKey=Compare}"
                                                 FontSize="16"
+                                                FontWeight="Normal"
                                                 Style="{StaticResource RadioButtonStyle1}" />
                                             <!--  IsChecked="{Binding VerifyAndPrintBasicSentMethod, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"  -->
                                         </StackPanel>
@@ -822,6 +847,7 @@
 
                                     <GroupBox
                                         Width="420"
+                                        Margin="0,10,0,0"
                                         HorizontalAlignment="Left"
                                         Header="{DynamicResource ResourceKey=Field_Settings}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
@@ -838,6 +864,7 @@
                                                     Height="30"
                                                     Margin="0,0,10,0"
                                                     FontSize="16"
+                                                    FontWeight="Normal"
                                                     Text="{Binding FormatedPOD}" />
                                                 <Button
                                                     Width="70"
@@ -858,6 +885,7 @@
                                                     Height="30"
                                                     Margin="0,0,10,0"
                                                     FontSize="16"
+                                                    FontWeight="Normal"
                                                     Text="{Binding FailedDataSentToPrinter}"
                                                     TextChanged="TextBox_ParamsChanged" />
 
@@ -880,9 +908,17 @@
                                 Height="25"
                                 VerticalAlignment="Top"
                                 FontSize="16"
-                                Header="{DynamicResource ResourceKey=Scanner_Settings}">
+                                Style="{StaticResource TabItemStyleForSettings}">
+                                <TabItem.Header>
+                                    <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Scanner_Settings}" />
+                                </TabItem.Header>
                                 <StackPanel IsEnabled="{Binding IsLockUISetting}">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Normal" />
+                                        </Style>
 
+                                    </StackPanel.Resources>
                                     <!--  Com  -->
                                     <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                         <TextBlock
@@ -893,13 +929,14 @@
                                             x:Name="comboBoxComName"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16"
+                                            FontSize="15"
+                                            FontWeight="Normal"
                                             SelectedValuePath="Content">
-                                            <ComboBoxItem Content="COM3" />
-                                            <ComboBoxItem Content="COM4" />
-                                            <ComboBoxItem Content="COM5" />
-                                            <ComboBoxItem Content="COM6" />
-                                            <ComboBoxItem Content="COM7" />
+                                            <ComboBoxItem Content="COM 3" />
+                                            <ComboBoxItem Content="COM 4" />
+                                            <ComboBoxItem Content="COM 5" />
+                                            <ComboBoxItem Content="COM 6" />
+                                            <ComboBoxItem Content="COM 7" />
                                         </ComboBox>
 
                                     </StackPanel>
@@ -914,7 +951,8 @@
                                             x:Name="comboBoxBitPerSeconds"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16"
+                                            FontSize="15"
+                                            FontWeight="Normal"
                                             SelectedValuePath="Content">
                                             <ComboBoxItem Content="9600" />
                                             <ComboBoxItem Content="19200" />
@@ -936,7 +974,8 @@
                                             x:Name="comboBoxDataBits"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16"
+                                            FontSize="15"
+                                            FontWeight="Normal"
                                             SelectedValuePath="Content">
                                             <ComboBoxItem Content="7" />
                                             <ComboBoxItem Content="8" />
@@ -953,7 +992,8 @@
                                             x:Name="comboBoxParity"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16">
+                                            FontSize="15"
+                                            FontWeight="Normal">
                                             <ComboBoxItem Content="None" />
                                             <ComboBoxItem Content="Odd" />
                                             <ComboBoxItem Content="Even" />
@@ -972,13 +1012,12 @@
                                             x:Name="comboBoxStopBits"
                                             Width="200"
                                             Height="30"
-                                            FontSize="16">
+                                            FontSize="15"
+                                            FontWeight="Normal">
                                             <ComboBoxItem Content="One" />
                                             <ComboBoxItem Content="Two" />
                                         </ComboBox>
                                     </StackPanel>
-
-
                                 </StackPanel>
                             </TabItem>
 
@@ -989,12 +1028,13 @@
                         <Button
                             Width="140"
                             Height="40"
-                            Margin="0,0,10,0"
+                            Margin="0,5,10,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             Background="White"
                             BorderBrush="#00ABE6"
                             Click="RestartButton_Click"
+                            FontWeight="Normal"
                             IsEnabled="{Binding IsLockUISetting}">
                             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                 <fa:IconImage

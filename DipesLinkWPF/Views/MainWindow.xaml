@@ -10,6 +10,7 @@
     xmlns:params="clr-namespace:DipesLink.Properties"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:uc="clr-namespace:DipesLink.Views.UserControls.MainUc"
+    xmlns:vconverter="clr-namespace:DipesLink.Views.Converter"
     MinWidth="1280"
     MinHeight="768"
     d:Height="1080"
@@ -24,6 +25,7 @@
                 <Binding Source="{x:Static params:Settings.Default}" Path="SoftwareVersion"/>
             </MultiBinding>-->
             <converter:OptToVis x:Key="OptToVis" />
+            <vconverter:StationStatusTextColor x:Key="StationStatusTextColorConverter" />
 
             <!--  Common Var  -->
             <SolidColorBrush x:Key="ColorMenuItem">White</SolidColorBrush>
@@ -352,10 +354,23 @@
                     Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=0}" />
                 <uc:JobSettings
                     Grid.ColumnSpan="2"
+                    MinWidth="940"
+                    MinHeight="600"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Background="WhiteSmoke"
                     Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=2}" />
-                <uc:JobCreation Grid.ColumnSpan="2" Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=1}" />
-                <uc:JobEventsLog Grid.ColumnSpan="2" Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=3}" />
+                <uc:JobCreation
+                    Grid.ColumnSpan="2"
+                    MinWidth="1150"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=1}" />
+                <uc:JobEventsLog
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=3}" />
             </Grid>
 
             <!--  Device Status  -->
@@ -366,7 +381,7 @@
                 VerticalScrollBarVisibility="Disabled">
                 <Grid Background="WhiteSmoke">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="350" />
+                        <ColumnDefinition Width="400" />
                         <ColumnDefinition Width="500" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
@@ -389,88 +404,92 @@
                                     <fa:IconImage
                                         Width="15"
                                         Height="15"
-                                        Margin="0"
+                                        Margin="0,0,3,0"
                                         Foreground="{Binding CameraStatusColor}"
                                         Icon="Camera" />
                                     <fa:IconImage
                                         Width="15"
                                         Height="15"
-                                        Margin="1"
+                                        Margin="0,0,3,0"
                                         Foreground="{Binding PrinterStatusColor}"
                                         Icon="Print" />
                                     <fa:IconImage
                                         Width="15"
                                         Height="15"
-                                        Margin="1"
+                                        Margin="0,0,3,0"
                                         Foreground="{Binding ControllerStatusColor}"
                                         Icon="SignalPerfect" />
-                                    <!--  thinh dang lam  -->
+
                                     <Image
                                         Width="20"
                                         Height="20"
-                                        Margin="0"
+                                        Margin="0,0,3,0"
                                         Source="{Binding ScannerStatusImage}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Grid Grid.Column="1" Background="White">
 
+                    <!--  IP Address  -->
+                    <!--<Grid Grid.Column="1" Background="White" Visibility="Collapsed">
                         <StackPanel x:Name="StackPanelIPDisplay" Orientation="Horizontal">
                             <StackPanel.Resources>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontSize" Value="14" />
                                 </Style>
                             </StackPanel.Resources>
-
                             <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
-                                <TextBlock
-                                    Width="75"
-                                    VerticalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Text="{DynamicResource ResourceKey=Printer_IP}" />
+                                <Image
+                                    Width="18"
+                                    Height="18"
+                                    Source="/Images/ip-address.png" />
                                 <TextBlock
                                     x:Name="TextBlockPrinterIP"
                                     VerticalAlignment="Center"
                                     Text="######" />
-                            </StackPanel>
-
-                            <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                                 <TextBlock
                                     Width="75"
                                     VerticalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Text="{DynamicResource ResourceKey=Camera_IP}" />
+                                    Text="{DynamicResource ResourceKey=Printer_IP}" />
+                            </StackPanel>
+                            <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                                <Image
+                                    Width="18"
+                                    Height="18"
+                                    Source="/Images/ip-address.png" />
                                 <TextBlock
                                     x:Name="TextBlockCamIP"
                                     VerticalAlignment="Center"
                                     Text="######" />
-                                <!--<cuscontrol:IpAddressControl
-                                x:Name="TextBoxCamIP"
-                                Width="200"
-                                Height="30"
-                                Text="{Binding CameraIP}" />-->
+                                <TextBlock
+                                    Width="75"
+                                    VerticalAlignment="Center"
+                                    Text="{DynamicResource ResourceKey=Camera_IP}" />
                             </StackPanel>
                             <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
-                                <TextBlock
-                                    Width="70"
-                                    VerticalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Text="{DynamicResource ResourceKey=Controller_IP}" />
+                                <Image
+                                    Width="18"
+                                    Height="18"
+                                    Source="/Images/ip-address.png" />
                                 <TextBlock
                                     x:Name="TextBlockControllerIP"
                                     VerticalAlignment="Center"
                                     Text="######" />
+                                <TextBlock
+                                    Width="70"
+                                    VerticalAlignment="Center"
+                                    Text="{DynamicResource ResourceKey=Controller_IP}" />
                             </StackPanel>
                         </StackPanel>
-                    </Grid>
-                    <!--  Printer Status  -->
-                    <Grid Grid.Column="2" Background="White">
+                    </Grid>-->
+
+                    <!--  Station Status  -->
+                    <Grid Grid.Column="1" Background="White">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Margin="0,0,0,0"
+                                Margin="20,0,0,0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
+                                FontSize="16"
                                 Foreground="DimGray"
                                 Text="{DynamicResource ResourceKey=Station_Status}" />
                             <ListBox
@@ -491,7 +510,10 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Margin="2,0,0,0" Text="{Binding Name}" />
-                                            <TextBlock Margin="2,0,0,0" Text="{Binding State}" />
+                                            <TextBlock
+                                                Margin="2,0,0,0"
+                                                Foreground="{Binding State, Converter={StaticResource StationStatusTextColorConverter}}"
+                                                Text="{Binding State}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>

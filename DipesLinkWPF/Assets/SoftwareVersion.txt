@@ -1,4 +1,6 @@
-﻿* DIPES-LINK Version 1.0.0.0 (August 12 ,2024) 
- - Build: 240812 
+﻿* Dipes-Link Version 1.0.0.0 (August 12, 2024) Build: 240812 
   + Beta version software launched
- 
+* Dipes-Link Version 1.0.0.1 (Novemver 1, 2024) Build: 241101
+  + Added DataMan Multi-Reader Sync feature
+  + Fixed station logging feature is not working
+  + Added barcode scanner reader

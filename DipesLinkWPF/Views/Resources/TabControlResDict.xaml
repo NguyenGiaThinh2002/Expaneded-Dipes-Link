@@ -4,7 +4,7 @@
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontWeight" Value="Bold" />
-        
+
         <Setter Property="Padding" Value="10,4" />
         <Setter Property="Margin" Value="2,2,2,0" />
         <Setter Property="Template">
@@ -41,7 +41,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="TabControlStyle1" TargetType="TabControl">
         <Setter Property="Template">
             <Setter.Value>
@@ -57,7 +57,7 @@
                             Background="Transparent"
                             IsItemsHost="True"
                             KeyboardNavigation.TabIndex="1" />
-                        <Border 
+                        <Border
                             Grid.Row="1"
                             Background="Transparent"
                             BorderBrush="Transparent"
@@ -69,4 +69,83 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
+    <!--#region TabControl Style For Settings-->
+    <Style x:Key="TabControlStyleForSettings" TargetType="TabControl">
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TabPanel
+                            Grid.Row="0"
+                            Panel.ZIndex="1"
+                            Background="Transparent"
+                            IsItemsHost="True"
+                            KeyboardNavigation.TabIndex="1" />
+                        <Border
+                            Grid.Row="1"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="0">
+                            <ContentPresenter ContentSource="SelectedContent" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Định nghĩa Style cho TabItem  -->
+    <Style x:Key="TabItemStyleForSettings" TargetType="TabItem">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Padding" Value="10,4" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border
+                        x:Name="TabBorder"
+                        Height="30"
+                        Padding="0,0,0,3"
+                        Background="LightBlue"
+                        BorderBrush="LightBlue"
+                        BorderThickness="1,1,1,0"
+                        CornerRadius="5,5,0,0">
+                        <ContentPresenter
+                            x:Name="ContentSite"
+                            Margin="12,2,12,2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            ContentSource="Header" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="TabBorder" Property="Background" Value="#00ABE6" />
+
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="TabBorder" Property="Background" Value="#C1DAE8" />
+                            <Setter Property="Foreground" Value="#808080" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Trigger>
+
+        </Style.Triggers>
+    </Style>
+    <!--#endregion-->
 </ResourceDictionary>

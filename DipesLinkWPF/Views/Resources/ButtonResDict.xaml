@@ -201,8 +201,8 @@
                             <Setter TargetName="buttonBorder" Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0.0" Color="LightGray" />
-                                        <GradientStop Offset="1.0" Color="DimGray" />
+                                        <GradientStop Offset="0.0" Color="Gray" />
+                                        <GradientStop Offset="1.0" Color="Gray" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
@@ -211,8 +211,8 @@
                             <Setter TargetName="buttonBorder" Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0.0" Color="#0685BC" />
-                                        <GradientStop Offset="1.0" Color="#0685BC" />
+                                        <GradientStop Offset="0.0" Color="#00ABE6" />
+                                        <GradientStop Offset="1.0" Color="#00ABE6" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>

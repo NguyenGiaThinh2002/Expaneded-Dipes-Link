@@ -127,10 +127,10 @@
     <system:String x:Key="Settings">Settings</system:String>
     <system:String x:Key="Logs">Logs</system:String>
     <system:String x:Key="Exit">Exit</system:String>
-    <system:String x:Key="Station_Status">Station Status:</system:String>
-    <system:String x:Key="Printer_IP">Printer IP:</system:String>
-    <system:String x:Key="Camera_IP">Camera IP:</system:String>
-    <system:String x:Key="Controller_IP">Controller IP:</system:String>
+    <system:String x:Key="Station_Status">Station Status</system:String>
+    <system:String x:Key="Printer_IP">(Printer)</system:String>
+    <system:String x:Key="Camera_IP">(Camera)</system:String>
+    <system:String x:Key="Controller_IP">(PLC)</system:String>
     <system:String x:Key="Stopped">Stopped</system:String>
     <system:String x:Key="Running">Running</system:String>
     <system:String x:Key="Processing">Processing</system:String>
@@ -161,7 +161,7 @@
     <system:String x:Key="CameraType">Camera Type:</system:String>
     <system:String x:Key="DatamanReadMode">Read mode:</system:String>
     <system:String x:Key="Port">Port:</system:String>
-    <system:String x:Key="Remote">Remote:</system:String>
+    <system:String x:Key="Remote">Remote settings:</system:String>
     <system:String x:Key="Controller_Settings">Controller Settings</system:String>
     <system:String x:Key="Enable_Controller">Enable Controller:</system:String>
     <system:String x:Key="Sensor1">Sensor 1</system:String>
@@ -267,12 +267,12 @@
     <system:String x:Key="OnProduction">On Production</system:String>
     <system:String x:Key="VerifyAndPrint">Verify and Print</system:String>
     <system:String x:Key="StandAlone">StandAlone</system:String>
-    <system:String x:Key="Check_All_Printer_Settings">Check All Printer Settings:</system:String>
+    <system:String x:Key="Check_All_Printer_Settings">Check all Printer settings:</system:String>
 
     <!--#region ACCOUNTS-->
     <system:String x:Key="Account_Management">Users Management</system:String>
     <system:String x:Key="System_Management">System Management</system:String>
-    <system:String x:Key="About_DP_Link">About DIPES-Link</system:String>
+    <system:String x:Key="About_DP_Link">About Dipes-Link</system:String>
     <system:String x:Key="Logout">Logout</system:String>
     <system:String x:Key="USERS_MANAGEMENT">USERS MANAGEMENT</system:String>
     <system:String x:Key="Create_New_User">Create New</system:String>
