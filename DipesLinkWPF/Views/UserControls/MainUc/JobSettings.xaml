@@ -444,8 +444,7 @@
                                             Width="240"
                                             Height="30"
                                             FontSize="15"
-                                            FontWeight="Normal"
-                                            SelectedIndex="{Binding CameraTypeIndex}">
+                                            FontWeight="Normal">
                                             <ComboBoxItem>Cognex Dataman</ComboBoxItem>
                                             <ComboBoxItem>Cognex In-Sight Vision</ComboBoxItem>
                                             <ComboBoxItem>Cognex Dual In-Sight Vision</ComboBoxItem>
@@ -461,14 +460,13 @@
                                             VerticalAlignment="Center"
                                             FontWeight="Normal"
                                             Text="{DynamicResource ResourceKey=DatamanReadMode}" />
-
                                         <ComboBox
                                             x:Name="ComboBoxDatamanReadMode"
                                             Width="240"
                                             Height="30"
                                             FontSize="15"
                                             FontWeight="Normal"
-                                            SelectedIndex="{Binding DatamanReadModeIndex}">
+                                            >
                                             <ComboBoxItem>Basic Read (Image + Code)</ComboBoxItem>
                                             <ComboBoxItem>Multi-Sync Read (No Image)</ComboBoxItem>
 
@@ -1020,8 +1018,6 @@
                                             <ComboBoxItem Content="Two" />
                                         </ComboBox>
                                     </StackPanel>
-
-
                                 </StackPanel>
                             </TabItem>
 

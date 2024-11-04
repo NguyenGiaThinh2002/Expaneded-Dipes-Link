@@ -225,14 +225,22 @@ namespace DipesLink.Views.UserControls.MainUc
                     switch (ComboBoxCameraType.SelectedIndex)
                     {
                         case 0: // Dataman
-                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.Dataman;
-                           
+                            if(!(vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.Dataman))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.Dataman;
+                            }
                             break;
                         case 1: // IS
-                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVision;
+                            if (!(vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.InsightVision))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVision;
+                            }
                             break;
                         case 2: // IS Dual
-                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVisionDual;
+                            if (!(vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.InsightVisionDual))
+                            {
+                                vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVisionDual;
+                            }
                             break;
                         default:
                             vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.Unknown;
