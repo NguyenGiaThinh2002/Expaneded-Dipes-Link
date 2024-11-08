@@ -34,10 +34,6 @@ namespace DipesLink_SDK_Cameras
             _TimeOutOfConnection = timeOutOfConnection;
             _SendTimeout = sendTimeout;
         }
-        //public DatamanCameraTCPRead()
-        //{
-
-        //}
 
         public bool Connect()
         {

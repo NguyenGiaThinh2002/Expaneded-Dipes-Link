@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DipesLink_SDK_PLC
 {
-    internal interface IPLC_TCPIP
+    public interface IPLC_TCPIP
     {
         bool Connect();
         bool Disconnect();

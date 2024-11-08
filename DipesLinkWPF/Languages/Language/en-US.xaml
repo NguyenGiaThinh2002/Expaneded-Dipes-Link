@@ -48,7 +48,7 @@
     <system:String x:Key="PrinterDisconnected">Station {0}: Printer's Disconnected !</system:String>
     <system:String x:Key="CameraDisconnected">Station {0}: Camera's Disconnected !</system:String>
     <system:String x:Key="FileNotFound">Station {0}: File not found !</system:String>
- 
+
     <system:String x:Key="NotSupportedCheckPrinterSetting">Station {0}: Printer does not support check printer settings !</system:String>
     <system:String x:Key="DataTypeMustBeRAWData">Station {0}: Data type must be RAW data !</system:String>
     <system:String x:Key="PODFeatureIsNotEnabled">Station {0}: POD feature is not enabled !</system:String>

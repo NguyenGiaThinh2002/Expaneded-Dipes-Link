@@ -6,22 +6,27 @@ using IPCSharedMemory;
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
 using SharedProgram.Shared;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using IPCSharedMemory.Controllers;
+using System.Data;
 
 namespace DipesLinkDeviceTransfer
 {
     public partial class Program
     {
-        public static DatamanCameraTCPRead? DatamanCameraTCPRead;
-        public static DatamanCamera? DatamanCameraDeviceHandler;
-        public static RynanRPrinterTCPClient? RynanRPrinterDeviceHandler;
-        public static S7TCPIP? ControllerDeviceHandler;
-        public static RS232BarcodeScanner? BarcodeScannerHandler;
+        #region Variables
+        private static IServiceProvider serviceProvider;
+        private IPrinter? _rynanRPrinterDeviceHandler;
+        private IPLC_TCPIP? _controllerDeviceHandler;
+        private ICameras? _datamanCameraDeviceHandler;
+        private IBarcodeScanner? _barcodeScannerHandler;
         public static string? keyStep;
         private IPCSharedHelper? _ipcDeviceToUISharedMemory_DT;
         private IPCSharedHelper? _ipcUIToDeviceSharedMemory_DT;
         private IPCSharedHelper? _ipcDeviceToUISharedMemory_DB;
         private IPCSharedHelper? _ipcDeviceToUISharedMemory_RD;
-
+        #endregion
         private void InitInstanceIPC()
         {
             _ipcDeviceToUISharedMemory_DT = new(JobIndex, "DeviceToUISharedMemory_DT", SharedValues.SIZE_1MB); // data
@@ -60,10 +65,13 @@ namespace DipesLinkDeviceTransfer
         }
 
         static CancellationTokenSource cts;
+
         static async Task Main(string[] args)
         {
             try
             {
+
+
                 GetArgumentList(args);
                 JobIndex = DeviceSharedValues.Index;
                 new Program().NonStaticMainProgram();
@@ -77,6 +85,7 @@ namespace DipesLinkDeviceTransfer
             await HoldConsoleAsync(cts.Token);
 
         }
+
         static async Task HoldConsoleAsync(CancellationToken token)
         {
             try
@@ -105,10 +114,21 @@ namespace DipesLinkDeviceTransfer
             InitInstanceIPC();
             ListenConnectionParam();
             AlwaySendPrinterOperationToUI();
-          //  DatamanCameraDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
-            RynanRPrinterDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
-            ControllerDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
-            BarcodeScannerHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
+
+            serviceProvider = new ServiceCollection()
+            .AddSingleton<IBarcodeScanner>(provider =>
+                new RS232BarcodeScanner(JobIndex, _ipcDeviceToUISharedMemory_DT))
+            .AddSingleton<ICameras>(provider =>
+                new DatamanCamera(JobIndex, _ipcDeviceToUISharedMemory_DT))
+            .AddSingleton<IPLC_TCPIP>(provider =>
+                new S7TCPIP(JobIndex, _ipcDeviceToUISharedMemory_DT))
+            .AddSingleton<IPrinter>(provider =>
+                new RynanRPrinterTCPClient(JobIndex, _ipcDeviceToUISharedMemory_DT))
+            .BuildServiceProvider();
+            _barcodeScannerHandler = serviceProvider.GetService<IBarcodeScanner>();
+            _datamanCameraDeviceHandler = serviceProvider.GetService<ICameras>();
+            _controllerDeviceHandler = serviceProvider.GetService<IPLC_TCPIP>();
+            _rynanRPrinterDeviceHandler = serviceProvider.GetService<IPrinter>();
             CameraConnectionMonitor();
             InitEvents();
 
@@ -152,15 +172,11 @@ namespace DipesLinkDeviceTransfer
 
             try
             {
-                if (DatamanCameraDeviceHandler == null) return;
-                DatamanCameraDeviceHandler.Disconnect();
-                DatamanCameraDeviceHandler.Dispose();
-                DatamanCameraDeviceHandler = null;
-                //if (DatamanCameraDeviceHandler == null)
-                //{
-                //  //  SharedEventsIpc.RaiseCameraStatusChanged(false, EventArgs.Empty);
-                // //   Console.WriteLine("Dataman is diposed!");
-                //}
+                //if (_datamanCameraDeviceHandler == null) return;
+                _datamanCameraDeviceHandler.Disconnect();
+                (_datamanCameraDeviceHandler as IDisposable)?.Dispose();
+                _datamanCameraDeviceHandler.Dispose();
+                //_datamanCameraDeviceHandler = null;
             }
             catch (Exception ex)
             {
@@ -175,7 +191,6 @@ namespace DipesLinkDeviceTransfer
             {
                 try
                 {
-                   // SharedEventsIpc.CameraStatusChanged += SharedEvents_DeviceStatusChanged;
                     while (true)
                     {
                         switch (DeviceSharedValues.CameraSeries)
@@ -185,40 +200,36 @@ namespace DipesLinkDeviceTransfer
 
                                 break;
                             case SharedProgram.DataTypes.CommonDataType.CameraSeries.Dataman:
-                                 Console.WriteLine("Dataman Camera Connected !");
-                             //   Console.WriteLine("Vo day làm con mẹ ji !");
-                                if (DatamanCameraDeviceHandler == null)
+                                Console.WriteLine("Dataman Camera Connected !");
+
+                                if (_datamanCameraDeviceHandler == null)
                                 {
-                                    DatamanCameraDeviceHandler = new(JobIndex, _ipcDeviceToUISharedMemory_DT);
+                                    _datamanCameraDeviceHandler = new DatamanCamera(JobIndex, _ipcDeviceToUISharedMemory_DT);
                                 }
                                 else
                                 {
-                                    if (DatamanCameraDeviceHandler?.IsConnected == true)
+                                    if (_datamanCameraDeviceHandler?.IsConnected == true)
                                     {
-                                      //  DeviceSharedValues.IsCameraConnected = true;
-                                       await Console.Out.WriteLineAsync($"Dataman connected");
-                                        DeviceSharedValues.CameraInfos = DatamanCameraDeviceHandler.CameraInfo; // get status
+
+                                        await Console.Out.WriteLineAsync($"Dataman connected");
+                                        DeviceSharedValues.CameraInfos.ConnectionStatus = true;
+                                        DeviceSharedValues.CameraInfos = _datamanCameraDeviceHandler.CameraInfo; // get status
+
                                     }
                                     else
                                     {
                                         _countTimeOutConnection++;
                                         if (_countTimeOutConnection >= 5)
                                         {
-                                            DiposeDatamanCamera();
+                                            DeviceSharedValues.CameraInfos.ConnectionStatus = false;
                                             _countTimeOutConnection = 0;
                                         }
-                                        //    DeviceSharedValues.IsCameraConnected = false;
-                                        //  SharedEventsIpc.RaiseCameraStatusChanged(false, EventArgs.Empty);
                                         await Console.Out.WriteLineAsync($"Dataman disconnected");
                                     }
                                 }
 
                                 break;
                             case SharedProgram.DataTypes.CommonDataType.CameraSeries.InsightVision:
-                                // Console.WriteLine("Ket noi insight vision");
-                               // DeviceSharedValues.IsCameraConnected = false;
-
-                                // simulate camera info
                                 DeviceSharedValues.CameraInfos = new CameraInfos
                                 {
                                     ConnectionStatus = false,
@@ -233,14 +244,9 @@ namespace DipesLinkDeviceTransfer
                                         Type = ""
                                     }
                                 };
-                                DiposeDatamanCamera();
+
                                 break;
                             case SharedProgram.DataTypes.CommonDataType.CameraSeries.InsightVisionDual:
-                                //Console.WriteLine("Ket noi insightvision dual");
-                               // DeviceSharedValues.IsCameraConnected = false;
-
-
-                                // simulate camera info
                                 DeviceSharedValues.CameraInfos = new CameraInfos
                                 {
                                     ConnectionStatus = false,
@@ -255,16 +261,13 @@ namespace DipesLinkDeviceTransfer
                                         Type = ""
                                     }
                                 };
-                                DiposeDatamanCamera();
+
                                 break;
                             default:
                                 break;
                         }
-                      
-                        // SharedEventsIpc.RaiseCameraStatusChanged(DeviceSharedValues.IsCameraConnected, EventArgs.Empty);
-                       // Console.WriteLine("dit con me may: " + DeviceSharedValues.CameraInfos.Info.IPAddress);
+
                         SendCameraInfoAndStatusToUi(JobIndex, _ipcDeviceToUISharedMemory_DT, DeviceSharedValues.CameraInfos);
-                        // await Console.Out.WriteLineAsync($"Camera stst: {DeviceSharedValues.IsCameraConnected}");
                         await Task.Delay(1000);
                     }
                 }
@@ -278,12 +281,12 @@ namespace DipesLinkDeviceTransfer
         {
             try
             {
-                if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
+                if (_datamanCameraDeviceHandler != null && !_datamanCameraDeviceHandler.IsConnected)
                 {
                     return Task.FromResult(1);
                 }
 
-                if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected() &&
+                if (_rynanRPrinterDeviceHandler != null && !_rynanRPrinterDeviceHandler.IsConnected() &&
                     SharedValues.SelectedJob?.CompareType == SharedProgram.DataTypes.CommonDataType.CompareType.Database &&
                     SharedValues.SelectedJob.PrinterSeries == SharedProgram.DataTypes.CommonDataType.PrinterSeries.RynanSeries) // Standalone will not check Printer Connection
                 {

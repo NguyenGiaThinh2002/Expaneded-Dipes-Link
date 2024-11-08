@@ -89,7 +89,7 @@ namespace DipesLinkDeviceTransfer
             {
                 SharedEvents.OnControllerDataChange -= SharedEvents_OnControllerDataChange;
                 SharedEvents.OnControllerDataChange += SharedEvents_OnControllerDataChange;
-                if (ControllerDeviceHandler != null && ControllerDeviceHandler.IsConnected() && DeviceSharedValues.EnController)
+                if (_controllerDeviceHandler != null && _controllerDeviceHandler.IsConnected() && DeviceSharedValues.EnController)
                 {
                     string strDelaySensor = int.Parse(DeviceSharedValues.DelaySensor).ToString("D5");
                     string strDisableSensor = int.Parse(DeviceSharedValues.DisableSensor).ToString("D5");
@@ -112,7 +112,7 @@ namespace DipesLinkDeviceTransfer
                            strEncoderDia2,
                            strDelaySensor2,
                            strDisableSensor2);
-                    ControllerDeviceHandler.SendData(strCommand);
+                    _controllerDeviceHandler.SendData(strCommand);
                     //MessageBox.Show("strCommand: " + strCommand);
                     //Console.WriteLine("strCommand: " + strCommand);
                 }
@@ -258,9 +258,9 @@ namespace DipesLinkDeviceTransfer
         {
             try
             {
-                if (DatamanCameraDeviceHandler != null && DatamanCameraDeviceHandler.IsConnected)
+                if (_datamanCameraDeviceHandler != null && _datamanCameraDeviceHandler.IsConnected)
                 {
-                    DatamanCameraDeviceHandler.ManualInputTrigger();
+                    _datamanCameraDeviceHandler.ManualInputTrigger();
                 }
             }
             catch (Exception ex)

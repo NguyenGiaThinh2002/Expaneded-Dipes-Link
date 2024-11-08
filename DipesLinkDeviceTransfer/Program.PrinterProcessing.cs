@@ -80,7 +80,7 @@ namespace DipesLinkDeviceTransfer
         {
             // Check Camera Connection
 #if !DEBUG
-            if (DatamanCameraDeviceHandler != null && !DatamanCameraDeviceHandler.IsConnected)
+            if (_datamanCameraDeviceHandler != null && !_datamanCameraDeviceHandler.IsConnected)
             {
                 return CheckCondition.NotConnectCamera;
             }
@@ -89,7 +89,7 @@ namespace DipesLinkDeviceTransfer
             {
                 SharedFunctions.PrintConsoleMessage(SharedValues.SelectedJob.PrinterSeries.ToString());
                 //Check Printer Connection
-                if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected())
+                if (_rynanRPrinterDeviceHandler != null && !_rynanRPrinterDeviceHandler.IsConnected())
                 {
                     return CheckCondition.NotConnectPrinter;
                 }
@@ -286,14 +286,14 @@ namespace DipesLinkDeviceTransfer
                     SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && !_IsRechecked)
                 {
                     SharedValues.OperStatus = OperationStatus.Processing;
-                    if (RynanRPrinterDeviceHandler != null)
+                    if (_rynanRPrinterDeviceHandler != null)
                     {
-                        RynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
+                        _rynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
                         Thread.Sleep(50);
                         string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
                         string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
                         Thread.Sleep(50);
-                        RynanRPrinterDeviceHandler.SendData(startPrintCommand); // Send Start command to printer
+                        _rynanRPrinterDeviceHandler.SendData(startPrintCommand); // Send Start command to printer
                     }
                 }
                 else
@@ -385,7 +385,7 @@ namespace DipesLinkDeviceTransfer
             //    return;
             //}
             // thinh dang lam
-            if (BarcodeScannerHandler == null || !BarcodeScannerHandler.IsConnected())
+            if (_barcodeScannerHandler == null || !_barcodeScannerHandler.IsConnected())
             {
                 NotificationProcess(NotifyType.NotConnectScanner);
             }
@@ -428,9 +428,9 @@ namespace DipesLinkDeviceTransfer
 
                 if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
                 {
-                    if (RynanRPrinterDeviceHandler != null)
+                    if (_rynanRPrinterDeviceHandler != null)
                     {
-                        RynanRPrinterDeviceHandler.SendData("STOP");
+                        _rynanRPrinterDeviceHandler.SendData("STOP");
                         lock (_StopLocker)
                         {
                             _IsStopOK = false;
@@ -511,9 +511,9 @@ namespace DipesLinkDeviceTransfer
                             token.ThrowIfCancellationRequested();
                             data = string.Join(";", codeModel.Take(codeModel.Length - 1).Skip(1));// Trim data (exclude Index, Status column)
                             string command = string.Format("DATA;{0}", data); // Init send command
-                            if (RynanRPrinterDeviceHandler != null)
+                            if (_rynanRPrinterDeviceHandler != null)
                             {
-                                RynanRPrinterDeviceHandler.SendData(command);
+                                _rynanRPrinterDeviceHandler.SendData(command);
                                 NumberOfSentPrinter++;
                                 Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
                                 _QueueSentCodeNumber.Enqueue(_countSentCode);
@@ -1338,9 +1338,9 @@ namespace DipesLinkDeviceTransfer
             OnReceiveVerifyDataEvent?.Invoke(sender, EventArgs.Empty);
         }
 
-        public static bool GetPrinterStatus()
+        public bool GetPrinterStatus()
         {
-            if (RynanRPrinterDeviceHandler != null && !RynanRPrinterDeviceHandler.IsConnected())
+            if (_rynanRPrinterDeviceHandler != null && !_rynanRPrinterDeviceHandler.IsConnected())
             {
                 return false;
             }
@@ -1372,9 +1372,9 @@ namespace DipesLinkDeviceTransfer
                            .Select(x => arr[x.Index] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[x.Index]));
                     }
                 }
-                if (RynanRPrinterDeviceHandler != null)
+                if (_rynanRPrinterDeviceHandler != null)
                 {
-                    RynanRPrinterDeviceHandler.SendData(command);
+                    _rynanRPrinterDeviceHandler.SendData(command);
                     NumberOfSentPrinter++;
                     Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
                     _QueueSentCodeNumber.Enqueue(_countSentCode);
@@ -1719,10 +1719,10 @@ namespace DipesLinkDeviceTransfer
         {
             Task requestTemplateTask = Task.Run(async () =>
             {
-                if (RynanRPrinterDeviceHandler != null && RynanRPrinterDeviceHandler.IsConnected())
+                if (_rynanRPrinterDeviceHandler != null && _rynanRPrinterDeviceHandler.IsConnected())
                 {
                     SharedFunctions.PrintConsoleMessage("Fucking Uw");
-                    RynanRPrinterDeviceHandler.SendData("RQLI"); //send request template list command to printer
+                    _rynanRPrinterDeviceHandler.SendData("RQLI"); //send request template list command to printer
                     await Task.Delay(100);
                     SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductTemplateList);
                 }
@@ -1958,7 +1958,7 @@ namespace DipesLinkDeviceTransfer
         {
             try
             {
-                if (RynanRPrinterDeviceHandler.IsConnected())
+                if (_rynanRPrinterDeviceHandler.IsConnected())
                 {
                     if (SharedValues.SelectedJob is null) { SharedFunctions.PrintConsoleMessage("Job Not Found !"); return; }
                     SharedFunctions.PrintConsoleMessage("Please Disconnect Printer before start Simulate !"); return;
