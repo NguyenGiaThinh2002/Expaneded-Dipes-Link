@@ -821,7 +821,7 @@
                                         Width="470"
                                         Margin="0,5,0,0"
                                         VerticalAlignment="Stretch"
-                                        Header="Output Camera"
+                                        Header="{DynamicResource ResourceKey=Output_Camera}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
                                         <!--<GroupBox.Header>
                                     <TextBlock FontWeight="Bold" Text="Output Camera" />

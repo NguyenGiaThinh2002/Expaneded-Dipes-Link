@@ -16,7 +16,7 @@ using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLink_SDK_Printers
 {
-    public class RynanRPrinterTCPClient : CommonPrintersFunctions
+    public class RynanRPrinterTCPClient : IPrinter
     {
         private TcpClient? _TcpClient;
         private NetworkStream? _NetworkStream;
@@ -149,7 +149,7 @@ namespace DipesLink_SDK_Printers
             }
         }
 
-        public override bool Connect()
+        public bool Connect()
         {
             try
             {
@@ -192,7 +192,7 @@ namespace DipesLink_SDK_Printers
             }
         }
 
-        public override bool Disconnect()
+        public bool Disconnect()
         {
             try
             {
@@ -264,7 +264,7 @@ namespace DipesLink_SDK_Printers
             }
         }
 
-        public override void SendData(string data)
+        public void SendData(string data)
         {
             try
             {

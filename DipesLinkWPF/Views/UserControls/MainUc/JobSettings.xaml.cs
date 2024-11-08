@@ -17,6 +17,7 @@ using static DipesLink.Views.Enums.ViewEnums;
 using TextBox = System.Windows.Controls.TextBox;
 using SharedProgram.DataTypes;
 using System.Windows.Media;
+using DipesLink_SDK_Cameras;
 namespace DipesLink.Views.UserControls.MainUc
 {
     /// <summary>
@@ -24,8 +25,20 @@ namespace DipesLink.Views.UserControls.MainUc
     /// </summary>
     public partial class JobSettings : UserControl
     {
+        #region Variables
         public static bool IsInitializing = true;
         private bool _firstLoad = false;
+        static string[] comNames = new[] { "COM3", "COM4", "COM5", "COM6", "COM7" };
+        static int[] bitRates = new[] { 9600, 19200, 38400, 57600, 115200 };
+        static int[] dataBits = new[] { 7, 8 };
+        static Parity[] parities = new[] { Parity.None, Parity.Odd, Parity.Even };
+        static StopBits[] stopBits = new[] { StopBits.One, StopBits.Two };
+        static CommonDataType.CameraSeries[] cameraSeries = new[] { CommonDataType.CameraSeries.Dataman, CommonDataType.CameraSeries.InsightVision, CommonDataType.CameraSeries.InsightVisionDual };
+        static CommonDataType.DatamanReadMode[] datamanReadModes = new[] { CommonDataType.DatamanReadMode.Basic, CommonDataType.DatamanReadMode.MultiRead };
+        static CommonDataType.AutoSaveSettingsType settingType;
+
+        #endregion
+
         public JobSettings()
         {
             InitializeComponent();
@@ -70,214 +83,48 @@ namespace DipesLink.Views.UserControls.MainUc
             var vm = CurrentViewModel<MainViewModel>();
             if (vm == null) return;
             if (vm.ConnectParamsList == null) return;
-            // vm.AutoSaveConnectionSetting(CurrentIndex());
+            int currentIndex = CurrentIndex();
             switch (((ComboBox)sender).Name)
             {
                 case "comboBoxComName":
-                    switch (comboBoxComName.SelectedIndex)
-                    {
-                        case 0:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM3"))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM3";
-                            }
-                            break;
-                        case 1:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM4"))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM4";
-                            }
-                            break;
-                        case 2:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM5"))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM5";
-                            }
-                            break;
-                        case 3:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM6"))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM6";
-                            }
-                            break;
-                        case 4:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].ComName == "COM7"))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].ComName = "COM7";
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    InitSerialDivComName(vm);
-                    vm.AutoSaveConnectionSetting(CurrentIndex(),CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    var newComName = comNames[comboBox.SelectedIndex];
+                    vm.ConnectParamsList[currentIndex].ComName = newComName;
+                    settingType = CommonDataType.AutoSaveSettingsType.BarcodeScanner;
                     break;
                 case "comboBoxBitPerSeconds":
-                    switch (comboBoxBitPerSeconds.SelectedIndex)
-                    {
-                        case 0:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 9600))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 9600;
-                                //Shared.SerialDevController.
-                            }
-                            break;
-                        case 1:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 19200))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 19200;
-                            }
-                            break;
-                        case 2:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 38400))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 38400;
-                            }
-                            break;
-                        case 3:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 57600))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 57600;
-                            }
-                            break;
-                        case 4:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].BitPerSeconds == 115200))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].BitPerSeconds = 115200;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    InitSerialDivBitPerSecond(vm);
-                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    var newBitRate = bitRates[comboBox.SelectedIndex];
+                    vm.ConnectParamsList[currentIndex].BitPerSeconds = newBitRate;
+                    settingType = CommonDataType.AutoSaveSettingsType.BarcodeScanner;
                     break;
                 case "comboBoxDataBits":
-                    switch (comboBoxDataBits.SelectedIndex)
-                    {
-                        case 0:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].DataBits == 7))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].DataBits = 7;
-                            }
-                            break;
-                        case 1:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].DataBits == 8))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].DataBits = 8;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    InitSerialDivDataBits(vm);
-                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    var newDataBit = dataBits[comboBox.SelectedIndex];
+                    vm.ConnectParamsList[currentIndex].DataBits = newDataBit;
+                    settingType = CommonDataType.AutoSaveSettingsType.BarcodeScanner;
                     break;
                 case "comboBoxParity":
-                    switch (comboBoxParity.SelectedIndex)
-                    {
-                        case 0:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].Parity == Parity.None))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].Parity = Parity.None;
-                            }
-                            break;
-                        case 1:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].Parity == Parity.Odd))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].Parity = Parity.Odd;
-                            }
-                            break;
-                        case 2:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].Parity == Parity.Even))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].Parity = Parity.Even;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    InitSerialDivParity(vm);
-                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    var newParity = parities[comboBox.SelectedIndex];
+                    vm.ConnectParamsList[currentIndex].Parity = newParity;
+                    settingType = CommonDataType.AutoSaveSettingsType.BarcodeScanner;
                     break;
                 case "comboBoxStopBits":
-                    switch (comboBoxStopBits.SelectedIndex)
-                    {
-                        case 0:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].StopBits == StopBits.One))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].StopBits = StopBits.One;
-                            }
-                            break;
-                        case 1:
-                            if (!(vm.ConnectParamsList[CurrentIndex()].StopBits == StopBits.Two))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].StopBits = StopBits.Two;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    InitSerialDivStopBits(vm);
-                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.BarcodeScanner);
+                    var newStopBit = stopBits[comboBox.SelectedIndex];
+                    vm.ConnectParamsList[currentIndex].StopBits = newStopBit;
+                    settingType = CommonDataType.AutoSaveSettingsType.BarcodeScanner;
                     break;
                 case "ComboBoxCameraType":
-                    switch (ComboBoxCameraType.SelectedIndex)
-                    {
-                        case 0: // Dataman
-                            if(!(vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.Dataman))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.Dataman;
-                            }
-                            break;
-                        case 1: // IS
-                            if (!(vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.InsightVision))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVision;
-                            }
-                            break;
-                        case 2: // IS Dual
-                            if (!(vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.InsightVisionDual))
-                            {
-                                vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.InsightVisionDual;
-                            }
-                            break;
-                        default:
-                            vm.ConnectParamsList[CurrentIndex()].CameraSeries = CommonDataType.CameraSeries.Unknown;
-                            break;
-                          
-                    }
-
-                    // Show or hide Dataman Read Mode
-                    if (vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.Dataman)
-                    {
-                        StackPanelDatamanReadMode.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        StackPanelDatamanReadMode.Visibility = Visibility.Collapsed;
-                    }
-
-                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Camera);
+                    var newCameraType = cameraSeries[comboBox.SelectedIndex];
+                    vm.ConnectParamsList[currentIndex].CameraSeries = newCameraType;
+                    settingType = CommonDataType.AutoSaveSettingsType.Camera;
                     break;
-
                 case "ComboBoxDatamanReadMode":
-                    switch (ComboBoxDatamanReadMode.SelectedIndex)
-                    {
-                        case 0: // Basic
-                            vm.ConnectParamsList[CurrentIndex()].DatamanReadMode = CommonDataType.DatamanReadMode.Basic;
-                            break;
-                        case 1: // Multi Read
-                            vm.ConnectParamsList[CurrentIndex()].DatamanReadMode = CommonDataType.DatamanReadMode.MultiRead;
-                            break;
-                        default:
-                            break;
-                    }
-                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Camera);
-                    break;
-                default:
+                    var newDatamanReadMode = datamanReadModes[comboBox.SelectedIndex];
+                    vm.ConnectParamsList[currentIndex].DatamanReadMode = newDatamanReadMode;
+                    settingType = CommonDataType.AutoSaveSettingsType.Camera;
                     break;
             }
+            StackPanelDatamanReadMode.Visibility = vm.ConnectParamsList[CurrentIndex()].CameraSeries == CommonDataType.CameraSeries.Dataman ? Visibility.Visible : Visibility.Collapsed;
+
+            vm.AutoSaveConnectionSetting(CurrentIndex(), settingType);
         }
 
         private void JobStatusChanged(object? sender, EventArgs e)
@@ -289,7 +136,6 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             CurrentViewModel<MainViewModel>()?.LockUI(ListBoxMenuStationSetting.SelectedIndex);
         }
-
 
         private void MainListBoxMenuChange(object? sender, EventArgs e)
         {
@@ -316,7 +162,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             #region Update UI values
             UpdateSendModeVerifyAndPrintState(vm);
-            UpdateSerialDevComboBoxValues(vm);
+            UpdateScannerComboBoxValues(vm);
             UpdateCameraTypeValues(vm);
             UpdateCheckAllPrinterSettingsState(vm);
             UpdateDatamanReadModeValues(vm);
@@ -325,19 +171,17 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void UpdateDatamanReadModeValues(MainViewModel vm)
         {
-            if (vm == null) return;
-            if (vm.ConnectParamsList == null) return;
-            switch (vm.ConnectParamsList[CurrentIndex()].DatamanReadMode)
+            if (vm?.ConnectParamsList == null) return;
+            var currentDatamanReadMode = vm.ConnectParamsList[CurrentIndex()].DatamanReadMode;
+
+            int currentIndex = Array.IndexOf(datamanReadModes, currentDatamanReadMode);
+            if (currentIndex >= 0)
             {
-                case CommonDataType.DatamanReadMode.Basic:
-                    ComboBoxDatamanReadMode.SelectedIndex = 0;
-                    break;
-                case CommonDataType.DatamanReadMode.MultiRead:
-                    ComboBoxDatamanReadMode.SelectedIndex = 1;
-                    break;
-                default:
-                    ComboBoxDatamanReadMode.SelectedIndex = -1;
-                    break;
+                ComboBoxDatamanReadMode.SelectedIndex = currentIndex;
+            }
+            else
+            {
+                ComboBoxDatamanReadMode.SelectedIndex = -1;
             }
         }
 
@@ -352,7 +196,6 @@ namespace DipesLink.Views.UserControls.MainUc
                 return null;
             }
         }
-
 
         private void ListBoxMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -381,148 +224,99 @@ namespace DipesLink.Views.UserControls.MainUc
             {
             }
         }
-        private void UpdateSerialDevComboBoxValues(MainViewModel vm)
+
+        private void UpdateScannerComboBoxValues(MainViewModel vm)
         {
-            InitSerialDivComName(vm);
-            InitSerialDivBitPerSecond(vm);
-            InitSerialDivDataBits(vm);
-            InitSerialDivParity(vm);
-            InitSerialDivStopBits(vm);
+            UpdateScannerComName(vm);
+            UpdateScannerBitPerSecond(vm);
+            UpdateScannerDataBits(vm);
+            UpdateScannerParity(vm);
+            UpdateScannerStopBits(vm);
         }
-        private void InitSerialDivComName(MainViewModel vm)
+
+        private void UpdateScannerComName(MainViewModel vm)
         {
-            if (vm == null) return;
-            if (vm.ConnectParamsList == null) return;
-            switch (vm.ConnectParamsList[CurrentIndex()].ComName)
+            if (vm?.ConnectParamsList == null) return;
+            var currentComName = vm.ConnectParamsList[CurrentIndex()].ComName;
+            // Find the index of the current COM name in the array
+            int selectedIndex = Array.IndexOf(comNames, currentComName);
+            if (selectedIndex >= 0)
             {
-                case "COM3":
-                    comboBoxComName.SelectedIndex = 0;
-                    break;
-                case "COM4":
-                    comboBoxComName.SelectedIndex = 1;
-                    break;
-                case "COM5":
-                    comboBoxComName.SelectedIndex = 2;
-                    break;
-                case "COM6":
-                    comboBoxComName.SelectedIndex = 3;
-                    break;
-                case "COM7":
-                    comboBoxComName.SelectedIndex = 4;
-                    break;
-                default:
-                    break;
+                comboBoxComName.SelectedIndex = selectedIndex;
             }
         }
 
-        private void InitSerialDivBitPerSecond(MainViewModel vm)
+        private void UpdateScannerBitPerSecond(MainViewModel vm)
         {
-            if (vm == null) return;
-            if (vm.ConnectParamsList == null) return;
-            switch (vm.ConnectParamsList[CurrentIndex()].BitPerSeconds)
+            if (vm?.ConnectParamsList == null) return;
+            var currentBitRate = vm.ConnectParamsList[CurrentIndex()].BitPerSeconds;
+
+            int selectedIndex = Array.IndexOf(bitRates, currentBitRate);
+            if (selectedIndex >= 0)
             {
-                case 9600:
-                    comboBoxBitPerSeconds.SelectedIndex = 0;
-                    break;
-                case 19200:
-                    comboBoxBitPerSeconds.SelectedIndex = 1;
-                    break;
-                case 38400:
-                    comboBoxBitPerSeconds.SelectedIndex = 2;
-                    break;
-                case 57600:
-                    comboBoxBitPerSeconds.SelectedIndex = 3;
-                    break;
-                case 115200:
-                    comboBoxBitPerSeconds.SelectedIndex = 4;
-                    break;
-                default:
-                    break;
+                comboBoxBitPerSeconds.SelectedIndex = selectedIndex;
             }
         }
 
-        private void InitSerialDivDataBits(MainViewModel vm)
+        private void UpdateScannerDataBits(MainViewModel vm)
         {
-            if (vm == null) return;
-            if (vm.ConnectParamsList == null) return;
-            switch (vm.ConnectParamsList[CurrentIndex()].DataBits)
+            if (vm?.ConnectParamsList == null) return;
+            var currentDataBits = vm.ConnectParamsList[CurrentIndex()].DataBits;
+
+            int selectedIndex = Array.IndexOf(dataBits, currentDataBits);
+            if (selectedIndex >= 0)
             {
-                case 7:
-                    comboBoxDataBits.SelectedIndex = 0;
-                    break;
-                case 8:
-                    comboBoxDataBits.SelectedIndex = 1;
-                    break;
-                default:
-                    break;
+                comboBoxDataBits.SelectedIndex = selectedIndex;
             }
         }
 
-        private void InitSerialDivParity(MainViewModel vm)
+        private void UpdateScannerParity(MainViewModel vm)
         {
-            if (vm == null) return;
-            if (vm.ConnectParamsList == null) return;
-            switch (vm.ConnectParamsList[CurrentIndex()].Parity)
+            if (vm?.ConnectParamsList == null) return;
+            var currentParity = vm.ConnectParamsList[CurrentIndex()].Parity;
+
+            int selectedIndex = Array.IndexOf(parities, currentParity);
+            if (selectedIndex >= 0)
             {
-                case Parity.None:
-                    comboBoxParity.SelectedIndex = 0;
-                    break;
-                case Parity.Odd:
-                    comboBoxParity.SelectedIndex = 1;
-                    break;
-                case Parity.Even:
-                    comboBoxParity.SelectedIndex = 2;
-                    break;
-                default:
-                    break;
+                comboBoxParity.SelectedIndex = selectedIndex;
             }
         }
 
-        private void InitSerialDivStopBits(MainViewModel vm)
+        private void UpdateScannerStopBits(MainViewModel vm)
         {
-            if (vm == null) return;
-            if (vm.ConnectParamsList == null) return;
-            switch (vm.ConnectParamsList[CurrentIndex()].StopBits)
+            if (vm?.ConnectParamsList == null) return;
+            var currentStopBits = vm.ConnectParamsList[CurrentIndex()].StopBits;
+
+            int selectedIndex = Array.IndexOf(stopBits, currentStopBits);
+            if (selectedIndex >= 0)
             {
-                case StopBits.One:
-                    comboBoxStopBits.SelectedIndex = 0;
-                    break;
-                case StopBits.Two:
-                    comboBoxStopBits.SelectedIndex = 1;
-                    break;
-                default:
-                    break;
+                comboBoxStopBits.SelectedIndex = selectedIndex;
             }
         }
+
         private void UpdateCameraTypeValues(MainViewModel vm)
         {
-            if (vm == null) return;
-            if (vm.ConnectParamsList == null) return;
-            switch (vm.ConnectParamsList[CurrentIndex()].CameraSeries)
+            if (vm?.ConnectParamsList == null) return;
+            var currentCameraSeries = vm.ConnectParamsList[CurrentIndex()].CameraSeries;
+
+            int selectedIndex = Array.IndexOf(cameraSeries, currentCameraSeries);
+            if(selectedIndex >= 0)
             {
-                case CommonDataType.CameraSeries.Dataman:
-                    ComboBoxCameraType.SelectedIndex = 0;
-                    break;
-                case CommonDataType.CameraSeries.InsightVision:
-                    ComboBoxCameraType.SelectedIndex = 1;
-                    break;
-                case CommonDataType.CameraSeries.InsightVisionDual:
-                    ComboBoxCameraType.SelectedIndex = 2;
-                    break;
-                default:
-                    ComboBoxCameraType.SelectedIndex = -1;
-                    break;
+                ComboBoxCameraType.SelectedIndex = selectedIndex;
+            }
+            else
+            {
+                ComboBoxCameraType.SelectedIndex = -1;
             }
         }
+
         private void UpdateCheckAllPrinterSettingsState(MainViewModel vm)
         {
             CheckAllPrinterSettings.IsOn = vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled;
         }
         #endregion
 
-
         private int CurrentIndex() => ListBoxMenuStationSetting.SelectedIndex;
-
 
         private void TextBox_ParamsChanged(object sender, TextChangedEventArgs e)
         {
@@ -785,11 +579,6 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
-        private void NumDelaySensor_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-        {
-
-        }
-
         private void TextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             // Check if the input is a number, if not, handle the event
@@ -858,9 +647,6 @@ namespace DipesLink.Views.UserControls.MainUc
             }
             catch (Exception) { }
         }
-
-
-
 
         private void NumUpdownParamsHandler(HandyControl.Controls.NumericUpDown num)
         {

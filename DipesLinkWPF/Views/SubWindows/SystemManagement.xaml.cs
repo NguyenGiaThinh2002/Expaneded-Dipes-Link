@@ -33,7 +33,6 @@ namespace DipesLink.Views.SubWindows
             ComboBoxDateTimeFormat.SelectedIndex = _viewModel.DateTimeFormatSelectedIndex;
            
         }
-      
 
         private void SetCurrentLanguage()
         {
@@ -56,7 +55,6 @@ namespace DipesLink.Views.SubWindows
             }
             IsInitializing = false;
         }
-
 
         private void ComboBoxLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -86,9 +84,7 @@ namespace DipesLink.Views.SubWindows
             {
                 SetCurrentLanguage();
             }
-        }
-
-      
+        }    
 
         private bool IsChangeLanguageAccepted()
         {
@@ -106,15 +102,6 @@ namespace DipesLink.Views.SubWindows
             _viewModel.StationSelectedIndex = cbb.SelectedIndex;
             _viewModel.CheckStationChange();
             cbb.SelectedIndex = _viewModel.StationSelectedIndex;
-        }
-        private void ComboBoxStationNum_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //var cbb = sender as ComboBox;
-            //var vm = CurrentViewModel<MainViewModel>();
-            //if (vm is null) return;
-            //vm.StationSelectedIndex = cbb.SelectedIndex;
-            //vm.CheckStationChange();
-            //cbb.SelectedIndex = vm.StationSelectedIndex;
         }
 
         private void ComboBoxDateTimeFormat_SelectionChanged(object sender, SelectionChangedEventArgs e)

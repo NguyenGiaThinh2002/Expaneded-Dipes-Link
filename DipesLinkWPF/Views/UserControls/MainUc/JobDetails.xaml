@@ -26,7 +26,7 @@
             <converter:AddOne x:Key="AddOneConverter" />
             <converter:BooleanToVisibilityConverter x:Key="BolToVis" />
             <converter:TextToVisibilityConverter x:Key="TextToVis" />
-          
+
 
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
@@ -908,7 +908,10 @@
                             Visibility="{Binding IsShowLoadingChecked}" />
 
                         <!--  IP Address  -->
-                        <Grid Grid.Row="4" Background="Transparent" Margin="10 0 10 0">
+                        <Grid
+                            Grid.Row="4"
+                            Margin="10,0,10,0"
+                            Background="Transparent">
                             <StackPanel x:Name="StackPanelIPDisplay" Orientation="Horizontal">
                                 <StackPanel.Resources>
                                     <Style TargetType="TextBlock">
