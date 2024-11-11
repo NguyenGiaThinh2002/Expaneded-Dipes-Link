@@ -10,6 +10,7 @@
     <system:String x:Key="ErrorDialogCaption">Hộp Thoại Báo Lỗi</system:String>
     <!--#endregion Dialog Caption-->
 
+    <system:String x:Key="Starting">Đang khởi động...</system:String>
     <system:String x:Key="DatamanReadMode">Chế độ đọc:</system:String>
     <system:String x:Key="ChangeNumberOfStation">Thay đổi số trạm !</system:String>
     <system:String x:Key="NotFoundSearchResult">Không tìm thấy kết quả tìm kiếm !</system:String>
@@ -29,7 +30,7 @@
     <system:String x:Key="PrinterNotConnected">Trạm {0}: Không có kết nối Máy in!</system:String>
     <system:String x:Key="InputDatabaseDuplicate">Trạm {0}: Cơ sở dữ liệu đầu vào bị trùng lặp !</system:String>
     <system:String x:Key="CannotLoadTemplatePrinter">Trạm {0}: Không thể tải mẫu in !</system:String>
-    <system:String x:Key="ScannerIsNotConnected">Station {0}: Không có kết nối Máy Quét!</system:String>
+    <system:String x:Key="ScannerIsNotConnected">Trạm {0}: Không có kết nối Máy Quét!</system:String>
     <system:String x:Key="CameraNotConnected">Trạm {0}: Không có kết nối Camera!</system:String>
     <system:String x:Key="ProcessCompleted">Trạm {0}: Quy trình đã hoàn tất!</system:String>
     <system:String x:Key="MissingParams">Trạm {0}: Thiếu tham số !</system:String>
@@ -277,9 +278,19 @@
 
     <system:String x:Key="None">Trống</system:String>
     <system:String x:Key="AfterProduction">Sau sản xuất</system:String>
-    <system:String x:Key="OnProduction">Trong s.xuất</system:String>
+    <system:String x:Key="OnProduction">Trong sản xuất</system:String>
     <system:String x:Key="VerifyAndPrint">Kiểm tra và In</system:String>
     <system:String x:Key="StandAlone">StandAlone</system:String>
+    <system:String x:Key="CanRead">Có Thể Đọc</system:String>
+    <system:String x:Key="StaticText">Văn Bản Tĩnh</system:String>
+    <system:String x:Key="TotalPassed">Tổng đã đạt</system:String>
+    <system:String x:Key="TotalChecked">Tổng số kiểm tra</system:String>
+    <system:String x:Key="True">Kích hoạt</system:String>
+    <system:String x:Key="False">Vô hiệu hóa</system:String>
+    <system:String x:Key="NewlyCreated">Mới tạo</system:String>
+    <system:String x:Key="Unfinished">Chưa hoàn thành</system:String>
+    <system:String x:Key="Accomplished">Đã hoàn thành</system:String>
+    <system:String x:Key="Deleted">Đã xóa</system:String>
 
     <system:String x:Key="Camera">Máy ảnh</system:String>
     <system:String x:Key="BarcodeScanner">Máy quét</system:String>

@@ -380,8 +380,8 @@
                                             VerticalContentAlignment="Center"
                                             FontSize="15"
                                             FontWeight="Normal"
-                                            OffContent="Disabled"
-                                            OnContent="Enabled"
+                                            OffContent="{DynamicResource ResourceKey=Disable}"
+                                            OnContent="{DynamicResource ResourceKey=Enable}"
                                             Toggled="CheckAllPrinterSettings_Toggled" />
                                     </StackPanel>
 
@@ -465,8 +465,7 @@
                                             Width="240"
                                             Height="30"
                                             FontSize="15"
-                                            FontWeight="Normal"
-                                            >
+                                            FontWeight="Normal">
                                             <ComboBoxItem>Basic Read (Image + Code)</ComboBoxItem>
                                             <ComboBoxItem>Multi-Sync Read (No Image)</ComboBoxItem>
 
