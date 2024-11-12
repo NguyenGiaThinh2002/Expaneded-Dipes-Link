@@ -115,6 +115,8 @@
     <system:String x:Key="Language_Code">en-US</system:String>
     <system:String x:Key="Setting_Apply">Apply</system:String>
     <system:String x:Key="Setting_Choose_Your_Language">Choose Your Language:</system:String>
+    <system:String x:Key="Starting">Starting...</system:String>
+
 
     <system:String x:Key="Stations_Details">DETAILS OF STATIONS</system:String>
     <system:String x:Key="Stations_Overview">OVERVIEW</system:String>
@@ -267,6 +269,17 @@
     <system:String x:Key="OnProduction">On Production</system:String>
     <system:String x:Key="VerifyAndPrint">Verify and Print</system:String>
     <system:String x:Key="StandAlone">StandAlone</system:String>
+    <system:String x:Key="CanRead">Can Read</system:String>
+    <system:String x:Key="StaticText">Static Text</system:String>
+    <system:String x:Key="TotalPassed">Total Passed</system:String>
+    <system:String x:Key="TotalChecked">Total Checked</system:String>
+    <system:String x:Key="True">Enable</system:String>
+    <system:String x:Key="False">Disable</system:String>
+    <system:String x:Key="NewlyCreated">Newly Created</system:String>
+    <system:String x:Key="Unfinished">Unfinished</system:String>
+    <system:String x:Key="Accomplished">Accomplished</system:String>
+    <system:String x:Key="Deleted">Deleted</system:String>
+
     <system:String x:Key="Check_All_Printer_Settings">Check all Printer settings:</system:String>
 
     <!--#region ACCOUNTS-->

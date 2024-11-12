@@ -13,8 +13,8 @@ namespace DipesLink.Views.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string text = value as string;
-            if (!string.IsNullOrWhiteSpace(text) && text.Equals(parameter.ToString()))
+            string text = value.ToString();
+            if (text.Equals(parameter.ToString()))
             {
                 return Visibility.Visible; 
             }

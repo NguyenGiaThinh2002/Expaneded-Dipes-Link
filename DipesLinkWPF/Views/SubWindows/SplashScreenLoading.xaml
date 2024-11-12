@@ -23,7 +23,7 @@
                 VerticalAlignment="Center"
                 FontSize="20"
                 Foreground="White"
-                Text="Starting..." />
+                Text="{DynamicResource ResourceKey=Starting}" />
         </Grid>
 
         <Grid Margin="0,35,0,0">
