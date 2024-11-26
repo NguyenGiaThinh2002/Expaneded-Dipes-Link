@@ -249,13 +249,15 @@ namespace DipesLink_SDK_Printers
                     var buffer = new byte[1024];
                     int bytesRead;
                     StringBuilder commandBuilder = new();
-                    while ((bytesRead=_NetworkStream.Read(buffer, 0, buffer.Length) )!= 0)
+                    SpinWait spinWait = new();
+                    while ((bytesRead = _NetworkStream.Read(buffer, 0, buffer.Length)) != 0)
                     {
                         string data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                         SplitCommands(data);
-                        Thread.Sleep(1);
+                        //Thread.Sleep(1);
+                        spinWait.SpinOnce();
                     }
-                  
+
                 }
             }
             catch (Exception ex)

@@ -496,6 +496,7 @@ namespace DipesLinkDeviceTransfer
                 }
                 try
                 {
+                    var spinWait = new SpinWait();
                     int startIndex = codeList.FindIndex(x => x.Last() != "Printed"); // Get the first not-printed code in database (first waiting)
                     if (startIndex == -1) return;
                     _IsPrintedWait = true;  // Init waiting send data
@@ -555,7 +556,7 @@ namespace DipesLinkDeviceTransfer
                                 if (counterCodeSent < 100) // Send 100 buffer data
                                 {
                                     stopwSend = Stopwatch.StartNew();
-                                    await Task.Delay(50, token);
+                                    await Task.Delay(20, token);
                                 }
                                 else
                                 {
@@ -567,7 +568,8 @@ namespace DipesLinkDeviceTransfer
                                             stopwSend = Stopwatch.StartNew();
                                             detectStopSend = false;
                                         }
-                                        await Task.Delay(1, token);
+                                        //await Task.Delay(1, token);
+                                        spinWait.SpinOnce();
                                     }
                                 }
                             }

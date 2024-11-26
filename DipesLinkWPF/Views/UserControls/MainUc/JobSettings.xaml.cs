@@ -648,49 +648,48 @@ namespace DipesLink.Views.UserControls.MainUc
             catch (Exception) { }
         }
 
-        private void NumUpdownParamsHandler(HandyControl.Controls.NumericUpDown num)
+        private void NumUpdownParamsHandler(NumericUpDown numericUpDown, double value)
         {
             try
             {
-                num?.Dispatcher.BeginInvoke(new Action(() => // Use BeginInvoke to Update Input Last Value 
-                {
-                    var vm = CurrentViewModel<MainViewModel>();
-                    if (vm == null) return;
-                    if (vm.ConnectParamsList == null) return;
-                    //   num.Text ??= string.Empty;
-                    var index = CurrentIndex();
-                    switch (num.Name)
-                    {
-                        case "NumPort":
-                            vm.ConnectParamsList[index].PrinterPort = num.Value;
-                            vm.AutoSaveConnectionSetting(index,CommonDataType.AutoSaveSettingsType.Printer);
-                            break;
-                        case "NumPLCPort":
-                            vm.ConnectParamsList[index].ControllerPort = num.Value;
-                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
-                            break;
-                        case "NumDelaySensor":
-                            vm.ConnectParamsList[index].DelaySensor = (int)num.Value;
-                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
-                            break;
-                        case "NumDisSensor":
-                            vm.ConnectParamsList[index].DisableSensor = (int)num.Value;
-                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
-                            break;
-                        case "NumPulseEncoder":
-                            vm.ConnectParamsList[index].PulseEncoder = (int)num.Value;
-                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
-                            break;
-                        case "NumEncoderDia":
-                            vm.ConnectParamsList[index].EncoderDiameter = num.Value;
-                            vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
-                            break;
-                        default:
-                            break;
-                    }
-                  
+                var vm = CurrentViewModel<MainViewModel>();
+                if (vm == null) return;
+                if (vm.ConnectParamsList == null) return;
+                var index = CurrentIndex();
 
-                }), DispatcherPriority.Background);
+                switch (numericUpDown.Name)
+                {
+                    case "NumPort":
+                        vm.ConnectParamsList[index].PrinterPort = value;
+                        vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Printer);
+                        break;
+                    case "NumPLCPort":
+                        vm.ConnectParamsList[index].ControllerPort = value;
+                        vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
+                        break;
+                    case "NumDelaySensor":
+                        vm.ConnectParamsList[index].DelaySensor = (int)value;
+                        vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
+                        break;
+                    case "NumDisSensor":
+                        vm.ConnectParamsList[index].DisableSensor = (int)value;
+                        vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
+                        break;
+                    case "NumPulseEncoder":
+                        vm.ConnectParamsList[index].PulseEncoder = (int)value;
+                        vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
+                        break;
+                    case "NumEncoderDia":
+                        vm.ConnectParamsList[index].EncoderDiameter = value;
+                        vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
+                        break;
+                    //case "NumBuffer":
+                    //    vm.ConnectParamsList[index].NumberOfBuffer = (int)value;
+                    //    vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
+                    //    break;
+                    default:
+                        break;
+                }
             }
             catch (Exception)
             {
@@ -700,12 +699,12 @@ namespace DipesLink.Views.UserControls.MainUc
         private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
             if (IsInitializing) return;
-            if (sender is HandyControl.Controls.NumericUpDown numericUpdown)
+            if (sender is MahApps.Metro.Controls.NumericUpDown numericUpDown && e.NewValue != null)
             {
-                NumUpdownParamsHandler(numericUpdown);
+                double newValue = (double)e.NewValue; // Ensure it matches the NumericUpDown's value type
+                NumUpdownParamsHandler(numericUpDown, newValue);
             }
         }
-
         private void CheckAllPrinterSettings_Toggled(object sender, RoutedEventArgs e)
         {
             ToggleSwitch toggleSwitch = sender as ToggleSwitch;
