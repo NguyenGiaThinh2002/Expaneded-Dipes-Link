@@ -56,8 +56,8 @@
 
     <Grid Background="White">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="180" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="33*" />
+            <ColumnDefinition Width="180*" />
         </Grid.ColumnDefinitions>
         <!--  Menu  -->
         <Border
@@ -150,8 +150,8 @@
 
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="320" />
-                                    <RowDefinition />
+                                    <RowDefinition Height="320*" />
+                                    <RowDefinition Height="230*" />
                                 </Grid.RowDefinitions>
                                 <Grid.Resources>
                                     <Style TargetType="TextBlock">
@@ -160,7 +160,7 @@
                                 </Grid.Resources>
 
                                 <GroupBox
-                                    Margin="2"
+                                    Margin="5,2,45,2"
                                     HorizontalAlignment="Stretch"
                                     Header="{DynamicResource ResourceKey=Job_Selection}"
                                     Style="{StaticResource CustomGroupBoxStyle}">
@@ -180,7 +180,7 @@
 
                                             <ListView
                                                 x:Name="ListViewJobTemplate"
-                                                Height="200"
+                                                Height="300"
                                                 Margin="10"
                                                 FontWeight="Normal"
                                                 ItemsSource="{Binding JobFileList}"
@@ -217,7 +217,7 @@
                                                 Text="{DynamicResource ResourceKey=Selected}" />
                                             <ListView
                                                 x:Name="ListViewSelectedJob"
-                                                Height="200"
+                                                Height="300"
                                                 Margin="10"
                                                 ItemsSource="{Binding SelectedJobFileList}"
                                                 PreviewMouseDown="ListViewSelectedJob_MouseDown"
@@ -232,8 +232,7 @@
                                 <Grid Grid.Row="1">
                                     <GroupBox
                                         x:Name="myGroupBox"
-                                        Height="280"
-                                        Margin="2"
+                                        Margin="5,20,45,2"
                                         VerticalAlignment="Top"
                                         FontSize="16"
                                         FontWeight="Bold"
@@ -487,16 +486,19 @@
                         <TabItem.Header>
                             <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Create_New_Job}" />
                         </TabItem.Header>
-                        <Grid Background="White">
+                        <Grid
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Background="White">
                             <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="50" />
+                                <RowDefinition Height="12*" />
+                                <RowDefinition Height="2*" />
                             </Grid.RowDefinitions>
                             <!--  Content  -->
                             <Grid Margin="10,10,0,0" IsEnabled="{Binding IsButtonOperationJobEnable}">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="490" />
-                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.Resources>
                                     <Style TargetType="TextBlock">
@@ -509,17 +511,18 @@
 
                                     </Style>
                                 </Grid.Resources>
-                                <Grid Margin="5">
+                                <Grid Margin="5" HorizontalAlignment="Stretch">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="80" />
-                                        <RowDefinition Height="80" />
-                                        <RowDefinition Height="80" />
-                                        <RowDefinition Height="150" />
-                                        <RowDefinition Height="150" />
+                                        <RowDefinition Height="1*" />
+                                        <RowDefinition Height="1*" />
+                                        <RowDefinition Height="1*" />
+                                        <RowDefinition Height="2*" />
+                                        <RowDefinition Height="2*" />
                                     </Grid.RowDefinitions>
 
                                     <StackPanel
                                         Margin="0,0,0,0"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         Orientation="Horizontal">
                                         <TextBlock
@@ -545,351 +548,412 @@
                                             FontSize="20"
                                             Style="{StaticResource ModernButton2}" />
                                     </StackPanel>
-                                    <StackPanel
+                                    <GroupBox
                                         Grid.Row="1"
-                                        Margin="0,5,0,0"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Orientation="Horizontal">
-                                        <GroupBox
-                                            Width="470"
-                                            Header="{DynamicResource ResourceKey=Printer_Series}"
-                                            Style="{StaticResource CustomGroupBoxStyle}">
-                                            <!--<GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Series}" />
-                                    </GroupBox.Header>-->
-                                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                                <RadioButton
-                                                    x:Name="RadioButtonRynanSeries"
-                                                    Width="150"
-                                                    Checked="RadioButton_Checked"
-                                                    Content="Rynan Series"
-                                                    FontWeight="Normal"
-                                                    GroupName="PrinterSeriesGr"
-                                                    IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=0}"
-                                                    Style="{DynamicResource RadioButtonStyle2}" />
-                                                <RadioButton
-                                                    x:Name="RadioButtonStandalone"
-                                                    Width="150"
-                                                    Margin="10,0,0,0"
-                                                    Checked="RadioButton_Checked"
-                                                    Content="Standalone"
-                                                    FontWeight="Normal"
-                                                    GroupName="PrinterSeriesGr"
-                                                    IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=1}"
-                                                    Style="{DynamicResource RadioButtonStyle2}" />
-                                            </StackPanel>
-                                        </GroupBox>
+                                        Header="{DynamicResource ResourceKey=Printer_Series}"
+                                        Style="{StaticResource CustomGroupBoxStyle}">
 
-                                    </StackPanel>
-                                    <StackPanel
+                                        <!--  Inner Grid for RadioButtons  -->
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  First RadioButton  -->
+                                            <RadioButton
+                                                x:Name="RadioButtonRynanSeries"
+                                                Grid.Column="0"
+                                                Checked="RadioButton_Checked"
+                                                Content="Rynan Series"
+                                                FontWeight="Normal"
+                                                GroupName="PrinterSeriesGr"
+                                                IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=0, Mode=TwoWay}"
+                                                Style="{DynamicResource RadioButtonStyle2}" />
+
+                                            <!--  Second RadioButton  -->
+                                            <RadioButton
+                                                x:Name="RadioButtonStandalone"
+                                                Grid.Column="1"
+                                                Margin="10,0,0,0"
+                                                Checked="RadioButton_Checked"
+                                                Content="Standalone"
+                                                FontWeight="Normal"
+                                                GroupName="PrinterSeriesGr"
+                                                IsChecked="{Binding PrinterSeries, Converter={StaticResource PrinterToBool}, ConverterParameter=1, Mode=TwoWay}"
+                                                Style="{DynamicResource RadioButtonStyle2}" />
+                                        </Grid>
+                                    </GroupBox>
+
+                                    <GroupBox
+                                        x:Name="GroupBoxJobType"
                                         Grid.Row="2"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Orientation="Horizontal">
+                                        Header="{DynamicResource ResourceKey=Job_Type}"
+                                        Style="{StaticResource CustomGroupBoxStyle}">
 
-                                        <!--  Job Type  -->
-                                        <GroupBox
-                                            x:Name="GroupBoxJobType"
-                                            Width="470"
-                                            Margin="0,5,0,0"
-                                            Header="{DynamicResource ResourceKey=Job_Type}"
-                                            Style="{StaticResource CustomGroupBoxStyle}">
-                                            <!--<GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Job_Type}" />
-                                    </GroupBox.Header>-->
-                                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                                <RadioButton
-                                                    x:Name="RadioButtonAfterProduction"
-                                                    Width="150"
-                                                    Content="{DynamicResource ResourceKey=After_Production}"
-                                                    FontWeight="Normal"
-                                                    GroupName="JobTypeGr"
-                                                    IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=AfterProduction}"
-                                                    Style="{DynamicResource RadioButtonStyle2}" />
-                                                <RadioButton
-                                                    x:Name="RadioButtonOnProduction"
-                                                    Width="150"
-                                                    Margin="10,0,0,0"
-                                                    Content="{DynamicResource ResourceKey=On_Production}"
-                                                    FontWeight="Normal"
-                                                    GroupName="JobTypeGr"
-                                                    IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=OnProduction}"
-                                                    Style="{DynamicResource RadioButtonStyle2}" />
-                                                <RadioButton
-                                                    x:Name="RadioButtonVerifyAndPrint"
-                                                    Width="150"
-                                                    Margin="10,0,0,0"
-                                                    Content="{DynamicResource ResourceKey=Verify_And_Print}"
-                                                    FontWeight="Normal"
-                                                    GroupName="JobTypeGr"
-                                                    IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=VerifyAndPrint}"
-                                                    Style="{DynamicResource RadioButtonStyle2}" />
-                                            </StackPanel>
-                                        </GroupBox>
+                                        <!--  Inner Grid for Job Type RadioButtons  -->
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                                    </StackPanel>
-                                    <StackPanel
+                                            <!--  First RadioButton  -->
+                                            <RadioButton
+                                                x:Name="RadioButtonAfterProduction"
+                                                Grid.Column="0"
+                                                Content="{DynamicResource ResourceKey=After_Production}"
+                                                FontWeight="Normal"
+                                                GroupName="JobTypeGr"
+                                                IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=AfterProduction}"
+                                                Style="{DynamicResource RadioButtonStyle2}" />
+
+                                            <!--  Second RadioButton  -->
+                                            <RadioButton
+                                                x:Name="RadioButtonOnProduction"
+                                                Grid.Column="1"
+                                                Margin="10,0,0,0"
+                                                Content="{DynamicResource ResourceKey=On_Production}"
+                                                FontWeight="Normal"
+                                                GroupName="JobTypeGr"
+                                                IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=OnProduction}"
+                                                Style="{DynamicResource RadioButtonStyle2}" />
+
+                                            <!--  Third RadioButton  -->
+                                            <RadioButton
+                                                x:Name="RadioButtonVerifyAndPrint"
+                                                Grid.Column="2"
+                                                Margin="10,0,0,0"
+                                                Content="{DynamicResource ResourceKey=Verify_And_Print}"
+                                                FontWeight="Normal"
+                                                GroupName="JobTypeGr"
+                                                IsChecked="{Binding JobType, Converter={StaticResource JobtypeToBool}, ConverterParameter=VerifyAndPrint}"
+                                                Style="{DynamicResource RadioButtonStyle2}" />
+                                        </Grid>
+                                    </GroupBox>
+
+
+                                    <GroupBox
                                         Grid.Row="3"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Orientation="Horizontal">
-                                        <GroupBox
-                                            Width="470"
-                                            Margin="0,5,0,0"
-                                            Header="{DynamicResource ResourceKey=Compare_Type}"
-                                            Style="{StaticResource CustomGroupBoxStyle}">
-                                            <!--<GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Compare_Type}" />
-                                    </GroupBox.Header>-->
-                                            <StackPanel>
-                                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                                    <RadioButton
-                                                        x:Name="RadioButtonCanRead"
-                                                        Width="150"
-                                                        Checked="RadioButton_Checked"
-                                                        Content="{DynamicResource ResourceKey=Can_Read}"
-                                                        GroupName="CmpTypeGr"
-                                                        IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=CanRead}"
-                                                        Style="{DynamicResource RadioButtonStyle2}" />
-                                                    <RadioButton
-                                                        x:Name="RadioButtonStaticText"
-                                                        Width="150"
-                                                        Margin="10,0,0,0"
-                                                        Checked="RadioButton_Checked"
-                                                        Content="{DynamicResource ResourceKey=Static_Text}"
-                                                        GroupName="CmpTypeGr"
-                                                        IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=StaticText}"
-                                                        Style="{DynamicResource RadioButtonStyle2}" />
-                                                    <RadioButton
-                                                        x:Name="RadioButtonDatabase"
-                                                        Width="150"
-                                                        Margin="10,0,0,0"
-                                                        Checked="RadioButton_Checked"
-                                                        Content="{DynamicResource ResourceKey=Database}"
-                                                        GroupName="CmpTypeGr"
-                                                        IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=Database}"
-                                                        Style="{DynamicResource RadioButtonStyle2}" />
-                                                </StackPanel>
-                                                <StackPanel Margin="6,30,0,0" Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="{StaticResource LabelWidth}"
-                                                        VerticalAlignment="Center"
-                                                        Text="{DynamicResource ResourceKey=Static_Text}" />
-                                                    <TextBox
-                                                        Width="260"
-                                                        Height="30"
-                                                        Margin="10,0,0,0"
-                                                        IsEnabled="{Binding ElementName=RadioButtonStaticText, Path=IsChecked}"
-                                                        Style="{StaticResource TextBoxStyle2}"
-                                                        Text="{Binding StaticText}" />
-                                                </StackPanel>
+                                        Header="{DynamicResource ResourceKey=Compare_Type}"
+                                        Style="{StaticResource CustomGroupBoxStyle}">
 
+                                        <!--  Inner Grid for RadioButtons and TextBox for better resizing  -->
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <!--  Row 0: RadioButtons inside a StackPanel  -->
+                                            <Grid
+                                                Grid.Row="0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <RadioButton
+                                                    x:Name="RadioButtonCanRead"
+                                                    Grid.Column="0"
+                                                    Margin="5"
+                                                    Checked="RadioButton_Checked"
+                                                    Content="{DynamicResource ResourceKey=Can_Read}"
+                                                    GroupName="CmpTypeGr"
+                                                    IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=CanRead}"
+                                                    Style="{DynamicResource RadioButtonStyle2}" />
+
+                                                <RadioButton
+                                                    x:Name="RadioButtonStaticText"
+                                                    Grid.Column="1"
+                                                    Margin="5"
+                                                    Checked="RadioButton_Checked"
+                                                    Content="{DynamicResource ResourceKey=Static_Text}"
+                                                    GroupName="CmpTypeGr"
+                                                    IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=StaticText}"
+                                                    Style="{DynamicResource RadioButtonStyle2}" />
+
+                                                <RadioButton
+                                                    x:Name="RadioButtonDatabase"
+                                                    Grid.Column="2"
+                                                    Margin="5"
+                                                    Checked="RadioButton_Checked"
+                                                    Content="{DynamicResource ResourceKey=Database}"
+                                                    GroupName="CmpTypeGr"
+                                                    IsChecked="{Binding CompareType, Converter={StaticResource CompareTypeToBool}, ConverterParameter=Database}"
+                                                    Style="{DynamicResource RadioButtonStyle2}" />
+                                            </Grid>
+
+
+                                            <!--  Row 1: TextBox for StaticText  -->
+                                            <StackPanel
+                                                Grid.Row="1"
+                                                Margin="6,15,0,15"
+                                                HorizontalAlignment="Stretch"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="{StaticResource LabelWidth}"
+                                                    VerticalAlignment="Center"
+                                                    Text="{DynamicResource ResourceKey=Static_Text}" />
+
+                                                <TextBox
+                                                    Width="260"
+                                                    Height="30"
+                                                    Margin="10,0,0,0"
+                                                    IsEnabled="{Binding ElementName=RadioButtonStaticText, Path=IsChecked}"
+                                                    Style="{StaticResource TextBoxStyle2}"
+                                                    Text="{Binding StaticText}" />
                                             </StackPanel>
+                                        </Grid>
 
-                                        </GroupBox>
-                                    </StackPanel>
-                                    <StackPanel
+                                    </GroupBox>
+
+                                    <GroupBox
+                                        x:Name="GroupBoxDatabaseType"
                                         Grid.Row="5"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Orientation="Horizontal">
-                                        <GroupBox
-                                            x:Name="GroupBoxDatabaseType"
-                                            Width="470"
-                                            Margin="0,5,0,0"
-                                            Header="{DynamicResource ResourceKey=Database_Type}"
-                                            Style="{StaticResource CustomGroupBoxStyle}">
-                                            <!--<GroupBox.Header>
-                                        <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Database_Type}" />
-                                    </GroupBox.Header>-->
-                                            <StackPanel>
-                                                <StackPanel
-                                                    Margin="0,10,0,0"
-                                                    VerticalAlignment="Center"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="110"
-                                                        VerticalAlignment="Center"
-                                                        Text="{DynamicResource ResourceKey=Database_Path}" />
-                                                    <TextBox
-                                                        Width="260"
-                                                        Height="30"
-                                                        Margin="10,0,0,0"
-                                                        IsReadOnly="True"
-                                                        Style="{StaticResource TextBoxStyle2}"
-                                                        Text="{Binding DatabasePath}" />
-                                                    <Button
-                                                        x:Name="ButtonBrowseDb"
-                                                        Width="60"
-                                                        Height="30"
-                                                        Margin="5,0,0,0"
-                                                        Click="ButtonBrowseDb_Click"
-                                                        Content="{fa:Icon Folder,
-                                                                          Foreground=White}"
-                                                        FontSize="20"
-                                                        Style="{StaticResource ModernButton2}" />
-                                                </StackPanel>
+                                        Header="{DynamicResource ResourceKey=Database_Type}"
+                                        Style="{StaticResource CustomGroupBoxStyle}">
 
-                                                <StackPanel
-                                                    Margin="0,10,0,0"
+                                        <!--  Inner Grid for organizing content  -->
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <!--  Row 0: Database Path Section  -->
+                                            <StackPanel
+                                                Grid.Row="0"
+                                                Margin="10,15,0,15"
+                                                HorizontalAlignment="Stretch"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="110"
                                                     VerticalAlignment="Center"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="110"
-                                                        VerticalAlignment="Center"
-                                                        Text="{DynamicResource ResourceKey=POD_Format}" />
-                                                    <TextBox
-                                                        Width="260"
-                                                        Height="30"
-                                                        Margin="10,0,0,0"
-                                                        Style="{StaticResource TextBoxStyle2}"
-                                                        Text="{Binding DataCompareFormat}" />
-                                                    <Button
-                                                        x:Name="ButtonChooseCompareFormat"
-                                                        Width="60"
-                                                        Height="30"
-                                                        Margin="5,0,0,0"
-                                                        Click="ButtonChooseCompareFormat_Click"
-                                                        Content="{fa:Icon Table,
-                                                                          Foreground=White}"
-                                                        FontSize="20"
-                                                        Style="{StaticResource ModernButton2}" />
-                                                </StackPanel>
+                                                    Text="{DynamicResource ResourceKey=Database_Path}" />
+
+                                                <TextBox
+                                                    Width="260"
+                                                    Height="30"
+                                                    Margin="10,0,0,0"
+                                                    IsReadOnly="True"
+                                                    Style="{StaticResource TextBoxStyle2}"
+                                                    Text="{Binding DatabasePath}" />
+
+                                                <Button
+                                                    x:Name="ButtonBrowseDb"
+                                                    Width="60"
+                                                    Height="30"
+                                                    Margin="5,0,0,0"
+                                                    Click="ButtonBrowseDb_Click"
+                                                    Content="{fa:Icon Folder,
+                                                                      Foreground=White}"
+                                                    FontSize="20"
+                                                    Style="{StaticResource ModernButton2}" />
                                             </StackPanel>
 
-                                        </GroupBox>
-                                    </StackPanel>
+                                            <!--  Row 1: POD Format Section  -->
+                                            <StackPanel
+                                                Grid.Row="1"
+                                                Margin="10,15,0,15"
+                                                HorizontalAlignment="Stretch"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="110"
+                                                    VerticalAlignment="Center"
+                                                    Text="{DynamicResource ResourceKey=POD_Format}" />
 
+                                                <TextBox
+                                                    Width="260"
+                                                    Height="30"
+                                                    Margin="10,0,0,0"
+                                                    Style="{StaticResource TextBoxStyle2}"
+                                                    Text="{Binding DataCompareFormat}" />
 
+                                                <Button
+                                                    x:Name="ButtonChooseCompareFormat"
+                                                    Width="60"
+                                                    Height="30"
+                                                    Margin="5,0,0,0"
+                                                    Click="ButtonChooseCompareFormat_Click"
+                                                    Content="{fa:Icon Table,
+                                                                      Foreground=White}"
+                                                    FontSize="20"
+                                                    Style="{StaticResource ModernButton2}" />
+                                            </StackPanel>
+                                        </Grid>
 
-
-
-
+                                    </GroupBox>
                                 </Grid>
                                 <Grid
                                     Grid.Column="1"
                                     Margin="0,5,0,0"
-                                    HorizontalAlignment="Left"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
                                     Background="Transparent">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="80" />
-                                        <RowDefinition Height="80" />
-                                        <RowDefinition Height="120" />
-                                        <RowDefinition Height="260" />
-
-
-                                        <RowDefinition />
+                                        <RowDefinition Height="2*" />
+                                        <RowDefinition Height="2*" />
+                                        <RowDefinition Height="3*" />
+                                        <RowDefinition Height="5*" />
                                     </Grid.RowDefinitions>
-                                    <!--<Button
-                                x:Name="ButtonSaveJob"
-                                Grid.Row="5"
-                                Width="100"
-                                Height="40"
-                                Margin="0,0,10,50"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Click="ButtonSaveJob_Click"
-                                Content="{DynamicResource ResourceKey=CREATE}"
-                                Style="{StaticResource ModernButton1}" />-->
-                                    <!--  Complete Condition  -->
                                     <GroupBox
                                         Grid.Row="0"
-                                        Width="470"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Header="{DynamicResource ResourceKey=Complete_Condition}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
-                                        <!--<GroupBox.Header>
-                                    <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Complete_Condition}" />
-                                </GroupBox.Header>-->
-                                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+
+                                        <!--  Inner Grid for RadioButtons  -->
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <!--  Columns for RadioButtons with equal width  -->
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  First RadioButton  -->
                                             <RadioButton
+                                                Grid.Column="0"
                                                 Width="150"
                                                 Content="{DynamicResource ResourceKey=Total_Passed}"
                                                 GroupName="compcondGr"
                                                 IsChecked="{Binding CompleteCondition, Converter={StaticResource CompleteCondToBool}, ConverterParameter=TotalPassed}"
                                                 Style="{DynamicResource RadioButtonStyle2}" />
+
+                                            <!--  Second RadioButton  -->
                                             <RadioButton
+                                                Grid.Column="1"
                                                 Width="150"
                                                 Margin="10,0,0,0"
                                                 Content="{DynamicResource ResourceKey=Total_Checked}"
                                                 GroupName="compcondGr"
                                                 IsChecked="{Binding CompleteCondition, Converter={StaticResource CompleteCondToBool}, ConverterParameter=TotalChecked}"
                                                 Style="{DynamicResource RadioButtonStyle2}" />
-                                        </StackPanel>
+                                        </Grid>
                                     </GroupBox>
+
 
                                     <!--  Output camera  -->
                                     <GroupBox
                                         Grid.Row="1"
-                                        Width="470"
-                                        Margin="0,5,0,0"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Header="{DynamicResource ResourceKey=Output_Camera}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
-                                        <!--<GroupBox.Header>
-                                    <TextBlock FontWeight="Bold" Text="Output Camera" />
-                                </GroupBox.Header>-->
-                                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+
+                                        <!--  Inner Grid for Output Camera RadioButtons  -->
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <!--  Columns for RadioButtons with equal width  -->
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  First RadioButton  -->
                                             <RadioButton
+                                                Grid.Column="0"
                                                 Width="150"
                                                 Content="{DynamicResource ResourceKey=Enable}"
                                                 GroupName="OutCamGr"
                                                 IsChecked="{Binding OutputCamera, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"
                                                 Style="{DynamicResource RadioButtonStyle2}" />
+
+                                            <!--  Second RadioButton  -->
                                             <RadioButton
+                                                Grid.Column="1"
                                                 Width="150"
                                                 Margin="10,0,0,0"
                                                 Content="{DynamicResource ResourceKey=Disable}"
                                                 GroupName="OutCamGr"
                                                 IsChecked="{Binding OutputCamera, Converter={StaticResource CoupRadToBol}, ConverterParameter=1}"
                                                 Style="{DynamicResource RadioButtonStyle2}" />
-                                        </StackPanel>
+                                        </Grid>
                                     </GroupBox>
+
 
                                     <!--  Image Export  -->
                                     <GroupBox
                                         Grid.Row="2"
-                                        Width="470"
-                                        Margin="0,5,0,0"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Header="{DynamicResource ResourceKey=Image_Export}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
-                                        <!--<GroupBox.Header>
-                                    <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Image_Export}" />
-                                </GroupBox.Header>-->
-                                        <StackPanel>
-                                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                                <RadioButton
-                                                    x:Name="RadioButtonImageExport"
-                                                    Width="150"
-                                                    Content="{DynamicResource ResourceKey=Enable}"
-                                                    GroupName="ImgExGr"
-                                                    IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"
-                                                    Style="{DynamicResource RadioButtonStyle2}" />
-                                                <RadioButton
-                                                    Width="150"
-                                                    Margin="10,0,0,0"
-                                                    Content="{DynamicResource ResourceKey=Disable}"
-                                                    GroupName="ImgExGr"
-                                                    IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=1}"
-                                                    Style="{DynamicResource RadioButtonStyle2}" />
 
-                                            </StackPanel>
-                                            <!--  Image Export Path  -->
+                                        <Grid
+                                            Margin="10,10,70,5"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <RadioButton
+                                                x:Name="RadioButtonImageExport"
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Margin="0,15,15,15"
+                                                HorizontalAlignment="Left"
+                                                Content="{DynamicResource ResourceKey=Enable}"
+                                                GroupName="ImgExGr"
+                                                IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=0}"
+                                                Style="{DynamicResource RadioButtonStyle2}" />
+
+                                            <RadioButton
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Margin="15,15,0,15"
+                                                HorizontalAlignment="Right"
+                                                Content="{DynamicResource ResourceKey=Disable}"
+                                                GroupName="ImgExGr"
+                                                IsChecked="{Binding IsImageExport, Converter={StaticResource CoupRadToBol}, ConverterParameter=1}"
+                                                Style="{DynamicResource RadioButtonStyle2}" />
+
                                             <StackPanel
-                                                Margin="0,10,0,0"
-                                                VerticalAlignment="Center"
+                                                Grid.Row="1"
+                                                Grid.ColumnSpan="2"
                                                 IsEnabled="{Binding Path=IsChecked, ElementName=RadioButtonImageExport}"
                                                 Orientation="Horizontal">
+
                                                 <TextBlock
                                                     Width="130"
                                                     VerticalAlignment="Center"
                                                     Text="{DynamicResource ResourceKey=Image_Export_Path}" />
+
                                                 <TextBox
-                                                    Width="260"
+                                                    Width="305"
                                                     Height="30"
                                                     Margin="10,0,0,0"
                                                     FontWeight="Normal"
                                                     IsReadOnly="True"
                                                     Style="{StaticResource TextBoxStyle2}"
                                                     Text="{Binding DataContext.ImageExpPath, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+
                                                 <Button
                                                     Width="60"
                                                     Height="30"
@@ -900,23 +964,20 @@
                                                     Style="{StaticResource ModernButton2}"
                                                     Visibility="Collapsed" />
                                             </StackPanel>
-                                        </StackPanel>
-
+                                        </Grid>
                                     </GroupBox>
+
+
 
                                     <GroupBox
                                         x:Name="GroupBoxTemplate"
                                         Grid.Row="3"
-                                        Width="470"
-                                        Margin="0,5,0,0"
-                                        HorizontalAlignment="Left"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Header="{DynamicResource ResourceKey=Printer_Template}"
                                         IsEnabled="{Binding ElementName=RadioButtonStandalone, Path=IsChecked}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
-                                        <!--<GroupBox.Header>
-    <TextBlock FontWeight="Bold" Text="{DynamicResource ResourceKey=Printer_Template}" />
-</GroupBox.Header>-->
                                         <StackPanel>
                                             <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
                                                 <TextBlock
@@ -945,10 +1006,10 @@
                                             </StackPanel>
                                             <ListView
                                                 x:Name="ListViewTemplate"
-                                                Width="380"
-                                                Height="130"
+                                                MinHeight="150"
                                                 Margin="0,5,0,0"
-                                                HorizontalAlignment="Left"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
                                                 FontWeight="Normal"
                                                 ItemsSource="{Binding TemplateList}"
                                                 SelectedItem="{Binding PrinterTemplate}"
@@ -963,13 +1024,14 @@
                             <Button
                                 x:Name="ButtonSaveJob"
                                 Grid.Row="1"
-                                Width="100"
-                                Height="40"
-                                Margin="0,0,5,5"
+                                Width="180"
+                                Height="Auto"
+                                Margin="10"
                                 HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
+                                VerticalAlignment="Stretch"
                                 Click="ButtonSaveJob_Click"
                                 Content="{DynamicResource ResourceKey=CREATE}"
+                                FontSize="18"
                                 Style="{StaticResource ModernButton1}" />
                         </Grid>
 

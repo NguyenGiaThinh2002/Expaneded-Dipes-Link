@@ -354,23 +354,10 @@
                     Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=0}" />
                 <uc:JobSettings
                     Grid.ColumnSpan="2"
-                    MinWidth="940"
-                    MinHeight="600"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Background="WhiteSmoke"
                     Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=2}" />
-                <uc:JobCreation
-                    Grid.ColumnSpan="2"
-                    MinWidth="1150"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=1}" />
-                <uc:JobEventsLog
-                    Grid.ColumnSpan="2"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=3}" />
+                <uc:JobCreation Grid.ColumnSpan="2" Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=1}" />
+                <uc:JobEventsLog Grid.ColumnSpan="2" Visibility="{Binding ElementName=ListBoxMenu, Path=SelectedIndex, Converter={StaticResource OptToVis}, ConverterParameter=3}" />
             </Grid>
 
             <!--  Device Status  -->

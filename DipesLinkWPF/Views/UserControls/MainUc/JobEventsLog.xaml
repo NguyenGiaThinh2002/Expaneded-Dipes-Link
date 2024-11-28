@@ -23,10 +23,10 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="180" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="33*" />
+            <ColumnDefinition Width="180*" />
         </Grid.ColumnDefinitions>
 
         <Border
@@ -39,6 +39,7 @@
                 x:Name="ListBoxMenu"
                 Margin="2"
                 VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
                 BorderBrush="Transparent"
                 ItemContainerStyle="{DynamicResource ListBoxItemContainerStyle1}"
                 ItemsSource="{Binding JobList}"
@@ -160,8 +161,8 @@
             <DataGrid
                 x:Name="DataGridEventLogs"
                 Grid.Row="3"
-                Width="800"
-                Height="600"
+                Width="Auto"
+                Height="Auto"
                 Margin="1"
                 AlternatingRowBackground="#F5F5F5"
                 BorderBrush="LightGray"

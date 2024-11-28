@@ -11,7 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     d:Background="WhiteSmoke"
-    d:DesignHeight="500"
+    d:DesignHeight="1150"
     d:DesignWidth="1150"
     mc:Ignorable="d">
     <!--<UserControl.DataContext>
@@ -140,8 +140,8 @@
     </UserControl.Resources>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="180" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="33*" />
+            <ColumnDefinition Width="180*" />
         </Grid.ColumnDefinitions>
 
         <!--  Menu  -->
@@ -287,8 +287,8 @@
                 <!--  Every Line  -->
                 <Grid Visibility="Visible">
                     <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="50" />
+                        <RowDefinition Height="9*" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <!--  Content setting  -->
 
@@ -302,14 +302,14 @@
                                 <TabItem.Header>
                                     <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Printer_Settings}" />
                                 </TabItem.Header>
-                                <StackPanel Margin="5,10,0,0">
+                                <StackPanel Margin="15,10,0,0">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="FontWeight" Value="Normal" />
                                         </Style>
                                     </StackPanel.Resources>
                                     <StackPanel
-                                        Margin="0,10,0,0"
+                                        Margin="0,10,0,5"
                                         IsEnabled="{Binding IsLockUISetting}"
                                         Orientation="Horizontal">
 
@@ -335,7 +335,7 @@
                                     </StackPanel>
 
                                     <StackPanel
-                                        Margin="0,10,0,0"
+                                        Margin="0,10,0,5"
                                         IsEnabled="{Binding IsLockUISetting}"
                                         Orientation="Horizontal">
                                         <TextBlock
@@ -366,7 +366,7 @@
                                             Visibility="Collapsed" />-->
                                     </StackPanel>
                                     <StackPanel
-                                        Margin="0,10,0,0"
+                                        Margin="0,10,0,5"
                                         VerticalAlignment="Center"
                                         IsEnabled="{Binding IsLockUISetting}"
                                         Orientation="Horizontal">
@@ -408,7 +408,7 @@
                                 <TabItem.Header>
                                     <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Camera_Settings}" />
                                 </TabItem.Header>
-                                <StackPanel Margin="5,20,0,0" IsEnabled="{Binding IsLockUISetting}">
+                                <StackPanel Margin="15,10,0,0" IsEnabled="{Binding IsLockUISetting}">
 
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock
@@ -428,7 +428,7 @@
                                     </StackPanel>
 
                                     <!--  Cam Type  -->
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <StackPanel.Resources>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontWeight" Value="Normal" />
@@ -453,7 +453,7 @@
                                     <!--  Dataman ReadMode  -->
                                     <StackPanel
                                         x:Name="StackPanelDatamanReadMode"
-                                        Margin="0,10,0,0"
+                                        Margin="0,10,0,5"
                                         Orientation="Horizontal">
                                         <TextBlock
                                             Width="110"
@@ -472,7 +472,7 @@
                                         </ComboBox>
                                     </StackPanel>
                                     <!--  Cam IP Address  -->
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
@@ -486,7 +486,7 @@
                                             Text="{Binding CameraIP}" />
                                     </StackPanel>
 
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
@@ -504,7 +504,7 @@
                                             Text="{Binding CameraModel}" />
                                     </StackPanel>
 
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="110"
                                             VerticalAlignment="Center"
@@ -529,13 +529,13 @@
                                 <TabItem.Header>
                                     <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=PLC_Settings}" />
                                 </TabItem.Header>
-                                <StackPanel Margin="5,10,0,0" IsEnabled="{Binding IsLockUISetting}">
+                                <StackPanel Margin="15,10,0,0" IsEnabled="{Binding IsLockUISetting}">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="FontWeight" Value="Normal" />
                                         </Style>
                                     </StackPanel.Resources>
-                                    <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="170"
                                             VerticalAlignment="Center"
@@ -548,27 +548,27 @@
 
                                     </StackPanel>
                                     <StackPanel x:Name="InputArea">
-                                        <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
                                             <TextBlock
                                                 Width="170"
                                                 VerticalAlignment="Center"
                                                 Text="{DynamicResource ResourceKey=IP_Address}" />
                                             <cuscontrol:IpAddressControl
                                                 x:Name="TextBoxControllerIP"
-                                                Width="200"
+                                                Width="215"
                                                 Height="30"
                                                 FontWeight="Normal"
                                                 Text="{Binding ControllerIP}" />
                                         </StackPanel>
 
-                                        <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+                                        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
                                             <TextBlock
                                                 Width="170"
                                                 VerticalAlignment="Center"
                                                 Text="{DynamicResource ResourceKey=Port}" />
                                             <mah:NumericUpDown
                                                 x:Name="NumPLCPort"
-                                                Width="200"
+                                                Width="215"
                                                 Height="30"
                                                 Padding="0,3,0,0"
                                                 BorderBrush="LightBlue"
@@ -579,8 +579,8 @@
                                                 Value="{Binding ControllerPort}" />
                                         </StackPanel>
                                         <GroupBox
-                                            Width="420"
-                                            Margin="0,10,0,0"
+                                            Width="450"
+                                            Margin="0,10,0,5"
                                             HorizontalAlignment="Left"
                                             Header="{DynamicResource ResourceKey=Sensor1}"
                                             Style="{StaticResource CustomGroupBoxStyle}">
@@ -592,7 +592,7 @@
                                                         Text="{DynamicResource ResourceKey=Delay_Sensor}" />
                                                     <mah:NumericUpDown
                                                         x:Name="NumDelaySensor"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -616,7 +616,7 @@
                                                         Text="{DynamicResource ResourceKey=Disable_Sensor}" />
                                                     <mah:NumericUpDown
                                                         x:Name="NumDisSensor"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -640,7 +640,7 @@
                                                         Text="{DynamicResource ResourceKey=Pulse_Encoder}" />
                                                     <mah:NumericUpDown
                                                         x:Name="NumPulseEncoder"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -664,7 +664,7 @@
                                                         Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
                                                     <mah:NumericUpDown
                                                         x:Name="NumEncoderDia"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -684,7 +684,7 @@
                                         </GroupBox>
 
                                         <GroupBox
-                                            Width="420"
+                                            Width="450"
                                             Margin="0,10,0,0"
                                             HorizontalAlignment="Left"
                                             Header="{DynamicResource ResourceKey=Sensor2}"
@@ -699,7 +699,7 @@
 
                                                     <mah:NumericUpDown
                                                         x:Name="NumDelaySensor2"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -724,7 +724,7 @@
 
                                                     <mah:NumericUpDown
                                                         x:Name="NumDisSensor2"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -749,7 +749,7 @@
 
                                                     <mah:NumericUpDown
                                                         x:Name="NumPulseEncoder2"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -773,7 +773,7 @@
                                                         Text="{DynamicResource ResourceKey=Encoder_Diameter}" />
                                                     <mah:NumericUpDown
                                                         x:Name="NumEncoderDia2"
-                                                        Width="200"
+                                                        Width="215"
                                                         Height="30"
                                                         Padding="0,3,0,0"
                                                         BorderBrush="LightBlue"
@@ -801,7 +801,7 @@
                                 </TabItem.Header>
                                 <StackPanel
                                     Grid.Row="1"
-                                    Margin="0,10,0,0"
+                                    Margin="15,10,0,0"
                                     VerticalAlignment="Top"
                                     IsEnabled="{Binding IsLockUISetting}"
                                     Orientation="Vertical">
@@ -814,8 +814,9 @@
 
                                     <!--  Gr Mode  -->
                                     <GroupBox
-                                        Width="420"
+                                        Width="450"
                                         Height="70"
+                                        Margin="0,10,10,10"
                                         HorizontalAlignment="Left"
                                         Header="{DynamicResource ResourceKey=Send_Mode}"
                                         Style="{StaticResource CustomGroupBoxStyle}">
@@ -823,7 +824,8 @@
 
                                             <RadioButton
                                                 x:Name="RadBasic"
-                                                Width="100"
+                                                Width="150"
+                                                Margin="20,0,0,0"
                                                 HorizontalAlignment="Center"
                                                 Click="RadBasic_Click"
                                                 Content="{DynamicResource ResourceKey=Basic}"
@@ -834,7 +836,7 @@
                                             <RadioButton
                                                 x:Name="RadCompare"
                                                 Width="150"
-                                                Margin="10,0,0,0"
+                                                Margin="40,0,0,0"
                                                 Click="RadCompare_Click"
                                                 Content="{DynamicResource ResourceKey=Compare}"
                                                 FontSize="16"
@@ -845,7 +847,7 @@
                                     </GroupBox>
 
                                     <GroupBox
-                                        Width="420"
+                                        Width="450"
                                         Margin="0,10,0,0"
                                         HorizontalAlignment="Left"
                                         Header="{DynamicResource ResourceKey=Field_Settings}"
@@ -859,7 +861,7 @@
                                                 <TextBlock Width="100" Text="{DynamicResource ResourceKey=Print_Fields}" />
                                                 <TextBox
                                                     x:Name="TextBoxPOD"
-                                                    Width="200"
+                                                    Width="250"
                                                     Height="30"
                                                     Margin="0,0,10,0"
                                                     FontSize="16"
@@ -880,7 +882,7 @@
 
                                                 <TextBox
                                                     x:Name="TextBoxErrorField"
-                                                    Width="200"
+                                                    Width="250"
                                                     Height="30"
                                                     Margin="0,0,10,0"
                                                     FontSize="16"
@@ -911,7 +913,7 @@
                                 <TabItem.Header>
                                     <TextBlock Foreground="White" Text="{DynamicResource ResourceKey=Scanner_Settings}" />
                                 </TabItem.Header>
-                                <StackPanel IsEnabled="{Binding IsLockUISetting}">
+                                <StackPanel Margin="15,10,0,0" IsEnabled="{Binding IsLockUISetting}">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="FontWeight" Value="Normal" />
@@ -919,7 +921,7 @@
 
                                     </StackPanel.Resources>
                                     <!--  Com  -->
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
@@ -941,7 +943,7 @@
                                     </StackPanel>
 
                                     <!--  Bps  -->
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
@@ -964,7 +966,7 @@
                                     </StackPanel>
 
                                     <!--  Data bits  -->
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
@@ -982,7 +984,7 @@
                                     </StackPanel>
 
                                     <!--  Parity  -->
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
@@ -1002,7 +1004,7 @@
                                     </StackPanel>
 
                                     <!--  Stop bits  -->
-                                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
                                         <TextBlock
                                             Width="120"
                                             VerticalAlignment="Center"
@@ -1025,9 +1027,9 @@
 
                     <Grid Grid.Row="1" DataContext="{Binding CurrentConnectParams}">
                         <Button
-                            Width="140"
-                            Height="40"
-                            Margin="0,5,10,0"
+                            Width="180"
+                            Height="60"
+                            Margin="0,0,80,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             Background="White"
@@ -1039,12 +1041,13 @@
                                 <fa:IconImage
                                     Width="16"
                                     Height="16"
-                                    Margin="0,0,5,0"
+                                    Margin="0,0,10,0"
                                     Foreground="#00ABE6"
                                     Icon="RotateBack" />
                                 <TextBlock
+                                    Width="63"
                                     VerticalAlignment="Center"
-                                    FontSize="15"
+                                    FontSize="18"
                                     Text="{DynamicResource ResourceKey=Restart}" />
                             </StackPanel>
                         </Button>
