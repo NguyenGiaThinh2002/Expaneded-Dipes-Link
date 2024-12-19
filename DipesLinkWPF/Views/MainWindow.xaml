@@ -394,12 +394,31 @@
                                         Margin="0,0,3,0"
                                         Foreground="{Binding CameraStatusColor}"
                                         Icon="Camera" />
-                                    <fa:IconImage
+                                    <!--<fa:IconImage
                                         Width="15"
                                         Height="15"
                                         Margin="0,0,3,0"
                                         Foreground="{Binding PrinterStatusColor}"
-                                        Icon="Print" />
+                                        Icon="Print" />-->
+
+                                    <ItemsControl ItemsSource="{Binding PrinterStatusColorList}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <fa:IconImage
+                                                    Width="15"
+                                                    Height="15"
+                                                    Margin="0,0,3,0"
+                                                    Foreground="{Binding Color}"
+                                                    Icon="{Binding Icon}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
                                     <fa:IconImage
                                         Width="15"
                                         Height="15"

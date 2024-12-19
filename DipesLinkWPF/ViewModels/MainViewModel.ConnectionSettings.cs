@@ -1,7 +1,9 @@
 ﻿using DipesLink.Views.UserControls.MainUc;
 using IPCSharedMemory;
 using SharedProgram.Shared;
+using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms;
 using static SharedProgram.DataTypes.CommonDataType;
 
@@ -16,7 +18,7 @@ namespace DipesLink.ViewModels
 
         internal void SaveConnectionSetting()
         {
-           // ConnectParamsList = ViewModelSharedValues.Settings.SystemParamsList;
+            // ConnectParamsList = ViewModelSharedValues.Settings.SystemParamsList;
             for (int i = 0; i < _numberOfStation; i++)
             {
                 SendConnectionParamsToDeviceTransfer(i);
@@ -26,6 +28,10 @@ namespace DipesLink.ViewModels
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterIP = ConnectParamsList[i].PrinterIP;
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterPort = ConnectParamsList[i].PrinterPort;
                 ViewModelSharedValues.Settings.SystemParamsList[i].IsCheckPrinterSettingsEnabled = ConnectParamsList[i].IsCheckPrinterSettingsEnabled;
+
+                ViewModelSharedValues.Settings.SystemParamsList[i].PrinterIPs = ConnectParamsList[i].PrinterIPs;
+                ViewModelSharedValues.Settings.SystemParamsList[i].PrinterPorts = ConnectParamsList[i].PrinterPorts;
+                ViewModelSharedValues.Settings.SystemParamsList[i].IsCheckPrintersSettingsEnabled = ConnectParamsList[i].IsCheckPrintersSettingsEnabled;
                 #endregion
 
                 #region Camera
@@ -71,7 +77,7 @@ namespace DipesLink.ViewModels
 
         internal void AutoSaveConnectionSetting(int index, AutoSaveSettingsType autoSaveSettingsType) // Auto save Connection Setting according to Textbox change
         {
-            if (JobSettings.IsInitializing) return;           
+            if (JobSettings.IsInitializing) return;
             ConnectParamsList[index].Index = index;
             switch (autoSaveSettingsType)
             {
@@ -80,6 +86,10 @@ namespace DipesLink.ViewModels
                     ConnectParamsList[index].PrinterIP = CurrentConnectParams.PrinterIP;
                     ConnectParamsList[index].PrinterPort = CurrentConnectParams.PrinterPort;
                     ConnectParamsList[index].IsCheckPrinterSettingsEnabled = CurrentConnectParams.IsCheckPrinterSettingsEnabled;
+
+                    ConnectParamsList[index].PrinterIPs = CurrentConnectParams.PrinterIPs;
+                    ConnectParamsList[index].PrinterPorts = CurrentConnectParams.PrinterPorts;
+                    ConnectParamsList[index].IsCheckPrintersSettingsEnabled = CurrentConnectParams.IsCheckPrintersSettingsEnabled;
                     #endregion
                     break;
                 case AutoSaveSettingsType.Camera:
@@ -132,7 +142,7 @@ namespace DipesLink.ViewModels
         /// <summary>
         /// Update camera infor (Type and Model) to UI
         /// </summary>
-        internal void UpdateCameraInfo(int index) 
+        internal void UpdateCameraInfo(int index)
         {
             try
             {
@@ -154,7 +164,7 @@ namespace DipesLink.ViewModels
         {
             try
             {
-                int i = stationIndex;               
+                int i = stationIndex;
                 var sysParamsBytes =  DataConverter.ToByteArray(ViewModelSharedValues.Settings.SystemParamsList[i]);
                 MemoryTransfer.SendConnectionParamsToDevice(listIPCUIToDevice1MB[stationIndex], stationIndex, sysParamsBytes);
             }

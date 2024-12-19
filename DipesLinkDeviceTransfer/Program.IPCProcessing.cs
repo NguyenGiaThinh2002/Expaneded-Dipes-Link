@@ -192,7 +192,7 @@ namespace DipesLinkDeviceTransfer
                             TriggerCamera();
                             break;
                         case ActionButtonType.Simulate:
-                           
+
                             StartAllThreadForTesting();
                             break;
                         case ActionButtonType.ReloadTemplate: // Reload template
@@ -328,7 +328,7 @@ namespace DipesLinkDeviceTransfer
                 }
             }
         }
-        private void NotificationProcess(NotifyType notifyType)
+        public void NotificationProcess(NotifyType notifyType)
         {
             MemoryTransfer.SendMessageJobStatusToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(notifyType));
         }

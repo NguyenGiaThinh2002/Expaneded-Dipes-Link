@@ -8,14 +8,16 @@ namespace SharedProgram.Shared
     {
         public static int Index {  get; set; }
 
+        public static int SelectedPrinter { get; set; } = 0;
+
+        public static int SelectedTemplate { get; set; } = 0;
+
         public static SettingsModel Settings = new();
 
         public static int NumberOfStation = 4;
         public static string AppName = "DipesLink";
 
         public static string DeviceTransferName = "DipesLinkDeviceTransfer";
-
-
 
         public static readonly string[] ColumnNames = new string[] { "Index", "ResultData", "Result", "ProcessingTime", "DateTime", "Device" };
 

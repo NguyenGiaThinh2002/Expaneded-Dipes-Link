@@ -16,16 +16,19 @@ namespace DipesLinkDeviceTransfer
     public partial class Program
     {
         #region Variables
-        private static IServiceProvider serviceProvider;
-        private IPrinter? _rynanRPrinterDeviceHandler;
-        private IPLC_TCPIP? _controllerDeviceHandler;
-        private ICameras? _datamanCameraDeviceHandler;
-        private IBarcodeScanner? _barcodeScannerHandler;
+        public static IServiceProvider serviceProvider;
+        public IPrinter? _rynanRPrinterDeviceHandler;
+        public IPLC_TCPIP? _controllerDeviceHandler;
+        public ICameras? _datamanCameraDeviceHandler;
+        public IBarcodeScanner? _barcodeScannerHandler;
         public static string? keyStep;
-        private IPCSharedHelper? _ipcDeviceToUISharedMemory_DT;
-        private IPCSharedHelper? _ipcUIToDeviceSharedMemory_DT;
-        private IPCSharedHelper? _ipcDeviceToUISharedMemory_DB;
-        private IPCSharedHelper? _ipcDeviceToUISharedMemory_RD;
+        public IPCSharedHelper? _ipcDeviceToUISharedMemory_DT;
+        public IPCSharedHelper? _ipcUIToDeviceSharedMemory_DT;
+        public IPCSharedHelper? _ipcDeviceToUISharedMemory_DB;
+        public IPCSharedHelper? _ipcDeviceToUISharedMemory_RD;
+
+        public PrinterManager? _printerManager;
+        //public PrinterProcessingManager? _printerProcessing;
         #endregion
         private void InitInstanceIPC()
         {
@@ -115,6 +118,8 @@ namespace DipesLinkDeviceTransfer
             ListenConnectionParam();
             AlwaySendPrinterOperationToUI();
 
+            _printerManager = new PrinterManager(4, _ipcDeviceToUISharedMemory_DT);
+
             serviceProvider = new ServiceCollection()
             .AddSingleton<IBarcodeScanner>(provider =>
                 new RS232BarcodeScanner(JobIndex, _ipcDeviceToUISharedMemory_DT))
@@ -167,22 +172,22 @@ namespace DipesLinkDeviceTransfer
 #endif
         }
 
-        private void DiposeDatamanCamera()
-        {
+        //private void DiposeDatamanCamera()
+        //{
 
-            try
-            {
-                //if (_datamanCameraDeviceHandler == null) return;
-                _datamanCameraDeviceHandler.Disconnect();
-                (_datamanCameraDeviceHandler as IDisposable)?.Dispose();
-                _datamanCameraDeviceHandler.Dispose();
-                //_datamanCameraDeviceHandler = null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Loi e: {ex}");
-            }
-        }
+        //    try
+        //    {
+        //        //if (_datamanCameraDeviceHandler == null) return;
+        //        _datamanCameraDeviceHandler.Disconnect();
+        //        (_datamanCameraDeviceHandler as IDisposable)?.Dispose();
+        //        _datamanCameraDeviceHandler.Dispose();
+        //        //_datamanCameraDeviceHandler = null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Loi e: {ex}");
+        //    }
+        //}
 
         private int _countTimeOutConnection = 0;
         private void CameraConnectionMonitor()
@@ -196,7 +201,7 @@ namespace DipesLinkDeviceTransfer
                         switch (DeviceSharedValues.CameraSeries)
                         {
                             case SharedProgram.DataTypes.CommonDataType.CameraSeries.Unknown:
-                                Console.WriteLine("No camera connection!");
+                                //Console.WriteLine("No camera connection!");
 
                                 break;
                             case SharedProgram.DataTypes.CommonDataType.CameraSeries.Dataman:
@@ -286,7 +291,7 @@ namespace DipesLinkDeviceTransfer
                     return Task.FromResult(1);
                 }
 
-                if (_rynanRPrinterDeviceHandler != null && !_rynanRPrinterDeviceHandler.IsConnected() &&
+                if (_printerManager._printers[SharedValues.SelectedPrinter] != null && !_printerManager._printers[SharedValues.SelectedPrinter].IsConnected() &&
                     SharedValues.SelectedJob?.CompareType == SharedProgram.DataTypes.CommonDataType.CompareType.Database &&
                     SharedValues.SelectedJob.PrinterSeries == SharedProgram.DataTypes.CommonDataType.PrinterSeries.RynanSeries) // Standalone will not check Printer Connection
                 {
@@ -303,6 +308,7 @@ namespace DipesLinkDeviceTransfer
         public void InitEvents()
         {
             PrinterEventInit();
+            //_printerProcessing = new PrinterProcessingManager(1);
             CameraEventInit();
             ScannerEventInit();
         }

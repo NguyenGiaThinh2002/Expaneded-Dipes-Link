@@ -9,8 +9,16 @@ namespace SharedProgram.Models
         public int Index { get; set; }
 
         #region Printer
+
         public string PrinterIP { get; set; } = "127.0.0.1";
         public double PrinterPort { get; set; } = 0;
+
+        public List<double> PrinterPorts { get; set; }
+
+        public List<bool> IsCheckPrintersSettingsEnabled { get; set; }
+
+        public List<string> PrinterIPs { get; set ; }
+
         #endregion
 
         #region Camera
@@ -20,7 +28,7 @@ namespace SharedProgram.Models
         public string CameraModel { get => cameraModel; set { cameraModel = value; OnPropertyChanged(); } }
         public CameraInfos? CameraInfors { get; set; }
         public DatamanReadMode DatamanReadMode { get; set; } = DatamanReadMode.Basic;
-       
+
         #endregion
 
         #region Controller
@@ -44,8 +52,6 @@ namespace SharedProgram.Models
         public int DataBits { get; set; } = 8;
         public StopBits StopBits { get; set; } = StopBits.One;
         #endregion
-
-
 
         private bool _IsLockUISetting;
         public bool IsLockUISetting
@@ -138,7 +144,7 @@ namespace SharedProgram.Models
         }
 
         private string _FailedDataSentToPrinter = "Failure";
-        
+
 
         public string FailedDataSentToPrinter
         {

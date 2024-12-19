@@ -13,13 +13,13 @@ namespace DipesLinkDeviceTransfer
     /// </summary>
     public partial class Program
     {
-        private List<NotifyType> _InitDataErrorList = new();
+        public List<NotifyType> _InitDataErrorList = new();
 
-        private int _TotalMissed = 0; // Use for RePrint Condition
+        public int _TotalMissed = 0; // Use for RePrint Condition
 
-        private readonly int _StartIndex = 1;
+        public readonly int _StartIndex = 1;
 
-        private async Task InitDataAsync(JobModel selectedJob)
+        public async Task InitDataAsync(JobModel selectedJob)
         {
 
             if (SharedValues.SelectedJob == null)

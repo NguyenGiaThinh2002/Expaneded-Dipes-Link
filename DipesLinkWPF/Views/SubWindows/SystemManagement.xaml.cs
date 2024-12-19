@@ -23,6 +23,7 @@ namespace DipesLink.Views.SubWindows
             InitializeComponent();
             InitControls();
             SetCurrentLanguage();
+            IsInitializing = false;
         }
         private void InitControls()
         {
@@ -31,7 +32,7 @@ namespace DipesLink.Views.SubWindows
             ComboBoxStationNumber.IsEnabled = !_viewModel.JobList.Any(job => job.OperationStatus != OperationStatus.Stopped);
             ComboBoxStationNumber.SelectedIndex = _viewModel.StationSelectedIndex;
             ComboBoxDateTimeFormat.SelectedIndex = _viewModel.DateTimeFormatSelectedIndex;
-           
+            ComboBoxPrinterNumber.SelectedIndex = ViewModelSharedValues.Settings.NumberOfPrinter -1;
         }
 
         private void SetCurrentLanguage()
@@ -132,6 +133,15 @@ namespace DipesLink.Views.SubWindows
             catch (Exception)
             {
             }
+        }
+
+        private void ComboBoxLanguage_PrinterNumberChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cbb = sender as ComboBox;
+            if (_viewModel is null || cbb == null || IsInitializing) return;
+            _viewModel.CheckPrinterChange(ComboBoxPrinterNumber.SelectedIndex);
+            ComboBoxPrinterNumber.SelectedIndex = ViewModelSharedValues.Settings.NumberOfPrinter -1 ;
+
         }
     }
 }

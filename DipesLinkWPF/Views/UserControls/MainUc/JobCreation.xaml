@@ -967,9 +967,91 @@
                                         </Grid>
                                     </GroupBox>
 
-
-
                                     <GroupBox
+                                        x:Name="GroupBoxTemplate"
+                                        Grid.Row="3"
+                                        Margin="5"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        IsEnabled="{Binding ElementName=RadioButtonStandalone, Path=IsChecked}">
+                                        <GroupBox.Header>
+
+                                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock
+                                                    Margin="0,0,10,0"
+                                                    VerticalAlignment="Center"
+                                                    Text="{DynamicResource ResourceKey=Printer_Template}" />
+                                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                    <ItemsControl x:Name="ButtonItemsControl">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Orientation="Horizontal" />
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Button
+                                                                    Width="30"
+                                                                    Height="25"
+                                                                    Margin="2,0,0,0"
+                                                                    Click="TemplateLoadClick"
+                                                                    Content="{Binding}" />
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+
+                                            </StackPanel>
+                                        </GroupBox.Header>
+                                        <StackPanel VerticalAlignment="Stretch">
+                                            <StackPanel
+                                                Margin="0,5,0,0"
+                                                VerticalAlignment="Stretch"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="110"
+                                                    VerticalAlignment="Center"
+                                                    Text="{DynamicResource ResourceKey=Template_Name}" />
+                                                <TextBox
+                                                    x:Name="TextBoxSearch"
+                                                    Width="260"
+                                                    Height="30"
+                                                    Margin="10,0,0,0"
+                                                    Style="{StaticResource TextBoxStyle2}"
+                                                    Text="{Binding SearchTemplateText}"
+                                                    TextChanged="TextBoxSearch_TextChanged" />
+
+                                                <Button
+                                                    x:Name="ButtonReloadPrinterTemplate"
+                                                    Width="60"
+                                                    Height="30"
+                                                    Margin="5,0,0,0"
+                                                    Click="ButtonReloadPrinterTemplate_Click"
+                                                    Content="{fa:Icon Rotate,
+                                                                      Foreground=White}"
+                                                    FontSize="20"
+                                                    Style="{StaticResource ModernButton2}" />
+                                            </StackPanel>
+                                            <ScrollViewer
+                                                Grid.Row="1"
+                                                HorizontalScrollBarVisibility="Disabled"
+                                                VerticalScrollBarVisibility="Auto">
+                                                <ListView
+                                                    x:Name="ListViewTemplate"
+                                                    MinHeight="150"
+                                                    MaxHeight="250"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    FontWeight="Normal"
+                                                    ItemsSource="{Binding TemplateList}"
+                                                    SelectedItem="{Binding PrinterTemplate}"
+                                                    SelectionChanged="ListViewTemplate_SelectionChanged"
+                                                    Style="{DynamicResource ListViewStylePrinterTemplate}" />
+                                            </ScrollViewer>
+                                        </StackPanel>
+                                    </GroupBox>
+
+                                    <!--<GroupBox
                                         x:Name="GroupBoxTemplate"
                                         Grid.Row="3"
                                         Margin="5"
@@ -1015,7 +1097,7 @@
                                                 SelectedItem="{Binding PrinterTemplate}"
                                                 Style="{DynamicResource ListViewStylePrinterTemplate}" />
                                         </StackPanel>
-                                    </GroupBox>
+                                    </GroupBox>-->
 
 
                                 </Grid>

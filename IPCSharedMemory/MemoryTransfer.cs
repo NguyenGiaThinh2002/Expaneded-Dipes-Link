@@ -248,7 +248,7 @@ namespace IPCSharedMemory
             catch (Exception) { }
         }
 
-        public static void SendPrinterTemplateListToUI(IPCSharedHelper? ipc, int index, byte[] data)
+        public static void SendPrinterTemplateListToUI(IPCSharedHelper? ipc, int index, byte[] data, int PrinterIndex) // 
         {
             try
             {
@@ -256,6 +256,7 @@ namespace IPCSharedMemory
                     (byte)SharedMemoryCommandType.DeviceCommand ,
                     (byte)index,
                     (byte)SharedMemoryType.PrinterTemplate,
+                    (byte)PrinterIndex
                 };
                 var newCommand = new byte[command.Length + data.Length]; // Create new array
                 Array.Copy(command, 0, newCommand, 0, command.Length); // copy array 1 to new array

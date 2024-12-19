@@ -1,5 +1,4 @@
-﻿using Cloudtoid;
-using DipesLink.Datatypes;
+﻿using DipesLink.Datatypes;
 using DipesLink.Extensions;
 using DipesLink.Languages;
 using DipesLink.Models;
@@ -57,6 +56,7 @@ namespace DipesLink.ViewModels
         {
             _numberOfStation = ViewModelSharedValues.Settings.NumberOfStation;
             StationSelectedIndex = _numberOfStation > 0 ? _numberOfStation - 1 : StationSelectedIndex;
+            PrinterSelectedIndex= 
             DateTimeFormatSelectedIndex = ViewModelSharedValues.Settings.DateTimeFormatSelectedIndex;
             TemplateName = ViewModelSharedValues.Settings.TemplateName;
             ImageExpPath = ViewModelSharedValues.Settings.FailedImagePath;
@@ -226,6 +226,7 @@ namespace DipesLink.ViewModels
             JobList[index].TotalRecDb = jobModel.TotalRecDb;
             JobList[index].CompleteCondition = jobModel.CompleteCondition;
             JobList[index].PrinterTemplate = jobModel.PrinterTemplate;
+            
             JobList[index].CameraSeries = jobModel.CameraSeries;
             JobList[index].ImageExportPath = jobModel.ImageExportPath;
             JobList[index].PODFormat = jobModel.PODFormat;
@@ -476,6 +477,7 @@ namespace DipesLink.ViewModels
                         // Printer Status
                         case (byte)SharedMemoryType.PrinterStatus:
                             JobList[stationIndex].PrinterStsBytes = result[3];
+                            JobList[stationIndex].PrinterListStsBytes[result[1]] = result[3];
                             break;
 
                         // Controller Status
@@ -605,6 +607,7 @@ namespace DipesLink.ViewModels
                         {
 
                             byte printerStsBytes = JobList[stationIndex].PrinterStsBytes;
+                            List<byte> printerListStsBytes = JobList[stationIndex].PrinterListStsBytes;
                             byte controllerStsBytes = JobList[stationIndex].ControllerStsBytes;
                             byte scannerStsBytes = JobList[stationIndex].ScannerStsBytes;
 
@@ -632,6 +635,18 @@ namespace DipesLink.ViewModels
                             }
 
                             // PRINTER CONNECTION
+                            for (int i = 0; i < ViewModelSharedValues.Settings.NumberOfPrinter; i++)
+                            {
+                                if (printerListStsBytes[i] == (byte)PrinterStatus.Connected)
+                                {
+                                    JobDeviceStatusList[stationIndex].PrinterStatusColorList[i].Color.Color = Colors.Green;
+                                }
+                                else
+                                {
+                                    JobDeviceStatusList[stationIndex].PrinterStatusColorList[i].Color.Color = Colors.Red;
+                                }
+                            }
+
                             if (printerStsBytes == (byte)PrinterStatus.Connected) // Printer Status Change
                             {
                                 _detectPrinterDisconnected = false;
@@ -700,10 +715,14 @@ namespace DipesLink.ViewModels
         {
             try
             {
-                var res = result.Skip(3).ToArray();
+                // thinh dang lam
+                var indexTemplate = result[3];
+                var res = result.Skip(4).ToArray();
                 string[]? resString = DataConverter.FromByteArray<string[]>(res); // convert to String
-                CreateNewJob.TemplateListFirstFound = resString?.ToList();
-                CreateNewJob.TemplateList = CreateNewJob.TemplateListFirstFound; // Update to Listview
+  
+                CreateNewJob.TemplateManager.TemplateListFirstFound[indexTemplate] = resString?.ToList();
+                CreateNewJob.TemplateManager.TemplateLists[indexTemplate] = CreateNewJob.TemplateManager.TemplateListFirstFound[indexTemplate];
+                CreateNewJob.TemplateList = CreateNewJob.TemplateManager.TemplateListFirstFound[SharedValues.SelectedTemplate]; // Update to Listview
             }
             catch (Exception)
             {
@@ -712,9 +731,7 @@ namespace DipesLink.ViewModels
 #endif
             }
         }
-
-       
-
+     
         private async void GetStatisticsAsync(int stationIndex)
         {
             _ctsGetStatisticsAsync = new();

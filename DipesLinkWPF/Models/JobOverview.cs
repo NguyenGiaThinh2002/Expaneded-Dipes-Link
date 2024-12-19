@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DipesLink.ViewModels;
 using DipesLink.Views.Models;
 using SharedProgram.Models;
 using System.Collections.Concurrent;
@@ -568,6 +569,7 @@ namespace DipesLink.Models
        // public CircleChartModel CircleChart { get; set; } = new();
         public byte[]? CameraStsBytes { get; set; }
         public byte PrinterStsBytes { get; set; }
+        public List<byte> PrinterListStsBytes { get; set; } = Enumerable.Range(0, ViewModelSharedValues.Settings.NumberOfPrinter).Select(t => (byte)0).ToList();
         public byte ControllerStsBytes { get; set; }
 
         public byte ScannerStsBytes { get; set; }

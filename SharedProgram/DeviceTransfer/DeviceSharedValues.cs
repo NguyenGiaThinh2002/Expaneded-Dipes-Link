@@ -12,11 +12,16 @@ namespace SharedProgram.DeviceTransfer
         public static string PrinterIP = "";
         public static double PrinterPort = 0;
         public static bool IsCheckPrinterSettingsEnabled;
+
+        public static List<string> PrinterIPs = new List<string>();
+        public static List<double> PrinterPorts = new List<double>();
+        public static List<bool> IsCheckPrintersSettingsEnabled = new List<bool>();
+
         #endregion
 
         #region Camera
         public static string CameraIP = "";
-        public static CameraSeries CameraSeries = CameraSeries.Unknown; 
+        public static CameraSeries CameraSeries = CameraSeries.Unknown;
         public static DatamanReadMode DatamanReadMode = DatamanReadMode.Basic;
         public static bool IsCameraConnected = false;
         public static CameraInfos? CameraInfos = new CameraInfos { Index = 0, ConnectionStatus = false, Info = new CamInfo() };

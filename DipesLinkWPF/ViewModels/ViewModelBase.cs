@@ -344,6 +344,21 @@ namespace DipesLink.ViewModels
                 }
             }
         }
+
+        private int _printerSelectedIndex;
+        public int PrinterSelectedIndex
+        {
+            get { return _printerSelectedIndex; }
+            set
+            {
+                if (_printerSelectedIndex != value)
+                {
+                    _printerSelectedIndex = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private int _dateTimeFormatSelectedIndex;
         public int DateTimeFormatSelectedIndex
         {

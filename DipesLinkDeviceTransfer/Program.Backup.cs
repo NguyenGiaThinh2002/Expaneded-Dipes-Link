@@ -8,7 +8,7 @@ namespace DipesLinkDeviceTransfer
     public partial class Program
     {
         private readonly string _DateTimeFormat = "yyMMddHHmmss";
-        private async void ExportCheckedResultToFileAsync()
+        public async void ExportCheckedResultToFileAsync()
         {
             if (SharedValues.SelectedJob == null) return;
             _CTS_BackupCheckedResult = new();
@@ -71,7 +71,7 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
-        private async void ExportPrintedResponseToFileAsync()
+        public async void ExportPrintedResponseToFileAsync()
         {
             if (SharedValues.SelectedJob == null) return;
             _CTS_BackupPrintedResponse = new();
@@ -151,7 +151,7 @@ namespace DipesLinkDeviceTransfer
             }
         }
 
-        private async void ExportImagesToFileAsync()
+        public async void ExportImagesToFileAsync()
         {
             _CTS_BackupFailedImage = new();
             var token = _CTS_BackupFailedImage.Token;

@@ -9,6 +9,7 @@ namespace SharedProgram.Models
 {
     public class PODDataModel : ViewModelBase
     {
+        public int Index { get; set; }
         public string IP { get; set; } = "";
         public string Port { get; set; } = "0";
         public RoleOfStation RoleOfPrinter { get; set; } = RoleOfStation.ForProduct;

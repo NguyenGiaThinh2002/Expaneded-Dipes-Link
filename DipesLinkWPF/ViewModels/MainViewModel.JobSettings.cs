@@ -5,6 +5,7 @@ using DipesLink.Views.SubWindows;
 using IPCSharedMemory;
 using Microsoft.Win32;
 using SharedProgram.Models;
+using SharedProgram.PrinterManager;
 using SharedProgram.Shared;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -82,8 +83,8 @@ namespace DipesLink.ViewModels
                 DatabasePath = CreateNewJob.DatabasePath,
                 DataCompareFormat = CreateNewJob.DataCompareFormat,
                 TotalRecDb = CreateNewJob.TotalRecDb,
-                PrinterTemplate = CreateNewJob.PrinterTemplate,
-                TemplateListFirstFound = CreateNewJob.TemplateListFirstFound,
+                PrinterTemplate = CreateNewJob.PrinterTemplate,          
+                TemplateManager = CreateNewJob.TemplateManager,
                 PODFormat = CreateNewJob.PODFormat,
                 CompleteCondition = CreateNewJob.CompleteCondition,
                 OutputCamera = CreateNewJob.OutputCamera,
@@ -144,17 +145,17 @@ namespace DipesLink.ViewModels
                             if (SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[0] == "System" && 
                                 SharedFunctions.GetCurrentUsernameAndRole()?.FirstOrDefault()[1] == "Administrator" &&
                                 string.IsNullOrEmpty(_jobModel.PrinterTemplate))
-                            {
+                            {  
                                 _jobModel.PrinterTemplate = CreateNewJob.SearchTemplateText;
-                                _jobModel.TemplateListFirstFound = new List<string>();
-                                _jobModel.TemplateListFirstFound.Add(_jobModel.PrinterTemplate);
+                                _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter] = new List<string>();
+                                _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter].Add(_jobModel.PrinterTemplate);
                             }
 
                             // Check printer template
                             if (_jobModel.PrinterTemplate == null ||
                                 _jobModel.PrinterTemplate == "" ||
-                                _jobModel.TemplateListFirstFound == null ||
-                                !SharedFunctions.CheckExitTemplate(_jobModel.PrinterTemplate, _jobModel.TemplateListFirstFound))
+                                _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter] == null ||
+                                !SharedFunctions.CheckExitTemplate(_jobModel.PrinterTemplate, _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter]))
                             {
                                 CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Printer_Template"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
                                 checkJobMsgBox.ShowDialog();
@@ -166,7 +167,7 @@ namespace DipesLink.ViewModels
                     {
                         // todo
                     }
-
+                    
                     // Check Image Export Path 
                     if (_jobModel.IsImageExport == true)
                     {
@@ -472,17 +473,18 @@ namespace DipesLink.ViewModels
 
         private void FilterListViewPrinterTemplate()
         {
-            if (CreateNewJob.TemplateListFirstFound != null)
+            if (CreateNewJob.TemplateManager.TemplateListFirstFound[SharedValues.SelectedTemplate] != null)
             {
                 IEnumerable<string> filteredItems;
                 if (SearchText != "")
                 {
-                    filteredItems = CreateNewJob.TemplateListFirstFound.Cast<string>().Where(x => x.ToLower().StartsWithOrdinal(SearchText.ToLower()));
+                    filteredItems = CreateNewJob.TemplateManager.TemplateListFirstFound[SharedValues.SelectedTemplate].Cast<string>().Where(x => x.ToLower().StartsWithOrdinal(SearchText.ToLower()));
+                    CreateNewJob.TemplateManager.TemplateLists[SharedValues.SelectedTemplate] = filteredItems.ToList();
                     CreateNewJob.TemplateList = filteredItems.ToList();
                 }
                 else
                 {
-                    CreateNewJob.TemplateList = CreateNewJob.TemplateListFirstFound;
+                    CreateNewJob.TemplateManager.TemplateLists[SharedValues.SelectedTemplate] = CreateNewJob.TemplateManager.TemplateListFirstFound[SharedValues.SelectedTemplate];
                 }
             }
         }

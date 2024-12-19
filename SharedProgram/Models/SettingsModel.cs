@@ -12,6 +12,8 @@ namespace SharedProgram.Models
     {
         public int NumberOfStation {  get; set; }
 
+        public int NumberOfPrinter { get; set; }
+
         public string JobFileExtension { get; set; } = ".rvis";
 
         public string Language { get; set; } = "en-US"; 
@@ -21,6 +23,7 @@ namespace SharedProgram.Models
         public int DateTimeFormatSelectedIndex { get; set; }
 
         public string TemplateName { get; set; } = "JobFile";
+
         public string FailedImagePath { get; set; } = string.Empty;
 
 

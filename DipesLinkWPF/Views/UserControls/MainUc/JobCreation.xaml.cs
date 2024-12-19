@@ -2,6 +2,7 @@
 using DipesLink.ViewModels;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
+using SharedProgram.Shared;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ namespace DipesLink.Views.UserControls.MainUc
 {
     public partial class JobCreation : UserControl
     {
+        static int currentSelectedTemplate = 0;
         public JobCreation()
         {
             InitializeComponent();
@@ -18,6 +20,12 @@ namespace DipesLink.Views.UserControls.MainUc
             ViewModelSharedEvents.OnDataTableLoading += DataTableLoadingChange; // Event notify done load database
             ViewModelSharedEvents.OnChangeJobStatus += JobStatusChanged;
             Loaded += JobCreation_Loaded;
+
+            if (ViewModelSharedValues.Settings.NumberOfPrinter > 1)
+            {
+                ButtonItemsControl.ItemsSource = Enumerable.Range(1, ViewModelSharedValues.Settings.NumberOfPrinter).Select(n => n.ToString()).ToList();
+            }
+
         }
 
         private void JobStatusChanged(object? sender, EventArgs e)
@@ -148,12 +156,13 @@ namespace DipesLink.Views.UserControls.MainUc
                 if (CurrentViewModel<MainViewModel>() is MainViewModel vm)
                 {
                     vm.CreateNewJob.TemplateList = new List<string>();
+                    //vm.CreateNewJob.TemplateManager.TemplateLists[SharedValues.SelectedPrinter] = new List<string>();
                     vm.RefreshTemplatName(jobIndex);
                 }
             }
             catch (Exception)
             {
-            }
+            }  
         }
 
 
@@ -223,8 +232,6 @@ namespace DipesLink.Views.UserControls.MainUc
             }
 
         }
-
-       
 
         private void Button_SaveAllClick(object sender, RoutedEventArgs e)
         {
@@ -348,6 +355,54 @@ namespace DipesLink.Views.UserControls.MainUc
             if (lv.SelectedItem != null)
             {
                 Button_AddJobClick(sender, e);
+            }
+        }
+
+        private void TemplateLoadClick(object sender, RoutedEventArgs e)
+        {
+            // Cast the sender to a Button
+            if (sender is Button clickedButton && int.TryParse(clickedButton.Content.ToString(), out int templateNumber))
+            {
+                HandleTemplateSelection(templateNumber);
+            }
+            else
+            {
+                MessageBox.Show("Unknown template selected.");
+            }
+        }
+
+        private void HandleTemplateSelection(int templateNumber)
+        {
+
+            SharedValues.SelectedTemplate = templateNumber - 1;
+            if (CurrentViewModel<MainViewModel>() is MainViewModel vm)
+            {
+                if (vm?.CreateNewJob?.TemplateManager?.TemplateLists != null)
+                {
+                    foreach (var sublist in vm.CreateNewJob.TemplateManager.TemplateLists)
+                    {
+                        sublist?.Clear(); // Clears the elements of each sublist, keeping the structure intact
+                    }
+                }
+                if (vm?.CreateNewJob?.TemplateManager?.TemplateListFirstFound != null)
+                {
+                    foreach (var sublist in vm.CreateNewJob.TemplateManager.TemplateListFirstFound)
+                    {
+                        sublist?.Clear(); // Clears the elements of each sublist, keeping the structure intact
+                    }
+                }
+
+                GetTemplateFromPrinter();
+                vm.CreateNewJob.PrinterTemplate = vm.CreateNewJob.TemplateManager.PrinterTemplateList[SharedValues.SelectedTemplate];
+            }
+        }
+
+        private void ListViewTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // thinh noww
+            if (CurrentViewModel<MainViewModel>() is MainViewModel vm && ListViewTemplate.SelectedItem != null)
+            {
+                vm.CreateNewJob.TemplateManager.PrinterTemplateList[SharedValues.SelectedTemplate] = ListViewTemplate.SelectedItem.ToString();
             }
         }
     }

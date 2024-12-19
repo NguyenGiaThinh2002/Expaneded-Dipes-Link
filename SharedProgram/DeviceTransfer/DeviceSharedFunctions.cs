@@ -22,6 +22,10 @@ namespace SharedProgram.DeviceTransfer
                 DeviceSharedValues.PrinterIP = connectParams.PrinterIP.Trim();
                 DeviceSharedValues.PrinterPort = connectParams.PrinterPort;
                 DeviceSharedValues.IsCheckPrinterSettingsEnabled = connectParams.IsCheckPrinterSettingsEnabled;
+
+                DeviceSharedValues.PrinterIPs = connectParams.PrinterIPs;
+                DeviceSharedValues.PrinterPorts = connectParams.PrinterPorts;
+                DeviceSharedValues.IsCheckPrintersSettingsEnabled = connectParams.IsCheckPrintersSettingsEnabled;
                 #endregion
 
                 #region Camera
@@ -57,7 +61,7 @@ namespace SharedProgram.DeviceTransfer
                 DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod = connectParams.VerifyAndPrintBasicSentMethod;
                 DeviceSharedValues.VPObject.FailedDataSentToPrinter = connectParams.FailedDataSentToPrinter;
                 #endregion
-  
+
                 SharedEvents.RaiseOnVerifyAndPrindSendDataMethod();
                 SharedEvents.OnRaiseCameraIPAddressHandler(DeviceSharedValues.CameraIP);
 
@@ -109,7 +113,7 @@ namespace SharedProgram.DeviceTransfer
             Array.Copy(result,
                 indexBytes.Length +
                 cameraIPBytes.Length, printerIPBytes, 0, 15);
-            DeviceSharedValues.PrinterIP = Encoding.ASCII.GetString(printerIPBytes).Trim();
+            DeviceSharedValues.PrinterIPs[SharedValues.SelectedPrinter] = Encoding.ASCII.GetString(printerIPBytes).Trim();
 #if DEBUG
             Console.WriteLine("Printer IP: " + Encoding.ASCII.GetString(printerIPBytes).Trim());
 #endif
@@ -120,8 +124,8 @@ namespace SharedProgram.DeviceTransfer
                 indexBytes.Length +
                 cameraIPBytes.Length +
                 printerIPBytes.Length, printerPortBytes, 0, 5);
-             var port = double.Parse(Encoding.ASCII.GetString(printerPortBytes).Trim());
-            DeviceSharedValues.PrinterPort = port;
+            var port = double.Parse(Encoding.ASCII.GetString(printerPortBytes).Trim());
+            DeviceSharedValues.PrinterPorts[SharedValues.SelectedPrinter] = port;
 #if DEBUG
             Console.WriteLine("Printer Port: " + Encoding.ASCII.GetString(printerPortBytes).Trim());
 #endif

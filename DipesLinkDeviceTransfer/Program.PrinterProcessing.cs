@@ -1,4 +1,6 @@
-﻿using IPCSharedMemory;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using DipesLink_SDK_Printers;
+using IPCSharedMemory;
 using SharedProgram.Controller;
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
@@ -15,6 +17,19 @@ namespace DipesLinkDeviceTransfer
 
     public partial class Program
     {
+        // dang lam
+        //private readonly int _Index;
+        //public PrinterProcessing(int index)
+        //{
+        //    _Index = index;
+        //    PrinterEventInit();
+        //}
+
+        //public int GetIndex()
+        //{
+        //    return _Index;
+        //}
+
         #region Declarations
         private CancellationTokenSource _CTS_SendStsPrint = new();
         private CancellationTokenSource _CTS_SendStsCheck = new();
@@ -30,449 +45,12 @@ namespace DipesLinkDeviceTransfer
         private CancellationTokenSource? _VirtualCTS;
         private PrinterSettingsModel _PrinterSettingsModel;
         #endregion Declarations
-
         public void PrinterEventInit()
         {
             OnReceiveVerifyDataEvent -= SendVerifiedDataToPrinter;
             OnReceiveVerifyDataEvent += SendVerifiedDataToPrinter;
             SharedEvents.OnPrinterDataChange += SharedEvents_OnPrinterDataChange; // Printer Data change event
             ReceiveDataFromPrinterHandlerAsync();
-        }
-
-        private void SharedEvents_OnPrinterDataChange(object? sender, EventArgs e)
-        {
-            if (sender is PODDataModel)
-            {
-                _QueueBufferPrinterReceivedData.Enqueue(sender);
-            }
-        }
-
-        private NotifyType CheckInitDataErrorAndGenerateMessage()
-        {
-
-            if (_InitDataErrorList.Count > 0)
-            {
-                foreach (var value in _InitDataErrorList)
-                {
-                    NotifyType tmp = value switch
-                    {
-                        NotifyType.DatabaseUnknownError => value,
-                        NotifyType.PrintedStatusUnknownError => value,
-                        NotifyType.CheckedResultUnknownError => value,
-                        NotifyType.CannotAccessDatabase => value,
-                        NotifyType.CannotAccessCheckedResult => value,
-                        NotifyType.CannotAccessPrintedResponse => value,
-                        NotifyType.DatabaseDoNotExist => value,
-                        NotifyType.CheckedResultDoNotExist => value,
-                        NotifyType.PrintedResponseDoNotExist => value,
-                        NotifyType.CannotCreatePodDataList => value,
-                        NotifyType.Unknown => value,
-                        _ => NotifyType.Unk,
-                    };
-
-                    return tmp;
-                }
-            }
-            return NotifyType.Unk;
-        }
-
-        private CheckCondition CheckAllTheConditions()
-        {
-            // Check Camera Connection
-#if !DEBUG
-            if (_datamanCameraDeviceHandler != null && !_datamanCameraDeviceHandler.IsConnected)
-            {
-                return CheckCondition.NotConnectCamera;
-            }
-#endif
-            if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
-            {
-                SharedFunctions.PrintConsoleMessage(SharedValues.SelectedJob.PrinterSeries.ToString());
-                //Check Printer Connection
-                if (_rynanRPrinterDeviceHandler != null && !_rynanRPrinterDeviceHandler.IsConnected())
-                {
-                    return CheckCondition.NotConnectPrinter;
-                }
-
-                // Check Printer Template
-                if (SharedValues.SelectedJob.CompareType == CompareType.Database && (SharedValues.SelectedJob == null || SharedValues.SelectedJob.PrinterTemplate == ""))
-                {
-                    return CheckCondition.MissingParameterActivation;
-                }
-
-                // Check list POD code for Print and Check
-                if (_CodeListPODFormat == null || _CodeListPODFormat.IsEmpty)
-                {
-                    return CheckCondition.MissingParameterActivation;
-                }
-            }
-
-            return CheckCondition.Success;
-        }
-
-        private CheckPrinterSettings CheckAllSettingsPrinter(string printerIP)
-        {
-            _PrinterSettingsModel = SharedFunctions.GetSettingsPrinter(printerIP);
-
-            if (!_PrinterSettingsModel.IsSupportHttpRequest)
-            {
-                return CheckPrinterSettings.NotSupported;
-            }
-
-            if (!_PrinterSettingsModel.EnablePOD)
-            {
-                return CheckPrinterSettings.PODNotEnabled;
-            }
-
-            if (!_PrinterSettingsModel.ResponsePODCommand)
-            {
-                return CheckPrinterSettings.ResponsePODCommandNotEnable;
-            }
-
-            if (!_PrinterSettingsModel.ResponsePODData)
-            {
-                return CheckPrinterSettings.ResponsePODDataNotEnable;
-            }
-            // 0: json, 1: Raw data, 2: Customise
-            if (_PrinterSettingsModel.PodDataType != 1)
-            {
-                return CheckPrinterSettings.NotRawData;
-            }
-            // 0:print all, 1:print last, 2 print last and repeat
-            var podMode = SharedValues.SelectedJob.JobType == JobType.AfterProduction ? 0 : 1;
-            if (_PrinterSettingsModel.PodMode != podMode)
-            {
-                return CheckPrinterSettings.PODMode;
-            }
-
-            if (!_PrinterSettingsModel.EnableMonitor)
-            {
-                return CheckPrinterSettings.MonitorNotEnable;
-            }
-
-            return CheckPrinterSettings.Success;
-        }
-
-
-
-        public void StartProcess()
-        {
-            try
-            {
-                if (SharedValues.SelectedJob == null) return;
-                if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
-                {
-                    SharedFunctions.PrintConsoleMessage("Notify Error: The system has started !");
-                    _IsRechecked = false;
-                    NotificationProcess(NotifyType.StartSync);
-                    return;
-                }
-
-                var checkInitDataNotifyType = CheckInitDataErrorAndGenerateMessage();
-                if (checkInitDataNotifyType != NotifyType.Unk && SharedValues.SelectedJob.CompareType == CompareType.Database)
-                {
-                    NotificationProcess(checkInitDataNotifyType);
-                    SharedFunctions.PrintConsoleMessage("Check Init Data Error: " + checkInitDataNotifyType.ToString());
-                    return;
-                }
-
-                bool isDatabaseDeny = SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.TotalCode == 0;
-                if (isDatabaseDeny)
-                {
-                    SharedFunctions.PrintConsoleMessage("Database doesn't exist !");
-                    NotificationProcess(NotifyType.DatabaseDoNotExist);
-                    return;
-                }
-
-                CheckCondition checkCondition = CheckAllTheConditions();
-
-                if (checkCondition != CheckCondition.Success)
-                {
-                    switch (checkCondition)
-                    {
-                        case CheckCondition.NotLoadDatabase:
-                            Console.WriteLine("Notify Error: Please check database connection");
-                            NotificationProcess(NotifyType.NotLoadDatabase);
-                            break;
-                        case CheckCondition.NotConnectCamera:
-                            Console.WriteLine("Notify Error: Please check camera connection");
-                            NotificationProcess(NotifyType.NotConnectCamera);
-                            break;
-                        case CheckCondition.NotLoadTemplate:
-                            Console.WriteLine("Notify Error: Please check the printer template");
-                            NotificationProcess(NotifyType.NotLoadTemplate);
-                            break;
-                        case CheckCondition.MissingParameter:
-                            Console.WriteLine("Notify Error: Some parameter is missing ! Please check again");
-                            NotificationProcess(NotifyType.MissingParameter);
-                            break;
-                        case CheckCondition.NotConnectPrinter:
-                            Console.WriteLine("Notify Error: Please check printer connection");
-                            NotificationProcess(NotifyType.NotConnectPrinter);
-                            break;
-                        case CheckCondition.NotConnectServer:
-                            NotificationProcess(NotifyType.NotConnectServer);
-                            break;
-                        case CheckCondition.LeastOneAction:
-                            NotificationProcess(NotifyType.LeastOneAction);
-                            break;
-                        case CheckCondition.MissingParameterActivation:
-                            Console.WriteLine("Notify Error: Some activation params are missing! Please check again");
-                            NotificationProcess(NotifyType.MissingParameterActivation);
-                            break;
-                        case CheckCondition.MissingParameterPrinting:
-                            NotificationProcess(NotifyType.MissingParameterPrinting);
-                            break;
-                        case CheckCondition.MissingParameterWarehouseInput:
-                            NotificationProcess(NotifyType.MissingParameterWarehouseInput);
-                            break;
-                        case CheckCondition.MissingParameterWarehouseOutput:
-                            NotificationProcess(NotifyType.MissingParameterWarehouseOutput);
-                            break;
-                        case CheckCondition.CreatingWarehouseInputReceipt:
-                            NotificationProcess(NotifyType.CreatingWarehouseInputReceipt);
-                            break;
-                        case CheckCondition.NoJobsSelected:
-                            Console.WriteLine("Notify Error: Please select a jon for system");
-                            NotificationProcess(NotifyType.NoJobsSelected);
-                            break;
-                        default:
-                            break;
-                    }
-                    return;
-                }
-
-                bool isNeedToCheckPrinter = SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && SharedValues.SelectedJob.CompareType == CompareType.Database;
-
-                CheckPrinterSettings checkPrinterSettings = CheckAllSettingsPrinter(DeviceSharedValues.PrinterIP);
-                //&& SharedValues.SelectedJob.IsCheckPrinterSettingsEnabled
-                if (checkPrinterSettings != CheckPrinterSettings.Success && isNeedToCheckPrinter && DeviceSharedValues.IsCheckPrinterSettingsEnabled && !_IsRechecked)
-                {
-                    switch (checkPrinterSettings)
-                    {
-                        case CheckPrinterSettings.NotSupported:
-                            NotificationProcess(NotifyType.NotSupported);
-                            break;
-                        case CheckPrinterSettings.NotRawData:
-                            NotificationProcess(NotifyType.NotRawData);
-                            break;
-                        case CheckPrinterSettings.PODNotEnabled:
-                            NotificationProcess(NotifyType.PODNotEnabled);
-                            break;
-                        case CheckPrinterSettings.ResponsePODDataNotEnable:
-                            NotificationProcess(NotifyType.ResponsePODDataNotEnable);
-                            break;
-                        case CheckPrinterSettings.ResponsePODCommandNotEnable:
-                            NotificationProcess(NotifyType.ResponsePODCommandNotEnable);
-                            break;
-                        case CheckPrinterSettings.MonitorNotEnable:
-                            NotificationProcess(NotifyType.MonitorNotEnable);
-                            break;
-                        case CheckPrinterSettings.PODMode:
-                            if (SharedValues.SelectedJob.JobType == JobType.AfterProduction)
-                                NotificationProcess(NotifyType.PODModeMustBePrintAll);
-                            else
-                                NotificationProcess(NotifyType.PODModeMustBePrintLast);
-                            break;
-                        default:
-                            break;
-                    }
-                    return;
-                }
-
-                SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
-                _QueueBufferPrinterReceivedData.Clear();
-                if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
-                    SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && !_IsRechecked)
-                {
-                    SharedValues.OperStatus = OperationStatus.Processing;
-                    if (_rynanRPrinterDeviceHandler != null)
-                    {
-                        _rynanRPrinterDeviceHandler.SendData("STOP"); //send stop command to printer
-                        Thread.Sleep(50);
-                        string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
-                        string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
-                        Thread.Sleep(50);
-                        _rynanRPrinterDeviceHandler.SendData(startPrintCommand); // Send Start command to printer
-                    }
-                }
-                else
-                {
-                    SharedValues.OperStatus = OperationStatus.Running;
-                }
-                bool isNonePrinted = SharedValues.SelectedJob.CompareType == CompareType.CanRead || SharedValues.SelectedJob.CompareType == CompareType.StaticText;
-                SharedValues.SelectedJob.JobStatus = JobStatus.Unfinished;
-
-                SaveJobChangedSettings(SharedValues.SelectedJob);
-
-                SendCompleteDataToUIAsync();
-
-                CompareAsync();
-
-                ExportImagesToFileAsync();
-
-                UpdateUICheckedResultAsync();
-
-                ExportCheckedResultToFileAsync();
-
-                if (SharedValues.SelectedJob.CompareType == CompareType.Database)
-                {
-                    UpdateUIPrintedResponseAsync();
-                    ExportPrintedResponseToFileAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
-            }
-        }
-
-        private async void RePrintAsync()
-        {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    if (!_IsAfterProductionMode) return; // Only use for After Production
-
-                    lock (_SyncObjCodeList)
-                    {
-                        if (SharedValues.ListPrintedCodeObtainFromFile.Count > 0 && _CodeListPODFormat.Count > 0)
-                        {
-                            _TotalMissed = 0;
-                            int statusColIndex = SharedValues.ListPrintedCodeObtainFromFile[0].Length - 1;
-                            foreach (var item in _CodeListPODFormat)
-                            {
-                                if (!item.Value.Status) // Not yet compare or failed compare
-                                {
-                                    if (SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] == "Printed") // Is Printed
-                                        SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Reprint"; // change to Re-Print state
-#if DEBUG
-                                    Console.WriteLine("Status Reprint: " + SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
-#endif
-                                }
-                                else // Valid compare
-                                {
-                                    if (SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] != "Printed") // Not Printed
-                                        SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Printed";
-#if DEBUG
-                                    Console.WriteLine("Status Printed: " + SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
-#endif
-                                }
-                            }
-                            _TotalMissed = SharedValues.TotalCode - NumberOfCheckPassed;
-                        }
-                    }
-                    if (NumberOfCheckPassed < SharedValues.TotalCode)
-                    {
-                        StartProcess();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SharedFunctions.PrintConsoleMessage(ex.Message);
-                }
-            });
-        }
-
-        private void Recheck()
-        {
-            //if (SharedValues.SelectedJob == null) return;
-            //if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
-            //{
-            //    SharedFunctions.PrintConsoleMessage("Notify Error: The system has started !");
-            //    NotificationProcess(NotifyType.StartSync);
-            //    return;
-            //}
-            // thinh dang lam
-            if (_barcodeScannerHandler == null || !_barcodeScannerHandler.IsConnected())
-            {
-                NotificationProcess(NotifyType.NotConnectScanner);
-            }
-            else
-            {
-                _IsRechecked = true;
-                StartProcess();
-            }
-
-        }
-        private static void SaveJobChangedSettings(JobModel selectedJob)
-        {
-
-            try
-            {
-                string jobFilePath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
-                string jobFileSelectedPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
-
-                selectedJob.SaveJobFile(jobFilePath);
-                if (File.Exists(jobFileSelectedPath))
-                {
-                    selectedJob.SaveJobFile(jobFileSelectedPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
-            }
-        }
-
-        private async Task StopProcessAsync()
-        {
-            await Task.Run(() =>
-            {
-                KillTThreadSendWorkingDataToPrinter();
-                _QueueBufferPrinterReceivedData.Clear();
-                _QueueBufferCameraReceivedData.Clear();
-                _QueueBufferScannerReceivedData.Clear();
-                ClearBufferUpdateUI();
-
-                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
-                {
-                    if (_rynanRPrinterDeviceHandler != null)
-                    {
-                        _rynanRPrinterDeviceHandler.SendData("STOP");
-                        lock (_StopLocker)
-                        {
-                            _IsStopOK = false;
-                            int countTimeout = 0;
-                            while (!_IsStopOK && countTimeout < 1)
-                            {
-                                Monitor.Wait(_StopLocker, 3000); //Wait until there is a stop notify from the printer
-                                countTimeout++;
-                            }
-                        }
-                    }
-                }
-
-                _TotalMissed = 0;
-                _CTS_UIUpdatePrintedResponse.Cancel();
-                _CTS_CompareAction.Cancel();
-                _QueueBufferCameraReceivedData.Enqueue(null);
-                _QueueBufferPODDataCompared.Enqueue(null);
-                _QueueBufferScannerReceivedData.Enqueue(null);
-                _QueueBufferScannerDataCompared.Enqueue(null);
-                _VirtualCTS?.Cancel();
-
-                SharedValues.OperStatus = OperationStatus.Stopped;
-
-                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database)
-                {
-                    int currentCheckNumber = SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
-
-                    if (currentCheckNumber >= SharedValues.TotalCode - _NumberOfDuplicate)
-                    {
-                        SharedValues.SelectedJob.JobStatus = JobStatus.Accomplished;
-                        SaveJobChangedSettings(SharedValues.SelectedJob);
-                    }
-                }
-            });
-            _IsRechecked = false;
-        }
-
-        private void ClearBufferUpdateUI()
-        {
-            _QueueSentCodeNumber?.Clear();
-            _QueueReceivedCodeNumber?.Clear();
         }
 
         private async void SendWorkingDataToPrinterHandlerAsync()
@@ -512,9 +90,10 @@ namespace DipesLinkDeviceTransfer
                             token.ThrowIfCancellationRequested();
                             data = string.Join(";", codeModel.Take(codeModel.Length - 1).Skip(1));// Trim data (exclude Index, Status column)
                             string command = string.Format("DATA;{0}", data); // Init send command
-                            if (_rynanRPrinterDeviceHandler != null)
+                            if (_printerManager._printers[SharedValues.SelectedPrinter] != null )
                             {
-                                _rynanRPrinterDeviceHandler.SendData(command);
+                                _printerManager.SendDataToAllPrinters(command);
+
                                 NumberOfSentPrinter++;
                                 Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
                                 _QueueSentCodeNumber.Enqueue(_countSentCode);
@@ -606,7 +185,7 @@ namespace DipesLinkDeviceTransfer
                     while (true)
                     {
                         token.ThrowIfCancellationRequested();
-                        var isDoneDequeue = _QueueBufferPrinterReceivedData.TryDequeue(out object? result);
+                        var isDoneDequeue = _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].TryDequeue(out object? result);
                         if (!isDoneDequeue || result == null)
                         {
                             await Task.Delay(1, token);
@@ -616,6 +195,8 @@ namespace DipesLinkDeviceTransfer
                         {
                             if (result is PODDataModel podDataModel)
                             {
+                                // MessageBox.Show(SharedValues.SelectedPrinter.ToString());
+
                                 string[] pODcommand = podDataModel.Text.Split(';');
                                 var PODResponseModel = new PODResponseModel { Command = pODcommand[0] };
                                 if (PODResponseModel.Command != null)
@@ -667,6 +248,8 @@ namespace DipesLinkDeviceTransfer
                                             break;
 
                                         case "STAR": //Feedback start print
+                                            // thinh them 3500
+                                            //await Task.Delay(350);
                                             StartCommandHandler(pODcommand, PODResponseModel, podDataModel);
                                             break;
 
@@ -707,6 +290,725 @@ namespace DipesLinkDeviceTransfer
                     _ = StopProcessAsync();
                 }
             });
+        }
+
+        public void GetPrinterTemplateList()
+        {
+
+            Task requestTemplateTask = Task.Run(async () =>
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (_printerManager._printers[i] != null && _printerManager._printers[i].IsConnected())
+                    {
+                        _printerManager._printers[i].SendData("RQLI"); //send request template list command to printer
+                        await Task.Delay(100);
+                        SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductTemplateList, i);
+                    }
+                }
+
+            });
+        }
+
+        private void SendTemplateListToUI(int index, string[] printerTemplate, int PrinterIndex) //
+        {
+            try
+            {
+                byte[] byteRes = DataConverter.ToByteArray(printerTemplate);
+                MemoryTransfer.SendPrinterTemplateListToUI(_ipcDeviceToUISharedMemory_DT, index, byteRes, PrinterIndex);//
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+
+            }
+
+        }
+
+        private void SharedEvents_OnPrinterDataChange(object? sender , EventArgs e)
+        {
+            
+            if (sender is PODDataModel podData && podData.Index == SharedValues.SelectedPrinter) // && podData.Index == 1
+            {
+                _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Enqueue(sender); // 1
+            }
+        }
+
+        public void SendCompleteDataToUIAsync()
+        {
+            _CTS_SendStsPrint = new();
+            var tokenSts = _CTS_SendStsPrint.Token;
+            Task.Run(async () =>
+            {
+                byte[]? sentDataNumberBytes = new byte[7];
+                byte[]? receivedDataNumberBytes = new byte[7];
+                byte[]? printedDataNumberBytes = new byte[7];
+
+                try
+                {
+                    while (true)
+                    {
+                        if (tokenSts.IsCancellationRequested)
+                        {
+                            if (_QueueSentCodeNumber.IsEmpty &&
+                            _QueueReceivedCodeNumber.IsEmpty &&
+                            _QueuePrintedCodeNumber.IsEmpty &&
+                            _QueueCurrentPositionInDatabase.IsEmpty)
+                            {
+                                tokenSts.ThrowIfCancellationRequested();
+                            }
+                        }
+
+                        // Sent POD Number
+                        if (_QueueSentCodeNumber.TryDequeue(out int sentNumber))
+                        {
+                            sentDataNumberBytes = SharedFunctions.StringToFixedLengthByteArray(_countSentCode.ToString(), 7); // max 2000000
+                            MemoryTransfer.SendCounterSentToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, sentDataNumberBytes);
+                        }
+
+                        // Received POD Number
+                        if (_QueueReceivedCodeNumber.TryDequeue(out int receivedNumber))
+                        {
+                            receivedDataNumberBytes = SharedFunctions.StringToFixedLengthByteArray(_countReceivedCode.ToString(), 7); // max 2000000
+                            MemoryTransfer.SendCounterReceivedToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, receivedDataNumberBytes);
+                        }
+
+                        // Printed Number
+                        if (_QueuePrintedCodeNumber.TryDequeue(out int printedNumber))
+                        {
+                            printedDataNumberBytes = SharedFunctions.StringToFixedLengthByteArray(printedNumber.ToString(), 7);
+                            MemoryTransfer.SendCounterPrintedToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, printedDataNumberBytes);
+                        }
+
+                        // Current position (index and page)
+                        if (_QueueCurrentPositionInDatabase.TryDequeue(out byte[]? currentPos)) // Current Pos in Databse (index and page)
+                        {
+                            MemoryTransfer.SendCurrentPosDatabaseToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, currentPos);
+                        }
+
+                        // Cycle time POD transfer 
+                        MemoryTransfer.SendCycleTimePODTransferToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(_cycleTimePODDataTransfer));
+
+                        await Task.Delay(1);
+
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Thread sent sts print canceled !");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Thread sent sts print fail !");
+                }
+            });
+
+            // Total Checked, Total Passed, Total Failed
+            _CTS_SendStsCheck = new();
+            var tokenResult = _CTS_SendStsCheck.Token;
+            Task.Run(async () =>
+            {
+                byte[]? totalCheckedNumberBytes = new byte[7];
+                byte[]? totalPassedNumberBytes = new byte[7];
+                byte[]? totalFailedNumberBytes = new byte[7];
+
+                try
+                {
+                    while (true)
+                    {
+                        if (tokenResult.IsCancellationRequested)
+                        {
+                            if (_QueueTotalChekedNumber.IsEmpty &&
+                            _QueueTotalPassedNumber.IsEmpty &&
+                            _QueueTotalFailedNumber.IsEmpty)
+                            {
+                                tokenResult.ThrowIfCancellationRequested();
+                            }
+                        }
+
+                        bool triggerData = false;
+
+                        //Total Checked
+                        if (_QueueTotalChekedNumber.TryDequeue(out int totalCheckedNum))
+                        {
+                            totalCheckedNumberBytes = SharedFunctions.StringToFixedLengthByteArray(totalCheckedNum.ToString(), 7);
+                            triggerData = true;
+                        }
+
+                        //Total Passed
+                        if (_QueueTotalPassedNumber.TryDequeue(out int totalPassedNum))
+                        {
+                            totalPassedNumberBytes = SharedFunctions.StringToFixedLengthByteArray(totalPassedNum.ToString(), 7);
+                            triggerData = true;
+                        }
+
+                        //Total Failed
+                        if (_QueueTotalFailedNumber.TryDequeue(out int totalFailedNum))
+                        {
+                            totalFailedNumberBytes = SharedFunctions.StringToFixedLengthByteArray(totalFailedNum.ToString(), 7);
+                            triggerData = true;
+                        }
+
+                        if (triggerData)
+                        {
+                            byte[] combineBytes = SharedFunctions.CombineArrays(totalCheckedNumberBytes, totalPassedNumberBytes, totalFailedNumberBytes);
+                            MemoryTransfer.SendCheckedStatisticsToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, combineBytes);
+                        }
+
+                        await Task.Delay(1);
+                    }
+
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Thread sent sts checked canceled !");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Thread sent sts checked fail !");
+                }
+            });
+
+            _CTS_SendData = new();
+            var tokenData = _CTS_SendData.Token;
+            Task.Run(async () =>
+            {
+                try
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            if (tokenData.IsCancellationRequested)
+                            {
+                                if (_QueuePrintedCode.IsEmpty &&
+                                _QueueCheckedResultForUpdateUI.IsEmpty &&
+                                _QueueCheckedResult.IsEmpty)
+                                {
+                                    tokenData.ThrowIfCancellationRequested();
+                                }
+                            }
+
+                            //Printed Code
+                            if (_QueuePrintedCode.TryDequeue(out string[]? data))
+                            {
+                                MemoryTransfer.SendPrintedCodeRawToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(data));
+                            }
+
+                            //Detect Model Data
+                            if (_QueueCheckedResultForUpdateUI.TryDequeue(out DetectModel? detectModel)) // Detect model heavy size, So we will use Task
+                            {
+                                var detectModelBytes = DataConverter.ToByteArray(detectModel);
+                                MemoryTransfer.SendDetectModelToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, detectModelBytes);
+                            }
+
+                            if (_QueueCheckedResult.TryDequeue(out string[]? checkedResult))
+                            {
+
+                                var checkedResultBytes = DataConverter.ToByteArray(checkedResult);
+                                MemoryTransfer.SendCheckedResultRawToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, checkedResultBytes);
+
+                            }
+                        }
+                        catch (Exception) { }
+                        await Task.Delay(1);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Thread sent realtime data canceled !");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Thread sent realtime data fail !");
+                }
+            });
+        }
+
+        private CheckCondition CheckAllTheConditions()
+        {
+            // Check Camera Connection
+#if !DEBUG
+            if (_datamanCameraDeviceHandler != null && !_datamanCameraDeviceHandler.IsConnected)
+            {
+                return CheckCondition.NotConnectCamera;
+            }
+#endif
+            if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+            {
+                SharedFunctions.PrintConsoleMessage(SharedValues.SelectedJob.PrinterSeries.ToString());
+                //Check Printer Connection
+                if (_printerManager._printers[SharedValues.SelectedPrinter] != null && !_printerManager._printers[SharedValues.SelectedPrinter].IsConnected())
+                {
+                    return CheckCondition.NotConnectPrinter;
+                }
+
+                // Check Printer Template
+                if (SharedValues.SelectedJob.CompareType == CompareType.Database && (SharedValues.SelectedJob == null || SharedValues.SelectedJob.PrinterTemplate == ""))
+                {
+                    return CheckCondition.MissingParameterActivation;
+                }
+
+                // Check list POD code for Print and Check
+                if (_CodeListPODFormat == null || _CodeListPODFormat.IsEmpty)
+                {
+                    return CheckCondition.MissingParameterActivation;
+                }
+            }
+
+            return CheckCondition.Success;
+        }
+
+        private CheckPrinterSettings CheckAllSettingsPrinter(string printerIP)
+        {
+            _PrinterSettingsModel = SharedFunctions.GetSettingsPrinter(printerIP);
+
+            if (!_PrinterSettingsModel.IsSupportHttpRequest)
+            {
+                return CheckPrinterSettings.NotSupported;
+            }
+
+            if (!_PrinterSettingsModel.EnablePOD)
+            {
+                return CheckPrinterSettings.PODNotEnabled;
+            }
+
+            if (!_PrinterSettingsModel.ResponsePODCommand)
+            {
+                return CheckPrinterSettings.ResponsePODCommandNotEnable;
+            }
+
+            if (!_PrinterSettingsModel.ResponsePODData)
+            {
+                return CheckPrinterSettings.ResponsePODDataNotEnable;
+            }
+            // 0: json, 1: Raw data, 2: Customise
+            if (_PrinterSettingsModel.PodDataType != 1)
+            {
+                return CheckPrinterSettings.NotRawData;
+            }
+            // 0:print all, 1:print last, 2 print last and repeat
+            var podMode = SharedValues.SelectedJob.JobType == JobType.AfterProduction ? 0 : 1;
+            if (_PrinterSettingsModel.PodMode != podMode)
+            {
+                return CheckPrinterSettings.PODMode;
+            }
+
+            if (!_PrinterSettingsModel.EnableMonitor)
+            {
+                return CheckPrinterSettings.MonitorNotEnable;
+            }
+
+            return CheckPrinterSettings.Success;
+        }
+
+        public void StartProcess()
+        {
+            try
+            {
+                if (SharedValues.SelectedJob == null) return;
+                if (SharedValues.OperStatus == OperationStatus.Running || SharedValues.OperStatus == OperationStatus.Processing) // Only Start 1 times
+                {
+                    SharedFunctions.PrintConsoleMessage("Notify Error: The system has started !");
+                    _IsRechecked = false;
+                    NotificationProcess(NotifyType.StartSync);
+                    return;
+                }
+
+                var checkInitDataNotifyType = CheckInitDataErrorAndGenerateMessage();
+                if (checkInitDataNotifyType != NotifyType.Unk && SharedValues.SelectedJob.CompareType == CompareType.Database)
+                {
+                    NotificationProcess(checkInitDataNotifyType);
+                    SharedFunctions.PrintConsoleMessage("Check Init Data Error: " + checkInitDataNotifyType.ToString());
+                    return;
+                }
+
+                bool isDatabaseDeny = SharedValues.SelectedJob.CompareType == CompareType.Database && SharedValues.TotalCode == 0;
+                if (isDatabaseDeny)
+                {
+                    SharedFunctions.PrintConsoleMessage("Database doesn't exist !");
+                    NotificationProcess(NotifyType.DatabaseDoNotExist);
+                    return;
+                }
+
+                CheckCondition checkCondition = CheckAllTheConditions();
+
+                if (checkCondition != CheckCondition.Success)
+                {
+                    switch (checkCondition)
+                    {
+                        case CheckCondition.NotLoadDatabase:
+                            Console.WriteLine("Notify Error: Please check database connection");
+                            NotificationProcess(NotifyType.NotLoadDatabase);
+                            break;
+                        case CheckCondition.NotConnectCamera:
+                            Console.WriteLine("Notify Error: Please check camera connection");
+                            NotificationProcess(NotifyType.NotConnectCamera);
+                            break;
+                        case CheckCondition.NotLoadTemplate:
+                            Console.WriteLine("Notify Error: Please check the printer template");
+                            NotificationProcess(NotifyType.NotLoadTemplate);
+                            break;
+                        case CheckCondition.MissingParameter:
+                            Console.WriteLine("Notify Error: Some parameter is missing ! Please check again");
+                            NotificationProcess(NotifyType.MissingParameter);
+                            break;
+                        case CheckCondition.NotConnectPrinter:
+                            Console.WriteLine("Notify Error: Please check printer connection");
+                            NotificationProcess(NotifyType.NotConnectPrinter);
+                            break;
+                        case CheckCondition.NotConnectServer:
+                            NotificationProcess(NotifyType.NotConnectServer);
+                            break;
+                        case CheckCondition.LeastOneAction:
+                            NotificationProcess(NotifyType.LeastOneAction);
+                            break;
+                        case CheckCondition.MissingParameterActivation:
+                            Console.WriteLine("Notify Error: Some activation params are missing! Please check again");
+                            NotificationProcess(NotifyType.MissingParameterActivation);
+                            break;
+                        case CheckCondition.MissingParameterPrinting:
+                            NotificationProcess(NotifyType.MissingParameterPrinting);
+                            break;
+                        case CheckCondition.MissingParameterWarehouseInput:
+                            NotificationProcess(NotifyType.MissingParameterWarehouseInput);
+                            break;
+                        case CheckCondition.MissingParameterWarehouseOutput:
+                            NotificationProcess(NotifyType.MissingParameterWarehouseOutput);
+                            break;
+                        case CheckCondition.CreatingWarehouseInputReceipt:
+                            NotificationProcess(NotifyType.CreatingWarehouseInputReceipt);
+                            break;
+                        case CheckCondition.NoJobsSelected:
+                            Console.WriteLine("Notify Error: Please select a jon for system");
+                            NotificationProcess(NotifyType.NoJobsSelected);
+                            break;
+                        default:
+                            break;
+                    }
+                    return;
+                }
+
+                bool isNeedToCheckPrinter = SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && SharedValues.SelectedJob.CompareType == CompareType.Database;
+
+                CheckPrinterSettings checkPrinterSettings = CheckAllSettingsPrinter(DeviceSharedValues.PrinterIPs[SharedValues.SelectedPrinter]);
+                //&& SharedValues.SelectedJob.IsCheckPrinterSettingsEnabled
+                if (checkPrinterSettings != CheckPrinterSettings.Success && isNeedToCheckPrinter && DeviceSharedValues.IsCheckPrinterSettingsEnabled && !_IsRechecked)
+                {
+                    switch (checkPrinterSettings)
+                    {
+                        case CheckPrinterSettings.NotSupported:
+                            NotificationProcess(NotifyType.NotSupported);
+                            break;
+                        case CheckPrinterSettings.NotRawData:
+                            NotificationProcess(NotifyType.NotRawData);
+                            break;
+                        case CheckPrinterSettings.PODNotEnabled:
+                            NotificationProcess(NotifyType.PODNotEnabled);
+                            break;
+                        case CheckPrinterSettings.ResponsePODDataNotEnable:
+                            NotificationProcess(NotifyType.ResponsePODDataNotEnable);
+                            break;
+                        case CheckPrinterSettings.ResponsePODCommandNotEnable:
+                            NotificationProcess(NotifyType.ResponsePODCommandNotEnable);
+                            break;
+                        case CheckPrinterSettings.MonitorNotEnable:
+                            NotificationProcess(NotifyType.MonitorNotEnable);
+                            break;
+                        case CheckPrinterSettings.PODMode:
+                            if (SharedValues.SelectedJob.JobType == JobType.AfterProduction)
+                                NotificationProcess(NotifyType.PODModeMustBePrintAll);
+                            else
+                                NotificationProcess(NotifyType.PODModeMustBePrintLast);
+                            break;
+                        default:
+                            break;
+                    }
+                    return;
+                }
+
+                SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
+                _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Clear();
+                if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
+                    SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && !_IsRechecked)
+                {
+                    SharedValues.OperStatus = OperationStatus.Processing;
+                    if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
+                    {
+                        _printerManager._printers[SharedValues.SelectedPrinter].SendData("STOP"); //send stop command to printer
+                        Thread.Sleep(50);
+                        //string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
+                        //string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
+
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (_printerManager._printers[i].IsConnected()){
+                                string templateNameWithoutExt = SharedValues.SelectedJob.TemplateManager.PrinterTemplateList[i].Replace(".dsj", "");
+                                string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
+                                _printerManager._printers[i].SendData(startPrintCommand); // Send Start command to printer
+                                //MessageBox.Show("PrinterTemplateList " + i + templateNameWithoutExt.ToString());
+                            }
+
+                        }
+
+
+                    }
+                }
+                else
+                {
+                    SharedValues.OperStatus = OperationStatus.Running;
+                }
+                bool isNonePrinted = SharedValues.SelectedJob.CompareType == CompareType.CanRead || SharedValues.SelectedJob.CompareType == CompareType.StaticText;
+                SharedValues.SelectedJob.JobStatus = JobStatus.Unfinished;
+
+                SaveJobChangedSettings(SharedValues.SelectedJob);
+
+                SendCompleteDataToUIAsync();
+
+                CompareAsync();
+
+                ExportImagesToFileAsync();
+
+                UpdateUICheckedResultAsync();
+
+                ExportCheckedResultToFileAsync();
+
+                if (SharedValues.SelectedJob.CompareType == CompareType.Database)
+                {
+                    UpdateUIPrintedResponseAsync();
+                    ExportPrintedResponseToFileAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+        }
+
+        public async void RePrintAsync()
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    if (!_IsAfterProductionMode) return; // Only use for After Production
+
+                    lock (_SyncObjCodeList)
+                    {
+                        if (SharedValues.ListPrintedCodeObtainFromFile.Count > 0 && _CodeListPODFormat.Count > 0)
+                        {
+                            _TotalMissed = 0;
+                            int statusColIndex = SharedValues.ListPrintedCodeObtainFromFile[0].Length - 1;
+                            foreach (var item in _CodeListPODFormat)
+                            {
+                                if (!item.Value.Status) // Not yet compare or failed compare
+                                {
+                                    if (SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] == "Printed") // Is Printed
+                                        SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Reprint"; // change to Re-Print state
+#if DEBUG
+                                    Console.WriteLine("Status Reprint: " + SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
+#endif
+                                }
+                                else // Valid compare
+                                {
+                                    if (SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] != "Printed") // Not Printed
+                                        SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex] = "Printed";
+#if DEBUG
+                                    Console.WriteLine("Status Printed: " + SharedValues.ListPrintedCodeObtainFromFile[item.Value.Index][statusColIndex]);
+#endif
+                                }
+                            }
+                            _TotalMissed = SharedValues.TotalCode - NumberOfCheckPassed;
+                        }
+                    }
+                    if (NumberOfCheckPassed < SharedValues.TotalCode)
+                    {
+                        StartProcess();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SharedFunctions.PrintConsoleMessage(ex.Message);
+                }
+            });
+        }
+
+        public async Task StopProcessAsync()
+        {
+            await Task.Run(() =>
+            {
+                KillTThreadSendWorkingDataToPrinter();
+                _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Clear();
+                _QueueBufferCameraReceivedData.Clear();
+                _QueueBufferScannerReceivedData.Clear();
+                ClearBufferUpdateUI();
+
+                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+                {
+                    if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
+                    {
+                        _printerManager._printers[1].SendData("STOP");
+                        _printerManager._printers[0].SendData("STOP");
+
+                        lock (_StopLocker)
+                        {
+                            _IsStopOK = false;
+                            int countTimeout = 0;
+                            while (!_IsStopOK && countTimeout < 1)
+                            {
+                                Monitor.Wait(_StopLocker, 3000); //Wait until there is a stop notify from the printer
+                                countTimeout++;
+                            }
+                        }
+                    }
+                }
+
+                _TotalMissed = 0;
+                _CTS_UIUpdatePrintedResponse.Cancel();
+                _CTS_CompareAction.Cancel();
+                _QueueBufferCameraReceivedData.Enqueue(null);
+                _QueueBufferPODDataCompared.Enqueue(null);
+                _QueueBufferScannerReceivedData.Enqueue(null);
+                _QueueBufferScannerDataCompared.Enqueue(null);
+                _VirtualCTS?.Cancel();
+
+                SharedValues.OperStatus = OperationStatus.Stopped;
+
+                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database)
+                {
+                    int currentCheckNumber = SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
+
+                    if (currentCheckNumber >= SharedValues.TotalCode - _NumberOfDuplicate)
+                    {
+                        SharedValues.SelectedJob.JobStatus = JobStatus.Accomplished;
+                        SaveJobChangedSettings(SharedValues.SelectedJob);
+                    }
+                }
+            });
+            _IsRechecked = false;
+        }
+
+        public bool GetPrinterStatus()
+        {
+            if (_printerManager._printers[SharedValues.SelectedPrinter] != null && !_printerManager._printers[SharedValues.SelectedPrinter].IsConnected())
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        private void SendVerifiedDataToPrinter(object? sender, EventArgs e)
+        {
+            try
+            {
+                string command = "DATA;";
+                string[]? arr = sender as string[];
+
+                if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) // is basic
+                {
+                    command += arr[1] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[1]; // If null => send custom string, else send detectmodel.text (read = send)
+                }
+                else // is compare
+                {
+                    if (DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint.Count == 0) // If no select any field => send all field or send n failure field
+                    {
+                        command += string.Join(";", arr.Take(arr.Length - 1).Skip(1)
+                            .Select(x => x ?? DeviceSharedValues.VPObject.FailedDataSentToPrinter));
+                    }
+                    else // if select field => send selected field or send n value failure
+                    {
+                        command += string.Join(";", DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint
+                           .Where(x => x.Index < arr.Length - 1)
+                           .Select(x => arr[x.Index] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[x.Index]));
+                    }
+                }
+                if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
+                {
+                    _printerManager._printers[SharedValues.SelectedPrinter].SendData(command);
+                    NumberOfSentPrinter++;
+                    Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
+                    _QueueSentCodeNumber.Enqueue(_countSentCode);
+
+                }
+                else
+                {
+                }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+        }
+
+        // end printer
+
+        private NotifyType CheckInitDataErrorAndGenerateMessage()
+        {
+
+            if (_InitDataErrorList.Count > 0)
+            {
+                foreach (var value in _InitDataErrorList)
+                {
+                    NotifyType tmp = value switch
+                    {
+                        NotifyType.DatabaseUnknownError => value,
+                        NotifyType.PrintedStatusUnknownError => value,
+                        NotifyType.CheckedResultUnknownError => value,
+                        NotifyType.CannotAccessDatabase => value,
+                        NotifyType.CannotAccessCheckedResult => value,
+                        NotifyType.CannotAccessPrintedResponse => value,
+                        NotifyType.DatabaseDoNotExist => value,
+                        NotifyType.CheckedResultDoNotExist => value,
+                        NotifyType.PrintedResponseDoNotExist => value,
+                        NotifyType.CannotCreatePodDataList => value,
+                        NotifyType.Unknown => value,
+                        _ => NotifyType.Unk,
+                    };
+
+                    return tmp;
+                }
+            }
+            return NotifyType.Unk;
+        }
+
+        public void Recheck()
+        {
+            if (_barcodeScannerHandler == null || !_barcodeScannerHandler.IsConnected())
+            {
+                NotificationProcess(NotifyType.NotConnectScanner);
+            }
+            else
+            {
+                _IsRechecked = true;
+                StartProcess();
+            }
+
+        }
+        public static void SaveJobChangedSettings(JobModel selectedJob)
+        {
+
+            try
+            {
+                string jobFilePath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
+                string jobFileSelectedPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + selectedJob.Name + SharedValues.Settings.JobFileExtension;
+
+                selectedJob.SaveJobFile(jobFilePath);
+                if (File.Exists(jobFileSelectedPath))
+                {
+                    selectedJob.SaveJobFile(jobFileSelectedPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+        }
+
+        private void ClearBufferUpdateUI()
+        {
+            _QueueSentCodeNumber?.Clear();
+            _QueueReceivedCodeNumber?.Clear();
         }
 
         private void ResultFinishPrint(string[] podCommand)
@@ -1013,8 +1315,6 @@ namespace DipesLinkDeviceTransfer
                             if (isAutoComplete)
                             {
                                 bool completeCondition = false;
-                                // Total check : ((pass + fail) >= total) code will auto stop
-                                // Pass check: (pass >= total) check will auto stop
                                 int stopNumber = SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
 
                                 // get stop number for verify and print mode
@@ -1057,7 +1357,6 @@ namespace DipesLinkDeviceTransfer
                             }
                         }
 
-                        // thinh dang lam
                         DetectModel? detectModel = null;
 
                         if (!_QueueBufferScannerReceivedData.IsEmpty && _IsRechecked)
@@ -1068,15 +1367,6 @@ namespace DipesLinkDeviceTransfer
                         {
                             _ = _QueueBufferCameraReceivedData.TryDequeue(out detectModel);
                         }
-
-                        //if (!_QueueBufferScannerReceivedData.IsEmpty && _IsRechecked)
-                        //{
-                        //    _ = _QueueBufferScannerReceivedData.TryDequeue(out detectModel);
-                        //}
-                        //else if (!_QueueBufferCameraReceivedData.IsEmpty && !_IsRechecked)
-                        //{
-                        //    _ = _QueueBufferCameraReceivedData.TryDequeue(out detectModel);
-                        //}
 
                         int compareIndex = _StartIndex + TotalChecked;
                         if (detectModel != null)
@@ -1094,22 +1384,21 @@ namespace DipesLinkDeviceTransfer
                                     detectModel.CompareResult = StaticTextCompare(detectModel.Text, staticText);
                                     break;
                                 case CompareType.Database:
-                                    bool isNeedToCheckPrintedResponse = true; // mặc định true nếu không phải on production
-
-                                    if (_IsOnProductionMode)  // On Production
+                                    bool isNeedToCheckPrintedResponse = true; 
+                                    if (_IsOnProductionMode) 
                                     {
-                                        lock (_PrintedResponseLocker) // lắng nghe tín hiệu RSPF từ máy in (biến check phản hồi)
+                                        lock (_PrintedResponseLocker) 
                                         {
                                             isNeedToCheckPrintedResponse = _IsPrintedResponse;
                                             _IsPrintedResponse = false;
                                         }
                                     }
 
-                                    if (!isNeedToCheckPrintedResponse || _CodeListPODFormat == null) // Invalid nếu máy in không phản hồi
+                                    if (!isNeedToCheckPrintedResponse || _CodeListPODFormat == null)
                                     {
                                         detectModel.CompareResult = ComparisonResult.Invalided;
                                     }
-                                    else // nếu máy in có phản hồi thì tiến hành so sánh
+                                    else 
                                     {
                                         detectModel.CompareResult = DatabaseCompare(detectModel.Text, ref currentCheckedIndex); // Conclude Compare Result
 
@@ -1196,7 +1485,6 @@ namespace DipesLinkDeviceTransfer
                     _CTS_UIUpdateCheckedResult?.Cancel();
                     _QueueBufferCameraDataCompared.Enqueue(null);
                     _QueueBufferScannerDataCompared.Enqueue(null);
-                    // Reset Number sent/received data and 
                     NumberOfSentPrinter = 0;
                     ReceivedCode = 0;
 
@@ -1213,7 +1501,7 @@ namespace DipesLinkDeviceTransfer
 
         #region VerifyAndPrint
 
-        private async Task InitVerifyAndPrindSendDataMethod()
+        public async Task InitVerifyAndPrindSendDataMethod()
         {
             if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) return;
             _Emergency?.Clear();
@@ -1272,8 +1560,7 @@ namespace DipesLinkDeviceTransfer
                                 }
                             }
 
-                            result.TryAdd(tmp, index);  // Add to List : Tạo sẵn một danh sách theo cấu trúc POD send để sẵn sàng gửi xuống máy in
-                                                        // Console.WriteLine("VNP List "+ tmp +" - "+ index);
+                            result.TryAdd(tmp, index); 
                         }
                     }
                 }
@@ -1340,59 +1627,6 @@ namespace DipesLinkDeviceTransfer
             OnReceiveVerifyDataEvent?.Invoke(sender, EventArgs.Empty);
         }
 
-        public bool GetPrinterStatus()
-        {
-            if (_rynanRPrinterDeviceHandler != null && !_rynanRPrinterDeviceHandler.IsConnected())
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private void SendVerifiedDataToPrinter(object? sender, EventArgs e)
-        {
-            try
-            {
-                string command = "DATA;";
-                string[]? arr = sender as string[];
-
-                if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod) // is basic
-                {
-                    command += arr[1] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[1]; // If null => send custom string, else send detectmodel.text (read = send)
-                }
-                else // is compare
-                {
-                    if (DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint.Count == 0) // If no select any field => send all field or send n failure field
-                    {
-                        command += string.Join(";", arr.Take(arr.Length - 1).Skip(1)
-                            .Select(x => x ?? DeviceSharedValues.VPObject.FailedDataSentToPrinter));
-                    }
-                    else // if select field => send selected field or send n value failure
-                    {
-                        command += string.Join(";", DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint
-                           .Where(x => x.Index < arr.Length - 1)
-                           .Select(x => arr[x.Index] == null ? DeviceSharedValues.VPObject.FailedDataSentToPrinter : arr[x.Index]));
-                    }
-                }
-                if (_rynanRPrinterDeviceHandler != null)
-                {
-                    _rynanRPrinterDeviceHandler.SendData(command);
-                    NumberOfSentPrinter++;
-                    Interlocked.Exchange(ref _countSentCode, NumberOfSentPrinter);
-                    _QueueSentCodeNumber.Enqueue(_countSentCode);
-
-                }
-                else
-                {
-                    // Todo: Device Transfer Failed
-                }
-            }
-            catch (Exception ex)
-            {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
-            }
-        }
-
         #endregion End VerifyAndPrint
 
         private static ComparisonResult CanreadCompare(string text) => (text.Equals(string.Empty)) ? ComparisonResult.Invalided : ComparisonResult.Valid;
@@ -1416,20 +1650,17 @@ namespace DipesLinkDeviceTransfer
                         {
                             compareStatus.Index = SharedValues.ListPrintedCodeObtainFromFile.FindIndex(x => SharedFunctions.GetCompareDataByPODFormat(x, SharedValues.SelectedJob.PODFormat) == data);
                         }
-                        //If not yet check => change status to checked and => return valid Result
                         if (!compareStatus.Status) // Check duplicate
                         {
                             _CodeListPODFormat[data].Status = true;
                             currentValidIndex = compareStatus.Index;
                             return ComparisonResult.Valid;
                         }
-                        // If there has been a previous check => Duplicate
                         else
                         {
                             return ComparisonResult.Duplicated;
                         }
                     }
-                    //Not exist in Dictionary
                     else
                     {
                         return ComparisonResult.Invalided;
@@ -1523,17 +1754,13 @@ namespace DipesLinkDeviceTransfer
                                     }
                                 }
 
-                                // Add data to queue of Backup printed 
                                 var printedCode = new List<string[]>(strPrintedResponseList);
                                 _QueueBufferBackupPrintedCode.Enqueue(printedCode);
-
-
                                 // Clear list
                                 strPrintedResponseList.Clear();
                             }
                         }
 
-                        //Time delay avoid frezee user interface
                         await Task.Delay(1, token);
                     }
                 }
@@ -1579,10 +1806,8 @@ namespace DipesLinkDeviceTransfer
                         {
                             _ = _QueueBufferCameraDataCompared.TryDequeue(out detectModel);
                         }
-                        // SharedFunctions.PrintConsoleMessage($"_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count().ToString());
                         if (detectModel == null) { await Task.Delay(1); continue; };
-                        // Console.WriteLine("_QueueBufferCameraDataCompared: " + _QueueBufferCameraDataCompared.Count);
-                        // Backup Failed Image
+
                         var image = detectModel.Image ?? new Bitmap(100, 100);
                         if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.IsImageExport)
                         {
@@ -1604,14 +1829,11 @@ namespace DipesLinkDeviceTransfer
 
                         }
 
-                        _QueueBufferBackupCheckedResult.Enqueue(new List<string[]>(strResultCheckList)); // Add to queue for backup file checked result
-                        _QueueCheckedResultForUpdateUI.Enqueue(detectModel); // Queue Detectmodel for UI Update (Image and Decode Time)
-                                                                             //   Console.WriteLine("_QueueCheckedResultForUpdateUI: " + _QueueCheckedResultForUpdateUI.Count);
+                        _QueueBufferBackupCheckedResult.Enqueue(new List<string[]>(strResultCheckList)); 
+                        _QueueCheckedResultForUpdateUI.Enqueue(detectModel); 
+                                                                            
                         _ = strResult.DefaultIfEmpty();
                         strResultCheckList.Clear();
-
-                        //Time delay avoid frezee user interface
-                        // await Task.Delay(1, token);
                     }
                 }
                 catch (OperationCanceledException)
@@ -1620,12 +1842,6 @@ namespace DipesLinkDeviceTransfer
                     Console.WriteLine("Thread update checked result was stopped!");
 #endif
                     ReleaseBackupTask();
-                    // _CTS_BackupFailedImage?.Cancel(); //Cancel backup failed image task
-                    // _CTS_BackupCheckedResult?.Cancel(); //Cancel backup checked result task
-
-                    ///   _CTS_BackupPrintedResponse?.Cancel();
-
-
                 }
                 catch (Exception)
                 {
@@ -1661,14 +1877,9 @@ namespace DipesLinkDeviceTransfer
             _CTS_SendStsPrint.Cancel();
             _CTS_SendStsPrint.Cancel();
             _CTS_SendData.Cancel();
-
-            //_QueueBufferCameraDataCompared.Enqueue(null);
-            //_QueueBufferPODDataCompared.Enqueue(null);
-            //_QueueBufferBackupPrintedCode.Enqueue(null);
-            //_QueueBufferBackupCheckedResult.Enqueue(null);
         }
 
-        private void ReleaseResource()
+        public void ReleaseResource()
         {
             try
             {
@@ -1696,7 +1907,7 @@ namespace DipesLinkDeviceTransfer
                 SharedValues.ListPrintedCodeObtainFromFile.Clear();
 
                 _QueueBufferCameraReceivedData.Clear();
-                _QueueBufferPrinterReceivedData.Clear();
+                _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Clear();
                 _QueueBufferBackupPrintedCode.Clear();
                 _QueueBufferBackupCheckedResult.Clear();
                 _QueueBufferPODDataCompared.Clear();
@@ -1717,35 +1928,6 @@ namespace DipesLinkDeviceTransfer
             catch (Exception) { }
         }
 
-        public void GetPrinterTemplateList()
-        {
-            Task requestTemplateTask = Task.Run(async () =>
-            {
-                if (_rynanRPrinterDeviceHandler != null && _rynanRPrinterDeviceHandler.IsConnected())
-                {
-                    SharedFunctions.PrintConsoleMessage("Fucking Uw");
-                    _rynanRPrinterDeviceHandler.SendData("RQLI"); //send request template list command to printer
-                    await Task.Delay(100);
-                    SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductTemplateList);
-                }
-            });
-        }
-
-        private void SendTemplateListToUI(int index, string[] printerTemplate)
-        {
-            try
-            {
-                byte[] byteRes = DataConverter.ToByteArray(printerTemplate);
-                MemoryTransfer.SendPrinterTemplateListToUI(_ipcDeviceToUISharedMemory_DT, index, byteRes);
-            }
-            catch (Exception ex)
-            {
-                SharedFunctions.PrintConsoleMessage(ex.Message);
-
-            }
-
-        }
-
         private void ReleaseIPCTask()
         {
             _CTS_SendStsPrint?.Cancel();
@@ -1755,212 +1937,11 @@ namespace DipesLinkDeviceTransfer
 
         }
 
-        public void SendCompleteDataToUIAsync()
-        {
-            // Sent Number, Received Number, Printed Number
-            _CTS_SendStsPrint = new();
-            var tokenSts = _CTS_SendStsPrint.Token;
-            Task.Run(async () =>
-            {
-                byte[]? sentDataNumberBytes = new byte[7];
-                byte[]? receivedDataNumberBytes = new byte[7];
-                byte[]? printedDataNumberBytes = new byte[7];
-
-                try
-                {
-                    while (true)
-                    {
-                        if (tokenSts.IsCancellationRequested)
-                        {
-                            if (_QueueSentCodeNumber.IsEmpty &&
-                            _QueueReceivedCodeNumber.IsEmpty &&
-                            _QueuePrintedCodeNumber.IsEmpty &&
-                            _QueueCurrentPositionInDatabase.IsEmpty)
-                            {
-                                tokenSts.ThrowIfCancellationRequested();
-                            }
-                        }
-
-                        // Sent POD Number
-                        if (_QueueSentCodeNumber.TryDequeue(out int sentNumber))
-                        {
-                            sentDataNumberBytes = SharedFunctions.StringToFixedLengthByteArray(_countSentCode.ToString(), 7); // max 2000000
-                            MemoryTransfer.SendCounterSentToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, sentDataNumberBytes);
-                        }
-
-                        // Received POD Number
-                        if (_QueueReceivedCodeNumber.TryDequeue(out int receivedNumber))
-                        {
-                            receivedDataNumberBytes = SharedFunctions.StringToFixedLengthByteArray(_countReceivedCode.ToString(), 7); // max 2000000
-                            MemoryTransfer.SendCounterReceivedToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, receivedDataNumberBytes);
-                        }
-
-                        // Printed Number
-                        if (_QueuePrintedCodeNumber.TryDequeue(out int printedNumber))
-                        {
-                            printedDataNumberBytes = SharedFunctions.StringToFixedLengthByteArray(printedNumber.ToString(), 7);
-                            MemoryTransfer.SendCounterPrintedToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, printedDataNumberBytes);
-                        }
-
-                        // Current position (index and page)
-                        if (_QueueCurrentPositionInDatabase.TryDequeue(out byte[]? currentPos)) // Current Pos in Databse (index and page)
-                        {
-                            MemoryTransfer.SendCurrentPosDatabaseToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, currentPos);
-                        }
-
-                        // Cycle time POD transfer 
-                        MemoryTransfer.SendCycleTimePODTransferToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(_cycleTimePODDataTransfer));
-
-                        await Task.Delay(1);
-
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    Console.WriteLine("Thread sent sts print canceled !");
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Thread sent sts print fail !");
-                }
-            });
-
-            // Total Checked, Total Passed, Total Failed
-            _CTS_SendStsCheck = new();
-            var tokenResult = _CTS_SendStsCheck.Token;
-            Task.Run(async () =>
-            {
-                byte[]? totalCheckedNumberBytes = new byte[7];
-                byte[]? totalPassedNumberBytes = new byte[7];
-                byte[]? totalFailedNumberBytes = new byte[7];
-
-                try
-                {
-                    while (true)
-                    {
-                        if (tokenResult.IsCancellationRequested)
-                        {
-                            if (_QueueTotalChekedNumber.IsEmpty &&
-                            _QueueTotalPassedNumber.IsEmpty &&
-                            _QueueTotalFailedNumber.IsEmpty)
-                            {
-                                tokenResult.ThrowIfCancellationRequested();
-                            }
-                        }
-
-                        bool triggerData = false;
-
-                        //Total Checked
-                        if (_QueueTotalChekedNumber.TryDequeue(out int totalCheckedNum))
-                        {
-                            totalCheckedNumberBytes = SharedFunctions.StringToFixedLengthByteArray(totalCheckedNum.ToString(), 7);
-                            triggerData = true;
-                        }
-
-                        //Total Passed
-                        if (_QueueTotalPassedNumber.TryDequeue(out int totalPassedNum))
-                        {
-                            totalPassedNumberBytes = SharedFunctions.StringToFixedLengthByteArray(totalPassedNum.ToString(), 7);
-                            triggerData = true;
-                        }
-
-                        //Total Failed
-                        if (_QueueTotalFailedNumber.TryDequeue(out int totalFailedNum))
-                        {
-                            totalFailedNumberBytes = SharedFunctions.StringToFixedLengthByteArray(totalFailedNum.ToString(), 7);
-                            triggerData = true;
-                        }
-
-                        if (triggerData)
-                        {
-                            byte[] combineBytes = SharedFunctions.CombineArrays(totalCheckedNumberBytes, totalPassedNumberBytes, totalFailedNumberBytes);
-                            MemoryTransfer.SendCheckedStatisticsToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, combineBytes);
-                        }
-
-                        await Task.Delay(1);
-                    }
-
-                }
-                catch (OperationCanceledException)
-                {
-                    Console.WriteLine("Thread sent sts checked canceled !");
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Thread sent sts checked fail !");
-                }
-            });
-
-            //Printed code, Camera Data (Image, Point Focus), Checked Result
-            _CTS_SendData = new();
-            var tokenData = _CTS_SendData.Token;
-            Task.Run(async () =>
-            {
-                try
-                {
-                    while (true)
-                    {
-                        try
-                        {
-                            if (tokenData.IsCancellationRequested)
-                            {
-                                if (_QueuePrintedCode.IsEmpty &&
-                                _QueueCheckedResultForUpdateUI.IsEmpty &&
-                                _QueueCheckedResult.IsEmpty)
-                                {
-                                    tokenData.ThrowIfCancellationRequested();
-                                }
-                            }
-
-                            //Printed Code
-                            if (_QueuePrintedCode.TryDequeue(out string[]? data))
-                            {
-                                MemoryTransfer.SendPrintedCodeRawToUI(_ipcDeviceToUISharedMemory_DT, JobIndex, DataConverter.ToByteArray(data));
-                            }
-
-                            //Detect Model Data
-                            if (_QueueCheckedResultForUpdateUI.TryDequeue(out DetectModel? detectModel)) // Detect model heavy size, So we will use Task
-                            {
-                                //  SharedFunctions.PrintConsoleMessage($"_QueueCheckedResultForUpdateUI: " + _QueueCheckedResultForUpdateUI.Count().ToString());
-
-                                var detectModelBytes = DataConverter.ToByteArray(detectModel);
-                                //  SharedFunctions.PrintConsoleMessage(detectModelBytes.Length.ToString());
-                                MemoryTransfer.SendDetectModelToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, detectModelBytes);
-                            }
-
-                            // Current Checked Result
-                            if (_QueueCheckedResult.TryDequeue(out string[]? checkedResult))
-                            {
-                                // SharedFunctions.PrintConsoleMessage($"_QueueCheckedResult: " + _QueueCheckedResult.Count().ToString());
-                                //_ = Task.Run(() =>
-                                //{
-                                var checkedResultBytes = DataConverter.ToByteArray(checkedResult);
-                                MemoryTransfer.SendCheckedResultRawToUI(_ipcDeviceToUISharedMemory_RD, JobIndex, checkedResultBytes);
-                                //}); ;
-
-
-                            }
-                        }
-                        catch (Exception) { }
-                        await Task.Delay(1);
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    Console.WriteLine("Thread sent realtime data canceled !");
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Thread sent realtime data fail !");
-                }
-            });
-        }
-
-        private void StartAllThreadForTesting()
+        public void StartAllThreadForTesting()
         {
             try
             {
-                if (_rynanRPrinterDeviceHandler.IsConnected())
+                if (_printerManager._printers[SharedValues.SelectedPrinter].IsConnected())
                 {
                     if (SharedValues.SelectedJob is null) { SharedFunctions.PrintConsoleMessage("Job Not Found !"); return; }
                     SharedFunctions.PrintConsoleMessage("Please Disconnect Printer before start Simulate !"); return;
@@ -1992,7 +1973,6 @@ namespace DipesLinkDeviceTransfer
 
             _VirtualCTS = new CancellationTokenSource();
             var token = _VirtualCTS.Token;
-            //  Stopwatch stopwatch_Sim;
             await Task.Run(async () =>
             {
                 var codes = new List<string[]>();
@@ -2004,7 +1984,6 @@ namespace DipesLinkDeviceTransfer
 
                 if (SharedValues.SelectedJob?.JobType == JobType.VerifyAndPrint)
                 {
-                    // todo
                 }
 
                 try
@@ -2030,7 +2009,7 @@ namespace DipesLinkDeviceTransfer
                             Image = new(SharedFunctions.GetImageFromImageByte(imageBytes)),
                             Text = SharedFunctions.GetCompareDataByPODFormat(codeModel, SharedValues.SelectedJob.PODFormat)
                         };
-                        _QueueBufferPrinterReceivedData.Enqueue(podDataModel);
+                        _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Enqueue(podDataModel);
                         _QueueBufferCameraReceivedData.Enqueue(detectModel);
 
                         await Task.Delay(20);

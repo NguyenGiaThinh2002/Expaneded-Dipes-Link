@@ -5,6 +5,7 @@ using SharedProgram.Shared;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Windows;
 using static DipesLink.Views.Enums.ViewEnums;
 
 namespace DipesLink.ViewModels
@@ -16,20 +17,20 @@ namespace DipesLink.ViewModels
         /// </summary>
         public static void LoadSetting()
         {
-			try
-			{
-               
+            try
+            {
+
                 string fullFilePath = SharedPaths.GetSettingPath();
                 SettingsModel? loadSettingsModel = SettingsModel.LoadSetting(fullFilePath);
 
-                if(loadSettingsModel != null)
+                if (loadSettingsModel != null)
                 {
                     loadSettingsModel.SystemParamsList ??= new List<ConnectParamsModel>(loadSettingsModel.NumberOfStation);
                     var numberStationGetFromFile = loadSettingsModel.SystemParamsList.Count;
                     var numberOfStationDesire = loadSettingsModel.NumberOfStation;
-                    var numberAdjust = Math.Abs(numberOfStationDesire - numberStationGetFromFile);
+                    var numberAdjust = Math.Abs(numberOfStationDesire - numberStationGetFromFile);                  
                     bool isAdd = false;
-                    if(numberOfStationDesire> numberStationGetFromFile)
+                    if (numberOfStationDesire > numberStationGetFromFile)
                     {
                         isAdd = true;
                     }
@@ -38,10 +39,30 @@ namespace DipesLink.ViewModels
                         for (int i = 0; i < numberAdjust; i++)
                         {
                             var item = new ConnectParamsModel();
+
+
+                            item.PrinterIPs = Enumerable.Repeat("127.0.0.1", loadSettingsModel.NumberOfPrinter).ToList();
+                            item.PrinterPorts = Enumerable.Repeat(2000.0, loadSettingsModel.NumberOfPrinter).ToList();
+
+                            // Dưới đây là ví dụ ở trên
+                            //item.PrinterIPs = new List<string>() { "127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1" };
+                            //item.PrinterPorts = new List<double>() { 2001, 2002, 2003, 2004 };
+
                             loadSettingsModel.SystemParamsList.Add(item);
                         }
                     }
-                 
+
+
+                    for (int i = 0; i < loadSettingsModel.NumberOfStation; i++)
+                    {
+                        if (loadSettingsModel.SystemParamsList[i].PrinterIPs.Count < loadSettingsModel.NumberOfPrinter)
+                        {
+                            loadSettingsModel.SystemParamsList[i].PrinterIPs = Enumerable.Repeat("127.0.0.1", loadSettingsModel.NumberOfPrinter).ToList();
+                            loadSettingsModel.SystemParamsList[i].PrinterPorts = Enumerable.Repeat(2000.0, loadSettingsModel.NumberOfPrinter).ToList();
+                        }
+
+                    }
+
                     ViewModelSharedValues.Settings = loadSettingsModel;
                 }
                 else
@@ -49,19 +70,27 @@ namespace DipesLink.ViewModels
                     InitDefaultSettings();
                 }
             }
-			catch (Exception)
-			{
+            catch (Exception)
+            {
                 InitDefaultSettings();
             }
         }
 
-        private static void InitDefaultSettings() 
+        private static void InitDefaultSettings()
         {
             var item = new ConnectParamsModel();
+            //item.PrinterIPs = new List<string>() { "127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1" };
+            // item.PrinterPorts = new List<double>() { 2001, 2002, 2003, 2004 };
+            item.NumberOfPrinter = 1;
+            item.PrinterIPs = Enumerable.Repeat("127.0.0.1", item.NumberOfPrinter).ToList();
+            item.PrinterPorts = Enumerable.Repeat(2000.0, item.NumberOfPrinter).ToList();         
+            item.IsCheckPrintersSettingsEnabled = new List<bool>() { true, false, true, false };
+
             var initSettings = new SettingsModel();
             initSettings.SystemParamsList.Add(item);
-            ViewModelSharedValues.Settings = initSettings;
+            ViewModelSharedValues.Settings = initSettings;            
             ViewModelSharedValues.Settings.NumberOfStation = 1;
+            ViewModelSharedValues.Settings.NumberOfPrinter = 1;
         }
 
         /// <summary>
@@ -144,14 +173,14 @@ namespace DipesLink.ViewModels
         {
             // Thread t = new Thread(new ThreadStart(() => { })); MultiThread
 
-            return Task.Run(() => 
-             {
-                 KillDeviceTransferByIndex(job.DeviceTransferID); // kill old process
+            return Task.Run(() =>
+            {
+                KillDeviceTransferByIndex(job.DeviceTransferID); // kill old process
                 //await Task.Delay(5000); // 0.5s
                 job.DeviceTransferID = InitDeviceTransfer(job.Index); // start new process
-             });
+            });
         }
 
-        
+
     }
 }

@@ -83,6 +83,20 @@ namespace DipesLink.Models
         }
 
 
+        public class IconData
+        {
+            public string Icon { get; set; }
+            public SolidColorBrush Color { get; set; }
+        }
+
+        private List<IconData> _PrinterStatusColorList = Enumerable.Range(0, ViewModelSharedValues.Settings.NumberOfPrinter)
+                                                            .Select(i => new IconData{Icon = "Print", Color = new(Colors.Red)}).ToList();
+        public List<IconData> PrinterStatusColorList
+        {
+            get { return _PrinterStatusColorList; }
+            set { _PrinterStatusColorList = value; OnPropertyChanged(); }
+        }
+
         private SolidColorBrush _ControllerStatusColor = new(Colors.Red);
         public SolidColorBrush ControllerStatusColor
         {

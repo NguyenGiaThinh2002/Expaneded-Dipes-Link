@@ -18,6 +18,9 @@ using TextBox = System.Windows.Controls.TextBox;
 using SharedProgram.DataTypes;
 using System.Windows.Media;
 using DipesLink_SDK_Cameras;
+using System.Windows.Data;
+using System.Collections.ObjectModel;
+using SharedProgram.Shared;
 namespace DipesLink.Views.UserControls.MainUc
 {
     /// <summary>
@@ -36,6 +39,7 @@ namespace DipesLink.Views.UserControls.MainUc
         static CommonDataType.CameraSeries[] cameraSeries = new[] { CommonDataType.CameraSeries.Dataman, CommonDataType.CameraSeries.InsightVision, CommonDataType.CameraSeries.InsightVisionDual };
         static CommonDataType.DatamanReadMode[] datamanReadModes = new[] { CommonDataType.DatamanReadMode.Basic, CommonDataType.DatamanReadMode.MultiRead };
         static CommonDataType.AutoSaveSettingsType settingType;
+        static int currentSelectedPrinter = 0;
 
         #endregion
 
@@ -43,6 +47,12 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             InitializeComponent();
             EventRegister();
+
+            if(ViewModelSharedValues.Settings.NumberOfPrinter > 1)
+            {
+                ButtonItemsControl.ItemsSource = Enumerable.Range(1, ViewModelSharedValues.Settings.NumberOfPrinter).Select(n => n.ToString()).ToList();
+            }
+
         }
 
         private void EventRegister()
@@ -156,6 +166,7 @@ namespace DipesLink.Views.UserControls.MainUc
             catch (Exception)
             {
             }
+
         }
 
         private void UpdateUIValues(MainViewModel vm)
@@ -300,7 +311,7 @@ namespace DipesLink.Views.UserControls.MainUc
             var currentCameraSeries = vm.ConnectParamsList[CurrentIndex()].CameraSeries;
 
             int selectedIndex = Array.IndexOf(cameraSeries, currentCameraSeries);
-            if(selectedIndex >= 0)
+            if (selectedIndex >= 0)
             {
                 ComboBoxCameraType.SelectedIndex = selectedIndex;
             }
@@ -333,21 +344,24 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void TextBoxIpParamsHandler(IpAddressControl textBox)
         {
+
             try
             {
                 textBox?.Dispatcher.BeginInvoke(new Action(() => // Use BeginInvoke to Update Input Last Value 
-                {
+                { 
                     var vm = CurrentViewModel<MainViewModel>();
                     if (vm == null) return;
                     if (vm.ConnectParamsList == null) return;
                     textBox.Text ??= string.Empty;
+
                     switch (textBox.Name)
                     {
                         case "TextBoxPrinterIP":
                             vm.ConnectParamsList[CurrentIndex()].PrinterIP = textBox.Text;
+                            vm.ConnectParamsList[CurrentIndex()].PrinterIPs[currentSelectedPrinter] = textBox.Text;                        
                             vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
                             break;
-                       
+
                         case "TextBoxCamIP":
                             vm.ConnectParamsList[CurrentIndex()].CameraIP = textBox.Text;
                             vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Camera);
@@ -356,17 +370,16 @@ namespace DipesLink.Views.UserControls.MainUc
                             vm.ConnectParamsList[CurrentIndex()].ControllerIP = textBox.Text;
                             vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Controller);
                             break;
-                      
+
                         case "TextBoxErrorField":
                             vm.ConnectParamsList[CurrentIndex()].FailedDataSentToPrinter = textBox.Text;
                             vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.VerifyAndPrint);
                             break;
-                       
 
                         default:
                             break;
                     }
-                   
+
 
                 }), DispatcherPriority.Background);
             }
@@ -407,7 +420,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-                  
+
 
                 }), DispatcherPriority.Background);
             }
@@ -491,7 +504,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         default:
                             break;
                     }
-                    vm.AutoSaveConnectionSetting(CurrentIndex(),CommonDataType.AutoSaveSettingsType.Controller);
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Controller);
                 }), DispatcherPriority.Background);
             }
             catch (Exception) { }
@@ -508,7 +521,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     if (vm == null) return;
                     vm.ConnectParamsList[CurrentIndex()].EnController = (bool)toggleButton.IsChecked;
-                    vm.AutoSaveConnectionSetting(CurrentIndex(),SharedProgram.DataTypes.CommonDataType.AutoSaveSettingsType.Controller);
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), SharedProgram.DataTypes.CommonDataType.AutoSaveSettingsType.Controller);
                 }), DispatcherPriority.Background);
 
                 if (vm.ConnectParamsList[CurrentIndex()].EnController)
@@ -547,7 +560,7 @@ namespace DipesLink.Views.UserControls.MainUc
                     List<PODModel> _PODFormat = verifyAndPrintPODFormat._PODFormat;
                     vm.ConnectParamsList[CurrentIndex()].PrintFieldForVerifyAndPrint = _PODFormat;
                     vm.ConnectParamsList[CurrentIndex()].FormatedPOD = verifyAndPrintPODFormat.FormatedPOD;
-                    vm.AutoSaveConnectionSetting(CurrentIndex(),CommonDataType.AutoSaveSettingsType.VerifyAndPrint);
+                    vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.VerifyAndPrint);
                 }
             }
             catch (Exception)
@@ -611,7 +624,7 @@ namespace DipesLink.Views.UserControls.MainUc
                         ViewModelSharedEvents.OnChangeJobHandler(((Button)sender).Name, CurrentIndex()); // event trigger for clear data job detail
                         CusAlert.Show(LanguageModel.GetLanguage("RestartSuccessfully", job?.Index), ImageStyleMessageBox.Info, true);
                     }
-                  //  vm?.AutoSaveConnectionSetting(CurrentIndex());
+                    //  vm?.AutoSaveConnectionSetting(CurrentIndex());
                 }
             }
             catch (Exception)
@@ -661,6 +674,8 @@ namespace DipesLink.Views.UserControls.MainUc
                 {
                     case "NumPort":
                         vm.ConnectParamsList[index].PrinterPort = value;
+                        vm.ConnectParamsList[index].PrinterPort = value;
+                        vm.ConnectParamsList[index].PrinterPorts[currentSelectedPrinter] = value;
                         vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Printer);
                         break;
                     case "NumPLCPort":
@@ -687,7 +702,11 @@ namespace DipesLink.Views.UserControls.MainUc
                     //    vm.ConnectParamsList[index].NumberOfBuffer = (int)value;
                     //    vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                     //    break;
-                    default:
+                    //case "NumPort1":
+                    //    SharedValues.SelectedPrinter = (int)value;
+                    //    MessageBox.Show(SharedValues.SelectedPrinter.ToString());
+                    //    break;
+                    default:               
                         break;
                 }
             }
@@ -695,6 +714,7 @@ namespace DipesLink.Views.UserControls.MainUc
             {
             }
         }
+
 
         private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
@@ -705,6 +725,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 NumUpdownParamsHandler(numericUpDown, newValue);
             }
         }
+
         private void CheckAllPrinterSettings_Toggled(object sender, RoutedEventArgs e)
         {
             ToggleSwitch toggleSwitch = sender as ToggleSwitch;
@@ -722,6 +743,75 @@ namespace DipesLink.Views.UserControls.MainUc
                 }
                 vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
             }
+        }
+
+        //private void TextBoxIP_ParamsChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    var ipAddressControl = sender as IpAddressControl;
+        //    if (ipAddressControl != null)
+        //    {
+        //        // thinh sua PrinterIPs
+        //        string updatedPrinterIP = ipAddressControl.Text;
+        //        var container = FindParent<ContentPresenter>(ipAddressControl);
+        //        var index = ItemControl_PrinterIPs.ItemContainerGenerator.IndexFromContainer(container);
+        //        var vm = CurrentViewModel<MainViewModel>();
+        //        vm.ConnectParamsList[CurrentIndex()].PrinterIPs[index] = updatedPrinterIP;
+        //        vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
+
+        //        // MessageBox.Show($"Item changed at index: {index}" + updatedPrinterIP);
+        //    }
+        //}
+
+        //private void NumericUpDownPorts_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        //{
+        //    var numericUpDown = sender as MahApps.Metro.Controls.NumericUpDown;
+        //    if (numericUpDown != null && e.NewValue != null)
+        //    {
+        //        var container = FindParent<ContentPresenter>(numericUpDown);
+        //        var index = ItemControl_PrinterPorts.ItemContainerGenerator.IndexFromContainer(container);
+        //        double newValue = (double)e.NewValue;
+        //        var vm = CurrentViewModel<MainViewModel>();
+        //        vm.ConnectParamsList[CurrentIndex()].PrinterPorts[index] = newValue;
+        //        vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
+
+        //        //MessageBox.Show($"NumericUpDown value changed at index: {index}");
+        //    }
+        //}
+
+        private T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            var parent = VisualTreeHelper.GetParent(child);
+            while (parent != null && !(parent is T))
+            {
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+            return parent as T;
+        }
+
+        private void SelectPrinter_Click(object sender, RoutedEventArgs e)
+        {
+            // Cast the sender to a Button
+            if (sender is Button clickedButton && int.TryParse(clickedButton.Content.ToString(), out int templateNumber))
+            {
+                HandlePrinterSelection(templateNumber);
+            }
+            else
+            {
+                MessageBox.Show("Unknown template selected.");
+            }
+        }
+        private void HandlePrinterSelection(int templateNumber)
+        {
+            currentSelectedPrinter = templateNumber - 1;
+            if (CurrentViewModel<MainViewModel>() is MainViewModel vm)
+            {
+                vm.CurrentConnectParams.PrinterIP = vm.CurrentConnectParams.PrinterIPs[templateNumber - 1];
+                vm.CurrentConnectParams.PrinterPort = vm.CurrentConnectParams.PrinterPorts[templateNumber - 1];
+                TextBoxPrinterIP.Text = vm.CurrentConnectParams.PrinterIP;
+                NumPort.Value = vm.CurrentConnectParams.PrinterPort;
+                //vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
+            }
+
         }
     }
 }

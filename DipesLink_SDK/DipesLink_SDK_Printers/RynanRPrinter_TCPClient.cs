@@ -9,8 +9,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 using System.Windows.Markup;
 using static SharedProgram.DataTypes.CommonDataType;
 
@@ -40,7 +42,7 @@ namespace DipesLink_SDK_Printers
         string oldIP = "";
         double oldPort = 0;
 
-        public RynanRPrinterTCPClient(int index,IPCSharedHelper? ipc)
+        public RynanRPrinterTCPClient(int index, IPCSharedHelper? ipc)
         {
             _Index = index;
             _ipc = ipc;
@@ -48,7 +50,12 @@ namespace DipesLink_SDK_Printers
             SharedEventsIpc.PrinterStatusChanged += SharedEvents_PrinterStatusChanged;
         }
 
-        private static bool PingIPCamera(string ipAddress) 
+        public int GetIndex()
+        {
+            return _Index;
+        }
+
+        private static bool PingIPPrinter(string ipAddress)
         {
             try
             {
@@ -76,7 +83,7 @@ namespace DipesLink_SDK_Printers
             {
                 if (_TcpClient?.Client != null)
                 {
-                    if (_TcpClient.Client.Connected && PingIPCamera(DeviceSharedValues.PrinterIP) && !IsChangeParams())
+                    if (_TcpClient.Client.Connected && PingIPPrinter(DeviceSharedValues.PrinterIPs[_Index]) && !IsChangeParams())
                     {
                         return _TcpClient.Client.Connected;
                     }
@@ -134,17 +141,17 @@ namespace DipesLink_SDK_Printers
             _ThreadMonitorPrinter.Start();
 
         }
-  
+
         private bool IsChangeParams()
         {
-            if(DeviceSharedValues.PrinterIP == oldIP && DeviceSharedValues.PrinterPort == oldPort)
+            if (DeviceSharedValues.PrinterIPs[_Index] == oldIP && DeviceSharedValues.PrinterPorts[_Index] == oldPort)
             {
                 return false;
             }
             else
             {
-                oldIP = DeviceSharedValues.PrinterIP;
-                oldPort = DeviceSharedValues.PrinterPort;
+                oldIP = DeviceSharedValues.PrinterIPs[_Index];
+                oldPort = DeviceSharedValues.PrinterPorts[_Index];
                 return true;
             }
         }
@@ -154,9 +161,15 @@ namespace DipesLink_SDK_Printers
             try
             {
                 _TcpClient = new TcpClient();
-                Task connectTask = _TcpClient.ConnectAsync(DeviceSharedValues.PrinterIP, int.Parse(DeviceSharedValues.PrinterPort.ToString()));
-                oldIP = DeviceSharedValues.PrinterIP;
-                oldPort = DeviceSharedValues.PrinterPort;
+                // thinh sua now
+                Task connectTask = _TcpClient.ConnectAsync(DeviceSharedValues.PrinterIPs[_Index], int.Parse(DeviceSharedValues.PrinterPorts[_Index].ToString()));
+                oldIP = DeviceSharedValues.PrinterIPs[_Index];
+                oldPort = DeviceSharedValues.PrinterPorts[_Index];
+
+                SharedFunctions.PrintConsoleMessage($"printerIP + {_Index} + {DeviceSharedValues.PrinterIPs[_Index]}");
+
+                SharedFunctions.PrintConsoleMessage($"Port + {_Index} + {DeviceSharedValues.PrinterPorts[_Index].ToString()}");
+
                 connectTask.Wait(3000);
                 if (!connectTask.IsCompleted)
                 {
@@ -176,7 +189,7 @@ namespace DipesLink_SDK_Printers
                 BitConverter.GetBytes((uint)5000).CopyTo(inOptionValues, Marshal.SizeOf(dummy));
                 BitConverter.GetBytes((uint)1000).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2);
                 _TcpClient.Client.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
-
+                //if(_Index == 0) { }
                 _ThreadReceiveData = new Thread(ReceiveData)
                 {
                     IsBackground = true,
@@ -184,6 +197,8 @@ namespace DipesLink_SDK_Printers
                 };
                 _ThreadReceiveData.Start();
 
+                SharedFunctions.PrintConsoleMessage($"printer {_Index} is connected");
+                //MessageBox.Show($"printer {_Index} is connected");
                 return true;
             }
             catch (Exception)
@@ -216,7 +231,7 @@ namespace DipesLink_SDK_Printers
             }
         }
 
-        private static void SplitCommands(string data)
+        private void SplitCommands(string data)
         {
             // STX and ETX in ASCII
             char STX = '\u0002';
@@ -249,13 +264,11 @@ namespace DipesLink_SDK_Printers
                     var buffer = new byte[1024];
                     int bytesRead;
                     StringBuilder commandBuilder = new();
-                    SpinWait spinWait = new();
                     while ((bytesRead = _NetworkStream.Read(buffer, 0, buffer.Length)) != 0)
                     {
                         string data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                         SplitCommands(data);
-                        //Thread.Sleep(1);
-                        spinWait.SpinOnce();
+                        Thread.Sleep(1);
                     }
 
                 }
@@ -291,8 +304,10 @@ namespace DipesLink_SDK_Printers
 
         }
 
-        public static void RaiseOnPODReceiveDataEventEvent(PODDataModel data)
+        public void RaiseOnPODReceiveDataEventEvent(PODDataModel data)
         {
+            // Them _Index
+            data.Index = _Index;     
             SharedEvents.RaiseOnPrinterDataChangeEvent(data);
         }
 
@@ -302,6 +317,9 @@ namespace DipesLink_SDK_Printers
             try
             {
                 bool printerIsConnected = (bool)sender;
+                // thinh sua 
+                bool isConnected = IsConnected();
+                printerIsConnected = isConnected;
                 PrinterStatus printerSts;
                 if (printerIsConnected)
                 {
@@ -311,7 +329,7 @@ namespace DipesLink_SDK_Printers
                 {
                     printerSts = PrinterStatus.Disconnected;
                 }
-                MemoryTransfer.SendPrinterStatusToUI(_ipc,_Index, printerSts);
+                MemoryTransfer.SendPrinterStatusToUI(_ipc, _Index, printerSts);
             }
             catch (Exception)
             {

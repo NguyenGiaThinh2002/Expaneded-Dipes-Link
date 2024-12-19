@@ -308,6 +308,25 @@
                                             <Setter Property="FontWeight" Value="Normal" />
                                         </Style>
                                     </StackPanel.Resources>
+                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                        <ItemsControl x:Name="ButtonItemsControl">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button
+                                                        Width="30"
+                                                        Height="25"
+                                                        Margin="2,0,0,0"
+                                                        Click="SelectPrinter_Click"
+                                                        Content="{Binding}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
                                     <StackPanel
                                         Margin="0,10,0,5"
                                         IsEnabled="{Binding IsLockUISetting}"
@@ -322,7 +341,7 @@
                                             Width="200"
                                             Height="30"
                                             FontWeight="Normal"
-                                            Text="{Binding PrinterIP}" />
+                                            Text="{Binding PrinterIP, Mode=TwoWay}" />
                                         <Button
                                             Width="80"
                                             Height="30"
@@ -353,6 +372,7 @@
                                             PreviewTextInput="TextBox_PreviewTextInput"
                                             ValueChanged="NumericUpDown_ValueChanged"
                                             Value="{Binding PrinterPort}" />
+
                                         <!--<TextBox
                                             x:Name="TextBoxPrinterPort"
                                             Width="80"
@@ -399,6 +419,56 @@
                                             FontSize="20"
                                             Style="{StaticResource ModernButton2}" />
                                     </StackPanel>-->
+
+                                    <!--<ItemsControl
+                                        x:Name="ItemControl_PrinterIPs"
+                                        Height="162"
+                                        Margin="10"
+                                        ItemsSource="{Binding PrinterIPs}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="130"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=IP_Address}" />
+                                                    <cuscontrol:IpAddressControl
+                                                        Width="200"
+                                                        Height="30"
+                                                        FontWeight="Normal"
+                                                        Text="{Binding ., Mode=TwoWay}"
+                                                        TextChanged="TextBoxIP_ParamsChanged" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <ItemsControl
+                                        x:Name="ItemControl_PrinterPorts"
+                                        Margin="10"
+                                        ItemsSource="{Binding PrinterPorts}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Width="130"
+                                                        VerticalAlignment="Center"
+                                                        Text="{DynamicResource ResourceKey=Port}" />
+                                                    <mah:NumericUpDown
+                                                        x:Name="NumPort1"
+                                                        Width="200"
+                                                        Height="30"
+                                                        Padding="0,3,0,0"
+                                                        BorderBrush="LightBlue"
+                                                        FontSize="16"
+                                                        FontWeight="Normal"
+                                                        PreviewTextInput="TextBox_PreviewTextInput"
+                                                        ValueChanged="NumericUpDownPorts_ValueChanged"
+                                                        Value="{Binding ., Mode=TwoWay}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>-->
 
                                 </StackPanel>
                             </TabItem>
@@ -1032,12 +1102,13 @@
                             Margin="0,0,80,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
+                            HorizontalContentAlignment="Center"
                             Background="White"
                             BorderBrush="#00ABE6"
                             Click="RestartButton_Click"
                             FontWeight="Normal"
                             IsEnabled="{Binding IsLockUISetting}">
-                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <fa:IconImage
                                     Width="16"
                                     Height="16"
@@ -1045,7 +1116,6 @@
                                     Foreground="#00ABE6"
                                     Icon="RotateBack" />
                                 <TextBlock
-                                    Width="63"
                                     VerticalAlignment="Center"
                                     FontSize="18"
                                     Text="{DynamicResource ResourceKey=Restart}" />

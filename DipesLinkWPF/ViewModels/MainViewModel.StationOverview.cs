@@ -46,6 +46,35 @@ namespace DipesLink.ViewModels
             }
         }
 
+        internal void CheckPrinterChange(int newNumber)
+        {
+            if (newNumber+1 != ViewModelSharedValues.Settings.NumberOfPrinter)
+            {
+                var res = CusMsgBox.Show(
+                   LanguageModel.GetLanguage("ChangeNumberOfStation"),
+                   LanguageModel.GetLanguage("WarningDialogCaption"),
+                   ButtonStyleMessageBox.OKCancel,
+                   ImageStyleMessageBox.Warning);
+                if (res.Result)
+                {
+
+                    ViewModelSharedValues.Settings.NumberOfPrinter = newNumber + 1;
+                    ViewModelSharedFunctions.SaveSetting();
+
+                    string exePath = Process.GetCurrentProcess().MainModule.FileName;
+                    Process.Start(exePath);
+                    Application.Current.Shutdown();
+
+                }
+                else
+                {
+
+                    //PrinterSelectedIndex = ViewModelSharedValues.Settings.NumberOfPrinter - 1;
+                }
+            }
+
+        }
+
         internal void CheckDateTimeFormat()
         {
             switch (DateTimeFormatSelectedIndex)

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SharedProgram.PrinterManager;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -91,6 +92,13 @@ namespace SharedProgram.Models
             set { _CameraSeries = value; OnPropertyChanged(); }
         }
 
+        private TemplateManager _templateManager = new TemplateManager(4);
+        public TemplateManager TemplateManager
+        {
+            get { return _templateManager; }
+            set { _templateManager = value; OnPropertyChanged(); }
+        }
+
         private List<string>? _TemplateList;
         public List<string>? TemplateList
         {
@@ -102,6 +110,20 @@ namespace SharedProgram.Models
         {
             get { return _TemplateListFirstFound; }
             set { _TemplateListFirstFound = value; OnPropertyChanged(); }
+        }        
+
+        private string? _SearchTemplateText;
+        public string? SearchTemplateText
+        {
+            get { return _SearchTemplateText; }
+            set
+            {
+                if (_SearchTemplateText != value)
+                {
+                    _SearchTemplateText = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private JobStatus _JobStatus;
@@ -150,7 +172,7 @@ namespace SharedProgram.Models
                
             }
         }
-        // thinh dang sua  
+
         private bool _IsCheckPrinterSettingsEnabled;
         public bool IsCheckPrinterSettingsEnabled
         {
@@ -271,22 +293,6 @@ namespace SharedProgram.Models
             }
         }
 
-
-        private string? _SearchTemplateText;
-
-        public string? SearchTemplateText
-        {
-            get { return _SearchTemplateText; }
-            set
-            {
-                if (_SearchTemplateText != value)
-                {
-                    _SearchTemplateText = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         private string _totalChecked = "0";
         public string TotalChecked
         {
@@ -331,10 +337,6 @@ namespace SharedProgram.Models
 
         [ObservableProperty]
         public string? _DisableSensor;
-
-       
-
-        
 
         public static JobModel? LoadFile(string fileName)
         {
