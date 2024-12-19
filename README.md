@@ -1,0 +1,7 @@
+- Added number of printer selection into system management.
+- Added Printer Manager to control multiple Printers.
+- Changed UI to select printer and printer template.
+- Changed send and receive data printer to send data to multiple printer.
+- Changed to show 4 icon printer.
+- Fixed printer port connect.
+- Changed sleep 1 to SpinOnce.
