@@ -8,6 +8,8 @@ namespace SharedProgram.Models
     {
         public int Index { get; set; }
 
+        public int numberOfPrinter { get; set; }
+
         #region Printer
 
         public string PrinterIP { get; set; } = "127.0.0.1";

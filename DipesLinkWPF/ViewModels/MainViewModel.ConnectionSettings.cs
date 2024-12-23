@@ -1,5 +1,6 @@
 ﻿using DipesLink.Views.UserControls.MainUc;
 using IPCSharedMemory;
+using SharedProgram.DeviceTransfer;
 using SharedProgram.Shared;
 using System;
 using System.Diagnostics;
@@ -21,6 +22,7 @@ namespace DipesLink.ViewModels
             // ConnectParamsList = ViewModelSharedValues.Settings.SystemParamsList;
             for (int i = 0; i < _numberOfStation; i++)
             {
+                ViewModelSharedValues.Settings.SystemParamsList[i].numberOfPrinter = ViewModelSharedValues.Settings.NumberOfPrinter;
                 SendConnectionParamsToDeviceTransfer(i);
                 ViewModelSharedValues.Settings.SystemParamsList[i].Index = ConnectParamsList[i].Index;
 

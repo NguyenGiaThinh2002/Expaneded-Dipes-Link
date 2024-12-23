@@ -39,19 +39,13 @@ namespace DipesLink.ViewModels
                         for (int i = 0; i < numberAdjust; i++)
                         {
                             var item = new ConnectParamsModel();
-
-
                             item.PrinterIPs = Enumerable.Repeat("127.0.0.1", loadSettingsModel.NumberOfPrinter).ToList();
                             item.PrinterPorts = Enumerable.Repeat(2000.0, loadSettingsModel.NumberOfPrinter).ToList();
-
-                            // Dưới đây là ví dụ ở trên
-                            //item.PrinterIPs = new List<string>() { "127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1" };
-                            //item.PrinterPorts = new List<double>() { 2001, 2002, 2003, 2004 };
 
                             loadSettingsModel.SystemParamsList.Add(item);
                         }
                     }
-
+         
 
                     for (int i = 0; i < loadSettingsModel.NumberOfStation; i++)
                     {
@@ -60,6 +54,8 @@ namespace DipesLink.ViewModels
                             loadSettingsModel.SystemParamsList[i].PrinterIPs = Enumerable.Repeat("127.0.0.1", loadSettingsModel.NumberOfPrinter).ToList();
                             loadSettingsModel.SystemParamsList[i].PrinterPorts = Enumerable.Repeat(2000.0, loadSettingsModel.NumberOfPrinter).ToList();
                         }
+                        loadSettingsModel.SystemParamsList[i].PrinterIP = loadSettingsModel.SystemParamsList[i].PrinterIPs[0];
+                        loadSettingsModel.SystemParamsList[i].PrinterPort = loadSettingsModel.SystemParamsList[i].PrinterPorts[0];
 
                     }
 

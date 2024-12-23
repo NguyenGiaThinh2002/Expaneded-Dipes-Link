@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using DipesLink_SDK_Printers;
 using IPCSharedMemory;
+using Newtonsoft.Json.Linq;
 using SharedProgram.Controller;
 using SharedProgram.DeviceTransfer;
 using SharedProgram.Models;
@@ -51,6 +52,7 @@ namespace DipesLinkDeviceTransfer
             OnReceiveVerifyDataEvent += SendVerifiedDataToPrinter;
             SharedEvents.OnPrinterDataChange += SharedEvents_OnPrinterDataChange; // Printer Data change event
             ReceiveDataFromPrinterHandlerAsync();
+            ReceiveTemplateFromAllPrinter();
         }
 
         private async void SendWorkingDataToPrinterHandlerAsync()
@@ -184,8 +186,10 @@ namespace DipesLinkDeviceTransfer
                     int countTemp = 0;
                     while (true)
                     {
+                                              
                         token.ThrowIfCancellationRequested();
                         var isDoneDequeue = _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].TryDequeue(out object? result);
+
                         if (!isDoneDequeue || result == null)
                         {
                             await Task.Delay(1, token);
@@ -209,6 +213,7 @@ namespace DipesLinkDeviceTransfer
                                             pODcommand = pODcommand.Take(pODcommand.Length - 1).ToArray();
                                             PODResponseModel.Template = pODcommand;
                                             _PrintProductTemplateList = PODResponseModel.Template;
+                                            _PrintProductTemplateLists[0] = PODResponseModel.Template;
                                             foreach (var item in _PrintProductTemplateList)
                                             {
                                                 SharedFunctions.PrintConsoleMessage(item);
@@ -248,8 +253,8 @@ namespace DipesLinkDeviceTransfer
                                             break;
 
                                         case "STAR": //Feedback start print
-                                            // thinh them 3500
-                                            //await Task.Delay(350);
+                                            // Wait for all printer to start
+                                            await Task.Delay(200);
                                             StartCommandHandler(pODcommand, PODResponseModel, podDataModel);
                                             break;
 
@@ -266,14 +271,16 @@ namespace DipesLinkDeviceTransfer
                                     }
                                 }
                             }
+                            
                         }
                         catch (Exception)
                         {
 #if DEBUG
                             Console.WriteLine("ReceiveDataFromPrinterHandlerAsync logic Fail");
 #endif
-                        }
+                        }                     
                     }
+
                 }
                 catch (OperationCanceledException)
                 {
@@ -292,18 +299,114 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
+        //private async void ReceiveDataFromAllPrinter()
+        //{
+        //    try
+        //    {
+
+        //        _CTS_ReceiveDataFromAllPrinter = new();
+        //        var token = _CTS_ReceiveDataFromAllPrinter.Token;
+        //        while (true)
+        //        {
+        //            token.ThrowIfCancellationRequested();
+        //            // thinh them de lay template list cho tung printer
+        //            for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
+        //            {
+        //                try
+        //                {
+        //                    var isThisDoneDequeue = _QueueBufferPrinterReceivedData[i].TryDequeue(out object? thisResult);
+        //                    if (!isThisDoneDequeue || thisResult == null)
+        //                    {
+        //                        await Task.Delay(1);
+        //                        continue;
+        //                    }
+        //                    try
+        //                    {
+        //                        if (thisResult is PODDataModel podDataModel1)
+        //                        {
+        //                            string[] pODcommand1 = podDataModel1.Text.Split(';');
+        //                            var PODResponseModel1 = new PODResponseModel { Command = pODcommand1[0] };
+        //                            if (PODResponseModel1.Command != null)
+        //                            {
+        //                                switch (PODResponseModel1.Command)
+        //                                {
+        //                                    case "RSLI": // Feedback  Printer Template  
+        //                                        pODcommand1 = pODcommand1.Skip(1).ToArray();
+        //                                        pODcommand1 = pODcommand1.Take(pODcommand1.Length - 1).ToArray();
+        //                                        PODResponseModel1.Template = pODcommand1;
+        //                                        _PrintProductTemplateLists[i] = PODResponseModel1.Template;
+        //                                        break;
+        //                                }
+        //                                await Task.Delay(1000);
+        //                            }
+        //                        }
+
+        //                    }
+        //                    catch (OperationCanceledException) { }
+        //                }
+        //                catch (OperationCanceledException)
+        //                { }
+
+        //            }
+        //        }
+
+        //    }
+        //    catch (Exception) { }
+        //}
+
+        private async void ReceiveTemplateFromAllPrinter()
+        {
+            try
+            {
+                for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
+                {
+                    var isThisDoneDequeue = _QueueBufferPrinterReceivedData[i].TryDequeue(out object? thisResult);
+                    if (!isThisDoneDequeue || thisResult == null)
+                    {
+                        await Task.Delay(10);
+                        // continue;
+                    }
+
+                    if (thisResult is PODDataModel podDataModel1)
+                    {
+                        string[] pODcommand1 = podDataModel1.Text.Split(';');
+                        var PODResponseModel1 = new PODResponseModel { Command = pODcommand1[0] };
+
+                        if (PODResponseModel1.Command != null)
+                        {
+                            switch (PODResponseModel1.Command)
+                            {
+                                case "RSLI":
+                                    pODcommand1 = pODcommand1.Skip(1).Take(pODcommand1.Length - 2).ToArray();
+                                    PODResponseModel1.Template = pODcommand1;
+                                    _PrintProductTemplateLists[i] = PODResponseModel1.Template;
+                                    break;
+                            }
+                            await Task.Delay(300);
+                        }
+                    }
+                }
+              
+            }
+            catch (Exception)
+            {
+                // Handle exceptions
+            }
+        }
+
+
         public void GetPrinterTemplateList()
         {
-
             Task requestTemplateTask = Task.Run(async () =>
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
                 {
                     if (_printerManager._printers[i] != null && _printerManager._printers[i].IsConnected())
                     {
                         _printerManager._printers[i].SendData("RQLI"); //send request template list command to printer
+                        ReceiveTemplateFromAllPrinter();
                         await Task.Delay(100);
-                        SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductTemplateList, i);
+                        SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductTemplateLists[i], i); //_PrintProductTemplateList
                     }
                 }
 
@@ -327,10 +430,10 @@ namespace DipesLinkDeviceTransfer
 
         private void SharedEvents_OnPrinterDataChange(object? sender , EventArgs e)
         {
-            
-            if (sender is PODDataModel podData && podData.Index == SharedValues.SelectedPrinter) // && podData.Index == 1
+            // thinh sua now
+            if (sender is PODDataModel podData) // && podData.Index == SharedValues.SelectedPrinter
             {
-                _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Enqueue(sender); // 1
+                _QueueBufferPrinterReceivedData[podData.Index].Enqueue(sender); // 1SharedValues.SelectedPrinter
             }
         }
 
@@ -728,21 +831,28 @@ namespace DipesLinkDeviceTransfer
                 }
 
                 SharedValues.SelectedJob.ExportNamePrefix = DateTime.Now.ToString(SharedValues.SelectedJob.ExportNamePrefixFormat);
-                _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Clear();
+                // thinh dang lam
+                for(int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
+                {
+                    _QueueBufferPrinterReceivedData[i].Clear();
+                }
+
                 if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
                     SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && !_IsRechecked)
                 {
                     SharedValues.OperStatus = OperationStatus.Processing;
                     if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
                     {
-                        _printerManager._printers[SharedValues.SelectedPrinter].SendData("STOP"); //send stop command to printer
+                        _printerManager.StopAllPrinter("STOP");
                         Thread.Sleep(50);
                         //string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
                         //string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
 
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
                         {
+                            
                             if (_printerManager._printers[i].IsConnected()){
+                                //MessageBox.Show("IP: " + i + "___" + DeviceSharedValues.PrinterIPs[i]);
                                 string templateNameWithoutExt = SharedValues.SelectedJob.TemplateManager.PrinterTemplateList[i].Replace(".dsj", "");
                                 string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
                                 _printerManager._printers[i].SendData(startPrintCommand); // Send Start command to printer
@@ -837,55 +947,67 @@ namespace DipesLinkDeviceTransfer
         {
             await Task.Run(() =>
             {
-                KillTThreadSendWorkingDataToPrinter();
-                _QueueBufferPrinterReceivedData[SharedValues.SelectedPrinter].Clear();
-                _QueueBufferCameraReceivedData.Clear();
-                _QueueBufferScannerReceivedData.Clear();
-                ClearBufferUpdateUI();
-
-                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+                try
                 {
-                    if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
+                    KillTThreadSendWorkingDataToPrinter();
+                    for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
                     {
-                        _printerManager._printers[1].SendData("STOP");
-                        _printerManager._printers[0].SendData("STOP");
+                        _QueueBufferPrinterReceivedData[i].Clear();
 
-                        lock (_StopLocker)
+                    }
+                    _QueueBufferCameraReceivedData.Clear();
+                    _QueueBufferScannerReceivedData.Clear();
+                    ClearBufferUpdateUI();
+
+                    if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
+                    {
+                        if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
                         {
-                            _IsStopOK = false;
-                            int countTimeout = 0;
-                            while (!_IsStopOK && countTimeout < 1)
+                            _printerManager.StopAllPrinter("STOP");
+
+                            lock (_StopLocker)
                             {
-                                Monitor.Wait(_StopLocker, 3000); //Wait until there is a stop notify from the printer
-                                countTimeout++;
+                                _IsStopOK = false;
+                                int countTimeout = 0;
+                                while (!_IsStopOK && countTimeout < 1)
+                                {
+                                    Monitor.Wait(_StopLocker, 3000); //Wait until there is a stop notify from the printer
+                                    countTimeout++;
+                                }
                             }
                         }
                     }
-                }
 
-                _TotalMissed = 0;
-                _CTS_UIUpdatePrintedResponse.Cancel();
-                _CTS_CompareAction.Cancel();
-                _QueueBufferCameraReceivedData.Enqueue(null);
-                _QueueBufferPODDataCompared.Enqueue(null);
-                _QueueBufferScannerReceivedData.Enqueue(null);
-                _QueueBufferScannerDataCompared.Enqueue(null);
-                _VirtualCTS?.Cancel();
+                    _TotalMissed = 0;
+                    _CTS_UIUpdatePrintedResponse.Cancel();
+                    _CTS_CompareAction.Cancel();
+                    _QueueBufferCameraReceivedData.Enqueue(null);
+                    _QueueBufferPODDataCompared.Enqueue(null);
+                    _QueueBufferScannerReceivedData.Enqueue(null);
+                    _QueueBufferScannerDataCompared.Enqueue(null);
+                    _VirtualCTS?.Cancel();
 
-                SharedValues.OperStatus = OperationStatus.Stopped;
+                    SharedValues.OperStatus = OperationStatus.Stopped;
 
-                if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database)
-                {
-                    int currentCheckNumber = SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
-
-                    if (currentCheckNumber >= SharedValues.TotalCode - _NumberOfDuplicate)
+                    if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.CompareType == CompareType.Database)
                     {
-                        SharedValues.SelectedJob.JobStatus = JobStatus.Accomplished;
-                        SaveJobChangedSettings(SharedValues.SelectedJob);
+                        int currentCheckNumber = SharedValues.SelectedJob.CompleteCondition == CompleteCondition.TotalChecked ? TotalChecked : NumberOfCheckPassed;
+
+                        if (currentCheckNumber >= SharedValues.TotalCode - _NumberOfDuplicate)
+                        {
+                            SharedValues.SelectedJob.JobStatus = JobStatus.Accomplished;
+                            SaveJobChangedSettings(SharedValues.SelectedJob);
+                        }
                     }
+
+                }
+                catch (Exception ex)
+                {
+
                 }
             });
             _IsRechecked = false;
+
         }
 
         public bool GetPrinterStatus()
@@ -1886,6 +2008,7 @@ namespace DipesLinkDeviceTransfer
                 // Release Cancel Token Source
                 _CTS_SendWorkingDataToPrinter?.Cancel();
                 _CTS_ReceiveDataFromPrinter?.Cancel();
+                _CTS_ReceiveDataFromAllPrinter.Cancel();
                 _CTS_CompareAction?.Cancel();
                 _CTS_UIUpdatePrintedResponse?.Cancel();
                 _CTS_UIUpdateCheckedResult?.Cancel();
@@ -1894,6 +2017,7 @@ namespace DipesLinkDeviceTransfer
                 _CTS_BackupFailedImage?.Cancel();
 
                 _CTS_SendWorkingDataToPrinter?.Dispose();
+                _CTS_ReceiveDataFromAllPrinter?.Dispose();
                 _CTS_ReceiveDataFromPrinter?.Dispose();
                 _CTS_CompareAction?.Dispose();
                 _CTS_UIUpdatePrintedResponse?.Dispose();

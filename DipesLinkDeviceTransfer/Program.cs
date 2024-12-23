@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using IPCSharedMemory.Controllers;
 using System.Data;
+using System.Windows.Forms;
 
 namespace DipesLinkDeviceTransfer
 {
@@ -43,6 +44,8 @@ namespace DipesLinkDeviceTransfer
             try
             {
                 DeviceSharedValues.Index = int.Parse(args[0]);
+                //MessageBox.Show(args[0].ToString());
+                //Console.WriteLine("args[0].ToString()" + args[0].ToString());
             }
             catch (Exception)  // for Device transfer only 
             {
@@ -111,14 +114,17 @@ namespace DipesLinkDeviceTransfer
             ReleaseResource();
         }
 
-        public void NonStaticMainProgram()
+        public async void NonStaticMainProgram()
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExitHandler);
             InitInstanceIPC();
             ListenConnectionParam();
-            AlwaySendPrinterOperationToUI();
+            // wait for number of printer
+            await Task.Delay(500);
+            //MessageBox.Show(DeviceSharedValues.numberOfPrinter.ToString());
 
-            _printerManager = new PrinterManager(4, _ipcDeviceToUISharedMemory_DT);
+            AlwaySendPrinterOperationToUI();
+            _printerManager = new PrinterManager(DeviceSharedValues.numberOfPrinter, _ipcDeviceToUISharedMemory_DT);
 
             serviceProvider = new ServiceCollection()
             .AddSingleton<IBarcodeScanner>(provider =>

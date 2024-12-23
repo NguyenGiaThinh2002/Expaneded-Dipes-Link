@@ -113,12 +113,17 @@ namespace DipesLink_SDK_Printers
                 {
                     try
                     {
-                        if (firstState == false)
+                        bool isConnected = IsConnected();
+                        if (!isConnected ) // && firstState == false
                         {
+                           
                             Disconnect();
                             Connect();
-                        }
-                        bool isConnected = IsConnected();
+                        }                        
+                        //if (firstState == false)
+                        //{                          
+                        //}
+                        
                         if (firstState != isConnected)
                         {
                             firstState = isConnected;
@@ -161,7 +166,6 @@ namespace DipesLink_SDK_Printers
             try
             {
                 _TcpClient = new TcpClient();
-                // thinh sua now
                 Task connectTask = _TcpClient.ConnectAsync(DeviceSharedValues.PrinterIPs[_Index], int.Parse(DeviceSharedValues.PrinterPorts[_Index].ToString()));
                 oldIP = DeviceSharedValues.PrinterIPs[_Index];
                 oldPort = DeviceSharedValues.PrinterPorts[_Index];
@@ -203,6 +207,7 @@ namespace DipesLink_SDK_Printers
             }
             catch (Exception)
             {
+                SharedFunctions.PrintConsoleMessage($"printer {_Index} is disconnected");
                 return false;
             }
         }

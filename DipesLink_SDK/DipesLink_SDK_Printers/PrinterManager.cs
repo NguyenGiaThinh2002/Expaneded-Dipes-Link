@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 
 namespace DipesLink_SDK_Printers
@@ -25,17 +26,26 @@ namespace DipesLink_SDK_Printers
 
         private void AddPrinter(int index, IPCSharedHelper? ipc)
         {
-            // Check if the printer already exists by comparing its index.
-            if (_printers.Any(p => p.GetIndex() == index))
+            try
             {
-                Console.WriteLine($"Printer with index {index} already exists.");
-                return;
+                // Check if the printer already exists by comparing its index.
+                if (_printers.Any(p => p.GetIndex() == index))
+                {
+                    Console.WriteLine($"Printer with index {index} already exists.");
+                    return;
+                }
+
+                var printer = new RynanRPrinterTCPClient(index, ipc);
+                _printers.Add(printer);
+
+                Console.WriteLine($"Printer {index} added.");
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"Cannot Add Printer {index} added." + ex);
+
             }
 
-            var printer = new RynanRPrinterTCPClient(index, ipc);
-            _printers.Add(printer);
-
-            Console.WriteLine($"Printer {index} added.");
         }
 
         public void ConnectAllPrinters()
@@ -55,17 +65,28 @@ namespace DipesLink_SDK_Printers
 
         public void SendDataToAllPrinters(string data)
         {
-            foreach (var printer in _printers)
+            try
             {
-                if (printer.IsConnected())
+                foreach (var printer in _printers)
                 {
-                    printer.SendData(data);
+                    
+                    if (printer.IsConnected())
+                    {
+                        printer.SendData(data);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Printer {printer.GetIndex()} failed to connect.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine($"Printer {printer.GetIndex()} failed to connect.");
-                }
+
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SendDataToAllPrinters failed " + ex);
+
+            }
+
         }
 
         public void StartAllPrinter(string data)
@@ -84,6 +105,20 @@ namespace DipesLink_SDK_Printers
         }
 
 
+        public void StopAllPrinter(string data)
+        {
+            foreach (var printer in _printers)
+            {
+                if (printer.IsConnected())
+                {
+                    printer.SendData(data);
+                }
+                else
+                {
+                    Console.WriteLine($"Printer {printer.GetIndex()} failed to stop.");
+                }
+            }
+        }
 
         public void DisconnectAllPrinters()
         {

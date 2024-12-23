@@ -18,6 +18,9 @@ namespace SharedProgram.DeviceTransfer
             try
             {
 
+                DeviceSharedValues.numberOfPrinter = connectParams.numberOfPrinter;
+                //MessageBox.Show(DeviceSharedValues.numberOfPrinter.ToString());
+
                 #region Printer
                 DeviceSharedValues.PrinterIP = connectParams.PrinterIP.Trim();
                 DeviceSharedValues.PrinterPort = connectParams.PrinterPort;

@@ -30,6 +30,7 @@ namespace DipesLink.Views.SubWindows
             TextBoxTemplateName.Text = _viewModel.TemplateName;
             TextBoxErrImagePath.Text = _viewModel.ImageExpPath;
             ComboBoxStationNumber.IsEnabled = !_viewModel.JobList.Any(job => job.OperationStatus != OperationStatus.Stopped);
+            ComboBoxPrinterNumber.IsEnabled = !_viewModel.JobList.Any(job => job.OperationStatus != OperationStatus.Stopped);
             ComboBoxStationNumber.SelectedIndex = _viewModel.StationSelectedIndex;
             ComboBoxDateTimeFormat.SelectedIndex = _viewModel.DateTimeFormatSelectedIndex;
             ComboBoxPrinterNumber.SelectedIndex = ViewModelSharedValues.Settings.NumberOfPrinter -1;

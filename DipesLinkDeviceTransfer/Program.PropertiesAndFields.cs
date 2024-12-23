@@ -50,6 +50,7 @@ namespace DipesLinkDeviceTransfer
         #region Cancellation Token
         public CancellationTokenSource _CTS_SendWorkingDataToPrinter = new();
         public CancellationTokenSource _CTS_ReceiveDataFromPrinter = new();
+        public CancellationTokenSource _CTS_ReceiveDataFromAllPrinter = new();
         public CancellationTokenSource _CTS_CompareAction = new();
         public CancellationTokenSource _CTS_BackupCheckedResult = new();
         public CancellationTokenSource _CTS_BackupPrintedResponse = new();
@@ -71,6 +72,14 @@ namespace DipesLinkDeviceTransfer
         /// </summary>
        // private List<string[]> ListCheckedResultCode = new();
         public static string[] _PrintProductTemplateList = Array.Empty<string>();
+
+        public static List<string[]> _PrintProductTemplateLists = new List<string[]>()
+            {
+                new string[] {},  // First empty array
+                new string[] {},  // Second empty array
+                new string[] {},  // Third empty array
+                new string[] {}   // Fourth empty array
+            };
 
 
         #endregion

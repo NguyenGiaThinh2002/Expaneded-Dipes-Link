@@ -7,7 +7,7 @@ namespace SharedProgram.DeviceTransfer
     public class DeviceSharedValues
     {
         public static int Index = 0;
-
+        public static int numberOfPrinter;
         #region Printer
         public static string PrinterIP = "";
         public static double PrinterPort = 0;

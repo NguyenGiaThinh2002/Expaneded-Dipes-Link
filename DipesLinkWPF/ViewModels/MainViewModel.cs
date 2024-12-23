@@ -719,8 +719,8 @@ namespace DipesLink.ViewModels
                 var indexTemplate = result[3];
                 var res = result.Skip(4).ToArray();
                 string[]? resString = DataConverter.FromByteArray<string[]>(res); // convert to String
-  
                 CreateNewJob.TemplateManager.TemplateListFirstFound[indexTemplate] = resString?.ToList();
+
                 CreateNewJob.TemplateManager.TemplateLists[indexTemplate] = CreateNewJob.TemplateManager.TemplateListFirstFound[indexTemplate];
                 CreateNewJob.TemplateList = CreateNewJob.TemplateManager.TemplateListFirstFound[SharedValues.SelectedTemplate]; // Update to Listview
             }
