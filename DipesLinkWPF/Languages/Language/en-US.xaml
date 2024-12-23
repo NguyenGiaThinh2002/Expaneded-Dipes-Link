@@ -216,6 +216,10 @@
     <system:String x:Key="On_Production">On Production</system:String>
     <system:String x:Key="Verify_And_Print">Verify And Print</system:String>
     <system:String x:Key="Verify_And_Print_Settings">Verify And Print Settings</system:String>
+    <system:String x:Key="Number_Of_Buffer">Number of buffers:</system:String>
+    <system:String x:Key="Select_Printer">Select Printer:</system:String>
+
+
     <system:String x:Key="Can_Read">Can Read</system:String>
     <system:String x:Key="Static_Text">Static Text</system:String>
     <system:String x:Key="Database_Path">Database Path</system:String>

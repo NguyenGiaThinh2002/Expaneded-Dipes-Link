@@ -62,6 +62,13 @@ namespace SharedProgram.Models
             set { _IsLockUISetting = value; OnPropertyChanged(); }
         }
 
+        private int _NumberOfBuffer = 200;
+        public int NumberOfBuffer
+        {
+            get { return _NumberOfBuffer; }
+            set { _NumberOfBuffer = value; OnPropertyChanged(); }
+        }
+
         private bool _IsCheckPrinterSettingsIsEnable;
         public bool IsCheckPrinterSettingsEnabled
         {

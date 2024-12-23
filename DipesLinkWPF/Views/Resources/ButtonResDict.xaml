@@ -233,6 +233,74 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ModernButtonPrinter" TargetType="Button">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Width" Value="60" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="4" />
+        <Setter Property="Background" Value="#00ABE6" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="buttonBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  MouseOver  -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="buttonBorder" Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Offset="0.0" Color="#007BB5" />
+                                        <GradientStop Offset="1.0" Color="#007BB5" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <!--  Pressed  -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="buttonBorder" Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Offset="0.0" Color="#003C5D" />
+                                        <GradientStop Offset="1.0" Color="#003C5D" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <!--  Disabled  -->
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="buttonBorder" Property="Background" Value="Gray" />
+                            <Setter TargetName="buttonBorder" Property="Opacity" Value="0.5" />
+                        </Trigger>
+                        <!--  Selected  -->
+                        <Trigger Property="Tag" Value="Selected">
+                            <Setter TargetName="buttonBorder" Property="BorderBrush" Value="#003C5D" />
+                            <Setter TargetName="buttonBorder" Property="BorderThickness" Value="3" />
+                            <Setter TargetName="buttonBorder" Property="Background" Value="#003C5D" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+
+
     <Style x:Key="ModernButton3" TargetType="Button">
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontWeight" Value="Bold" />

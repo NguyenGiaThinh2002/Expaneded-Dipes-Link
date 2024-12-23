@@ -105,7 +105,7 @@ namespace DipesLinkDeviceTransfer
 
                             if (SharedValues.OperStatus == OperationStatus.Processing)
                             {
-                                if (counterCodeSent >= 100 && _IsAfterProductionMode)
+                                if (counterCodeSent >= DeviceSharedValues.NumberOfBuffer && _IsAfterProductionMode)
                                 {
                                     SharedValues.OperStatus = OperationStatus.Running;
                                 }
@@ -134,7 +134,7 @@ namespace DipesLinkDeviceTransfer
                             // After production mode
                             if (_IsAfterProductionMode)
                             {
-                                if (counterCodeSent < 100) // Send 100 buffer data
+                                if (counterCodeSent < DeviceSharedValues.NumberOfBuffer) // Send 100 buffer data
                                 {
                                     stopwSend = Stopwatch.StartNew();
                                     await Task.Delay(20, token);
@@ -299,7 +299,7 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
-        //private async void ReceiveDataFromAllPrinter()
+        //private async void ReceiveTemplateFromAllPrinter()
         //{
         //    try
         //    {
@@ -310,7 +310,7 @@ namespace DipesLinkDeviceTransfer
         //        {
         //            token.ThrowIfCancellationRequested();
         //            // thinh them de lay template list cho tung printer
-        //            for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
+        //            for (int i = 1; i < DeviceSharedValues.numberOfPrinter; i++)
         //            {
         //                try
         //                {
@@ -336,8 +336,31 @@ namespace DipesLinkDeviceTransfer
         //                                        PODResponseModel1.Template = pODcommand1;
         //                                        _PrintProductTemplateLists[i] = PODResponseModel1.Template;
         //                                        break;
+
+        //                                    //case "RSFP": //Feedback data printed
+
+        //                                    //    if (_IsOnProductionMode)
+        //                                    //    {
+        //                                    //        lock (_PrintedResponseLocker)
+        //                                    //        {
+        //                                    //            _IsPrintedResponse = true; // Notify that have a printed response
+        //                                    //        }
+        //                                    //    }
+
+        //                                    //    if (_IsAfterProductionMode)
+        //                                    //    {
+        //                                    //        // Condition for wait send
+        //                                    //        CountFeedback++;
+        //                                    //        Interlocked.Exchange(ref _countFb, CountFeedback);
+        //                                    //        _QueueCountFeedback.Enqueue(_countFb);
+        //                                    //    }
+        //                                    //    //Example Receive data: RSFP;1/101;DATA; data1;data2;data3
+        //                                    //    pODcommand1 = pODcommand1.Skip(3).ToArray();  // get  [data1;data2;data3]
+        //                                    //    ResultFinishPrint(pODcommand1);
+        //                                    //    await Task.Delay(1, token);
+        //                                    //    break;
         //                                }
-        //                                await Task.Delay(1000);
+        //                                await Task.Delay(1);
         //                            }
         //                        }
 
@@ -386,7 +409,7 @@ namespace DipesLinkDeviceTransfer
                         }
                     }
                 }
-              
+
             }
             catch (Exception)
             {

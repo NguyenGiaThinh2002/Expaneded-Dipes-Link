@@ -6,6 +6,7 @@ using SharedProgram.Shared;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using static DipesLink.Views.Enums.ViewEnums;
 
 namespace DipesLink.Views.UserControls.MainUc
@@ -20,12 +21,20 @@ namespace DipesLink.Views.UserControls.MainUc
             ViewModelSharedEvents.OnDataTableLoading += DataTableLoadingChange; // Event notify done load database
             ViewModelSharedEvents.OnChangeJobStatus += JobStatusChanged;
             Loaded += JobCreation_Loaded;
+            LoadUIPrinter();
+        }
 
+        private void LoadUIPrinter()
+        {
             if (ViewModelSharedValues.Settings.NumberOfPrinter > 1)
             {
                 ButtonItemsControl.ItemsSource = Enumerable.Range(1, ViewModelSharedValues.Settings.NumberOfPrinter).Select(n => n.ToString()).ToList();
+                PrinterSelection.Visibility = Visibility.Visible;
             }
-
+            else
+            {
+                PrinterSelection.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void JobStatusChanged(object? sender, EventArgs e)
@@ -357,12 +366,51 @@ namespace DipesLink.Views.UserControls.MainUc
                 Button_AddJobClick(sender, e);
             }
         }
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T tChild)
+                {
+                    return tChild;
+                }
 
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
         private void TemplateLoadClick(object sender, RoutedEventArgs e)
         {
+            foreach (var item in ButtonItemsControl.Items)
+            {
+                var container = ButtonItemsControl.ItemContainerGenerator.ContainerFromItem(item) as ContentPresenter;
+                if (container != null)
+                {
+                    var button = FindVisualChild<Button>(container);
+                    if (button != null)
+                    {
+                        button.Tag = null; // Clear selection
+                    }
+                }
+            }
+
             // Cast the sender to a Button
             if (sender is Button clickedButton && int.TryParse(clickedButton.Content.ToString(), out int templateNumber))
             {
+                if (clickedButton.Tag == null || clickedButton.Tag.ToString() != "Selected")
+                {
+                    clickedButton.Tag = "Selected";  // Set as selected
+                }
+                else
+                {
+                    clickedButton.Tag = null;  // Deselect
+                }
+
                 HandleTemplateSelection(templateNumber);
             }
             else

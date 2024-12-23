@@ -47,12 +47,6 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             InitializeComponent();
             EventRegister();
-
-            if(ViewModelSharedValues.Settings.NumberOfPrinter > 1)
-            {
-                ButtonItemsControl.ItemsSource = Enumerable.Range(1, ViewModelSharedValues.Settings.NumberOfPrinter).Select(n => n.ToString()).ToList();
-            }
-
         }
 
         private void EventRegister()
@@ -84,6 +78,46 @@ namespace DipesLink.Views.UserControls.MainUc
             comboBoxStopBits.SelectionChanged += AdjustData;
             #endregion
         }
+
+        private void LoadUIPrinter()
+        {
+            if (ViewModelSharedValues.Settings.NumberOfPrinter > 1)
+            {
+                ButtonItemsControl.ItemsSource = Enumerable.Range(1, ViewModelSharedValues.Settings.NumberOfPrinter).Select(n => n.ToString()).ToList();
+                PrinterSelection.Visibility = Visibility.Visible;
+
+                //ButtonItemsControl.LayoutUpdated += (sender, e) =>
+                //{
+                //    bool isFirst = true;
+                //    foreach (var item in ButtonItemsControl.Items)
+                //    {
+                //        var container = ButtonItemsControl.ItemContainerGenerator.ContainerFromItem(item) as ContentPresenter;
+                //        if (container != null)
+                //        {
+                //            var button = FindVisualChild<Button>(container);
+                //            if (isFirst)
+                //            {
+                //                //button.Tag = "Selected";  // Mark the first button as selected
+                //                button.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#003C5D"));
+                //                isFirst = false;  // Set flag to false after first item
+                //            }
+                //            else
+                //            {
+                //                button.Tag = null;  // Reset the tag for other buttons
+                //            }
+                //        }
+                //    }
+                //};
+
+
+
+            }
+            else
+            {
+                PrinterSelection.Visibility = Visibility.Collapsed;
+            }
+        }
+
         // UI NEW CODE 
         private void AdjustData(object sender, EventArgs e)
         {
@@ -162,6 +196,7 @@ namespace DipesLink.Views.UserControls.MainUc
                 vm.SaveConnectionSetting();
                 InputArea.IsEnabled = vm.ConnectParamsList[CurrentIndex()].EnController;
                 UpdateUIValues(vm);
+                LoadUIPrinter();
             }
             catch (Exception)
             {
@@ -698,10 +733,10 @@ namespace DipesLink.Views.UserControls.MainUc
                         vm.ConnectParamsList[index].EncoderDiameter = value;
                         vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
                         break;
-                    //case "NumBuffer":
-                    //    vm.ConnectParamsList[index].NumberOfBuffer = (int)value;
-                    //    vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Controller);
-                    //    break;
+                    case "NumBuffer":
+                        vm.ConnectParamsList[index].NumberOfBuffer = (int)value;
+                        vm.AutoSaveConnectionSetting(index, CommonDataType.AutoSaveSettingsType.Printer);
+                        break;
                     //case "NumPort1":
                     //    SharedValues.SelectedPrinter = (int)value;
                     //    MessageBox.Show(SharedValues.SelectedPrinter.ToString());
@@ -790,9 +825,30 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void SelectPrinter_Click(object sender, RoutedEventArgs e)
         {
+            foreach (var item in ButtonItemsControl.Items)
+            {
+                var container = ButtonItemsControl.ItemContainerGenerator.ContainerFromItem(item) as ContentPresenter;
+                if (container != null)
+                {
+                    var button = FindVisualChild<Button>(container);
+                    if (button != null)
+                    {
+                        button.Tag = null; // Clear selection
+                    }
+                }
+            }
+
             // Cast the sender to a Button
             if (sender is Button clickedButton && int.TryParse(clickedButton.Content.ToString(), out int templateNumber))
             {
+                if (clickedButton.Tag == null || clickedButton.Tag.ToString() != "Selected")
+                {
+                    clickedButton.Tag = "Selected";  // Set as selected
+                }
+                else
+                {
+                    clickedButton.Tag = null;  // Deselect
+                }
                 HandlePrinterSelection(templateNumber);
             }
             else
@@ -800,6 +856,27 @@ namespace DipesLink.Views.UserControls.MainUc
                 MessageBox.Show("Unknown template selected.");
             }
         }
+
+
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T tChild)
+                {
+                    return tChild;
+                }
+
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
+
         private void HandlePrinterSelection(int templateNumber)
         {
             currentSelectedPrinter = templateNumber - 1;
