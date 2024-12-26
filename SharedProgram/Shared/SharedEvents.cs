@@ -10,7 +10,32 @@ namespace SharedProgram.Shared
     public class SharedEvents
     {
 
-        // Event Printer Data Changed
+        public class PrinterDataHandler
+        {
+            // Event declaration with index as an additional parameter
+            public static event EventHandler<PrinterDataEventArgs>? OnPrinterDataChange;
+
+            // Method to raise the event with index and data
+            public static void RaiseOnPrinterDataChangeEvent(PODDataModel data, int index)
+            {
+                // Raise the event if there are any subscribers, passing the data and index
+                OnPrinterDataChange?.Invoke(null, new PrinterDataEventArgs(data, index));
+            }
+        }
+
+        public class PrinterDataEventArgs : EventArgs
+        {
+            public PODDataModel Data { get; }
+            public int Index { get; }
+
+            public PrinterDataEventArgs(PODDataModel data, int index)
+            {
+                Data = data;
+                Index = index;
+            }
+        }
+
+        //Event Printer Data Changed
         public static event EventHandler? OnPrinterDataChange;
         public static void RaiseOnPrinterDataChangeEvent(PODDataModel data)
         {

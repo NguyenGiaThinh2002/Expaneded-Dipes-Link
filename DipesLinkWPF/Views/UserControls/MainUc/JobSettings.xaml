@@ -411,7 +411,7 @@
                                             FontSize="16"
                                             FontWeight="Normal"
                                             Maximum="100000"
-                                            Minimum="200"
+                                            Minimum="100"
                                             PreviewTextInput="TextBox_PreviewTextInput"
                                             ValueChanged="NumericUpDown_ValueChanged"
                                             Value="{Binding NumberOfBuffer}" />

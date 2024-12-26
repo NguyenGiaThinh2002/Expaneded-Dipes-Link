@@ -116,9 +116,9 @@ namespace DipesLinkDeviceTransfer
             try
             {
                 string? pathDatabase = jobModel.DatabasePath;
-                string pathBackupPrintedResponse = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + jobModel.PrintedResponePath;
+                string pathBackupPrintedResponse = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + jobModel.PrintedResponsePath;
                 List<string[]> tempDatabaseWithStatus = await Task.Run(() => { return InitDatabase(pathDatabase); });
-                if (jobModel.PrintedResponePath != "" && File.Exists(jobModel.DatabasePath) && tempDatabaseWithStatus.Count > 1)
+                if (jobModel.PrintedResponsePath != "" && File.Exists(jobModel.DatabasePath) && tempDatabaseWithStatus.Count > 1)
                 {
                     await Task.Run(() => { InitPrintedStatus(pathBackupPrintedResponse, tempDatabaseWithStatus); });
                 }

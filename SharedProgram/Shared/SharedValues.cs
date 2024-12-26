@@ -25,6 +25,16 @@ namespace SharedProgram.Shared
         public static int TotalCode = 0;
         public static string[] DatabaseColunms = Array.Empty<string>();
         public static List<string[]> ListPrintedCodeObtainFromFile = new();
+
+        public static List<List<string[]>> ListPrintedCodeObtainFromFileAllPrinter = new()
+        {
+            new List<string[]>(),
+            new List<string[]>(),
+            new List<string[]>(),
+            new List<string[]>()
+        };
+
+
         public static List<string[]> ListCheckedResultCode = new();
         public static JobModel? SelectedJob = new();
         public static string ConnectionString = "AccountDB.db";

@@ -255,13 +255,12 @@ namespace SharedProgram.Models
         }
 
        
-        private string _PrintedResponePath ="";
-        public string PrintedResponePath
+        private string _PrintedResponsePath ="";
+        public string PrintedResponsePath
         {
-            get { return _PrintedResponePath; }
-            set { _PrintedResponePath = value; OnPropertyChanged(); }
+            get { return _PrintedResponsePath; }
+            set { _PrintedResponsePath = value; OnPropertyChanged(); }
         }
-
 
         private string _CheckedResultPath ="";
         public string CheckedResultPath
@@ -275,7 +274,7 @@ namespace SharedProgram.Models
                     OnPropertyChanged();
                 }
             }
-        }
+        } 
 
 
         private List<PODModel> _PODFormat = new List<PODModel>();

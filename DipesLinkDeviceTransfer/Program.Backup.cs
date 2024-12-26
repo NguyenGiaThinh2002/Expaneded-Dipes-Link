@@ -1,6 +1,8 @@
-﻿using SharedProgram.Shared;
+﻿using SharedProgram.DeviceTransfer;
+using SharedProgram.Shared;
 using System.Drawing;
 using System.Text;
+using System.Windows;
 using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLinkDeviceTransfer
@@ -71,7 +73,7 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
-        public async void ExportPrintedResponseToFileAsync()
+        private async void ExportPrintedResponseToFileAsync()
         {
             if (SharedValues.SelectedJob == null) return;
             _CTS_BackupPrintedResponse = new();
@@ -80,7 +82,7 @@ namespace DipesLinkDeviceTransfer
             await Task.Run(async () =>
             {
 
-                if (SharedValues.SelectedJob.PrintedResponePath == "") // if not exist path then create new 
+                if (SharedValues.SelectedJob.PrintedResponsePath == "") // if not exist path then create new 
                 {
                     string fileNamePrintedResponse = DateTime.Now.ToString(_DateTimeFormat) + "_Printed_" + SharedValues.SelectedJob.Name;
                     string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension;
@@ -92,17 +94,17 @@ namespace DipesLinkDeviceTransfer
                         using StreamWriter streamWriter = new(printedResponsePath, true, new UTF8Encoding(true));
                         streamWriter.WriteLine(string.Join(",", SharedValues.DatabaseColunms));
                     }
-                    SharedValues.SelectedJob.PrintedResponePath = fileNamePrintedResponse + ".csv";
+                    SharedValues.SelectedJob.PrintedResponsePath = fileNamePrintedResponse + ".csv";
                     SharedFunctions.SaveStringOfPrintedResponePath(
                           SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\",
                           "printedPathString",
-                          SharedValues.SelectedJob.PrintedResponePath);
+                          SharedValues.SelectedJob.PrintedResponsePath);
                     SharedValues.SelectedJob.SaveJobFile(jobPath);
                     SharedValues.SelectedJob.SaveJobFile(selectedJobPath);
                 }
                 try
                 {
-                    string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponePath;
+                    string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponsePath;
                     while (true)
                     {
                         // Only stop if handled all data
@@ -135,6 +137,80 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
+        public async void ExportAllPrinterPrintedResponseToFileAsyncTemp(int printerIndex)
+        {
+            try
+            {
+                if (SharedValues.SelectedJob == null) return;
+
+                _CTS_BackupPrintedResponseDictionary[printerIndex] = new CancellationTokenSource();
+                var token = _CTS_BackupPrintedResponseDictionary[printerIndex].Token;
+
+                await Task.Run(async () =>
+                {
+                    string printedResponsePath2 = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponsePath;
+
+                    printedResponsePath2 = printedResponsePath2.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
+                                                                                                                    ? printedResponsePath2.Remove(printedResponsePath2.Length - 4)
+                                                                                                                    : printedResponsePath2;
+
+                    string PrinterPrintedReposesPath = printedResponsePath2 + "_Printer_" + printerIndex + ".csv";
+
+                    if (!File.Exists(PrinterPrintedReposesPath)) // if not exist path then create new 
+                    {
+                        string fileNamePrintedResponse = DateTime.Now.ToString(_DateTimeFormat) + "_Printed_" + SharedValues.SelectedJob.Name;
+                        string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension;
+                        string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension; //
+                        string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + printerIndex + ".csv";
+
+                        if (!File.Exists(printedResponsePath))
+                        {
+                            using StreamWriter streamWriter = new(printedResponsePath, true, new UTF8Encoding(true));
+                            streamWriter.WriteLine(string.Join(",", SharedValues.DatabaseColunms));
+                        }
+                        PrinterPrintedReposesPath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + printerIndex + ".csv";
+                    }
+                    try
+                    {
+                        while (true)
+                        {
+                            // Only stop if handled all data
+                            if (token.IsCancellationRequested)
+                                if (token.IsCancellationRequested)
+                                {
+                                    token.ThrowIfCancellationRequested();
+                                }
+
+                            _ = _QueueBufferBackupPrintedCodeTemp[printerIndex].TryDequeue(out string? valueArr);
+                            if (valueArr == null || valueArr == "") { await Task.Delay(1, token); continue; };
+                            if (valueArr != "")
+                            {
+                                SaveResultToFileTemp(valueArr, PrinterPrintedReposesPath);
+                            }
+                            //valueArr.Clear();
+                            valueArr = "";
+                            await Task.Delay(1, token);
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+#if DEBUG
+                        Console.WriteLine("ExportPrintedResponseToFileAsync Thread was Canceled !");
+#endif
+                    }
+                    catch (Exception)
+                    {
+#if DEBUG
+                        Console.WriteLine("ExportPrintedResponseToFileAsync Thread Failed !");
+#endif
+                    }
+                });
+            }
+            catch
+            {
+
+            }
+        }
         private static void SaveResultToFile(List<string[]> list, string path)
         {
             try
@@ -144,6 +220,19 @@ namespace DipesLinkDeviceTransfer
                 {
                     streamWriter.WriteLine(string.Join(",", strArr.Select(x => Csv.Escape(x))));
                 }
+            }
+            catch (Exception)
+            {
+                // Todo
+            }
+        }
+
+        private static void SaveResultToFileTemp(string text, string path)
+        {
+            try
+            {
+                using StreamWriter streamWriter = new(path, true, new UTF8Encoding(true));
+                streamWriter.WriteLine(text);
             }
             catch (Exception)
             {

@@ -229,7 +229,7 @@ namespace DipesLinkDeviceTransfer
                 Task<int> connectionCode = CheckDeviceConnectionAsync();
                 if (connectionCode == null) return;
                 int code = connectionCode.Result;
-                if (code == 0) // OKE
+                if (code == 0 || code == 1) // OKE
                 {
                     if (startWithDB)
                     {
@@ -237,11 +237,11 @@ namespace DipesLinkDeviceTransfer
                     }
                     StartProcess();
                 }
-                else if (code == 1) // Camera not connect
-                {
-                    SharedFunctions.PrintConsoleMessage("Please check camera connection !");
-                    NotificationProcess(NotifyType.NotConnectCamera);
-                }
+                //else if (code == 1) // Camera not connect // thinh khong check camera
+                //{
+                //    SharedFunctions.PrintConsoleMessage("Please check camera connection !");
+                //    NotificationProcess(NotifyType.NotConnectCamera);
+                //}
                 else if (code == 2) // Printer not connect
                 {
                     SharedFunctions.PrintConsoleMessage("Please check printer connection !");
@@ -309,7 +309,7 @@ namespace DipesLinkDeviceTransfer
                     SharedValues.ListPrintedCodeObtainFromFile.Clear();
                     _CodeListPODFormat.Clear();
 
-                    SharedFunctions.SaveStringOfPrintedResponePath(SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\", "printedPathString", SharedValues.SelectedJob.PrintedResponePath);
+                    SharedFunctions.SaveStringOfPrintedResponePath(SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\", "printedPathString", SharedValues.SelectedJob.PrintedResponsePath);
                     SharedFunctions.SaveStringOfCheckedPath(SharedPaths.PathCheckedResult + $"Job{JobIndex + 1}\\", "checkedPathString", SharedValues.SelectedJob.CheckedResultPath);
 
                     await InitDataAsync(SharedValues.SelectedJob);

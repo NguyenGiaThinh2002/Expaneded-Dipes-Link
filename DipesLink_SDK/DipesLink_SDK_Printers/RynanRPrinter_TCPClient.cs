@@ -15,6 +15,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Markup;
 using static SharedProgram.DataTypes.CommonDataType;
+using static SharedProgram.Shared.SharedEvents;
 
 namespace DipesLink_SDK_Printers
 {
@@ -312,8 +313,16 @@ namespace DipesLink_SDK_Printers
         public void RaiseOnPODReceiveDataEventEvent(PODDataModel data)
         {
             // Them _Index
-            data.Index = _Index;     
-            SharedEvents.RaiseOnPrinterDataChangeEvent(data);
+            //data.Index = _Index;     
+            //SharedEvents.RaiseOnPrinterDataChangeEvent(data);
+            if(_Index == 0)
+            {
+                RaiseOnPrinterDataChangeEvent(data);
+            }
+            else
+            {
+                PrinterDataHandler.RaiseOnPrinterDataChangeEvent(data, _Index);
+            }
         }
 
         private void SharedEvents_PrinterStatusChanged(object? sender, EventArgs e)

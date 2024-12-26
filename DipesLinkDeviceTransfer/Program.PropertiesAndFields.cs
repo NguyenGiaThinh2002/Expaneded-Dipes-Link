@@ -1,5 +1,6 @@
 ﻿using SharedProgram.Models;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using static SharedProgram.DataTypes.CommonDataType;
 
 namespace DipesLinkDeviceTransfer
@@ -50,11 +51,16 @@ namespace DipesLinkDeviceTransfer
         #region Cancellation Token
         public CancellationTokenSource _CTS_SendWorkingDataToPrinter = new();
         public CancellationTokenSource _CTS_ReceiveDataFromPrinter = new();
+        public Dictionary<int, CancellationTokenSource> _CTS_ReceiveDataFromPrinterDictionary = new();
         public CancellationTokenSource _CTS_ReceiveDataFromAllPrinter = new();
         public CancellationTokenSource _CTS_CompareAction = new();
         public CancellationTokenSource _CTS_BackupCheckedResult = new();
         public CancellationTokenSource _CTS_BackupPrintedResponse = new();
+        //public List<CancellationTokenSource> _CTS_BackupPrintedResponseList = new List<CancellationTokenSource>();
+        public Dictionary<int, CancellationTokenSource> _CTS_BackupPrintedResponseDictionary = new();
+
         public CancellationTokenSource _CTS_UIUpdatePrintedResponse = new();
+
         public CancellationTokenSource _CTS_UIUpdateCheckedResult = new();
         public CancellationTokenSource _CTS_SendCompleteDataToUI = new();
         public CancellationTokenSource _CTS_BackupFailedImage = new();
@@ -99,9 +105,9 @@ namespace DipesLinkDeviceTransfer
         /// <summary>
         /// Queue for printer raw data
         /// </summary>
-        //private ConcurrentQueue<object> _QueueBufferPrinterReceivedData = new();
+        private ConcurrentQueue<object> _QueueBufferPrinterReceivedData = new();
 
-        public readonly List<ConcurrentQueue<object>> _QueueBufferPrinterReceivedData = new()
+        public readonly List<ConcurrentQueue<object>> _QueueBufferPrinterReceivedDataList = new()
         {
             new ConcurrentQueue<object>(),
             new ConcurrentQueue<object>(),
@@ -137,7 +143,15 @@ namespace DipesLinkDeviceTransfer
         /// <summary>
         /// Queue for Backup printed code and status
         /// </summary>
-        public ConcurrentQueue<List<string[]>?> _QueueBufferBackupPrintedCode = new();
+        public ConcurrentQueue<List<string[]>> _QueueBufferBackupPrintedCode = new();
+
+        public readonly List<ConcurrentQueue<string>> _QueueBufferBackupPrintedCodeTemp = new()
+        {
+            new ConcurrentQueue<string>(),
+            new ConcurrentQueue<string>(),
+            new ConcurrentQueue<string>(),
+            new ConcurrentQueue<string>()
+        };
 
         /// <summary>
         /// Queue for backup checked result 
