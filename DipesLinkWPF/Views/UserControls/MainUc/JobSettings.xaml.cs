@@ -359,6 +359,7 @@ namespace DipesLink.Views.UserControls.MainUc
         private void UpdateCheckAllPrinterSettingsState(MainViewModel vm)
         {
             CheckAllPrinterSettings.IsOn = vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled;
+            ExportPrinterResponseSettings.IsOn = vm.ConnectParamsList[CurrentIndex()].IsExportPrinterResponseSettings;
         }
         #endregion
 
@@ -763,21 +764,22 @@ namespace DipesLink.Views.UserControls.MainUc
 
         private void CheckAllPrinterSettings_Toggled(object sender, RoutedEventArgs e)
         {
-            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            ToggleSwitch toggleSwitch = sender as ToggleSwitch;         
+            
             var vm = CurrentViewModel<MainViewModel>();
-            if (vm == null) return;
-            if (toggleSwitch != null)
+            if (vm == null && toggleSwitch == null) return;
+            switch (toggleSwitch.Name)
             {
-                if (toggleSwitch.IsOn == true)
-                {
-                    vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = true;
-                }
-                else
-                {
-                    vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = false;
-                }
-                vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
+                case "ExportPrinterResponseSettings":
+                    vm.ConnectParamsList[CurrentIndex()].IsExportPrinterResponseSettings = toggleSwitch.IsOn;
+                    break;
+                case "CheckAllPrinterSettings":
+                    vm.ConnectParamsList[CurrentIndex()].IsCheckPrinterSettingsEnabled = toggleSwitch.IsOn;
+                    break;
             }
+            vm.AutoSaveConnectionSetting(CurrentIndex(), CommonDataType.AutoSaveSettingsType.Printer);
+
+
         }
 
         //private void TextBoxIP_ParamsChanged(object sender, TextChangedEventArgs e)

@@ -12,6 +12,7 @@ namespace SharedProgram.DeviceTransfer
         public static string PrinterIP = "";
         public static double PrinterPort = 0;
         public static bool IsCheckPrinterSettingsEnabled;
+        public static bool IsExportPrinterResponseSettings;
         public static int NumberOfBuffer = 200;
 
         public static List<string> PrinterIPs = new List<string>();

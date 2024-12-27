@@ -77,9 +77,9 @@ namespace DipesLinkDeviceTransfer
         /// List checked Result 
         /// </summary>
        // private List<string[]> ListCheckedResultCode = new();
-        public static string[] _PrintProductTemplateList = Array.Empty<string>();
+        //public static string[] _PrintProductTemplateList = Array.Empty<string>();
 
-        public static List<string[]> _PrintProductTemplateLists = new List<string[]>()
+        public static List<string[]> _PrintProductAllPrintersTemplateLists = new List<string[]>()
             {
                 new string[] {},  // First empty array
                 new string[] {},  // Second empty array
@@ -107,7 +107,7 @@ namespace DipesLinkDeviceTransfer
         /// </summary>
         private ConcurrentQueue<object> _QueueBufferPrinterReceivedData = new();
 
-        public readonly List<ConcurrentQueue<object>> _QueueBufferPrinterReceivedDataList = new()
+        public readonly List<ConcurrentQueue<object>> _QueueBufferSubPrintersReceivedDataList = new()
         {
             new ConcurrentQueue<object>(),
             new ConcurrentQueue<object>(),
@@ -145,7 +145,7 @@ namespace DipesLinkDeviceTransfer
         /// </summary>
         public ConcurrentQueue<List<string[]>> _QueueBufferBackupPrintedCode = new();
 
-        public readonly List<ConcurrentQueue<string>> _QueueBufferBackupPrintedCodeTemp = new()
+        public readonly List<ConcurrentQueue<string>> _QueueSubPrintersBufferBackupPrintedCode = new()
         {
             new ConcurrentQueue<string>(),
             new ConcurrentQueue<string>(),

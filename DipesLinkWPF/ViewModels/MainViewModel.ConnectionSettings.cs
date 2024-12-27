@@ -30,6 +30,7 @@ namespace DipesLink.ViewModels
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterIP = ConnectParamsList[i].PrinterIP;
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterPort = ConnectParamsList[i].PrinterPort;
                 ViewModelSharedValues.Settings.SystemParamsList[i].IsCheckPrinterSettingsEnabled = ConnectParamsList[i].IsCheckPrinterSettingsEnabled;
+                ViewModelSharedValues.Settings.SystemParamsList[i].IsExportPrinterResponseSettings = ConnectParamsList[i].IsExportPrinterResponseSettings;
                 ViewModelSharedValues.Settings.SystemParamsList[i].NumberOfBuffer = ConnectParamsList[i].NumberOfBuffer;
 
                 ViewModelSharedValues.Settings.SystemParamsList[i].PrinterIPs = ConnectParamsList[i].PrinterIPs;
@@ -90,6 +91,7 @@ namespace DipesLink.ViewModels
                     ConnectParamsList[index].PrinterPort = CurrentConnectParams.PrinterPort;
                     ConnectParamsList[index].IsCheckPrinterSettingsEnabled = CurrentConnectParams.IsCheckPrinterSettingsEnabled;
                     ConnectParamsList[index].NumberOfBuffer = CurrentConnectParams.NumberOfBuffer;
+                    ConnectParamsList[index].IsExportPrinterResponseSettings = CurrentConnectParams.IsExportPrinterResponseSettings;
 
                     ConnectParamsList[index].PrinterIPs = CurrentConnectParams.PrinterIPs;
                     ConnectParamsList[index].PrinterPorts = CurrentConnectParams.PrinterPorts;

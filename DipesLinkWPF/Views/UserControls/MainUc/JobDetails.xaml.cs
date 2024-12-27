@@ -415,7 +415,7 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
-                if (_currentJob == null || _checkedObserHelper.CheckedList == null || !_checkedObserHelper.CheckedList.Any()) return;
+                //if (_currentJob == null || _checkedObserHelper.CheckedList == null || !_checkedObserHelper.CheckedList.Any()) return;
                 CheckedInfo printInfo = new()
                 {
                     list = new(_checkedObserHelper.CheckedList),
@@ -447,6 +447,21 @@ namespace DipesLink.Views.UserControls.MainUc
                     list = new(_printObserHelper.PrintList),
                     columnNames = _printObserHelper.ColumnNames,
                 };
+
+                // thinh dang lam now
+                //CheckedInfo printInfo = new()
+                //{
+                //    list = new(_checkedObserHelper.CheckedList),
+                //    columnNames = _checkedObserHelper?.ColumnNames,
+                //    RawList = new(_dataList),
+                //    PodFormat = _currentJob.PODFormat,
+                //    CurrentJob = _currentJob,
+                //};
+                //if (_currentJob.CompareType != SharedProgram.DataTypes.CommonDataType.CompareType.Database)
+                //{
+                //    printInfo.RawList.Clear();
+                //    printInfo.PodFormat.Clear();
+                //}
 
                 PrintedLogsWindow printedLogsWindow = new(printInfo);
                 printedLogsWindow.ShowDialog();

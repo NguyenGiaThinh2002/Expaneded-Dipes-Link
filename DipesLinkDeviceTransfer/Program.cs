@@ -314,7 +314,6 @@ namespace DipesLinkDeviceTransfer
         public void InitEvents()
         {
             PrinterEventInit();
-            //_printerProcessing = new PrinterProcessingManager(1);
             CameraEventInit();
             ScannerEventInit();
         }

@@ -53,11 +53,16 @@ namespace DipesLinkDeviceTransfer
             OnReceiveVerifyDataEvent += SendVerifiedDataToPrinter;
             SharedEvents.OnPrinterDataChange += SharedEvents_OnPrinterDataChange; // Printer Data change event
             PrinterDataHandler.OnPrinterDataChange += PrinterDataHandler_OnPrinterDataChange;
-            ReceiveDataFromPrinterHandlerAsync();
-            for (int i = 1; i < DeviceSharedValues.numberOfPrinter; i++)
+            ReceiveDataFromMainPrinterHandlerAsync();
+
+            if (DeviceSharedValues.numberOfPrinter > 1)
             {
-                ReceiveTemplateFromAllPrinter(i);
-            }
+                for (int i = 1; i < DeviceSharedValues.numberOfPrinter; i++)
+                {
+                    ReceiveDataFromSubPrintersHandlerAsync(i);
+                }
+            }          
+           
         }
 
         private void SharedEvents_OnPrinterDataChange(object? sender, EventArgs e)
@@ -78,7 +83,7 @@ namespace DipesLinkDeviceTransfer
                 var podData = eventArgs.Data;
                 var index = eventArgs.Index;
                 Console.WriteLine(podData.Text);
-                _QueueBufferPrinterReceivedDataList[index].Enqueue(podData);
+                _QueueBufferSubPrintersReceivedDataList[index].Enqueue(podData);
 
                 // Add the PODDataModel to the queue based on the index
                 //if(index == 0)
@@ -210,7 +215,7 @@ namespace DipesLinkDeviceTransfer
             }, _CTS_SendWorkingDataToPrinter.Token);
         }
 
-        private async void ReceiveDataFromPrinterHandlerAsync()
+        private async void ReceiveDataFromMainPrinterHandlerAsync()
         {
             _CTS_ReceiveDataFromPrinter = new();
             var token = _CTS_ReceiveDataFromPrinter.Token;
@@ -246,13 +251,14 @@ namespace DipesLinkDeviceTransfer
                                         case "RSLI": // Feedback  Printer Template  
                                             pODcommand = pODcommand.Skip(1).ToArray();
                                             pODcommand = pODcommand.Take(pODcommand.Length - 1).ToArray();
-                                            PODResponseModel.Template = pODcommand;
-                                            _PrintProductTemplateList = PODResponseModel.Template;
-                                            _PrintProductTemplateLists[0] = PODResponseModel.Template;
-                                            foreach (var item in _PrintProductTemplateList)
-                                            {
-                                                SharedFunctions.PrintConsoleMessage(item);
-                                            }
+                                            PODResponseModel.Template = pODcommand;                                          
+                                            _PrintProductAllPrintersTemplateLists[SharedValues.SelectedPrinter] = PODResponseModel.Template;
+
+                                            //_PrintProductTemplateList = PODResponseModel.Template;
+                                            //foreach (var item in _PrintProductTemplateList)
+                                            //{
+                                            //    SharedFunctions.PrintConsoleMessage(item);
+                                            //}
                                             break;
 
                                         case "DATA": //Feedback data sent
@@ -334,7 +340,7 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
-        private async void ReceiveTemplateFromAllPrinter(int printerIndex)
+        private async void ReceiveDataFromSubPrintersHandlerAsync(int printerIndex)
         {
             try
             {
@@ -347,7 +353,7 @@ namespace DipesLinkDeviceTransfer
                     
                         try
                         {
-                            var isThisDoneDequeue = _QueueBufferPrinterReceivedDataList[printerIndex].TryDequeue(out object? thisResult);
+                            var isThisDoneDequeue = _QueueBufferSubPrintersReceivedDataList[printerIndex].TryDequeue(out object? thisResult);
                             if (!isThisDoneDequeue || thisResult == null)
                             {
                                 await Task.Delay(1);
@@ -367,7 +373,7 @@ namespace DipesLinkDeviceTransfer
                                                 pODcommand1 = pODcommand1.Skip(1).ToArray();
                                                 pODcommand1 = pODcommand1.Take(pODcommand1.Length - 1).ToArray();
                                                 PODResponseModel1.Template = pODcommand1;
-                                                _PrintProductTemplateLists[printerIndex] = PODResponseModel1.Template;
+                                                _PrintProductAllPrintersTemplateLists[printerIndex] = PODResponseModel1.Template;
                                                 break;
 
                                             case "RSFP": //Feedback data printed
@@ -381,7 +387,7 @@ namespace DipesLinkDeviceTransfer
                                                 }
                                                 pODcommand1 = pODcommand1.Skip(3).ToArray();  // get  [data1;data2;data3]
                                                 string resultText = string.Join(",", pODcommand1) + ",Printed";
-                                                _QueueBufferBackupPrintedCodeTemp[printerIndex].Enqueue(resultText);
+                                                _QueueSubPrintersBufferBackupPrintedCode[printerIndex].Enqueue(resultText);
                                                 await Task.Delay(1, token);
                                                 break;
                                         }
@@ -408,7 +414,7 @@ namespace DipesLinkDeviceTransfer
         //    {
         //        for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
         //        {
-        //            var isThisDoneDequeue = _QueueBufferPrinterReceivedData[i].TryDequeue(out object? thisResult);
+        //            var isThisDoneDequeue = _QueueBufferSubPrintersReceivedDataList[i].TryDequeue(out object? thisResult);
         //            if (!isThisDoneDequeue || thisResult == null)
         //            {
         //                await Task.Delay(10);
@@ -427,7 +433,7 @@ namespace DipesLinkDeviceTransfer
         //                        case "RSLI":
         //                            pODcommand1 = pODcommand1.Skip(1).Take(pODcommand1.Length - 2).ToArray();
         //                            PODResponseModel1.Template = pODcommand1;
-        //                            _PrintProductTemplateLists[i] = PODResponseModel1.Template;
+        //                            _PrintProductAllPrintersTemplateLists[i] = PODResponseModel1.Template;
         //                            break;
         //                    }
         //                    await Task.Delay(300);
@@ -454,7 +460,7 @@ namespace DipesLinkDeviceTransfer
                         _printerManager._printers[i].SendData("RQLI"); //send request template list command to printer
                         //ReceiveTemplateFromAllPrinter();
                         await Task.Delay(100);
-                        SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductTemplateLists[i], i); //_PrintProductTemplateList
+                        SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductAllPrintersTemplateLists[i], i); //_PrintProductTemplateList
                     }
                 }
 
@@ -874,10 +880,10 @@ namespace DipesLinkDeviceTransfer
                 // thinh dang lam
                 for(int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
                 {
-                    _QueueBufferPrinterReceivedDataList[i].Clear();
+                    _QueueBufferSubPrintersReceivedDataList[i].Clear();
                 }
                 _QueueBufferPrinterReceivedData.Clear();
-                DisposeAndClearListQueue(_QueueBufferPrinterReceivedDataList);
+                DisposeAndClearListQueue(_QueueBufferSubPrintersReceivedDataList);
 
 
                 if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
@@ -930,21 +936,18 @@ namespace DipesLinkDeviceTransfer
                 {
                     try
                     {
-                        if (DeviceSharedValues.numberOfPrinter > 1)
+                        if (DeviceSharedValues.numberOfPrinter > 1 && DeviceSharedValues.IsExportPrinterResponseSettings)
                         {
                             for (int i = 1; i < DeviceSharedValues.numberOfPrinter; i++)
                             {
-                                ExportAllPrinterPrintedResponseToFileAsyncTemp(i);
+                                ExportSubPrintersPrintedResponseToFileAsync(i);
                             }
                         }
                     }
                     catch (Exception ex) { }
 
                     UpdateUIPrintedResponseAsync();
-                    ExportPrintedResponseToFileAsync();
-
-                
-
+                    ExportMainPrinterPrintedResponseToFileAsync();
                 }
             }
             catch (Exception ex)
@@ -1008,7 +1011,7 @@ namespace DipesLinkDeviceTransfer
                 try
                 {
                     KillTThreadSendWorkingDataToPrinter();
-                    DisposeAndClearListQueue(_QueueBufferPrinterReceivedDataList);
+                    DisposeAndClearListQueue(_QueueBufferSubPrintersReceivedDataList);
                     _QueueBufferPrinterReceivedData.Clear();
                     _QueueBufferCameraReceivedData.Clear();
                     _QueueBufferScannerReceivedData.Clear();
@@ -1946,12 +1949,12 @@ namespace DipesLinkDeviceTransfer
                                 var printedCode = new List<string[]>(strPrintedResponseList);
                                 _QueueBufferBackupPrintedCode.Enqueue(printedCode);
 
-                                // thinh them dieu kiem dung cho may in
-                                if (NumberPrinted == SharedValues.SelectedJob.TotalRecDb)
-                                {
-                                    _ = StopProcessAsync();
-                                    //SharedValues.SelectedJob.JobStatus = JobStatus.Accomplished;
-                                }
+                                //// thinh them dieu kiem dung cho may in
+                                //if (NumberPrinted == SharedValues.SelectedJob.TotalRecDb)
+                                //{
+                                //    _ = StopProcessAsync();
+                                //    //SharedValues.SelectedJob.JobStatus = JobStatus.Accomplished;
+                                //}
                                 // Clear list
                                 strPrintedResponseList.Clear();
                             }
@@ -2131,7 +2134,7 @@ namespace DipesLinkDeviceTransfer
                 _QueueBufferCameraReceivedData.Clear();
 
                 _QueueBufferPrinterReceivedData.Clear();
-                DisposeAndClearListQueue(_QueueBufferPrinterReceivedDataList);
+                DisposeAndClearListQueue(_QueueBufferSubPrintersReceivedDataList);
 
                 //_QueueBufferPrinterReceivedDataList[SharedValues.SelectedPrinter].Clear();
                 _QueueBufferBackupPrintedCode.Clear();

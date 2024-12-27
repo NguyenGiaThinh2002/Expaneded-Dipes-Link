@@ -21,8 +21,8 @@
             <converter:AddOne x:Key="AddOneConverter" />
             <converter:TextUpperCaseConverter x:Key="TextUppercase" />
             <converter:ForegroundColorConverter x:Key="ForegroundColorConverter" />
-            <converter:FormattedNumberConverter x:Key="FormatNumberConverter"/>
-            <converter:FontSizeConverter x:Key="FontSizeConverter"/>
+            <converter:FormattedNumberConverter x:Key="FormatNumberConverter" />
+            <converter:FontSizeConverter x:Key="FontSizeConverter" />
             <Color x:Key="DataTagColorGraTop">AliceBlue</Color>
             <Color x:Key="DataTagColorGraMid">WhiteSmoke</Color>
             <Color x:Key="DataTagColorGraBot">White</Color>
@@ -38,12 +38,12 @@
         </Border.Background>
         <Grid Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="180" />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
 
             <!--  Column 1  -->
@@ -61,7 +61,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="20"
+                            FontSize="25"
                             Foreground="White"
                             Text="{DynamicResource ResourceKey=STATION}" />
                         <TextBlock
@@ -79,14 +79,14 @@
                             Margin="0,0,4,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             Foreground="Black"
                             Text="{DynamicResource ResourceKey=Name}" />
                         <TextBlock
-                            Width="120"
+                            Width="170"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             Foreground="#0286de"
                             Text="{Binding Name, FallbackValue=#############}"
                             TextTrimming="CharacterEllipsis" />
@@ -98,14 +98,14 @@
                             Margin="0,0,4,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             Foreground="Black"
                             Text="{DynamicResource ResourceKey=Type}" />
                         <TextBlock
-                            Width="120"
+                            Width="170"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             Foreground="#0286de"
                             Text="{Binding JobType, FallbackValue=After Production, Converter={StaticResource TextUppercase}}"
                             TextTrimming="CharacterEllipsis" />
@@ -117,16 +117,16 @@
                             Margin="0,0,4,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             Foreground="Black"
                             Text="{DynamicResource ResourceKey=Total_Data}" />
                         <TextBlock
-                            Width="120"
+                            Width="170"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             Foreground="#0286de"
-                            Text="{Binding TotalRecDb,Converter={StaticResource FormatNumberConverter}, FallbackValue=1000000}"
+                            Text="{Binding TotalRecDb, Converter={StaticResource FormatNumberConverter}, FallbackValue=1000000}"
                             TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </Grid>
@@ -136,13 +136,13 @@
                             Margin="0,0,4,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             Foreground="Black"
                             Text="{DynamicResource ResourceKey=Status}" />
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="18"
                             FontWeight="Bold"
                             Foreground="{Binding OperationStatus, Converter={StaticResource ForegroundColorConverter}}"
                             Text="{Binding OperationStatus, Converter={StaticResource TextUppercase}}" />
@@ -182,7 +182,8 @@
                 Series="{Binding CircleChart.Series}" />
 
             <!--  Column 3  -->
-            <Border x:Name="BorderPrinted"
+            <Border
+                x:Name="BorderPrinted"
                 Grid.Column="2"
                 Margin="0"
                 BorderBrush="LightBlue"
@@ -197,10 +198,12 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontFamily="UTM Avo"
-                        FontSize="18"
+                        FontSize="25"
                         FontWeight="Bold"
                         Foreground="Gray"
                         Text="{DynamicResource ResourceKey=PRINTED}" />
+                    <!--  {Binding ActualWidth, ElementName=BorderPrinted, Converter={StaticResource FontSizeConverter}}  -->
+                    <!--  {Binding PrintedDataNumber, Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}  -->
                     <TextBlock
                         Grid.Row="1"
                         HorizontalAlignment="Center"
@@ -229,7 +232,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontFamily="UTM Avo"
-                        FontSize="18"
+                        FontSize="25"
                         FontWeight="Bold"
                         Foreground="Gray"
                         Text="{DynamicResource ResourceKey=CHECKED}" />
@@ -241,7 +244,7 @@
                         FontWeight="Bold"
                         Foreground="#0286de"
                         RenderOptions.EdgeMode="Unspecified"
-                        Text="{Binding TotalChecked,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
+                        Text="{Binding TotalChecked, Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
                 </Grid>
             </Border>
             <!--  Column 4  -->
@@ -260,7 +263,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontFamily="UTM Avo"
-                        FontSize="18"
+                        FontSize="25"
                         FontWeight="Bold"
                         Foreground="Gray"
                         Text="{DynamicResource ResourceKey=PASSED}" />
@@ -271,7 +274,7 @@
                         FontSize="{Binding ActualWidth, ElementName=BorderPrinted, Converter={StaticResource FontSizeConverter}}"
                         FontWeight="Bold"
                         Foreground="#29c24f"
-                        Text="{Binding TotalPassed, TargetNullValue=0,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
+                        Text="{Binding TotalPassed, TargetNullValue=0, Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
                 </Grid>
             </Border>
 
@@ -291,7 +294,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontFamily="UTM Avo"
-                        FontSize="18"
+                        FontSize="25"
                         FontWeight="Bold"
                         Foreground="Gray"
                         Text="{DynamicResource ResourceKey=FAILED}" />
@@ -302,7 +305,7 @@
                         FontSize="{Binding ActualWidth, ElementName=BorderPrinted, Converter={StaticResource FontSizeConverter}}"
                         FontWeight="Bold"
                         Foreground="#de3502"
-                        Text="{Binding TotalFailed, TargetNullValue=0,Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
+                        Text="{Binding TotalFailed, TargetNullValue=0, Converter={StaticResource FormatNumberConverter}, FallbackValue=#######}" />
                 </Grid>
             </Border>
         </Grid>

@@ -276,6 +276,8 @@
     <system:String x:Key="Waiting">Đang Chờ</system:String>
     <system:String x:Key="PRINTED_LOG">BẢN GHI TRẠNG THÁI IN</system:String>
     <system:String x:Key="Check_All_Printer_Settings">Kiểm tra tất cả các cài đặt máy in:</system:String>
+    <system:String x:Key="Export_Printer_Response_Settings">Xuất dữ liệu phản hồi máy in:</system:String>
+
     <system:String x:Key="Verify_And_Print_Settings">Cài đặt Kiểm Tra và In</system:String>
     <system:String x:Key="Number_Of_Buffer">Dữ liệu gửi trước:</system:String>
 

@@ -76,6 +76,13 @@ namespace SharedProgram.Models
             set { _IsCheckPrinterSettingsIsEnable = value; OnPropertyChanged(); }
         }
 
+        private bool _IsExportPrinterResponseSettings;
+        public bool IsExportPrinterResponseSettings
+        {
+            get { return _IsExportPrinterResponseSettings; }
+            set { _IsExportPrinterResponseSettings = value; OnPropertyChanged(); }
+        }
+
 
         private ObservableCollection<string> _responseMessList = new();
 

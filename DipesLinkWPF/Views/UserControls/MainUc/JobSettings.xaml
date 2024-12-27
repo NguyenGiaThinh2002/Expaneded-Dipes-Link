@@ -437,6 +437,27 @@
                                             Toggled="CheckAllPrinterSettings_Toggled" />
                                     </StackPanel>
 
+
+                                    <StackPanel
+                                        Margin="0,10,0,5"
+                                        VerticalAlignment="Center"
+                                        IsEnabled="{Binding IsLockUISetting}"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            Width="285"
+                                            VerticalAlignment="Center"
+                                            Text="{DynamicResource ResourceKey=Export_Printer_Response_Settings}" />
+                                        <mah:ToggleSwitch
+                                            x:Name="ExportPrinterResponseSettings"
+                                            Width="366"
+                                            VerticalContentAlignment="Center"
+                                            FontSize="15"
+                                            FontWeight="Normal"
+                                            OffContent="{DynamicResource ResourceKey=Disable}"
+                                            OnContent="{DynamicResource ResourceKey=Enable}"
+                                            Toggled="CheckAllPrinterSettings_Toggled" />
+                                    </StackPanel>
+
                                     <!--<StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                         <TextBlock
                                             Width="130"

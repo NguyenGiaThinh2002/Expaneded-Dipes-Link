@@ -1,9 +1,12 @@
 ﻿using DipesLink.Languages;
 using DipesLink.Models;
+using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
+using Microsoft.Win32;
 using SharedProgram.Models;
 using SharedProgram.Shared;
+using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
@@ -30,6 +33,8 @@ namespace DipesLink.Views.SubWindows
         public List<string[]>? CheckedResultList { get; set; }
         private string? _pageInfo;
 
+        private int selectedPrinter = 1;
+
         public int Num_TotalChecked { get; set; }
         public int Num_Printed { get; set; }
         public int Num_Verified { get; set; }
@@ -43,7 +48,7 @@ namespace DipesLink.Views.SubWindows
         private readonly int _maxDatabaseLine = 500;
         private JobOverview? _currentJob;
         private int countDataPerPage;
-
+        private string printedReponsePath;
 
         public CheckedLogsWindow(CheckedInfo printingInfo)
         {
@@ -56,7 +61,22 @@ namespace DipesLink.Views.SubWindows
                 _printingInfo.CurrentJob.JobType == SharedProgram.DataTypes.CommonDataType.JobType.AfterProduction; // Only use Re-Print for After Production
             ExportData_StackPanel.Visibility = _printingInfo.CurrentJob.CompareType == CompareType.Database ? Visibility.Visible : Visibility.Collapsed;
             InitPrintData();
+            LoadUIPrinter();
             Closing += CheckedLogsWindow_Closing;
+           
+        }
+
+        private void LoadUIPrinter()
+        {
+            if (ViewModelSharedValues.Settings.NumberOfPrinter > 1)
+            {
+                ButtonItemsControl.ItemsSource = Enumerable.Range(1, ViewModelSharedValues.Settings.NumberOfPrinter).Select(n => n.ToString()).ToList();
+                PrinterSelection.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PrinterSelection.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void InitPrintData()
@@ -727,11 +747,13 @@ namespace DipesLink.Views.SubWindows
         {
             try
             {
+             
                 if (_currentJob?.Name == null)
                 {
                     return;
-                }
+                }      
 
+                int? currentIndex = CurrentViewModel<JobOverview>()?.Index;
                 var confirmSaved = CusMsgBox.Show(LanguageModel.GetLanguage("ExportDataConfirmation"), 
                     "Export Checked Result", 
                     Enums.ViewEnums.ButtonStyleMessageBox.OKCancel, 
@@ -741,30 +763,81 @@ namespace DipesLink.Views.SubWindows
                     return;
                 }
 
-                string docFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "DPLink_LogFiles",
-                    $"Job{_currentJob.Index + 1}");
-
-                string fileName = _currentJob?.Name + $"_Logs_{DateTime.Now:yyyyMMdd_hhmmss}.csv";
-
-                if (!Directory.Exists(docFolderPath))
+                try
                 {
-                    Directory.CreateDirectory(docFolderPath);
-                }
+                    var printedNameFilePath = SharedPaths.PathSubJobsApp + $"{currentIndex + 1}\\" + "printedPathString";
 
-                if (fileName != null)
-                {
-                    string fullFilePath = Path.Combine(docFolderPath, fileName);
-                    Task<bool> doneExportTask = Task.Run(() => { return ExportData(fullFilePath, _printingInfo?.RawList, _printingInfo?.list, _printingInfo?.PodFormat); });
-                    if (!(await doneExportTask))
+                    var namePrintedFilePath = SharedPaths.PathPrintedResponse + $"Job{currentIndex + 1}\\"
+                        + SharedFunctions.ReadStringOfPrintedResponePath(printedNameFilePath);
+
+                    string subPrinterPath = namePrintedFilePath;
+                    if (selectedPrinter > 1)
                     {
+                        subPrinterPath = $"{(namePrintedFilePath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase) ? namePrintedFilePath[..^4] : namePrintedFilePath)}_Printer_{selectedPrinter}.csv";
+                    }
+
+                    var saveFileDialog = new SaveFileDialog
+                    {
+                        Title = "Save File As",
+                        Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+                        FileName = Path.GetFileName(subPrinterPath)
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true) // In WPF, `ShowDialog` returns `bool?`
+                    {
+                        string csvPath = subPrinterPath;
+                        List<string[]> rawDatabaseList = new List<string[]>();
+                        string[] lines = File.ReadAllLines(csvPath);
+
+                        // Turn csv file into rawDatabaseList
+                        for (int i = 0; i < lines.Length; i++)
+                        {
+                            string[] fields = lines[i].Split(',');
+
+                            string[] rowWithIndex = new string[fields.Length + 1];
+
+                            rowWithIndex[0] = i == 0 ? "Index" : (i).ToString();
+
+                            Array.Copy(fields, 0, rowWithIndex, 1, fields.Length);
+
+                            rawDatabaseList.Add(rowWithIndex);
+                        }
+
+                        Task<bool> doneExportTask = Task.Run(() => { return ExportData(saveFileDialog.FileName, rawDatabaseList, _printingInfo?.list, _printingInfo?.PodFormat); });
 
                     }
-                    else
-                    {
-                        SharedFunctions.PrintConsoleMessage($"Job{_currentJob?.Index + 1} export successfully");
-                    }
+
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Export SubPrinter Data Error " + ex.Message);
+                }
+
+                //string docFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                //    "DPLink_LogFiles",
+                //    $"Job{_currentJob.Index + 1}");
+
+                //string fileName = _currentJob?.Name + $"_Logs_{DateTime.Now:yyyyMMdd_hhmmss}.csv";
+
+                //if (!Directory.Exists(docFolderPath))
+                //{
+                //    Directory.CreateDirectory(docFolderPath);
+                //}
+
+                //if (fileName != null)
+                //{
+
+                //    string fullFilePath = Path.Combine(docFolderPath, fileName);
+                //    Task<bool> doneExportTask = Task.Run(() => { return ExportData(fullFilePath, _printingInfo?.RawList, _printingInfo?.list, _printingInfo?.PodFormat); });
+                //    if (!(await doneExportTask))
+                //    {
+
+                //    }
+                //    else
+                //    {
+                //        SharedFunctions.PrintConsoleMessage($"Job{_currentJob?.Index + 1} export successfully");
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -907,7 +980,39 @@ namespace DipesLink.Views.SubWindows
             }
         }
 
+        private void TemplateLoadClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in ButtonItemsControl.Items)
+            {
+                var container = ButtonItemsControl.ItemContainerGenerator.ContainerFromItem(item) as ContentPresenter;
+                if (container != null)
+                {
+                    var button = FindVisualChild<Button>(container);
+                    if (button != null)
+                    {
+                        button.Tag = null; // Clear selection
+                    }
+                }
+            }
 
-
+            // Cast the sender to a Button
+            if (sender is Button clickedButton && int.TryParse(clickedButton.Content.ToString(), out int printerNumber))
+                {
+                    selectedPrinter = printerNumber;
+                    if (clickedButton.Tag == null || clickedButton.Tag.ToString() != "Selected")
+                    {
+                        clickedButton.Tag = "Selected";  // Set as selected
+                    }
+                    else
+                    {
+                        clickedButton.Tag = null;  // Deselect
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Unknown template selected.");
+                }
+            }
+        
     }
 }

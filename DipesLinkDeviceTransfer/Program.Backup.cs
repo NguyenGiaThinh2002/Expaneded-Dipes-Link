@@ -73,7 +73,7 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
-        private async void ExportPrintedResponseToFileAsync()
+        private async void ExportMainPrinterPrintedResponseToFileAsync()
         {
             if (SharedValues.SelectedJob == null) return;
             _CTS_BackupPrintedResponse = new();
@@ -137,7 +137,7 @@ namespace DipesLinkDeviceTransfer
             });
         }
 
-        public async void ExportAllPrinterPrintedResponseToFileAsyncTemp(int printerIndex)
+        public async void ExportSubPrintersPrintedResponseToFileAsync(int printerIndex)
         {
             try
             {
@@ -148,27 +148,37 @@ namespace DipesLinkDeviceTransfer
 
                 await Task.Run(async () =>
                 {
-                    string printedResponsePath2 = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponsePath;
+                    string printedResponseSubPrintersPath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponsePath;
 
-                    printedResponsePath2 = printedResponsePath2.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
-                                                                                                                    ? printedResponsePath2.Remove(printedResponsePath2.Length - 4)
-                                                                                                                    : printedResponsePath2;
+                    printedResponseSubPrintersPath = printedResponseSubPrintersPath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
+                                                                                                                    ? printedResponseSubPrintersPath.Remove(printedResponseSubPrintersPath.Length - 4)
+                                                                                                                    : printedResponseSubPrintersPath;
 
-                    string PrinterPrintedReposesPath = printedResponsePath2 + "_Printer_" + printerIndex + ".csv";
+                    string SubPrinterPrintedReposesPath = printedResponseSubPrintersPath + "_Printer_" + (printerIndex+1) + ".csv";
 
-                    if (!File.Exists(PrinterPrintedReposesPath)) // if not exist path then create new 
+                    if (!File.Exists(SubPrinterPrintedReposesPath)) // if not exist path then create new 
                     {
-                        string fileNamePrintedResponse = DateTime.Now.ToString(_DateTimeFormat) + "_Printed_" + SharedValues.SelectedJob.Name;
-                        string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension;
-                        string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension; //
-                        string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + printerIndex + ".csv";
+                        await Task.Delay(150);
+                        string printedResponseSubPrintersPath1 = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponsePath;
 
-                        if (!File.Exists(printedResponsePath))
+                        printedResponseSubPrintersPath1 = printedResponseSubPrintersPath1.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
+                                                                                                                        ? printedResponseSubPrintersPath1.Remove(printedResponseSubPrintersPath1.Length - 4)
+                                                                                                                        : printedResponseSubPrintersPath1;
+
+                        string SubPrinterPrintedReposesPath1 = printedResponseSubPrintersPath1 + "_Printer_" + (printerIndex + 1) + ".csv";
+
+                        //string fileNamePrintedResponse = DateTime.Now.ToString(_DateTimeFormat) + "_Printed_" + SharedValues.SelectedJob.Name;
+                        //string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension;
+                        //string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension; //
+                        //string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + (printerIndex + 1) + ".csv";
+
+                        if (!File.Exists(SubPrinterPrintedReposesPath1))
                         {
-                            using StreamWriter streamWriter = new(printedResponsePath, true, new UTF8Encoding(true));
-                            streamWriter.WriteLine(string.Join(",", SharedValues.DatabaseColunms));
+                            using StreamWriter streamWriter = new(SubPrinterPrintedReposesPath1, true, new UTF8Encoding(true));
+                            streamWriter.WriteLine(string.Join(",", SharedValues.DatabaseColunms.Skip(1)));
                         }
-                        PrinterPrintedReposesPath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + printerIndex + ".csv";
+                        SubPrinterPrintedReposesPath = SubPrinterPrintedReposesPath1;
+                        //SubPrinterPrintedReposesPath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + (printerIndex + 1) + ".csv";
                     }
                     try
                     {
@@ -181,13 +191,12 @@ namespace DipesLinkDeviceTransfer
                                     token.ThrowIfCancellationRequested();
                                 }
 
-                            _ = _QueueBufferBackupPrintedCodeTemp[printerIndex].TryDequeue(out string? valueArr);
+                            _ = _QueueSubPrintersBufferBackupPrintedCode[printerIndex].TryDequeue(out string? valueArr);
                             if (valueArr == null || valueArr == "") { await Task.Delay(1, token); continue; };
                             if (valueArr != "")
                             {
-                                SaveResultToFileTemp(valueArr, PrinterPrintedReposesPath);
+                                SaveResultToFileTemp(valueArr, SubPrinterPrintedReposesPath);
                             }
-                            //valueArr.Clear();
                             valueArr = "";
                             await Task.Delay(1, token);
                         }

@@ -15,9 +15,9 @@ namespace DipesLink.Views.Converter
             if (value is double parentSize)
             {
                 // Adjust the scaling factor as needed
-                return parentSize * 0.18;
+                return parentSize * 0.21;
             }
-            return 50; // Default font size
+            return 70; // Default font size
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

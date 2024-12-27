@@ -284,7 +284,10 @@
     <system:String x:Key="Accomplished">Accomplished</system:String>
     <system:String x:Key="Deleted">Deleted</system:String>
 
-    <system:String x:Key="Check_All_Printer_Settings">Check all Printer settings:</system:String>
+    <system:String x:Key="Check_All_Printer_Settings">Check All Printer Settings:</system:String>
+    <system:String x:Key="Export_Printer_Response_Settings">Export Printer Response Settings:</system:String>
+
+
 
     <!--#region ACCOUNTS-->
     <system:String x:Key="Account_Management">Users Management</system:String>

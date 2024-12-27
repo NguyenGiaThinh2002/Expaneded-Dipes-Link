@@ -26,6 +26,7 @@ namespace SharedProgram.DeviceTransfer
                 DeviceSharedValues.PrinterPort = connectParams.PrinterPort;
                 DeviceSharedValues.IsCheckPrinterSettingsEnabled = connectParams.IsCheckPrinterSettingsEnabled;
                 DeviceSharedValues.NumberOfBuffer = connectParams.NumberOfBuffer;
+                DeviceSharedValues.IsExportPrinterResponseSettings = connectParams.IsExportPrinterResponseSettings;
 
                 DeviceSharedValues.PrinterIPs = connectParams.PrinterIPs;
                 DeviceSharedValues.PrinterPorts = connectParams.PrinterPorts;
