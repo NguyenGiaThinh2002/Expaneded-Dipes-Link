@@ -12,7 +12,8 @@
 
     <system:String x:Key="Starting">Đang khởi động...</system:String>
     <system:String x:Key="DatamanReadMode">Chế độ đọc:</system:String>
-    <system:String x:Key="ChangeNumberOfStation">Thay đổi số trạm !</system:String>
+    <system:String x:Key="ChangeNumberOfStation">Thay đổi số trạm ?</system:String>
+    <system:String x:Key="ChangeNumberOfPrinter">Thay đổi số trạm ?</system:String>
     <system:String x:Key="NotFoundSearchResult">Không tìm thấy kết quả tìm kiếm !</system:String>
     <system:String x:Key="AddJobConfirmation">Trạm {0}: Bạn muốn chọn công việc này?</system:String>
     <system:String x:Key="DeleteJobConfirmation">Trạm {0}: Bạn có muốn xóa công việc này ?</system:String>
@@ -111,6 +112,8 @@
     <system:String x:Key="NotLoadTemplate">Trạm {0}: Không tải được mẫu in !</system:String>
 
     <system:String x:Key="AppAlreadyOpen">Ứng dụng này đã được mở.</system:String>
+    <system:String x:Key="NoDongleKeyLicense">Xin hãy kiểm tra giấy phép USB!</system:String>
+
 
     <!--#region MainMenu-->
     <system:String x:Key="Home">Trang Chủ</system:String>

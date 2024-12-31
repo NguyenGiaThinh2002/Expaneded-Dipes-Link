@@ -5,6 +5,7 @@ using DipesLink.Views.Extension;
 using RelationalDatabaseHelper.SQLite;
 using SharedProgram.Shared;
 using SQLite;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -132,6 +133,10 @@ namespace DipesLink.Views.SubWindows
 
         private void IconImage_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if(NamedPipeServerStreamHelper.CheckUSBDongleKeyProcessID != 0)
+            {
+                Process.GetProcessById(NamedPipeServerStreamHelper.CheckUSBDongleKeyProcessID).Kill();
+            }
             Close();
         }
         private void ButtonLogin_Click(object sender, RoutedEventArgs e)

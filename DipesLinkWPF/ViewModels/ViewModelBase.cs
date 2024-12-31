@@ -87,7 +87,7 @@ namespace DipesLink.ViewModels
 
 
             
-        private int _checkUSBDongleKeyProcessID;
+        private int _checkUSBDongleKeyProcessID = 0;
 
         public int CheckUSBDongleKeyProcessID
         {

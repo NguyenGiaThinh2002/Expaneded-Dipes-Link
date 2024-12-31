@@ -2,12 +2,13 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
+using System.Windows;
 
 namespace DipesLink.ViewModels
 {
     public partial class MainViewModel
     {
-        private int _numberLicense;
+        public static int _numberLicense;
 
         private void CheckDongleKeyForStation(object? sender, EventArgs e)
         {
@@ -69,6 +70,9 @@ namespace DipesLink.ViewModels
                         if (message != null)
                         {
                             ViewModelSharedEvents.OnChangeDongleKeyHandler(int.Parse(message));
+                            _numberLicense = int.Parse(message);
+                            //MessageBox.Show(_numberLicense.ToString());
+
                         }
                     }
                     catch (Exception)

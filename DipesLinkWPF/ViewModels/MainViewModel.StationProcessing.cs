@@ -35,7 +35,7 @@ namespace DipesLink.ViewModels
         private void StartButtonCommandEventHandler(object? sender, EventArgs e) 
         {
             int index = sender != null ? (int)sender : -1;
-            if (CheckJobExisting(index,out _) && JobList[index].IsHaveLicense)
+            if (CheckJobExisting(index,out _)) //  && JobList[index].IsHaveLicense
             {
                 ActionButtonProcess(index, ActionButtonType.Start);
             }

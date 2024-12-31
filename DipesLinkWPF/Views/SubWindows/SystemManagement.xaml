@@ -61,7 +61,7 @@
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
                         Text="{DynamicResource ResourceKey=Station_Number}" />
-                    <ComboBox
+                    <!--<ComboBox
                         x:Name="ComboBoxStationNumber"
                         Width="230"
                         Height="30"
@@ -71,7 +71,14 @@
                         <ComboBoxItem>2</ComboBoxItem>
                         <ComboBoxItem>3</ComboBoxItem>
                         <ComboBoxItem>4</ComboBoxItem>
-                    </ComboBox>
+                    </ComboBox>-->
+                    <ComboBox
+                        x:Name="ComboBoxStationNumber"
+                        Width="230"
+                        Height="30"
+                        SelectionChanged="ComboBoxLanguage_StationNumberChanged"
+                        Style="{StaticResource ComboBoxStyle2}" />
+
                 </StackPanel>
 
                 <StackPanel

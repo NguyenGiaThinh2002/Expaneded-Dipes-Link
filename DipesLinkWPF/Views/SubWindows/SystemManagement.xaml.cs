@@ -24,6 +24,20 @@ namespace DipesLink.Views.SubWindows
             InitControls();
             SetCurrentLanguage();
             IsInitializing = false;
+            // thinh now
+            InitializeComboBox(); 
+        }
+
+        private void InitializeComboBox()
+        {
+            ComboBoxStationNumber.Items.Clear();
+
+            for (int i = 1; i <= NamedPipeServerStreamHelper._numberLicense; i++)
+            {
+                ComboBoxStationNumber.Items.Add(i);
+            }
+
+            //ComboBoxStationNumber.SelectedIndex = 0;
         }
         private void InitControls()
         {

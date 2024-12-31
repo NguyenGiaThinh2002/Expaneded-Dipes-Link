@@ -51,7 +51,7 @@ namespace DipesLink.ViewModels
             if (newNumber+1 != ViewModelSharedValues.Settings.NumberOfPrinter)
             {
                 var res = CusMsgBox.Show(
-                   LanguageModel.GetLanguage("ChangeNumberOfStation"),
+                   LanguageModel.GetLanguage("ChangeNumberOfPrinter"),
                    LanguageModel.GetLanguage("WarningDialogCaption"),
                    ButtonStyleMessageBox.OKCancel,
                    ImageStyleMessageBox.Warning);

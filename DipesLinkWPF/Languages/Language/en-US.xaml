@@ -10,7 +10,8 @@
     <system:String x:Key="ErrorDialogCaption">Error Dialog Box</system:String>
     <!--  BACKEND  -->
 
-    <system:String x:Key="ChangeNumberOfStation">Change number of station !</system:String>
+    <system:String x:Key="ChangeNumberOfStation">Change number of station ?</system:String>
+    <system:String x:Key="ChangeNumberOfPrinter">Change number of printer ?</system:String>
     <system:String x:Key="NotFoundSearchResult">Not found search result !</system:String>
     <system:String x:Key="AddJobConfirmation">Station {0}: Do you want to select this Job ?</system:String>
     <system:String x:Key="DeleteJobConfirmation">Station {0}: Do you want to delete this Job ?</system:String>
@@ -108,7 +109,7 @@
     <system:String x:Key="NotLoadTemplate">Station {0}: Not load Template!</system:String>
 
     <system:String x:Key="AppAlreadyOpen">The application is already open.</system:String>
-
+    <system:String x:Key="NoDongleKeyLicense">Please Check USB License!</system:String>
 
 
     <!--  FRONTEND  -->

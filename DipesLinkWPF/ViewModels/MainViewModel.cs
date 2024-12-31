@@ -98,7 +98,8 @@ namespace DipesLink.ViewModels
 
         private void InitStations(int numberOfStation)
         {
-            StartDongleKeyProcess();
+            // thinh now
+            //StartDongleKeyProcess();
             for (int i = 0; i < numberOfStation; i++)
             {
                 InitInstanceIPC(i);
@@ -1419,7 +1420,10 @@ namespace DipesLink.ViewModels
 
         internal void KillProcessByID()
         {
-            Process.GetProcessById(CheckUSBDongleKeyProcessID).Kill(); // Kill process check usb license
+            if (NamedPipeServerStreamHelper.CheckUSBDongleKeyProcessID != 0)
+            {
+                Process.GetProcessById(NamedPipeServerStreamHelper.CheckUSBDongleKeyProcessID).Kill(); // Kill process check usb license
+            }
             foreach (var job in JobList)
             {
                 try

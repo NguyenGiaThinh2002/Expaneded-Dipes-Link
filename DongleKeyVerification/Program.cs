@@ -5,6 +5,8 @@ using DongleKeyVerification.Extensions;
 using System.Text;
 using System.IO;
 using DongleKeyVerification.Models;
+using System.Windows.Forms;
+using System.Linq;
 
 namespace DongleKeyVerification
 {
@@ -50,14 +52,15 @@ namespace DongleKeyVerification
             int keyLevel = 0;
             try
             {
-                if (AutoCheckByPassLicenseFile())
-                {
-                    keyLevel = 4;
-                }
-                else
-                {
-                    keyLevel = DetectUSBDongleLevel();
-                }
+                //if (AutoCheckByPassLicenseFile())
+                //{
+                //    keyLevel = 4;
+                //}
+                //else
+                //{
+                //    keyLevel = DetectUSBDongleLevel();
+                //}
+                keyLevel = AutoCheckByPassLicenseFile();
                 var client = new DongleKeyNamedPipeHelper();
                 client.SendKeyLevel(keyLevel >= 1 ? keyLevel : 0);
 
@@ -65,15 +68,17 @@ namespace DongleKeyVerification
                 {
                     int newkeyLevel = 0;
                     Thread.Sleep(5000); // Check every 5 seconds
-                    if (AutoCheckByPassLicenseFile())
-                    {
-                        newkeyLevel = 4;
-                    }
-                    else
-                    {
-                        newkeyLevel = DetectUSBDongleLevel();
-                    }
-                
+                    //if (AutoCheckByPassLicenseFile())
+                    //{
+                    //    newkeyLevel = 4;
+                    //}
+                    //else
+                    //{
+                    //    newkeyLevel = DetectUSBDongleLevel();
+                    //}
+                    newkeyLevel = AutoCheckByPassLicenseFile();
+
+
                     if (newkeyLevel != keyLevel)
                     {
                         var newClient = new DongleKeyNamedPipeHelper();
@@ -92,7 +97,24 @@ namespace DongleKeyVerification
 
         }
 
-        private static bool AutoCheckByPassLicenseFile()
+        private static int CheckNumberOfStation(string str)
+        {
+            int dotIndex = str.IndexOf('*');
+            if (dotIndex != -1)
+            {
+                int NumberOfStation = dotIndex >= 0 ? int.Parse(str.Substring(0, dotIndex)) : 0;
+
+                DecryptionHardwareID.listPCAllow.FirstOrDefault().HardwareID = dotIndex >= 0 ? str.Substring(dotIndex + 1) : "";
+                if (NumberOfStation != null && NumberOfStation != 0)
+                {
+                    return NumberOfStation;
+                }
+            }         
+                      
+            return 0;
+        }
+
+        private static int AutoCheckByPassLicenseFile()
         {
             // Check HwId PC
             try
@@ -113,7 +135,10 @@ namespace DongleKeyVerification
                 {
                     Directory.CreateDirectory(PathAllowPC);
                 }
+
                 DecryptionHardwareID.DecryptFile_UUID(pathDPconfig); // Descript file .dat
+
+                int NumberOfStation = CheckNumberOfStation(DecryptionHardwareID.listPCAllow.FirstOrDefault().HardwareID);
                 foreach (HardwareIDModel id in DecryptionHardwareID.listPCAllow) // Compare byte in descript data
                 {
                     var foundKeyByte = Encoding.UTF8.GetBytes(id.HardwareID);
@@ -128,11 +153,26 @@ namespace DongleKeyVerification
                     }
                 }
                 DecryptionHardwareID.listPCAllow.Clear();
-                return isByPass;
+                if (isByPass) 
+                {
+                    if(NumberOfStation > 0)
+                    {
+                        return NumberOfStation;
+                    }
+                    else
+                    {
+                        return 4;
+                    }
+                }
+                else
+                {
+                    return 0;
+                }
+               // return isByPass;
             }
             catch (Exception)
             {
-                return false;
+                return 0;
             }
         }
         private static int DetectUSBDongleLevel()

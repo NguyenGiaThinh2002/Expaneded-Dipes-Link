@@ -1,4 +1,5 @@
-﻿using DipesLink.Languages;
+﻿using DipesLink.Extensions;
+using DipesLink.Languages;
 using DipesLink.Views;
 using DipesLink.Views.Extension;
 using DipesLink.Views.SubWindows;
@@ -30,10 +31,21 @@ namespace DipesLink
             splashScreen = new(); //Show Loading Screen
             splashScreen.Show();
 
+
+            NamedPipeServerStreamHelper.StartDongleKeyProcess();
+            await Task.Delay(2000);
+            //MessageBox.Show(NamedPipeServerStreamHelper._numberLicense.ToString());
+
             if (!InitializeMutex()) // Check Application is running 
             {
                 NotifyAndShutdown();
                 return;
+            }
+
+            if (NamedPipeServerStreamHelper._numberLicense < 1)
+            {
+                Process.GetProcessById(NamedPipeServerStreamHelper.CheckUSBDongleKeyProcessID).Kill();
+                NotifyNoDongleKeyAndShutDown();
             }
 
             KillProcessByName(new ProcessType[] { ProcessType.DeviceTransfer }); // Kill old process
@@ -117,6 +129,20 @@ namespace DipesLink
             try
             {
                 string msg = LanguageModel.GetLanguage("AppAlreadyOpen");
+                string caption = LanguageModel.GetLanguage("WarningDialogCaption");
+                CusMsgBox.Show(msg, caption, Views.Enums.ViewEnums.ButtonStyleMessageBox.OK, Views.Enums.ViewEnums.ImageStyleMessageBox.Warning);
+                Current.Shutdown();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private static void NotifyNoDongleKeyAndShutDown()
+        {
+            try
+            {
+                string msg = LanguageModel.GetLanguage("NoDongleKeyLicense");
                 string caption = LanguageModel.GetLanguage("WarningDialogCaption");
                 CusMsgBox.Show(msg, caption, Views.Enums.ViewEnums.ButtonStyleMessageBox.OK, Views.Enums.ViewEnums.ImageStyleMessageBox.Warning);
                 Current.Shutdown();
