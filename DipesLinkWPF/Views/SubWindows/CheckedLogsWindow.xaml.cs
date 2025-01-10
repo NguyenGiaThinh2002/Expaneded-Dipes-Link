@@ -787,24 +787,29 @@ namespace DipesLink.Views.SubWindows
                     {
                         string csvPath = subPrinterPath;
                         List<string[]> rawDatabaseList = new List<string[]>();
-                        string[] lines = File.ReadAllLines(csvPath);
+                        //string[] lines = File.ReadAllLines(csvPath);
 
-                        // Turn csv file into rawDatabaseList
-                        for (int i = 0; i < lines.Length; i++)
+
+                        rawDatabaseList = GetRawDatabaseListForPrinterReponses(csvPath, _printingInfo?.RawList);
+                        //// Turn csv file into rawDatabaseList
+                        //for (int i = 0; i < lines.Length; i++)
+                        //{
+                        //    string[] fields = lines[i].Split(',');
+
+                        //    string[] rowWithIndex = new string[fields.Length + 1];
+
+                        //    rowWithIndex[0] = i == 0 ? "Index" : (i).ToString();
+
+                        //    Array.Copy(fields, 0, rowWithIndex, 1, fields.Length);
+
+                        //    rawDatabaseList.Add(rowWithIndex);
+                        //}
+
+                        // Task<bool> doneExportTask = Task.Run(() => { return ExportData(saveFileDialog.FileName, rawDatabaseList, _printingInfo?.list, _printingInfo?.PodFormat); });
+                        Task<bool> doneExportTask = Task.Run(() =>
                         {
-                            string[] fields = lines[i].Split(',');
-
-                            string[] rowWithIndex = new string[fields.Length + 1];
-
-                            rowWithIndex[0] = i == 0 ? "Index" : (i).ToString();
-
-                            Array.Copy(fields, 0, rowWithIndex, 1, fields.Length);
-
-                            rawDatabaseList.Add(rowWithIndex);
-                        }
-
-                        Task<bool> doneExportTask = Task.Run(() => { return ExportData(saveFileDialog.FileName, rawDatabaseList, _printingInfo?.list, _printingInfo?.PodFormat); });
-
+                            return ExportData(saveFileDialog.FileName, rawDatabaseList, _printingInfo?.list, _printingInfo?.PodFormat);
+                        });
                     }
 
                 }
@@ -842,6 +847,57 @@ namespace DipesLink.Views.SubWindows
             catch (Exception ex)
             {
                 SharedFunctions.PrintConsoleMessage(ex.Message);
+            }
+        }
+
+        public static List<string[]> GetRawDatabaseListForPrinterReponses(string pathBackupPrinted, List<string[]> rawDatabase)
+        {
+            List<string[]> rawDatabaseList = rawDatabase;
+            for (int i = 1; i < rawDatabaseList.Count; i++)
+            {
+                rawDatabaseList[i][^1] = "Waiting"; // Update the last element of each line except the first one
+            }
+
+            if (!File.Exists(pathBackupPrinted))
+            {
+                return rawDatabaseList;
+            }
+            try
+            {
+                // Use FileStream with buffering
+                using FileStream fs = new(pathBackupPrinted, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+                using StreamReader reader = new(fs, Encoding.UTF8, true);
+
+                // Read all lines at once
+                string[] lines = reader.ReadToEnd().Split(Environment.NewLine);
+
+                if (lines.Length < 2) return rawDatabaseList; // If there are less than 2 lines, there's nothing to process
+
+                // Skip the first line (header) and process the rest in parallel
+                Parallel.For(1, lines.Length, i =>
+                {
+                    if (string.IsNullOrWhiteSpace(lines[i])) return;
+                    string line = lines[i];
+                    string[] columns = line.Split(',');
+                    if (columns.Length > 0)
+                    {
+                        string indexString = Csv.Unescape(columns[0]);
+                        if (int.TryParse(indexString, out int index))
+                        {
+                            rawDatabaseList[index][^1] = "Printed"; // Get rows by index and update the last column with "Printed"
+                        }
+                    }
+                });
+                return rawDatabaseList;
+
+            }
+            catch (IOException)
+            {
+                return rawDatabaseList;
+            }
+            catch (Exception)
+            {
+                return rawDatabaseList;
             }
         }
 

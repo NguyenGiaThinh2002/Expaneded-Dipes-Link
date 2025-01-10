@@ -167,52 +167,47 @@ namespace DipesLinkDeviceTransfer
 
                         string SubPrinterPrintedReposesPath1 = printedResponseSubPrintersPath1 + "_Printer_" + (printerIndex + 1) + ".csv";
 
-                        //string fileNamePrintedResponse = DateTime.Now.ToString(_DateTimeFormat) + "_Printed_" + SharedValues.SelectedJob.Name;
-                        //string jobPath = SharedPaths.PathSubJobsApp + $"{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension;
-                        //string selectedJobPath = SharedPaths.PathSelectedJobApp + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.Name + SharedValues.Settings.JobFileExtension; //
-                        //string printedResponsePath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + (printerIndex + 1) + ".csv";
-
                         if (!File.Exists(SubPrinterPrintedReposesPath1))
                         {
                             using StreamWriter streamWriter = new(SubPrinterPrintedReposesPath1, true, new UTF8Encoding(true));
-                            streamWriter.WriteLine(string.Join(",", SharedValues.DatabaseColunms.Skip(1)));
+                            streamWriter.WriteLine(string.Join(",", SharedValues.DatabaseColunms)); //.Skip(1)
                         }
                         SubPrinterPrintedReposesPath = SubPrinterPrintedReposesPath1;
-                        //SubPrinterPrintedReposesPath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + fileNamePrintedResponse + "_Printer_" + (printerIndex + 1) + ".csv";
                     }
-                    try
-                    {
-                        while (true)
-                        {
-                            // Only stop if handled all data
-                            if (token.IsCancellationRequested)
-                                if (token.IsCancellationRequested)
-                                {
-                                    token.ThrowIfCancellationRequested();
-                                }
+//                    try
+//                    {
+//                        while (true)
+//                        {
+//                            // Only stop if handled all data
+//                            if (token.IsCancellationRequested)
+//                                if (token.IsCancellationRequested)
+//                                {
+//                                    token.ThrowIfCancellationRequested();
+//                                }
 
-                            _ = _QueueSubPrintersBufferBackupPrintedCode[printerIndex].TryDequeue(out string? valueArr);
-                            if (valueArr == null || valueArr == "") { await Task.Delay(1, token); continue; };
-                            if (valueArr != "")
-                            {
-                                SaveResultToFileTemp(valueArr, SubPrinterPrintedReposesPath);
-                            }
-                            valueArr = "";
-                            await Task.Delay(1, token);
-                        }
-                    }
-                    catch (OperationCanceledException)
-                    {
-#if DEBUG
-                        Console.WriteLine("ExportPrintedResponseToFileAsync Thread was Canceled !");
-#endif
-                    }
-                    catch (Exception)
-                    {
-#if DEBUG
-                        Console.WriteLine("ExportPrintedResponseToFileAsync Thread Failed !");
-#endif
-                    }
+//                            _ = _QueueSubPrintersBufferBackupPrintedCode[printerIndex].TryDequeue(out string? valueArr);
+//                            if (valueArr == null || valueArr == "") { await Task.Delay(1, token); continue; };
+//                            if (valueArr != "")
+//                            {
+//                                _BufferCount[printerIndex]++;
+//                                SaveResultToFileTemp(valueArr, SubPrinterPrintedReposesPath);
+//                            }
+//                            valueArr = "";
+//                            await Task.Delay(1, token);
+//                        }
+//                    }
+//                    catch (OperationCanceledException)
+//                    {
+//#if DEBUG
+//                        Console.WriteLine("ExportPrintedResponseToFileAsync Thread was Canceled !");
+//#endif
+//                    }
+//                    catch (Exception)
+//                    {
+//#if DEBUG
+//                        Console.WriteLine("ExportPrintedResponseToFileAsync Thread Failed !");
+//#endif
+//                    }
                 });
             }
             catch
@@ -220,6 +215,8 @@ namespace DipesLinkDeviceTransfer
 
             }
         }
+
+
         private static void SaveResultToFile(List<string[]> list, string path)
         {
             try
@@ -235,6 +232,8 @@ namespace DipesLinkDeviceTransfer
                 // Todo
             }
         }
+
+
 
         private static void SaveResultToFileTemp(string text, string path)
         {

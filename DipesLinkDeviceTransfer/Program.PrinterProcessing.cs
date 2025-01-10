@@ -75,6 +75,8 @@ namespace DipesLinkDeviceTransfer
             }
 
         }
+       
+
 
         private void PrinterDataHandler_OnPrinterDataChange(object? sender, PrinterDataEventArgs e)
         {
@@ -346,6 +348,7 @@ namespace DipesLinkDeviceTransfer
             {
                 _CTS_ReceiveDataFromPrinterDictionary[printerIndex] = new CancellationTokenSource();
                 var token = _CTS_ReceiveDataFromPrinterDictionary[printerIndex].Token;
+
                 while (true)
                 {
                     token.ThrowIfCancellationRequested();
@@ -377,21 +380,13 @@ namespace DipesLinkDeviceTransfer
                                                 break;
 
                                             case "RSFP": //Feedback data printed
-
-                                                if (_IsOnProductionMode)
-                                                {
-                                                    lock (_PrintedResponseLocker)
-                                                    {
-                                                        _IsPrintedResponse = true; // Notify that have a printed response
-                                                    }
-                                                }
                                                 pODcommand1 = pODcommand1.Skip(3).ToArray();  // get  [data1;data2;data3]
-                                                string resultText = string.Join(",", pODcommand1) + ",Printed";
-                                                _QueueSubPrintersBufferBackupPrintedCode[printerIndex].Enqueue(resultText);
-                                                await Task.Delay(1, token);
+                                                //string resultText = string.Join(",", pODcommand1);
+                                                //_QueueSubPrintersBufferBackupPrintedCode[printerIndex].Enqueue(resultText);
+                                                ResultPrintedReponsesForSubPrinters(pODcommand1, printerIndex);
                                                 break;
                                         }
-                                        await Task.Delay(1);
+                                        await Task.Delay(1, token);
                                     }
                                 }
 
@@ -406,6 +401,98 @@ namespace DipesLinkDeviceTransfer
 
             }
             catch (Exception) { }
+        }
+
+        public readonly static object _SyncObjCodeSubPrinterList = new();
+        private static readonly Mutex CodeListMutex = new Mutex();
+        private void ResultPrintedReponsesForSubPrinters(string[] podCommand, int printerIndex)
+        {
+            string printedResponseSubPrintersPath = SharedPaths.PathPrintedResponse + $"Job{JobIndex + 1}\\" + SharedValues.SelectedJob.PrintedResponsePath;
+
+            printedResponseSubPrintersPath = printedResponseSubPrintersPath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
+                                                                                                            ? printedResponseSubPrintersPath.Remove(printedResponseSubPrintersPath.Length - 4)
+                                                                                                            : printedResponseSubPrintersPath;
+
+            string SubPrinterPrintedReposesPath = printedResponseSubPrintersPath + "_Printer_" + (printerIndex + 1) + ".csv";
+
+            if(File.Exists(SubPrinterPrintedReposesPath))
+            {
+                try
+                {
+                    string printedResult = "";
+                    if (SharedValues.SelectedJob.JobType == JobType.VerifyAndPrint) // Verify and Print
+                    {
+                        if (DeviceSharedValues.VPObject.VerifyAndPrintBasicSentMethod)
+                        {
+                            printedResult = podCommand[0];
+                        }
+                        else // Compares mode
+                        {
+                            if (DeviceSharedValues.VPObject.PrintFieldForVerifyAndPrint.Count > 0)
+                            {
+                                lock (_SyncObjCodeList)
+                                {
+                                    if (_Emergency.TryGetValue(string.Join("", podCommand), out int codeIndex))
+                                    {
+                                        printedResult = SharedFunctions.GetCompareDataByPODFormat(SharedValues.ListPrintedCodeObtainFromFile[codeIndex], SharedValues.SelectedJob.PODFormat);
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                foreach (var item in SharedValues.SelectedJob.PODFormat)
+                                {
+                                    if (item.Type == PODModel.TypePOD.FIELD)
+                                    {
+                                        int indexItem = item.Index - 1;
+                                        if (indexItem < podCommand.Length)
+                                            printedResult += podCommand[item.Index - 1];
+                                    }
+                                    else if (item.Type == PODModel.TypePOD.TEXT)
+                                    {
+                                        printedResult += item.Value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else // After production
+                    {
+                        foreach (PODModel podData in SharedValues.SelectedJob.PODFormat)
+                        {
+                            if (podData.Type == PODModel.TypePOD.FIELD)
+                            {
+                                int indexItem = podData.Index - 1;
+                                if (indexItem < podCommand.Length)
+                                    printedResult += podCommand[indexItem]; // Get printed Result by index POD format
+                            }
+                            else if (podData.Type == PODModel.TypePOD.TEXT)
+                            {
+                                printedResult += podData.Value; //Custom Text String concatenation
+                            }
+                        }
+                    }
+
+                    if (printedResult != null)
+                    {
+                        lock (_SyncObjCodeSubPrinterList)
+                        {
+                            List<string[]> strPrintedResponseList = new();
+                            if (_CodeListPODFormat.TryGetValue(printedResult, out CompareStatus? compareStatus)) // Get status from done compare list
+                            {
+                                var temp = (string[])SharedValues.ListPrintedCodeObtainFromFile[compareStatus.Index].Clone();
+                                temp[^1] = "Printed";
+                                strPrintedResponseList.Add(temp);
+                                SaveResultToFile(strPrintedResponseList, SubPrinterPrintedReposesPath);
+                                strPrintedResponseList.Clear();
+                            }
+                        }
+                    }
+                }
+                catch (Exception) { }
+            }
+          
         }
 
         //private async void ReceiveTemplateFromAllPrinter()
@@ -894,18 +981,14 @@ namespace DipesLinkDeviceTransfer
                     {
                         _printerManager.StopAllPrinter("STOP");
                         Thread.Sleep(50);
-                        //string templateNameWithoutExt = SharedValues.SelectedJob.PrinterTemplate.Replace(".dsj", "");
-                        //string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
 
                         for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
                         {
                             
                             if (_printerManager._printers[i].IsConnected()){
-                                //MessageBox.Show("IP: " + i + "___" + DeviceSharedValues.PrinterIPs[i]);
                                 string templateNameWithoutExt = SharedValues.SelectedJob.TemplateManager.PrinterTemplateList[i].Replace(".dsj", "");
                                 string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
                                 _printerManager._printers[i].SendData(startPrintCommand); // Send Start command to printer
-                                //MessageBox.Show("PrinterTemplateList " + i + templateNameWithoutExt.ToString());
                             }
 
                         }
@@ -1005,7 +1088,7 @@ namespace DipesLinkDeviceTransfer
         }
 
         public async Task StopProcessAsync()
-        {
+        {          
             await Task.Run(() =>
             {
                 try
@@ -1074,7 +1157,6 @@ namespace DipesLinkDeviceTransfer
                 }
             });
             _IsRechecked = false;
-
         }
 
         public bool GetPrinterStatus()
@@ -2090,15 +2172,14 @@ namespace DipesLinkDeviceTransfer
             resourceDictionary.Clear(); // Clear the dictionary
         }
 
-        public void DisposeAndClearListQueue(List<ConcurrentQueue<object>> listQueue)
+        public void DisposeAndClearListQueue<T>(List<ConcurrentQueue<T>> listQueue)
         {
             foreach (var item in listQueue)
             {
-                item.Clear(); // Dispose each CancellationTokenSource
+                item.Clear(); // Clear the queue
             }
-            //resourceDictionary.Clear(); // Clear the dictionary
+            // resourceDictionary.Clear(); // Clear any additional resources if necessary
         }
-       
 
         public void ReleaseResource()
         {
@@ -2135,10 +2216,10 @@ namespace DipesLinkDeviceTransfer
 
                 _QueueBufferPrinterReceivedData.Clear();
                 DisposeAndClearListQueue(_QueueBufferSubPrintersReceivedDataList);
-
-                //_QueueBufferPrinterReceivedDataList[SharedValues.SelectedPrinter].Clear();
+                DisposeAndClearListQueue(_QueueSubPrintersBufferBackupPrintedCode);
                 _QueueBufferBackupPrintedCode.Clear();
                 _QueueBufferBackupCheckedResult.Clear();
+                
                 _QueueBufferPODDataCompared.Clear();
                 _QueueCheckedResult.Clear();
                 _QueuePrintedCode.Clear();
