@@ -1,15 +1,20 @@
 ﻿using DipesLink.Languages;
 using DipesLink.Models;
+using DipesLink.ViewModels;
 using DipesLink.Views.Converter;
 using DipesLink.Views.Extension;
+using SharedProgram.Shared;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Dynamic;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using TAlex.WPF.Helpers;
 
 namespace DipesLink.Views.SubWindows
@@ -25,16 +30,81 @@ namespace DipesLink.Views.SubWindows
         private Paginator<ExpandoObject>? _paginator;
         private int countDataPerPage;
         private ObservableCollection<ExpandoObject>? filterList = new();
+        private static int selectedPrinter = 1;
         #endregion Declarations
 
         #region Functions
-        
+
         public PrintedLogsWindow(PrintingInfo printingInfo)
         {
             _printingInfo = printingInfo;
             InitializeComponent();
             InitPrintData();
+            LoadUIPrinter();
             this.Closing += PrintedLogsWindow_Closing;
+        }
+        private void LoadUIPrinter()
+        {
+            if (ViewModelSharedValues.Settings.NumberOfPrinter > 1)
+            {
+                ButtonItemsControl.ItemsSource = Enumerable.Range(1, ViewModelSharedValues.Settings.NumberOfPrinter).Select(n => n.ToString()).ToList();
+                PrinterSelection.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PrinterSelection.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void TemplateLoadClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in ButtonItemsControl.Items)
+            {
+                var container = ButtonItemsControl.ItemContainerGenerator.ContainerFromItem(item) as ContentPresenter;
+                if (container != null)
+                {
+                    var button = FindVisualChild<Button>(container);
+                    if (button != null)
+                    {
+                        button.Tag = null; // Clear selection
+                    }
+                }
+            }
+
+            // Cast the sender to a Button
+            if (sender is Button clickedButton && int.TryParse(clickedButton.Content.ToString(), out int printerNumber))
+            {
+                selectedPrinter = printerNumber;
+                if (clickedButton.Tag == null || clickedButton.Tag.ToString() != "Selected")
+                {
+                    clickedButton.Tag = "Selected";  // Set as selected
+                }
+                else
+                {
+                    clickedButton.Tag = null;  // Deselect
+                }
+                ReLoadSelectedPrinterData();
+            }
+            else
+            {
+                MessageBox.Show("Unknown template selected.");
+            }
+        }
+        public static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                if (child != null && child is T)
+                    return (T)child;
+                else
+                {
+                    T childOfChild = FindVisualChild<T>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
         }
 
         private void InitPrintData()
@@ -46,12 +116,135 @@ namespace DipesLink.Views.SubWindows
                 _columnNames = _printingInfo.columnNames;
                 CreateDataTemplate();
                 GetOriginalList();
+
             }
             catch (Exception)
             {
 
             }
         }
+
+        private void ReLoadSelectedPrinterData()
+        {
+            try
+            {              
+                int? currentIndex = _printingInfo.CurrentJob.Index;
+                var printedNameFilePath = SharedPaths.PathSubJobsApp + $"{currentIndex + 1}\\" + "printedPathString";
+
+                var namePrintedFilePath = SharedPaths.PathPrintedResponse + $"Job{currentIndex + 1}\\"
+                    + SharedFunctions.ReadStringOfPrintedResponePath(printedNameFilePath);
+
+                string subPrinterPath = namePrintedFilePath;
+
+                subPrinterPath = $"{(namePrintedFilePath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase) ? namePrintedFilePath[..^4] : namePrintedFilePath)}_Printer_{selectedPrinter}.csv";
+
+                //if (selectedPrinter > 1)
+                //{
+                //    subPrinterPath = $"{(namePrintedFilePath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase) ? namePrintedFilePath[..^4] : namePrintedFilePath)}_Printer_{selectedPrinter}.csv";
+                //}
+
+                string csvPath = subPrinterPath;
+
+                var rawDatabaseList = GetRawDatabaseListForPrinterReponses(csvPath, _printingInfo?.RawList);
+
+                filterList = rawDatabaseList;
+                _printingInfo.list = rawDatabaseList;
+
+                CreateDataTemplate();
+                GetOriginalList();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Export SubPrinter Data Error " + ex.Message);
+            }
+        }
+
+        public static ObservableCollection<ExpandoObject> GetRawDatabaseListForPrinterReponses(string pathBackupPrinted, List<string[]> rawNewDatabase)
+        {
+            //List<string[]> rawDatabase = rawNewDatabase;
+            List<string[]> rawDatabase = rawNewDatabase
+                                                    .Select(array => array.ToArray())
+                                                    .ToList();
+            if (selectedPrinter > 1) 
+            {
+                for (int i = 1; i < rawDatabase.Count; i++)
+                {
+                    rawDatabase[i][^1] = "Waiting"; // Update the last element of each line except the first one
+                }
+            }
+          
+
+            ObservableCollection<ExpandoObject> rawDatabaseList = new ObservableCollection<ExpandoObject>();
+
+            if (rawDatabase.Count <= 1) return rawDatabaseList; 
+
+            var headers = rawDatabase[0]; // The first line will be used as keys
+
+            for (int i = 0; i < rawDatabase.Count; i++)
+            {
+                // Create a new ExpandoObject for each row
+                dynamic expando = new ExpandoObject();
+                var dictionary = (IDictionary<string, object>)expando;
+
+                var row = rawDatabase[i];
+                for (int j = 0; j < headers.Length; j++)
+                {
+                    if (j < row.Length)
+                    {
+                        dictionary[headers[j]] = row[j];
+                    }
+                }
+
+                rawDatabaseList.Add(expando);
+            }
+
+            if (!File.Exists(pathBackupPrinted))
+            {
+                rawDatabaseList.RemoveAt(0); // Remove the header
+                return rawDatabaseList;
+            }
+
+            try
+            {
+                using FileStream fs = new(pathBackupPrinted, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+                using StreamReader reader = new(fs, Encoding.UTF8, true);
+
+                string[] lines = reader.ReadToEnd().Split(Environment.NewLine);
+                if (lines.Length < 2) return rawDatabaseList; // If there are less than 2 lines, there's nothing to process
+
+                // Skip the first line (header) and process the rest in parallel
+                Parallel.For(1, lines.Length, i =>
+                {
+                    if (string.IsNullOrWhiteSpace(lines[i])) return;
+                    string line = lines[i];
+                    string[] columns = line.Split(',');
+                    if (columns.Length > 0)
+                    {
+                        string indexString = Csv.Unescape(columns[0]);
+                        if (int.TryParse(indexString, out int index) && index < rawDatabaseList.Count)
+                        {
+                            // Update the last column of the corresponding row to "Printed"
+                            dynamic expando = rawDatabaseList[index];
+                            var dictionary = (IDictionary<string, object>)expando;
+                            dictionary[headers[^1]] = "Printed";
+                        }
+                    }
+                });
+                rawDatabaseList.RemoveAt(0); // Remove the header
+
+                return rawDatabaseList;
+            }
+            catch (IOException)
+            {
+                return rawDatabaseList;
+            }
+            catch (Exception)
+            {
+                return rawDatabaseList;
+            }
+    }
+
 
         private void GetOriginalList()
         {
@@ -68,6 +261,8 @@ namespace DipesLink.Views.SubWindows
 
             }
         }
+
+
 
         private void UpdateNumber()
         {
@@ -365,6 +560,7 @@ namespace DipesLink.Views.SubWindows
         private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
             SearchAction();
+
         }
 
         private void SearchAction()

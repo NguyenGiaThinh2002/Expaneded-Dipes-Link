@@ -77,8 +77,8 @@ namespace DipesLink.Extensions
                         string? message = reader.ReadLine();
                         if (message != null)
                         {
-                            ViewModelSharedEvents.OnChangeDongleKeyHandler(int.Parse(message));
                             _numberLicense = int.Parse(message);
+                            ViewModelSharedEvents.OnChangeDongleKeyHandler(int.Parse(message));
                             Console.WriteLine(_numberLicense.ToString());
 
                         }

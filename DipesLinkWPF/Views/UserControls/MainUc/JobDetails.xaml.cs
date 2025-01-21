@@ -415,6 +415,8 @@ namespace DipesLink.Views.UserControls.MainUc
         {
             try
             {
+
+                
                 //if (_currentJob == null || _checkedObserHelper.CheckedList == null || !_checkedObserHelper.CheckedList.Any()) return;
                 CheckedInfo printInfo = new()
                 {
@@ -437,18 +439,25 @@ namespace DipesLink.Views.UserControls.MainUc
             }
         }
 
+        /// <summary>
+        /// Show Printed Data Log
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PrintedData_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
+                // thinh dang lam now
                 if (_currentJob == null || _printObserHelper?.PrintList == null || !_printObserHelper.PrintList.Any()) return;
                 PrintingInfo printInfo = new()
                 {
+                    RawList = new(_dataList),
                     list = new(_printObserHelper.PrintList),
                     columnNames = _printObserHelper.ColumnNames,
+                    CurrentJob = _currentJob,
                 };
 
-                // thinh dang lam now
                 //CheckedInfo printInfo = new()
                 //{
                 //    list = new(_checkedObserHelper.CheckedList),

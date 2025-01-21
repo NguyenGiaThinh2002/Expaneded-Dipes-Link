@@ -69,8 +69,8 @@ namespace DipesLink.ViewModels
                         string? message = reader.ReadLine();
                         if (message != null)
                         {
-                            ViewModelSharedEvents.OnChangeDongleKeyHandler(int.Parse(message));
                             _numberLicense = int.Parse(message);
+                            ViewModelSharedEvents.OnChangeDongleKeyHandler(int.Parse(message));
                             //MessageBox.Show(_numberLicense.ToString());
 
                         }

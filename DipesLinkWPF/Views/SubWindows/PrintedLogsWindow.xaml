@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:DipesLink.Views.SubWindows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="1025"
-    Height="600"
+    Height="625"
     Icon="pack://application:,,,/DipesLink;component/Images/Logs.png"
     ResizeMode="NoResize"
     Topmost="True"
@@ -217,7 +217,7 @@
                 </Grid.RowDefinitions>
 
                 <!--  Header  -->
-                <Grid>
+                <Grid RenderTransformOrigin="0.545,0.47">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="309*" />
                         <ColumnDefinition Width="76*" />
@@ -226,22 +226,25 @@
 
                     <!--  Filter  -->
                     <Border
-                        Grid.ColumnSpan="2"
+                        Grid.ColumnSpan="3"
                         Width="auto"
                         Height="100"
-                        Margin="10,10,10,0"
+                        Margin="19,10,350,0"
                         VerticalAlignment="Top"
                         BorderBrush="Transparent"
                         BorderThickness="0"
                         CornerRadius="10">
-                        <StackPanel>
+                        <StackPanel
+                            Width="270"
+                            Margin="-5,0,0,0"
+                            HorizontalAlignment="Left">
                             <TextBlock
                                 Margin="10,0,0,0"
                                 FontSize="20"
                                 Text="{DynamicResource ResourceKey=Filter}" />
                             <ComboBox
                                 x:Name="ComboBoxFilter"
-                                Width="250"
+                                Width="246"
                                 Height="30"
                                 Margin="10,14,0,0"
                                 HorizontalAlignment="Left"
@@ -254,11 +257,9 @@
                             </ComboBox>
                         </StackPanel>
                     </Border>
-                    <StackPanel
-                        Grid.Column="1"
-                        Grid.ColumnSpan="2"
-                        Margin="75,0,0,0">
-                        <Grid Margin="10">
+
+                    <StackPanel Grid.Column="2" Margin="74,0,-20,0">
+                        <Grid Width="261" Margin="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition />
@@ -291,6 +292,7 @@
                         </Grid>
                         <TextBox
                             x:Name="TextBoxSearch"
+                            Width="245"
                             Height="30"
                             Margin="30,0,30,0"
                             Padding="0,0,0,0"
@@ -298,14 +300,44 @@
                             KeyDown="TextBoxSearch_KeyDownAsync"
                             Style="{StaticResource TextBoxStyle2}" />
                     </StackPanel>
+
+                    <StackPanel
+                        Grid.ColumnSpan="3"
+                        Height="94"
+                        Margin="269,3,285,3"
+                        Orientation="Vertical">
+                        <TextBlock
+                            x:Name="PrinterSelection"
+                            Width="177"
+                            Margin="0,5,0,5"
+                            FontSize="20"
+                            Text="{DynamicResource ResourceKey=Select_Printer}" />
+                        <ItemsControl x:Name="ButtonItemsControl">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Width="35"
+                                        Height="30"
+                                        Margin="15,10,0,0"
+                                        Click="TemplateLoadClick"
+                                        Content="{Binding}"
+                                        Style="{StaticResource ModernButtonPrinter}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </Grid>
 
                 <!--  DataView  -->
                 <Grid Grid.Row="1">
                     <DataGrid
                         x:Name="DataGridPrintLog"
-                        Grid.Row="3" FontSize="16"
-                        Margin="20"
+                        Margin="20,7,20,20"
                         AlternatingRowBackground="#F5F5F5"
                         BorderBrush="LightGray"
                         BorderThickness="1"
@@ -313,6 +345,7 @@
                         ColumnWidth="150"
                         EnableColumnVirtualization="True"
                         EnableRowVirtualization="True"
+                        FontSize="16"
                         GridLinesVisibility="All"
                         HeadersVisibility="Column"
                         HorizontalGridLinesBrush="#D3D3D3"

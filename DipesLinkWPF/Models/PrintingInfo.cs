@@ -12,5 +12,9 @@ namespace DipesLink.Models
     {
         public ObservableCollection<ExpandoObject>? list { get; set; }
         public string[]? columnNames { get; set; }
+
+        public List<string[]>? RawList { get; set; }
+
+        public JobOverview CurrentJob { get; internal set; }
     }
 }

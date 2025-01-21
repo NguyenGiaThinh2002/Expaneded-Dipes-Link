@@ -59,7 +59,8 @@ namespace DipesLink.Views.SubWindows
                 _printingInfo.CurrentJob.StatusStartButton && 
                 _printingInfo.CurrentJob.PrinterSeries == SharedProgram.DataTypes.CommonDataType.PrinterSeries.RynanSeries &&
                 _printingInfo.CurrentJob.JobType == SharedProgram.DataTypes.CommonDataType.JobType.AfterProduction; // Only use Re-Print for After Production
-            ExportData_StackPanel.Visibility = _printingInfo.CurrentJob.CompareType == CompareType.Database ? Visibility.Visible : Visibility.Collapsed;
+            ExportDataPanel.Visibility = _printingInfo.CurrentJob.CompareType == CompareType.Database ? Visibility.Visible : Visibility.Collapsed;
+
             InitPrintData();
             LoadUIPrinter();
             Closing += CheckedLogsWindow_Closing;
@@ -804,7 +805,7 @@ namespace DipesLink.Views.SubWindows
 
                         //    rawDatabaseList.Add(rowWithIndex);
                         //}
-
+                          
                         // Task<bool> doneExportTask = Task.Run(() => { return ExportData(saveFileDialog.FileName, rawDatabaseList, _printingInfo?.list, _printingInfo?.PodFormat); });
                         Task<bool> doneExportTask = Task.Run(() =>
                         {

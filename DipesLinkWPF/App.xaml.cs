@@ -26,22 +26,19 @@ namespace DipesLink
 
         protected override async void OnStartup(StartupEventArgs e)
         {
+            NamedPipeServerStreamHelper.StartDongleKeyProcess();
+
             base.OnStartup(e);
 
             splashScreen = new(); //Show Loading Screen
             splashScreen.Show();
-
-
-            NamedPipeServerStreamHelper.StartDongleKeyProcess();
-            await Task.Delay(2000);
-            //MessageBox.Show(NamedPipeServerStreamHelper._numberLicense.ToString());
 
             if (!InitializeMutex()) // Check Application is running 
             {
                 NotifyAndShutdown();
                 return;
             }
-
+            await Task.Delay(1500); // Wait for Dongle Key Process
             if (NamedPipeServerStreamHelper._numberLicense < 1)
             {
                 Process.GetProcessById(NamedPipeServerStreamHelper.CheckUSBDongleKeyProcessID).Kill();
