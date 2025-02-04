@@ -442,7 +442,8 @@
                                         Margin="0,10,0,5"
                                         VerticalAlignment="Center"
                                         IsEnabled="{Binding IsLockUISetting}"
-                                        Orientation="Horizontal">
+                                        Orientation="Horizontal"
+                                        Visibility="Collapsed">
                                         <TextBlock
                                             Width="285"
                                             VerticalAlignment="Center"

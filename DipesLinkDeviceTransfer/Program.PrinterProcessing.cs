@@ -84,7 +84,7 @@ namespace DipesLinkDeviceTransfer
             {
                 var podData = eventArgs.Data;
                 var index = eventArgs.Index;
-                Console.WriteLine(podData.Text);
+                //Console.WriteLine("INdex " + index + "POD"  + podData.Text);
                 _QueueBufferSubPrintersReceivedDataList[index].Enqueue(podData);
 
                 // Add the PODDataModel to the queue based on the index
@@ -134,6 +134,7 @@ namespace DipesLinkDeviceTransfer
                             token.ThrowIfCancellationRequested();
                             data = string.Join(";", codeModel.Take(codeModel.Length - 1).Skip(1));// Trim data (exclude Index, Status column)
                             string command = string.Format("DATA;{0}", data); // Init send command
+                            _rynanRPrinterDeviceHandler?.SendData(command);
                             if (_printerManager._printers[SharedValues.SelectedPrinter] != null )
                             {
                                 _printerManager.SendDataToAllPrinters(command);
@@ -540,12 +541,15 @@ namespace DipesLinkDeviceTransfer
         {
             Task requestTemplateTask = Task.Run(async () =>
             {
+                //_printerManager?.SendDataToAllPrinters("RQLI");
                 for (int i = 0; i < DeviceSharedValues.numberOfPrinter; i++)
                 {
-                    if (_printerManager._printers[i] != null && _printerManager._printers[i].IsConnected())
+                    if (_printerManager?._printers[i] != null && _printerManager._printers[i].IsConnected())
                     {
                         _printerManager._printers[i].SendData("RQLI"); //send request template list command to printer
+                        Console.WriteLine("Index" + i);
                         //ReceiveTemplateFromAllPrinter();
+                        _rynanRPrinterDeviceHandler?.SendData("RQLI");
                         await Task.Delay(100);
                         SendTemplateListToUI(DeviceSharedValues.Index, _PrintProductAllPrintersTemplateLists[i], i); //_PrintProductTemplateList
                     }
@@ -973,11 +977,12 @@ namespace DipesLinkDeviceTransfer
                 DisposeAndClearListQueue(_QueueBufferSubPrintersReceivedDataList);
 
 
+                _rynanRPrinterDeviceHandler?.SendData("STOP");
                 if (SharedValues.SelectedJob.CompareType == CompareType.Database &&
                     SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries && !_IsRechecked)
                 {
                     SharedValues.OperStatus = OperationStatus.Processing;
-                    if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
+                    if (_printerManager?._printers[SharedValues.SelectedPrinter] != null)
                     {
                         _printerManager.StopAllPrinter("STOP");
                         Thread.Sleep(50);
@@ -986,13 +991,16 @@ namespace DipesLinkDeviceTransfer
                         {
                             
                             if (_printerManager._printers[i].IsConnected()){
+                                Console.WriteLine("Index Start: " + i);
                                 string templateNameWithoutExt = SharedValues.SelectedJob.TemplateManager.PrinterTemplateList[i].Replace(".dsj", "");
                                 string startPrintCommand = string.Format("STAR;{0};1;1;true", templateNameWithoutExt);
                                 _printerManager._printers[i].SendData(startPrintCommand); // Send Start command to printer
                             }
 
                         }
-
+                        string templateNameWithoutExtMain = SharedValues.SelectedJob.TemplateManager.PrinterTemplateList[0].Replace(".dsj", "");
+                        string startPrintCommandMain = string.Format("STAR;{0};1;1;true", templateNameWithoutExtMain);
+                        _rynanRPrinterDeviceHandler?.SendData(startPrintCommandMain);
 
                     }
                 }
@@ -1019,7 +1027,7 @@ namespace DipesLinkDeviceTransfer
                 {
                     try
                     {
-                        if (DeviceSharedValues.numberOfPrinter > 1 && DeviceSharedValues.IsExportPrinterResponseSettings)
+                        if (DeviceSharedValues.numberOfPrinter > 1) //  && DeviceSharedValues.IsExportPrinterResponseSettings
                         {
                             for (int i = 1; i < DeviceSharedValues.numberOfPrinter; i++)
                             {
@@ -1102,6 +1110,7 @@ namespace DipesLinkDeviceTransfer
 
                     if (SharedValues.SelectedJob != null && SharedValues.SelectedJob.PrinterSeries == PrinterSeries.RynanSeries)
                     {
+                        _rynanRPrinterDeviceHandler?.SendData("STOP");
                         if (_printerManager._printers[SharedValues.SelectedPrinter] != null)
                         {
                             _printerManager.StopAllPrinter("STOP");

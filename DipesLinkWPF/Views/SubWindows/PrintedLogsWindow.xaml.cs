@@ -30,6 +30,10 @@ namespace DipesLink.Views.SubWindows
         private Paginator<ExpandoObject>? _paginator;
         private int countDataPerPage;
         private ObservableCollection<ExpandoObject>? filterList = new();
+
+        private ObservableCollection<ExpandoObject>? tempFilterList = new();
+        private ObservableCollection<ExpandoObject>? tempRawList = new();
+
         private static int selectedPrinter = 1;
         #endregion Declarations
 
@@ -41,6 +45,8 @@ namespace DipesLink.Views.SubWindows
             InitializeComponent();
             InitPrintData();
             LoadUIPrinter();
+            tempFilterList = filterList;
+            tempRawList = _printingInfo.list;
             this.Closing += PrintedLogsWindow_Closing;
         }
         private void LoadUIPrinter()
@@ -145,10 +151,19 @@ namespace DipesLink.Views.SubWindows
 
                 string csvPath = subPrinterPath;
 
-                var rawDatabaseList = GetRawDatabaseListForPrinterReponses(csvPath, _printingInfo?.RawList);
+                
 
-                filterList = rawDatabaseList;
-                _printingInfo.list = rawDatabaseList;
+                if (selectedPrinter > 1)
+                {
+                    var rawDatabaseList = GetRawDatabaseListForPrinterReponses(csvPath, _printingInfo?.RawList);
+                    filterList = rawDatabaseList;
+                    _printingInfo.list = rawDatabaseList;
+                }
+                else
+                {
+                    filterList = tempFilterList;
+                    _printingInfo.list = tempRawList;
+                }
 
                 CreateDataTemplate();
                 GetOriginalList();

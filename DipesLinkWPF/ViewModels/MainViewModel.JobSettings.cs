@@ -152,15 +152,27 @@ namespace DipesLink.ViewModels
                             }
 
                             // Check printer template
-                            if (_jobModel.PrinterTemplate == null ||
-                                _jobModel.PrinterTemplate == "" ||
-                                _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter] == null ||
-                                !SharedFunctions.CheckExitTemplate(_jobModel.PrinterTemplate, _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter]))
+                            for(int i = 0; i < ViewModelSharedValues.Settings.NumberOfPrinter; i++)
                             {
-                                CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Printer_Template"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
-                                checkJobMsgBox.ShowDialog();
-                                return;
+                                if (!SharedFunctions.CheckExitTemplate(_jobModel.TemplateManager.PrinterTemplateList[i], _jobModel.TemplateManager.TemplateListFirstFound[i]))
+                                {
+                                    CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Printer_Template"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                                    checkJobMsgBox.ShowDialog();
+                                    return;
+                                }
                             }
+                            
+
+                            //if (_jobModel.PrinterTemplate == null ||
+                            //    _jobModel.PrinterTemplate == "" ||
+                            //    _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter] == null ||
+                            //    !SharedFunctions.CheckExitTemplate(_jobModel.PrinterTemplate, _jobModel.TemplateManager.TemplateListFirstFound[SharedValues.SelectedPrinter]))
+                            //{
+                            //    // thinh dang lam now 
+                            //    CustomMessageBox checkJobMsgBox = new(LanguageModel.GetLanguage("Please_Select_Printer_Template"), LanguageModel.GetLanguage("ErrorDialogCaption"), ButtonStyleMessageBox.OK, ImageStyleMessageBox.Error);
+                            //    checkJobMsgBox.ShowDialog();
+                            //    return;
+                            //}
                         }
                     }
                     else

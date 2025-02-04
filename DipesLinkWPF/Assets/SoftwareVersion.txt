@@ -4,3 +4,7 @@
   + Added DataMan Multi-Reader Sync feature
   + Fixed station logging feature is not working
   + Added barcode scanner reader
+* Dipes-Link Version 1.0.0.2 (February 4, 2025) Build: 250204
+  + Added Mutiple Printer Selection feature
+  + Added Checking Multiple Printer Status feature
+  + Added Exporting Multiple Printer Data feature

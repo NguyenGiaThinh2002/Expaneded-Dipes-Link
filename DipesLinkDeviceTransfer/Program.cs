@@ -120,7 +120,7 @@ namespace DipesLinkDeviceTransfer
             InitInstanceIPC();
             ListenConnectionParam();
             // wait for number of printer
-            await Task.Delay(500);
+            await Task.Delay(1000);
             //MessageBox.Show(DeviceSharedValues.numberOfPrinter.ToString());
 
             AlwaySendPrinterOperationToUI();

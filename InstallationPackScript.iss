@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dipes-Link"
-#define MyAppVersion "1.0.0.1 Build 241101"
+#define MyAppVersion "1.0.0.2 Build 250204"
 #define MyAppPublisher "Rynan Technologies"
 #define MyAppURL "https://rynantech.com/"
 #define MyAppExeName "DipesLink.exe"
@@ -80,8 +80,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "Output\Release\DipesLink\x64\Release\net6.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Output\Release\DipesLink\x64\Release\net6.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs ;Excludes: "*.pdb";
+Source: "Output\Release\DipesLink\Release\net6.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Output\Release\DipesLink\Release\net6.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs ;Excludes: "*.pdb";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 //Add file icon.ico into the installation directory
